@@ -33,7 +33,7 @@ class WorkerAdmin(admin.ModelAdmin):
         "payment_method",
         "current_district__province",
     ]
-    search_fields = ["full_name", "full_name_ne", "phone", "citizenship_no", "nid_no"]
+    search_fields = ["full_name", "full_name_ne", "phone"]
     autocomplete_fields = ["user", "naike"]
     readonly_fields = ["created_at", "updated_at", "verified_at", "verified_by"]
     inlines = [SkillInline]

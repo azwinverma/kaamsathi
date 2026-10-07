@@ -91,4 +91,10 @@ urlpatterns = [
     path("", include("apps.finance.urls")),
     path("", include("apps.insights.urls")),
     path("", include("apps.privacy.urls")),
+    path("", include("apps.risk.urls")),
+    path("", include("apps.support.urls")),
+    path("", include("apps.experience.urls")),
+    path("", include("apps.timesheets.urls")),
+    path("", include("apps.integrations.urls")),
+    path("", include("apps.mobility.urls")),
 ]

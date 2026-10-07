@@ -6,6 +6,7 @@ from django.db import models
 
 from apps.accounts.models import phone_validator
 from apps.core import labels
+from apps.core.crypto import EncryptedCharField, blind_index
 
 
 class Trade(models.Model):
@@ -55,8 +56,13 @@ class Worker(models.Model):
         "geo.District", on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
     )
     address = models.CharField(max_length=255, blank=True, null=True)
-    citizenship_no = models.CharField(max_length=40, blank=True, null=True)
-    nid_no = models.CharField(max_length=40, blank=True, null=True)
+    # Encrypted at rest; look up / de-duplicate via the *_hash blind indexes (apps/core/crypto.py).
+    citizenship_no = EncryptedCharField(max_length=40, blank=True, null=True)
+    nid_no = EncryptedCharField(max_length=40, blank=True, null=True)
+    citizenship_no_hash = models.CharField(
+        max_length=64, blank=True, null=True, db_index=True, editable=False
+    )
+    nid_no_hash = models.CharField(max_length=64, blank=True, null=True, db_index=True, editable=False)
     id_front = models.ImageField(upload_to="worker-ids/", blank=True, null=True)
     id_back = models.ImageField(upload_to="worker-ids/", blank=True, null=True)
     photo = models.ImageField(upload_to="worker-photos/", blank=True, null=True)
@@ -69,9 +75,11 @@ class Worker(models.Model):
     expected_monthly_wage = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     is_available = models.BooleanField(default=True)
     available_from = models.DateField(null=True, blank=True)
+    preferred_districts = models.ManyToManyField("geo.District", blank=True, related_name="+")
+    service_radius_km = models.PositiveSmallIntegerField(null=True, blank=True)
     payment_method = models.CharField(max_length=10, choices=PAYMENT_METHODS, default="cash")
     bank_name = models.CharField(max_length=120, blank=True, null=True)
-    bank_account_no = models.CharField(max_length=40, blank=True, null=True)
+    bank_account_no = EncryptedCharField(max_length=40, blank=True, null=True)
     bank_account_name = models.CharField(max_length=150, blank=True, null=True)
     wallet_id = models.CharField(max_length=40, blank=True, null=True)
     ssf_id = models.CharField(max_length=40, blank=True, null=True)
@@ -85,6 +93,15 @@ class Worker(models.Model):
 
     def __str__(self):
         return f"{self.full_name} ({self.phone})"
+
+    def save(self, *args, **kwargs):
+        self.citizenship_no_hash = blind_index(self.citizenship_no, "citizenship")
+        self.nid_no_hash = blind_index(self.nid_no, "nid")
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            extra = {"citizenship_no": "citizenship_no_hash", "nid_no": "nid_no_hash"}
+            kwargs["update_fields"] = set(update_fields) | {h for f, h in extra.items() if f in update_fields}
+        super().save(*args, **kwargs)
 
 
 class WorkerSkill(models.Model):

@@ -14,6 +14,7 @@ from rest_framework.views import APIView
 
 from apps.audit.services import diff, log, snapshot
 from apps.core.bs import today_ad
+from apps.core.crypto import blind_index
 from apps.core.exceptions import APIError
 from apps.core.permissions import IsOpsStaff
 from apps.hiring.models import JobOpening
@@ -85,7 +86,9 @@ class OpsWorkerViewSet(
                 Q(full_name__icontains=q)
                 | Q(full_name_ne__icontains=q)
                 | Q(phone__contains=q)
-                | Q(citizenship_no__icontains=q)
+                # Identifiers are encrypted: exact match through the blind index only.
+                | Q(citizenship_no_hash=blind_index(q, "citizenship"))
+                | Q(nid_no_hash=blind_index(q, "nid"))
             )
         if p.get("trade"):
             qs = qs.filter(skills__trade_id=p["trade"])
@@ -236,7 +239,7 @@ class OpsOrganizationViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, v
         )
         q = self.request.query_params.get("q")
         if q:
-            qs = qs.filter(Q(name__icontains=q) | Q(pan_no__icontains=q))
+            qs = qs.filter(Q(name__icontains=q) | Q(pan_hash=blind_index(q, "pan")))
         return qs.order_by("name")
 
     def _with_stats(self, org, data):

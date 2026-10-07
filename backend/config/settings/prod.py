@@ -7,6 +7,7 @@ ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 OTP_DEV_CODE = ""  # never in production
+FIELD_KEYS_REQUIRED = True  # apps/core/crypto.py refuses to fall back to SECRET_KEY-derived keys
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=True)

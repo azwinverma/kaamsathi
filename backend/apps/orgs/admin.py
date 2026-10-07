@@ -20,7 +20,7 @@ class SiteInline(admin.TabularInline):
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ["name", "industry", "district", "plan", "is_active", "created_at"]
     list_filter = ["industry", "plan", "is_active", "district__province"]
-    search_fields = ["name", "name_ne", "pan_no", "phone"]
+    search_fields = ["name", "name_ne", "phone"]
     inlines = [SiteInline, MembershipInline]
 
 

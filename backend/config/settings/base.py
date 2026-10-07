@@ -60,6 +60,13 @@ INSTALLED_APPS = [
     "apps.finance",
     "apps.insights",
     "apps.privacy",
+    # reference-gap modules (docs/CONTRACT-EXTENSIONS.md)
+    "apps.risk",
+    "apps.support",
+    "apps.experience",
+    "apps.timesheets",
+    "apps.integrations",
+    "apps.mobility",
 ]
 
 MIDDLEWARE = [
@@ -275,6 +282,19 @@ CELERY_TASK_EAGER_PROPAGATES = True
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_BEAT_SCHEDULE = {
+    "risk-anomaly-scan": {"task": "apps.risk.tasks.scan", "schedule": crontab(hour=4, minute=0)},
+    "support-sla-escalation": {
+        "task": "apps.support.tasks.escalate_overdue",
+        "schedule": crontab(minute="*/30"),
+    },
+    "mobility-document-expiry": {
+        "task": "apps.mobility.tasks.expiry_reminders",
+        "schedule": crontab(hour=8, minute=30),
+    },
+    "integrations-webhook-retry": {
+        "task": "apps.integrations.tasks.retry_deliveries",
+        "schedule": crontab(minute="*/10"),
+    },
     # Runs daily; only acts on BS day 1 (start of a Nepali month).
     "monthly-subscription-charges": {
         "task": "apps.billing.tasks.monthly_subscription_charges",
@@ -341,6 +361,9 @@ PARTNER_GRANT_MAX_DAYS = env.int("PARTNER_GRANT_MAX_DAYS", default=90)
 PDF_DEVANAGARI_FONT = env(
     "PDF_DEVANAGARI_FONT", default=str(BASE_DIR / "assets" / "fonts" / "Mukta-Regular.ttf")
 )
+# Field encryption (apps/core/crypto.py): Fernet keys newest-first, and the blind-index HMAC key.
+FIELD_ENCRYPTION_KEYS = env.list("FIELD_ENCRYPTION_KEYS", default=[])
+FIELD_HASH_KEY = env("FIELD_HASH_KEY", default="")
 PUBLIC_WEB_URL = env("PUBLIC_WEB_URL", default="http://localhost:3000")
 PRIVACY_EXPORT_TTL_HOURS = env.int("PRIVACY_EXPORT_TTL_HOURS", default=72)
 
