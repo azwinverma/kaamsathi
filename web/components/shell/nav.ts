@@ -1,5 +1,17 @@
 import {
+  BadgeCheck,
   Banknote,
+  BarChart3,
+  CalendarClock,
+  ClipboardCheck,
+  FileWarning,
+  GraduationCap,
+  Handshake,
+  HardHat,
+  Landmark,
+  LineChart,
+  Lock,
+  UsersRound,
   Briefcase,
   Building2,
   CalendarCheck,
@@ -47,11 +59,24 @@ export const APP_NAV: NavGroup[] = [
       { href: "/app/attendance", label: "nav.attendance", icon: CalendarCheck },
       { href: "/app/leave", label: "nav.leave", icon: CalendarOff },
       { href: "/app/advances", label: "nav.advance", icon: HandCoins, roles: FULL },
+      { href: "/app/roster", label: "nav.roster", icon: CalendarClock },
+      { href: "/app/contractors", label: "nav.contractors", icon: HardHat, roles: FULL },
+      { href: "/app/disputes", label: "nav.disputes", icon: FileWarning, roles: FULL },
     ],
   },
   {
     label: "nav.pay",
-    items: [{ href: "/app/payroll", label: "nav.payroll", icon: Banknote, roles: FULL }],
+    items: [
+      { href: "/app/payroll", label: "nav.payroll", icon: Banknote, roles: FULL },
+      { href: "/app/compliance", label: "nav.compliance", icon: ClipboardCheck, roles: FULL },
+    ],
+  },
+  {
+    label: "nav.grow",
+    items: [
+      { href: "/app/analytics", label: "nav.analytics", icon: BarChart3, roles: FULL },
+      { href: "/app/training", label: "nav.training", icon: GraduationCap, roles: FULL },
+    ],
   },
   {
     label: "nav.account",
@@ -71,6 +96,24 @@ export const OPS_NAV: NavGroup[] = [
       { href: "/ops/verification", label: "nav.ops_verification", icon: ShieldCheck },
       { href: "/ops/jobs", label: "nav.ops_jobs", icon: Briefcase },
       { href: "/ops/organizations", label: "nav.ops_organizations", icon: Building2 },
+    ],
+  },
+  {
+    label: "nav.ops_trust",
+    items: [
+      { href: "/ops/credentials", label: "nav.ops_credentials", icon: BadgeCheck },
+      { href: "/ops/disputes", label: "nav.ops_disputes", icon: FileWarning },
+      { href: "/ops/crews", label: "nav.ops_crews", icon: UsersRound },
+      { href: "/ops/privacy", label: "nav.ops_privacy", icon: Lock },
+    ],
+  },
+  {
+    label: "nav.ops_ecosystem",
+    items: [
+      { href: "/ops/training", label: "nav.ops_training", icon: GraduationCap },
+      { href: "/ops/partners", label: "nav.ops_partners", icon: Handshake },
+      { href: "/ops/finance", label: "nav.ops_finance", icon: Landmark },
+      { href: "/ops/insights", label: "nav.ops_insights", icon: LineChart },
     ],
   },
 ];

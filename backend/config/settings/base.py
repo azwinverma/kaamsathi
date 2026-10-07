@@ -46,6 +46,18 @@ INSTALLED_APPS = [
     "apps.billing",
     "apps.audit",
     "apps.notifications",
+    # ecosystem (docs/CONTRACT-ECOSYSTEM.md)
+    "apps.trust",
+    "apps.crews",
+    "apps.credentials",
+    "apps.training",
+    "apps.compliance",
+    "apps.payouts",
+    "apps.scheduling",
+    "apps.partners",
+    "apps.finance",
+    "apps.insights",
+    "apps.privacy",
 ]
 
 MIDDLEWARE = [
@@ -221,6 +233,34 @@ CELERY_BEAT_SCHEDULE = {
         "task": "apps.billing.tasks.monthly_subscription_charges",
         "schedule": crontab(hour=0, minute=30),
     },
+    "recompute-trust-scores": {
+        "task": "apps.trust.tasks.recompute_all",
+        "schedule": crontab(hour=1, minute=0),
+    },
+    "naike-referral-eligibility": {
+        "task": "apps.crews.tasks.update_referral_eligibility",
+        "schedule": crontab(hour=1, minute=30),
+    },
+    "credential-expiry-reminders": {
+        "task": "apps.credentials.tasks.expiry_reminders",
+        "schedule": crontab(hour=8, minute=0),
+    },
+    "ssf-filing-reminders": {
+        "task": "apps.compliance.tasks.ssf_reminders",
+        "schedule": crontab(hour=9, minute=0),
+    },
+    "refresh-financial-profiles": {
+        "task": "apps.finance.tasks.refresh_all_profiles",
+        "schedule": crontab(hour=2, minute=0),
+    },
+    "expire-partner-consents": {
+        "task": "apps.partners.tasks.expire_grants",
+        "schedule": crontab(minute=15),
+    },
+    "privacy-retention": {
+        "task": "apps.privacy.tasks.process_requests",
+        "schedule": crontab(hour=3, minute=0),
+    },
 }
 
 # --- KaamSathi domain settings ----------------------------------------------
@@ -241,6 +281,16 @@ PLACEMENT_FEE = env("PLACEMENT_FEE", default="5000.00")
 SUBSCRIPTION_PER_WORKER = env("SUBSCRIPTION_PER_WORKER", default="150.00")
 SUBSCRIPTION_MINIMUM = env("SUBSCRIPTION_MINIMUM", default="3000.00")
 REPLACEMENT_WINDOW_DAYS = 30
+
+# --- Ecosystem (docs/CONTRACT-ECOSYSTEM.md) -----------------------------------
+NAIKE_REFERRAL_FEE = env("NAIKE_REFERRAL_FEE", default="500.00")
+NAIKE_REFERRAL_HOLD_DAYS = env.int("NAIKE_REFERRAL_HOLD_DAYS", default=30)
+SSF_DUE_DAYS = env.int("SSF_DUE_DAYS", default=15)  # days after BS month end; verify with SSF
+PAYOUT_PROVIDERS = env.list("PAYOUT_PROVIDERS", default=["bank_file"])  # + esewa, khalti, connectips
+PAYOUT_WEBHOOK_SECRETS = env.dict("PAYOUT_WEBHOOK_SECRETS", default={})
+PARTNER_GRANT_MAX_DAYS = env.int("PARTNER_GRANT_MAX_DAYS", default=90)
+PUBLIC_WEB_URL = env("PUBLIC_WEB_URL", default="http://localhost:3000")
+PRIVACY_EXPORT_TTL_HOURS = env.int("PRIVACY_EXPORT_TTL_HOURS", default=72)
 
 # --- Logging ----------------------------------------------------------------
 LOG_LEVEL = env("LOG_LEVEL", default="INFO")

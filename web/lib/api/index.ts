@@ -9,3 +9,5 @@ export * from "./hooks/hiring";
 export * from "./hooks/workforce";
 export * from "./hooks/payroll";
 export * from "./hooks/ops";
+export * from "./types-trust crews credentials training compliance payouts scheduling partners finance insights privacy";
+export * from "./hooks/trust crews credentials training compliance payouts scheduling partners finance insights privacy";

@@ -5,7 +5,7 @@
   "type": "module",
   "packageManager": "pnpm@10.34.5",
   "engines": {
-    "node": ">=20.9"
+    "node": ">=22"
   },
   "scripts": {
     "messages": "node scripts/merge-messages.mjs",

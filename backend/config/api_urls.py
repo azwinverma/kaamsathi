@@ -1,10 +1,10 @@
 """All /api/v1 routes (CONTRACT.md §3). Trailing slashes are optional."""
 
-from django.urls import re_path
-from rest_framework.routers import SimpleRouter
+from django.urls import include, path, re_path
 
 from apps.accounts import views as accounts
 from apps.billing import views as billing
+from apps.core.routers import Router
 from apps.geo import views as ref
 from apps.hiring import views as hiring
 from apps.orgs import views as orgs
@@ -12,14 +12,6 @@ from apps.payroll import views as payroll
 from apps.workers import me_views as me
 from apps.workers import ops_views as ops
 from apps.workforce import views as workforce
-
-
-class Router(SimpleRouter):
-    def __init__(self):
-        super().__init__()
-        # DRF coerces any truthy trailing_slash to "/"; set the optional-slash regex explicitly.
-        self.trailing_slash = "/?"
-
 
 router = Router()
 # /org/*
@@ -83,4 +75,16 @@ urlpatterns = [
     # ops
     p("ops/dashboard", ops.OpsDashboardView, "ops-dashboard"),
     *router.urls,
+    # Ecosystem apps (docs/CONTRACT-ECOSYSTEM.md) each own their routes.
+    path("", include("apps.trust.urls")),
+    path("", include("apps.crews.urls")),
+    path("", include("apps.credentials.urls")),
+    path("", include("apps.training.urls")),
+    path("", include("apps.compliance.urls")),
+    path("", include("apps.payouts.urls")),
+    path("", include("apps.scheduling.urls")),
+    path("", include("apps.partners.urls")),
+    path("", include("apps.finance.urls")),
+    path("", include("apps.insights.urls")),
+    path("", include("apps.privacy.urls")),
 ]
