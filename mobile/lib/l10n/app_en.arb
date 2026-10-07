@@ -1,0 +1,382 @@
+{
+  "@@locale": "en",
+  "appName": "KaamSathi",
+  "appTagline": "Verified workers. On-time pay.",
+  "navDashboard": "Dashboard",
+  "navJobs": "Job openings",
+  "navCandidates": "Candidates",
+  "navWorkers": "Workers",
+  "navAttendance": "Hajiri (Attendance)",
+  "navPayroll": "Payroll (Talab)",
+  "navWageSheet": "Wage sheet",
+  "navPayslip": "Payslip",
+  "navLeave": "Leave (Bida)",
+  "navAdvance": "Advance (Peski)",
+  "navSites": "Work sites",
+  "navSettings": "Settings",
+  "navBilling": "Billing",
+  "termBasicSalary": "Basic salary",
+  "termDearnessAllowance": "Dearness allowance (DA)",
+  "termDailyWage": "Daily wage (Jyala)",
+  "termMonthlySalary": "Monthly salary",
+  "termOvertime": "Overtime (OT)",
+  "termAllowance": "Allowance (Bhatta)",
+  "termFestivalAllowance": "Dashain allowance",
+  "termSsf": "SSF (Social Security Fund)",
+  "termSsfNo": "SSF ID",
+  "termPan": "PAN",
+  "termCitizenship": "Citizenship no.",
+  "termNid": "National ID (NID)",
+  "termNaike": "Team lead (Naike)",
+  "termSupervisor": "Supervisor",
+  "termShift": "Shift",
+  "termPresent": "Present",
+  "termAbsent": "Absent",
+  "termHalfDay": "Half day",
+  "termOnLeave": "On leave",
+  "termPublicHoliday": "Public holiday",
+  "termCheckIn": "Check in",
+  "termCheckOut": "Check out",
+  "termVerified": "Verified",
+  "termSkillCertificate": "Skill certificate (NSTB)",
+  "termExperience": "Experience",
+  "termProvince": "Province",
+  "termDistrict": "District",
+  "termMunicipality": "Municipality",
+  "termWard": "Ward",
+  "termNpr": "Rs.",
+  "termBs": "B.S.",
+  "termAd": "A.D.",
+  "termFiscalYear": "Fiscal year",
+  "statusDraft": "Draft",
+  "statusOpen": "Open",
+  "statusFilled": "Filled",
+  "statusClosed": "Closed",
+  "stageSourced": "Sourced",
+  "stageShortlisted": "Shortlisted",
+  "stageInterview": "Interview",
+  "stageSelected": "Selected",
+  "stageJoined": "Joined",
+  "stageRejected": "Not selected",
+  "stageDropped": "Dropped out",
+  "payrollDraft": "Draft",
+  "payrollApproved": "Approved",
+  "payrollPaid": "Paid",
+  "payEsewa": "eSewa",
+  "payKhalti": "Khalti",
+  "payBank": "Bank transfer",
+  "payCash": "Cash",
+  "termWeeklyOff": "Weekly off",
+  "termNotMarked": "Not marked",
+  "statusShortPresent": "P",
+  "statusShortAbsent": "A",
+  "statusShortHalfDay": "H",
+  "statusShortLeave": "L",
+  "statusShortHoliday": "PH",
+  "statusShortWeeklyOff": "WO",
+  "commonRetry": "Try again",
+  "commonCancel": "Cancel",
+  "commonSave": "Save",
+  "commonSaved": "Saved",
+  "commonContinue": "Continue",
+  "commonClose": "Close",
+  "commonConfirm": "Confirm",
+  "commonToday": "Today",
+  "commonYesterday": "Yesterday",
+  "commonErrorGeneric": "Something went wrong. Please try again.",
+  "commonOffline": "You're offline. Changes will sync when you're back online.",
+  "commonNetworkError": "No internet connection. Please check and try again.",
+  "commonSessionExpired": "Your session has ended. Please log in again.",
+  "commonPermissionDenied": "You don't have permission to do this.",
+  "commonNotFound": "Not found.",
+  "commonEmpty": "Nothing here yet.",
+  "commonPreviousMonth": "Previous month",
+  "commonNextMonth": "Next month",
+  "commonTotal": "Total",
+  "commonDays": "Days",
+  "commonNow": "Now",
+  "languageTitle": "Choose your language",
+  "languageSubtitle": "You can change this later in your profile.",
+  "languageEnglish": "English",
+  "languageNepali": "नेपाली",
+  "languageLabel": "Language",
+  "loginTitle": "Log in with your mobile number",
+  "loginSubtitle": "We'll send a 6-digit code by SMS.",
+  "loginPhoneLabel": "Mobile number",
+  "loginPhoneHint": "98XXXXXXXX",
+  "loginPhoneInvalid": "Enter a 10-digit mobile number starting with 97 or 98.",
+  "loginSendCode": "Send code",
+  "otpTitle": "Enter the code",
+  "otpSubtitle": "We sent a 6-digit code to {phone}",
+  "@otpSubtitle": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "otpVerify": "Verify",
+  "otpResend": "Resend code",
+  "otpResendIn": "Resend code in {seconds}s",
+  "@otpResendIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  "otpDevHint": "Development code: {code}",
+  "@otpDevHint": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "otpChangeNumber": "Change number",
+  "otpSent": "A new code has been sent.",
+  "otpIncomplete": "Enter all 6 digits.",
+  "errOtpInvalid": "That code is not correct. Please check and try again.",
+  "errOtpExpired": "This code has expired. Please request a new one.",
+  "errOtpRateLimited": "Too many attempts. Please wait a while and try again.",
+  "noAccessTitle": "Ask your employer to add you",
+  "noAccessBody": "Your number {phone} is not linked to any employer yet. Ask your employer or supervisor to add you on KaamSathi with this number, then tap “Check again”.",
+  "@noAccessBody": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "noAccessRetry": "Check again",
+  "noAccessStill": "Still not linked. Please check with your employer.",
+  "logout": "Log out",
+  "logoutConfirm": "Log out of KaamSathi?",
+  "logoutPendingWarning": "{count} hajiri changes are not synced yet. They will be lost if you log out now.",
+  "@logoutPendingWarning": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "orgPickTitle": "Choose organization",
+  "sitePickTitle": "Choose work site",
+  "allSites": "All my sites",
+  "organization": "Organization",
+  "workSite": "Work site",
+  "modeSupervisor": "Supervisor",
+  "modeWorker": "Worker",
+  "modeSwitchToWorker": "Switch to my worker view",
+  "modeSwitchToSupervisor": "Switch to supervisor view",
+  "moreTitle": "More",
+  "roleOwner": "Owner",
+  "roleAdmin": "Admin",
+  "roleHr": "HR",
+  "roleSupervisor": "Supervisor",
+  "hajiriMarkAllPresent": "Mark all present",
+  "hajiriMarkAllConfirm": "Mark {count} unmarked workers as present?",
+  "@hajiriMarkAllConfirm": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "hajiriAllMarked": "Everyone is already marked.",
+  "hajiriPendingSync": "{count} waiting to sync",
+  "@hajiriPendingSync": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "hajiriAllSynced": "All changes saved",
+  "hajiriSyncNow": "Sync now",
+  "hajiriSyncing": "Syncing…",
+  "hajiriSyncFailed": "{count} could not be saved",
+  "@hajiriSyncFailed": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "hajiriOfflineCached": "Offline — showing the last saved list.",
+  "hajiriNoWorkers": "No workers at this site yet.",
+  "hajiriHoliday": "Public holiday: {name}",
+  "@hajiriHoliday": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hajiriOvertime": "OT {hours} h",
+  "@hajiriOvertime": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "hajiriOtDecrease": "Decrease overtime",
+  "hajiriOtIncrease": "Increase overtime",
+  "hajiriRegister": "Monthly register",
+  "hajiriPickDate": "Choose date",
+  "hajiriDiscard": "Discard",
+  "hajiriRetrySync": "Retry",
+  "hajiriNotSynced": "Not synced yet",
+  "hajiriSearch": "Search worker",
+  "hajiriCount": "{count} workers",
+  "@hajiriCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "registerEmpty": "No hajiri for this month.",
+  "registerOtHours": "OT hours",
+  "leavePending": "Pending",
+  "leaveApproved": "Approved",
+  "leaveRejected": "Rejected",
+  "leaveApprove": "Approve",
+  "leaveReject": "Reject",
+  "leaveRejectTitle": "Reject leave request?",
+  "leaveRejectNote": "Reason (optional)",
+  "leaveDays": "{days} days",
+  "@leaveDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "leaveEmpty": "No leave requests here.",
+  "leaveApprovedMsg": "Leave approved.",
+  "leaveRejectedMsg": "Leave rejected.",
+  "leaveTypeHome": "Home leave",
+  "leaveTypeSick": "Sick leave",
+  "leaveTypeMaternity": "Maternity leave",
+  "leaveTypePaternity": "Paternity leave",
+  "leaveTypeMourning": "Mourning leave",
+  "leaveTypeUnpaid": "Unpaid leave",
+  "homeGreeting": "Namaste, {name}",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeTodayHajiri": "Today's hajiri",
+  "homeNotCheckedIn": "You haven't checked in today.",
+  "homeCheckedInAt": "Checked in at {time}",
+  "@homeCheckedInAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "homeCheckedOutAt": "Checked out at {time}",
+  "@homeCheckedOutAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "homeScanHint": "Scan the QR code at your work site.",
+  "homeThisMonth": "This month",
+  "homeLatestPayslip": "Latest payslip",
+  "checkInSuccess": "Checked in. Have a good day at work!",
+  "checkOutSuccess": "Checked out. See you tomorrow!",
+  "scanTitle": "Scan site QR",
+  "scanInstructions": "Point the camera at the QR code at your site.",
+  "scanTorch": "Flashlight",
+  "gettingLocation": "Getting your location…",
+  "sendingHajiri": "Saving your hajiri…",
+  "errOutsideGeofence": "You seem to be away from the work site. Move closer to the site and try again.",
+  "errLocationDenied": "Location permission is needed to check in. Please allow it.",
+  "errLocationDeniedForever": "Location is blocked for KaamSathi. Open settings and allow location.",
+  "errLocationOff": "Your location (GPS) is off. Turn it on and try again.",
+  "errCameraDenied": "Camera permission is needed to scan the QR code.",
+  "errInvalidQr": "This is not a KaamSathi site QR code.",
+  "errAlreadyRecorded": "This has already been recorded.",
+  "errInvalidState": "This can't be changed now (the month may be locked for payroll).",
+  "openSettings": "Open settings",
+  "talabTitle": "Talab (Payslips)",
+  "talabEmpty": "No payslips yet. They appear here once your employer runs payroll.",
+  "talabNetPay": "Net pay",
+  "talabGrossPay": "Gross pay",
+  "talabEarnings": "Earnings",
+  "talabDeductions": "Deductions",
+  "talabSsfEmployee": "SSF (11%)",
+  "talabTds": "Tax (TDS)",
+  "talabPeskiRecovery": "Peski recovery",
+  "talabOtherDeductions": "Other deductions",
+  "talabOpenPdf": "Open PDF",
+  "talabPresentDays": "Present days",
+  "talabPayableDays": "Payable days",
+  "talabDaysInMonth": "Days in month",
+  "talabOtHours": "OT hours",
+  "talabPaidOn": "Paid on {date}",
+  "@talabPaidOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "talabPaymentPending": "Payment pending",
+  "talabPaymentMethod": "Paid by",
+  "talabAttendance": "Attendance",
+  "talabPdfError": "Could not open the PDF. Please try again.",
+  "historyTitle": "Work history",
+  "historyEmpty": "No verified work history yet.",
+  "historyMonths": "{months} months",
+  "@historyMonths": {
+    "placeholders": {
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "profileTitle": "Profile",
+  "profilePersonal": "Personal details",
+  "profileName": "Name",
+  "profileNameNe": "Name in Nepali",
+  "profilePhone": "Mobile number",
+  "profilePaymentMethod": "How you get paid",
+  "profileBankName": "Bank name",
+  "profileAccountNo": "Account number",
+  "profileAccountName": "Account holder name",
+  "profileWalletId": "Wallet ID (mobile number)",
+  "profileAvailable": "Available for new work",
+  "profileAvailableHint": "Employers on KaamSathi can find you for new jobs.",
+  "profileConsents": "Your data & privacy",
+  "profileConsentsHint": "You decide who can see your details. You can change this any time.",
+  "consentDataProcessing": "Use my details for hajiri and talab",
+  "consentDataProcessingHint": "Needed so your employer can record your hajiri and pay your talab.",
+  "consentProfileShare": "Show my profile to employers",
+  "consentProfileShareHint": "Employers looking for workers can see your skills and contact you.",
+  "consentHistoryShare": "Share my work history",
+  "consentHistoryShareHint": "New employers can see where you worked before and your ratings.",
+  "profileVerification": "Verification",
+  "verUnverified": "Not verified",
+  "verPending": "Verification pending",
+  "verRejected": "Verification rejected",
+  "profileEditPayment": "Edit payment details",
+  "profileNotLinked": "Your worker profile is not linked yet.",
+  "appVersion": "Version {version}",
+  "@appVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  }
+}

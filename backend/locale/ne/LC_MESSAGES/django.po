@@ -1,0 +1,282 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: KaamSathi\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-07 16:27+0545\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: KaamSathi\n"
+"Language-Team: Nepali\n"
+"Language: ne\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+msgid "Draft"
+msgstr "मस्यौदा"
+
+msgid "Open"
+msgstr "खुला"
+
+msgid "Filled"
+msgstr "पूरा भयो"
+
+msgid "Closed"
+msgstr "बन्द"
+
+msgid "Sourced"
+msgstr "खोजिएको"
+
+msgid "Shortlisted"
+msgstr "छानिएको"
+
+msgid "Interview"
+msgstr "अन्तर्वार्ता"
+
+msgid "Selected"
+msgstr "छनोट भयो"
+
+msgid "Joined"
+msgstr "काममा आयो"
+
+msgid "Not selected"
+msgstr "छनोट भएन"
+
+msgid "Dropped out"
+msgstr "छाड्यो"
+
+msgid "Approved"
+msgstr "स्वीकृत"
+
+msgid "Paid"
+msgstr "भुक्तानी भयो"
+
+msgid "Pending"
+msgstr "बाँकी"
+
+msgid "Present"
+msgstr "उपस्थित"
+
+msgid "Absent"
+msgstr "अनुपस्थित"
+
+msgid "Half day"
+msgstr "आधा दिन"
+
+msgid "On leave"
+msgstr "बिदामा"
+
+msgid "Public holiday"
+msgstr "सार्वजनिक बिदा"
+
+msgid "Weekly off"
+msgstr "साप्ताहिक बिदा"
+
+msgid "Home leave"
+msgstr "घर बिदा"
+
+msgid "Sick leave"
+msgstr "बिरामी बिदा"
+
+msgid "Maternity leave"
+msgstr "प्रसूति बिदा"
+
+msgid "Paternity leave"
+msgstr "पितृत्व बिदा"
+
+msgid "Mourning leave"
+msgstr "किरिया बिदा"
+
+msgid "Unpaid leave"
+msgstr "बेतलबी बिदा"
+
+msgid "Rejected"
+msgstr "अस्वीकृत"
+
+msgid "Active"
+msgstr "सक्रिय"
+
+msgid "Ended"
+msgstr "समाप्त"
+
+msgid "Resigned"
+msgstr "राजीनामा"
+
+msgid "Terminated"
+msgstr "बर्खास्त"
+
+msgid "Contract ended"
+msgstr "करार समाप्त"
+
+msgid "Absconded"
+msgstr "सूचना बिना छाडेको"
+
+msgid "Other"
+msgstr "अन्य"
+
+msgid "Monthly salary"
+msgstr "मासिक तलब"
+
+msgid "Daily wage (Jyala)"
+msgstr "दैनिक ज्याला"
+
+msgid "Bank transfer"
+msgstr "बैंक ट्रान्सफर"
+
+msgid "eSewa"
+msgstr "इसेवा"
+
+msgid "Khalti"
+msgstr "खल्ती"
+
+msgid "Cash"
+msgstr "नगद"
+
+msgid "Unverified"
+msgstr "अप्रमाणित"
+
+msgid "Verified"
+msgstr "प्रमाणित"
+
+msgid "Owner"
+msgstr "मालिक"
+
+msgid "Admin"
+msgstr "प्रशासक"
+
+msgid "HR"
+msgstr "मानव संसाधन"
+
+msgid "Supervisor"
+msgstr "सुपरभाइजर"
+
+msgid "Hospitality"
+msgstr "होटल तथा रेस्टुरेन्ट"
+
+msgid "Healthcare"
+msgstr "स्वास्थ्य सेवा"
+
+msgid "Security"
+msgstr "सुरक्षा"
+
+msgid "Construction"
+msgstr "निर्माण"
+
+msgid "Manufacturing"
+msgstr "उत्पादन उद्योग"
+
+msgid "Retail"
+msgstr "खुद्रा व्यापार"
+
+msgid "Unpaid"
+msgstr "भुक्तानी बाँकी"
+
+msgid "Waived"
+msgstr "मिनाहा"
+
+msgid "Placement fee"
+msgstr "नियुक्ति शुल्क"
+
+msgid "Subscription"
+msgstr "मासिक शुल्क"
+
+msgid "Some fields are invalid."
+msgstr "केही विवरण मिलेनन्।"
+
+msgid "Please log in to continue."
+msgstr "अगाडि बढ्न लगइन गर्नुहोस्।"
+
+msgid "You do not have permission to do this."
+msgstr "तपाईंलाई यो काम गर्ने अनुमति छैन।"
+
+msgid "You do not have access to this organization."
+msgstr "तपाईंलाई यो संस्थामा पहुँच छैन।"
+
+msgid "Not found."
+msgstr "भेटिएन।"
+
+msgid "The code is incorrect."
+msgstr "कोड मिलेन।"
+
+msgid "The code has expired. Please request a new one."
+msgstr "कोडको समय सकियो। नयाँ कोड माग्नुहोस्।"
+
+msgid "Too many code requests. Please try again later."
+msgstr "धेरै पटक कोड मागियो। केही समयपछि फेरि प्रयास गर्नुहोस्।"
+
+msgid "Wage is below the government minimum wage."
+msgstr "तलब सरकारले तोकेको न्यूनतम पारिश्रमिकभन्दा कम छ।"
+
+msgid "This action is not allowed in the current state."
+msgstr "हालको अवस्थामा यो काम गर्न मिल्दैन।"
+
+msgid "You are outside the work site area."
+msgstr "तपाईं कार्यस्थलको क्षेत्रभन्दा बाहिर हुनुहुन्छ।"
+
+msgid "This already exists."
+msgstr "यो पहिले नै छ।"
+
+msgid "Too many requests. Please slow down."
+msgstr "धेरै अनुरोध भयो। केही बेर पर्खनुहोस्।"
+
+msgid "Something went wrong. Please try again."
+msgstr "केही गडबड भयो। फेरि प्रयास गर्नुहोस्।"
+
+#, python-format
+msgid "Wage must be at least %(amount)s (minimum wage)."
+msgstr "तलब कम्तीमा %(amount)s हुनुपर्छ (न्यूनतम पारिश्रमिक)।"
+
+#, python-format
+msgid "Cannot move from %(from)s to %(to)s."
+msgstr "%(from)s बाट %(to)s मा सार्न मिल्दैन।"
+
+msgid "Employment details are required to join."
+msgstr "काममा लगाउन रोजगारीको विवरण चाहिन्छ।"
+
+msgid "This field is required for monthly wage."
+msgstr "मासिक तलबका लागि यो विवरण अनिवार्य छ।"
+
+#, python-format
+msgid "Basic + DA must be at least %(amount)s per month (minimum wage)."
+msgstr "आधारभूत तलब + महँगी भत्ता मासिक कम्तीमा %(amount)s हुनुपर्छ (न्यूनतम पारिश्रमिक)।"
+
+msgid "This field is required for daily wage."
+msgstr "दैनिक ज्यालाका लागि यो विवरण अनिवार्य छ।"
+
+#, python-format
+msgid "Daily wage must be at least %(amount)s (minimum wage)."
+msgstr "दैनिक ज्याला कम्तीमा %(amount)s हुनुपर्छ (न्यूनतम पारिश्रमिक)।"
+
+msgid "Must be monthly or daily."
+msgstr "मासिक वा दैनिक मध्ये एक हुनुपर्छ।"
+
+msgid "Enter a valid 10-digit mobile number."
+msgstr "१० अङ्कको सही मोबाइल नम्बर लेख्नुहोस्।"
+
+msgid "This field is required."
+msgstr "यो विवरण अनिवार्य छ।"
+
+msgid "This worker already has an active employment in your organization."
+msgstr "यो कामदार तपाईंको संस्थामा पहिले नै कार्यरत हुनुहुन्छ।"
+
+msgid "Payroll for this month is approved; attendance is locked."
+msgstr "यो महिनाको तलबी स्वीकृत भइसकेको छ; हाजिरी परिवर्तन गर्न मिल्दैन।"
+
+msgid "The worker is not employed on this date."
+msgstr "यो मितिमा कामदार कार्यरत हुनुहुन्नथ्यो।"
+
+msgid "client_uuid already used for another record."
+msgstr "यो client_uuid अर्को अभिलेखमा प्रयोग भइसकेको छ।"
+
+msgid "End date cannot be before start date."
+msgstr "अन्त्य मिति सुरु मितिभन्दा अघि हुन सक्दैन।"
+
+msgid "English"
+msgstr "अङ्ग्रेजी"
+
+msgid "Nepali"
+msgstr "नेपाली"

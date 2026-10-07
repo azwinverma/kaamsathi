@@ -1,0 +1,10 @@
+line-length = 110
+target-version = "py313"
+extend-exclude = ["migrations", ".venv"]
+
+[lint]
+select = ["E", "F", "I", "B", "UP", "DJ"]
+ignore = ["DJ001"]  # null=True on CharFields is intentional for optional IDs (PAN, SSF no.)
+
+[lint.isort]
+known-first-party = ["apps", "config"]

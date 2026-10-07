@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- KaamSathi mark: white "K" with a crimson accent dot. 108dp adaptive viewport. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:fillColor="#FFFFFF" android:pathData="M38,34 L48,34 L48,74 L38,74 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M48,50 L64,34 L78,34 L48,64 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M55,57 L78,74 L64,74 L48,64 Z" />
+    <path android:fillColor="#DC2B4B"
+        android:pathData="M76,80 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z" />
+</vector>
