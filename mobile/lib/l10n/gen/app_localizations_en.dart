@@ -802,4 +802,1301 @@ class AppLocalizationsEn extends AppLocalizations {
   String appVersion(String version) {
     return 'Version $version';
   }
+
+  @override
+  String get ecoComingSoon => 'This feature is coming soon. Please check again later.';
+
+  @override
+  String get ecoOfflineCached => 'Offline — showing your last saved information.';
+
+  @override
+  String get ecoPdfNotReady => 'The PDF is not ready yet. Please try again later.';
+
+  @override
+  String get ecoCopied => 'Copied';
+
+  @override
+  String get ecoCopyLink => 'Copy link';
+
+  @override
+  String get ecoSubmit => 'Submit';
+
+  @override
+  String get ecoRequired => 'Please fill this in.';
+
+  @override
+  String ecoOptional(String label) {
+    return '$label (optional)';
+  }
+
+  @override
+  String get ecoAdd => 'Add';
+
+  @override
+  String get ecoRemove => 'Remove';
+
+  @override
+  String get ecoRevoke => 'Revoke';
+
+  @override
+  String get ecoView => 'View';
+
+  @override
+  String get ecoNone => 'None';
+
+  @override
+  String ecoDays(String days) {
+    return '$days days';
+  }
+
+  @override
+  String ecoUntil(String date) {
+    return 'Until $date';
+  }
+
+  @override
+  String ecoOn(String date) {
+    return 'On $date';
+  }
+
+  @override
+  String get ecoStatus => 'Status';
+
+  @override
+  String get ecoGroupWork => 'My work';
+
+  @override
+  String get ecoGroupSkills => 'Skills & training';
+
+  @override
+  String get ecoGroupMoney => 'Money';
+
+  @override
+  String get ecoGroupPrivacy => 'Privacy & help';
+
+  @override
+  String get ecoChooseDate => 'Choose date';
+
+  @override
+  String ecoYears(String years) {
+    return '$years yrs';
+  }
+
+  @override
+  String get trustTitle => 'My reliability';
+
+  @override
+  String get trustScoreLabel => 'Reliability score';
+
+  @override
+  String trustScoreOutOf(String score) {
+    return '$score out of 100';
+  }
+
+  @override
+  String get trustScoreNone => 'Your score appears after your first job on KaamSathi.';
+
+  @override
+  String trustLevelN(String level) {
+    return 'Level $level';
+  }
+
+  @override
+  String get trustLevel0 => 'Phone verified';
+
+  @override
+  String get trustLevel1 => 'Identity verified';
+
+  @override
+  String get trustLevel2 => 'Employment verified';
+
+  @override
+  String get trustLevel3 => 'Skills assessed';
+
+  @override
+  String get trustLevel4 => 'Certificate verified';
+
+  @override
+  String get trustLevel5 => 'Highly trusted';
+
+  @override
+  String get trustBreakdown => 'What makes up your score';
+
+  @override
+  String get trustCompEmployerFeedback => 'Employer feedback';
+
+  @override
+  String get trustCompAttendance => 'Hajiri (attendance)';
+
+  @override
+  String get trustCompCompletion => 'Jobs completed';
+
+  @override
+  String get trustCompSkills => 'Skills verified';
+
+  @override
+  String get trustCompRepeatHiring => 'Hired again';
+
+  @override
+  String get trustCompStability => 'Stability';
+
+  @override
+  String get trustNextSteps => 'How to raise your score';
+
+  @override
+  String get trustNotCredit => 'This score comes only from your verified work record — hajiri, ratings and skills.';
+
+  @override
+  String get profileViewsTitle => 'Who viewed my profile';
+
+  @override
+  String get profileViewsHint => 'Every time an employer, partner or the KaamSathi team opens your full profile, it is listed here.';
+
+  @override
+  String get profileViewsEmpty => 'Nobody has opened your full profile yet.';
+
+  @override
+  String get viewByKaamSathi => 'KaamSathi team or shared link';
+
+  @override
+  String get viewCtxApplication => 'Job application';
+
+  @override
+  String get viewCtxEmployment => 'Your employer';
+
+  @override
+  String get viewCtxOps => 'KaamSathi verification';
+
+  @override
+  String get viewCtxPartner => 'Partner (with your consent)';
+
+  @override
+  String get viewCtxPassport => 'Skill Passport link';
+
+  @override
+  String get viewCtxCrew => 'Your team lead';
+
+  @override
+  String get disputesTitle => 'Complaints';
+
+  @override
+  String get disputesHint => 'Something wrong in your hajiri, talab or work record? Tell us. Your employer will be asked to respond and KaamSathi will review it.';
+
+  @override
+  String get disputesEmpty => 'You have not raised any complaint.';
+
+  @override
+  String get disputeRaise => 'Raise a complaint';
+
+  @override
+  String get disputeKindLabel => 'What is it about?';
+
+  @override
+  String get disputeKindAttendance => 'Hajiri (attendance)';
+
+  @override
+  String get disputeKindWage => 'Talab (wage)';
+
+  @override
+  String get disputeKindEmploymentDates => 'Job start/end dates';
+
+  @override
+  String get disputeKindRating => 'Rating';
+
+  @override
+  String get disputeKindIdentity => 'My identity details';
+
+  @override
+  String get disputeKindOther => 'Something else';
+
+  @override
+  String get disputeStatusOpen => 'Open';
+
+  @override
+  String get disputeStatusResponded => 'Employer replied';
+
+  @override
+  String get disputeStatusResolved => 'Resolved';
+
+  @override
+  String get disputeStatusRejected => 'Not accepted';
+
+  @override
+  String get disputeEmployment => 'Which job?';
+
+  @override
+  String get disputePayslip => 'Which payslip?';
+
+  @override
+  String get disputeDate => 'Which date?';
+
+  @override
+  String get disputeDescription => 'What is wrong?';
+
+  @override
+  String get disputeDescriptionHint => 'Explain in your own words. For example: I worked on this day but it shows absent.';
+
+  @override
+  String get disputeDescriptionShort => 'Please write at least 10 letters.';
+
+  @override
+  String get disputeSent => 'Complaint sent. We will let you know.';
+
+  @override
+  String get disputeEmployerNote => 'Employer\'s reply';
+
+  @override
+  String get disputeResolution => 'KaamSathi decision';
+
+  @override
+  String disputeRaisedOn(String date) {
+    return 'Raised on $date';
+  }
+
+  @override
+  String get disputeReviewNote => 'Records are changed only after your employer and KaamSathi check them.';
+
+  @override
+  String get rateTitle => 'Rate employer';
+
+  @override
+  String get rateHint => 'Your rating helps other workers. Only averages from several workers are used — your name is never shown to the employer.';
+
+  @override
+  String get ratePayOnTime => 'Paid on time';
+
+  @override
+  String get rateConditions => 'Working conditions';
+
+  @override
+  String get rateComment => 'Comment';
+
+  @override
+  String get ratePickStars => 'Please choose stars for both questions.';
+
+  @override
+  String get rateSent => 'Thank you! Your rating was saved.';
+
+  @override
+  String get rateAlready => 'You have already rated this employer for this job.';
+
+  @override
+  String get rateNotYet => 'You can rate after 30 days of work or when the job ends.';
+
+  @override
+  String get empActive => 'Current job';
+
+  @override
+  String get empEnded => 'Ended';
+
+  @override
+  String get empDetails => 'Job details';
+
+  @override
+  String get empDesignation => 'Position';
+
+  @override
+  String get empStart => 'Started';
+
+  @override
+  String get empEndDate => 'Ended on';
+
+  @override
+  String get empWage => 'Wage';
+
+  @override
+  String empWageMonthly(String amount) {
+    return '$amount per month';
+  }
+
+  @override
+  String empWageDaily(String amount) {
+    return '$amount per day';
+  }
+
+  @override
+  String get empSsfYes => 'Enrolled';
+
+  @override
+  String get empSsfNo => 'Not enrolled';
+
+  @override
+  String get empRated => 'You have rated this employer.';
+
+  @override
+  String get contractTitle => 'Employment contract';
+
+  @override
+  String contractAccepted(String date) {
+    return 'Accepted on $date';
+  }
+
+  @override
+  String get contractNotAccepted => 'Not accepted yet';
+
+  @override
+  String get contractUnknown => 'Open the contract to read it. Accept it here when you agree.';
+
+  @override
+  String get contractNone => 'Your employer has not made a contract for this job yet.';
+
+  @override
+  String get contractOpenPdf => 'Open contract (PDF)';
+
+  @override
+  String get contractReview => 'Review and accept';
+
+  @override
+  String contractVersion(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get contractAcceptTitle => 'Accept your contract';
+
+  @override
+  String get contractSummaryIntro => 'Please read this summary. This is what your employer promises you.';
+
+  @override
+  String get contractReadIn => 'Read in';
+
+  @override
+  String csEmployer(String org) {
+    return 'Employer: $org';
+  }
+
+  @override
+  String csPosition(String designation) {
+    return 'Position: $designation';
+  }
+
+  @override
+  String csSite(String site) {
+    return 'Work site: $site';
+  }
+
+  @override
+  String csStart(String date) {
+    return 'Start date: $date';
+  }
+
+  @override
+  String csWageMonthly(String basic, String da, String total) {
+    return 'Basic salary $basic + dearness allowance $da = $total per month.';
+  }
+
+  @override
+  String csWageDaily(String amount) {
+    return 'Daily wage (jyala): $amount.';
+  }
+
+  @override
+  String csAllowance(String amount) {
+    return 'Other allowance: $amount per month.';
+  }
+
+  @override
+  String get csHours => 'Working hours: 8 hours a day, 48 hours a week, with one weekly day off.';
+
+  @override
+  String get csOvertime => 'Overtime is paid at 1.5 times your hourly rate.';
+
+  @override
+  String get csLeave => 'Leave: 1 day home leave for every 20 days worked, 12 days sick leave a year, 13 days mourning leave, 98 days maternity or 15 days paternity leave.';
+
+  @override
+  String get csFestival => 'Dashain allowance: one month\'s basic salary each year.';
+
+  @override
+  String get csSsfYes => 'You are enrolled in SSF: 11% of basic salary is deducted and your employer adds 20%.';
+
+  @override
+  String get csSsfNo => 'You are not enrolled in SSF yet. Ask your employer about it.';
+
+  @override
+  String get csGrievance => 'If something is wrong, you can raise a complaint in KaamSathi at any time.';
+
+  @override
+  String get csPdfNote => 'The full contract (PDF) has all the details, including probation and notice period. Open it before you accept.';
+
+  @override
+  String get contractAgree => 'I have read and understood my contract.';
+
+  @override
+  String get contractAccept => 'Accept contract';
+
+  @override
+  String get contractAcceptedMsg => 'Contract accepted. A copy stays in your KaamSathi.';
+
+  @override
+  String get crewTitle => 'My team (Naike)';
+
+  @override
+  String get crewMenuSubtitle => 'Add your workers and see referral rewards';
+
+  @override
+  String get crewBecomeTitle => 'Become a team lead (Naike)';
+
+  @override
+  String get crewBecomeBody => 'Bring your team to KaamSathi. When a worker you added gets a job and stays, KaamSathi pays you a referral reward. It is never taken from the worker\'s pay.';
+
+  @override
+  String get crewName => 'Team name';
+
+  @override
+  String get crewNameHint => 'For example: Ram\'s mason team';
+
+  @override
+  String get crewCreate => 'Start my team';
+
+  @override
+  String get crewCreated => 'Your team is ready. Add your members.';
+
+  @override
+  String get crewMembers => 'Members';
+
+  @override
+  String get crewPlaced => 'Got jobs (90 days)';
+
+  @override
+  String get crewEarned => 'Earned';
+
+  @override
+  String get crewPending => 'Pending';
+
+  @override
+  String get crewAddMember => 'Add member';
+
+  @override
+  String get crewMemberName => 'Full name';
+
+  @override
+  String get crewTrade => 'Trade';
+
+  @override
+  String get crewYears => 'Years of experience';
+
+  @override
+  String get crewAdded => 'Added. We sent them an SMS invite.';
+
+  @override
+  String get crewMemberConsentNote => 'They will be asked to agree when they first log in. Their details are not shared before that.';
+
+  @override
+  String crewRemoveConfirm(String name) {
+    return 'Remove $name from your team?';
+  }
+
+  @override
+  String get crewRemoved => 'Removed from your team.';
+
+  @override
+  String get crewAvailable => 'Available for work';
+
+  @override
+  String crewWorkingAt(String employer) {
+    return 'Working at $employer';
+  }
+
+  @override
+  String get crewNotAvailable => 'Not available';
+
+  @override
+  String get crewEmpty => 'No members yet. Add the workers in your team.';
+
+  @override
+  String get crewReferrals => 'Referral rewards';
+
+  @override
+  String get crewReferralsEmpty => 'No referral rewards yet.';
+
+  @override
+  String get crewRefPending => 'Waiting';
+
+  @override
+  String get crewRefEligible => 'Ready to pay';
+
+  @override
+  String get crewRefPaid => 'Paid';
+
+  @override
+  String get crewRefVoid => 'Cancelled';
+
+  @override
+  String crewRefEligibleOn(String date) {
+    return 'Ready on $date';
+  }
+
+  @override
+  String get crewWorkersNeverPay => 'Workers never pay. Rewards are paid by KaamSathi.';
+
+  @override
+  String get credTitle => 'Certificates & licences';
+
+  @override
+  String get credMenuSubtitle => 'NSTB, training certificates, driving licence';
+
+  @override
+  String get credEmpty => 'Add your NSTB certificate, training certificate or licence. Verified certificates raise your reliability score.';
+
+  @override
+  String get credAdd => 'Add certificate';
+
+  @override
+  String get credKind => 'Type';
+
+  @override
+  String get credKindNstb => 'Skill certificate (NSTB)';
+
+  @override
+  String get credKindCtevt => 'CTEVT training';
+
+  @override
+  String get credKindCourse => 'Training course';
+
+  @override
+  String get credKindLicense => 'Licence';
+
+  @override
+  String get credKindSafety => 'Safety training';
+
+  @override
+  String get credKindLanguage => 'Language';
+
+  @override
+  String get credKindOther => 'Other';
+
+  @override
+  String get credName => 'Certificate name';
+
+  @override
+  String get credIssuer => 'Issued by';
+
+  @override
+  String get credNumber => 'Certificate number';
+
+  @override
+  String get credLevel => 'Level';
+
+  @override
+  String get credIssuedOn => 'Issued on';
+
+  @override
+  String get credExpiresOn => 'Expires on';
+
+  @override
+  String get credPhoto => 'Photo of the document';
+
+  @override
+  String get credTakePhoto => 'Take photo';
+
+  @override
+  String get credChoosePhoto => 'Choose from gallery';
+
+  @override
+  String get credPhotoNeeded => 'Please add a clear photo of the document.';
+
+  @override
+  String get credPhotoError => 'Could not open the camera or gallery.';
+
+  @override
+  String get credSaved => 'Sent for checking. We will let you know.';
+
+  @override
+  String get credStatusPending => 'Checking';
+
+  @override
+  String get credStatusVerified => 'Verified';
+
+  @override
+  String get credStatusRejected => 'Not accepted';
+
+  @override
+  String get credStatusExpired => 'Expired';
+
+  @override
+  String get credDeleteConfirm => 'Delete this certificate?';
+
+  @override
+  String get credDeleted => 'Deleted.';
+
+  @override
+  String credExpires(String date) {
+    return 'Expires $date';
+  }
+
+  @override
+  String get credVerifyNote => 'KaamSathi checks every document before it is marked verified.';
+
+  @override
+  String get nstbElementary => 'Elementary';
+
+  @override
+  String nstbLevelN(String level) {
+    return 'Level $level';
+  }
+
+  @override
+  String get passportTitle => 'Skill Passport';
+
+  @override
+  String get passportMenuSubtitle => 'Your verified skills and work record to show employers';
+
+  @override
+  String get passportIntro => 'Your Skill Passport shows only verified information. You decide who sees it.';
+
+  @override
+  String get passportPublic => 'Anyone with my passport code can view it';
+
+  @override
+  String get passportPublicHint => 'Turn off to keep it private. Your share links still work until they end.';
+
+  @override
+  String get passportShowContact => 'Show my phone number';
+
+  @override
+  String get passportShowContactHint => 'Only on your public passport. Each share link has its own setting.';
+
+  @override
+  String passportCode(String code) {
+    return 'Passport code: $code';
+  }
+
+  @override
+  String get passportOpenPdf => 'Download PDF';
+
+  @override
+  String get passportPreview => 'What others see';
+
+  @override
+  String get passportShares => 'Share links';
+
+  @override
+  String get passportSharesEmpty => 'No share links yet. Create one to send your passport to an employer.';
+
+  @override
+  String get passportNewShare => 'Create share link';
+
+  @override
+  String get shareAudience => 'Who is it for?';
+
+  @override
+  String get shareAudienceHint => 'For example: Hotel Everest HR';
+
+  @override
+  String get sharePurpose => 'Why are you sharing?';
+
+  @override
+  String get sharePurposeJob => 'Job application';
+
+  @override
+  String get sharePurposeAgency => 'Recruitment agency';
+
+  @override
+  String get sharePurposeBank => 'Bank';
+
+  @override
+  String get sharePurposeOther => 'Other';
+
+  @override
+  String get shareAgencyNote => 'KaamSathi does not find jobs abroad. Share with a licensed agency only if you choose to.';
+
+  @override
+  String get shareDays => 'Link works for';
+
+  @override
+  String get shareIncludeContact => 'Include my phone number';
+
+  @override
+  String get shareCreated => 'Link created and copied. Paste it in a message to send.';
+
+  @override
+  String shareViews(String count) {
+    return '$count views';
+  }
+
+  @override
+  String get shareExpired => 'Ended';
+
+  @override
+  String get shareRevoked => 'Stopped';
+
+  @override
+  String get shareActive => 'Active';
+
+  @override
+  String get shareRevokeConfirm => 'Stop this link? Anyone who has it will no longer see your passport.';
+
+  @override
+  String get shareRevokedMsg => 'Link stopped.';
+
+  @override
+  String get ppIdentity => 'Identity checks';
+
+  @override
+  String get ppCitizenship => 'Citizenship';
+
+  @override
+  String get ppPhone => 'Phone';
+
+  @override
+  String get ppAddress => 'Address';
+
+  @override
+  String get ppSkills => 'Skills';
+
+  @override
+  String get ppCredentials => 'Verified certificates';
+
+  @override
+  String get ppWork => 'Verified work';
+
+  @override
+  String get ppEmployers => 'Employers';
+
+  @override
+  String get ppMonths => 'Months worked';
+
+  @override
+  String get ppJobsDone => 'Jobs completed';
+
+  @override
+  String get ppAttendance => 'Attendance';
+
+  @override
+  String get ppAvailable => 'Available for work';
+
+  @override
+  String get ppNotAvailable => 'Not looking for work now';
+
+  @override
+  String get ppExpectedWage => 'Expected wage';
+
+  @override
+  String get ppVerifyAt => 'Anyone can check it at';
+
+  @override
+  String get trainTitle => 'Training';
+
+  @override
+  String get trainMenuSubtitle => 'Courses that lead to better jobs';
+
+  @override
+  String get trainCourses => 'Courses';
+
+  @override
+  String get trainMine => 'My enrolments';
+
+  @override
+  String get trainRecommended => 'Recommended for you';
+
+  @override
+  String get trainEmpty => 'No open courses right now. Please check again later.';
+
+  @override
+  String get trainMineEmpty => 'You have not applied for any course yet.';
+
+  @override
+  String get trainApply => 'Apply';
+
+  @override
+  String trainApplyConfirm(String course) {
+    return 'Apply for \"$course\"?';
+  }
+
+  @override
+  String get trainApplied => 'Applied! The training centre will contact you.';
+
+  @override
+  String get trainAlreadyApplied => 'Applied';
+
+  @override
+  String trainFee(String amount) {
+    return 'Fee: $amount';
+  }
+
+  @override
+  String get trainFree => 'Free';
+
+  @override
+  String trainStarts(String date) {
+    return 'Starts $date';
+  }
+
+  @override
+  String trainSeats(String count) {
+    return '$count seats';
+  }
+
+  @override
+  String get trainLeadsNstb => 'Leads to NSTB skill test';
+
+  @override
+  String get trainModeClassroom => 'Classroom';
+
+  @override
+  String get trainModeOnSite => 'At work site';
+
+  @override
+  String get trainModeOnline => 'Online';
+
+  @override
+  String get trainLevelBasic => 'Basic';
+
+  @override
+  String get trainLevelRefresher => 'Refresher';
+
+  @override
+  String get trainFeeNote => 'Any fee is paid to the training centre, never to KaamSathi.';
+
+  @override
+  String get trainStatusApplied => 'Applied';
+
+  @override
+  String get trainStatusEnrolled => 'Enrolled';
+
+  @override
+  String get trainStatusCompleted => 'Completed';
+
+  @override
+  String get trainStatusDropped => 'Left';
+
+  @override
+  String get trainStatusRejected => 'Not accepted';
+
+  @override
+  String trainCompletedOn(String date) {
+    return 'Completed on $date';
+  }
+
+  @override
+  String get moneyTitle => 'Money';
+
+  @override
+  String get moneyMenuSubtitle => 'Verified earnings and offers from licensed partners';
+
+  @override
+  String get moneyNoLend => 'KaamSathi does not lend money or charge you anything. Offers come from licensed partners.';
+
+  @override
+  String get moneyTabEarnings => 'Earnings';
+
+  @override
+  String get moneyTabOffers => 'Offers';
+
+  @override
+  String get moneyTabApplications => 'Applied';
+
+  @override
+  String get moneyTabSharing => 'Sharing';
+
+  @override
+  String get finVerifiedMonths => 'Verified months';
+
+  @override
+  String get finAvgNet => 'Average monthly pay';
+
+  @override
+  String get finStability => 'Income stability';
+
+  @override
+  String get finStabilityHigh => 'Steady';
+
+  @override
+  String get finStabilityMedium => 'Changes a little';
+
+  @override
+  String get finStabilityLow => 'Changes a lot';
+
+  @override
+  String get finEmployers => 'Employers';
+
+  @override
+  String get finSsfMonths => 'Months with SSF';
+
+  @override
+  String finRange(String min, String max) {
+    return 'Lowest $min · Highest $max';
+  }
+
+  @override
+  String get finMonthly => 'Salary by month';
+
+  @override
+  String get finPaid => 'Paid';
+
+  @override
+  String get finUnpaid => 'Not paid yet';
+
+  @override
+  String get finEmpty => 'Your verified earnings appear after your first salary is paid through KaamSathi.';
+
+  @override
+  String get finHint => 'Built only from salaries your employer paid and recorded on KaamSathi.';
+
+  @override
+  String offerByRegulated(String partner, String regulator) {
+    return 'Offered by $partner, regulated by $regulator';
+  }
+
+  @override
+  String offerBy(String partner) {
+    return 'Offered by $partner';
+  }
+
+  @override
+  String get regNrb => 'Nepal Rastra Bank (NRB)';
+
+  @override
+  String get regBeema => 'Nepal Insurance Authority';
+
+  @override
+  String get regDofe => 'Department of Foreign Employment';
+
+  @override
+  String get regCtevt => 'CTEVT';
+
+  @override
+  String get offerKindLoan => 'Loan';
+
+  @override
+  String get offerKindEwa => 'Early salary (already earned)';
+
+  @override
+  String get offerKindInsurance => 'Insurance';
+
+  @override
+  String get offerKindSavings => 'Savings';
+
+  @override
+  String get offerKindTool => 'Tool finance';
+
+  @override
+  String get offerKindVehicle => 'Vehicle finance';
+
+  @override
+  String get offerEligible => 'You qualify';
+
+  @override
+  String get offerNotEligible => 'Not yet';
+
+  @override
+  String offerUpTo(String amount) {
+    return 'Up to $amount';
+  }
+
+  @override
+  String offerMinMonths(String months) {
+    return 'Needs $months verified months';
+  }
+
+  @override
+  String offerMinAvg(String amount) {
+    return 'Needs average pay of $amount';
+  }
+
+  @override
+  String offerTerms(String note) {
+    return 'Partner\'s terms: $note';
+  }
+
+  @override
+  String get offerApply => 'Apply';
+
+  @override
+  String get offersEmpty => 'No offers right now.';
+
+  @override
+  String offerApplied(String partner) {
+    return 'Application sent to $partner. They will contact you.';
+  }
+
+  @override
+  String get partnersTitle => 'Our partners';
+
+  @override
+  String get partnerKindBank => 'Bank';
+
+  @override
+  String get partnerKindMicrofinance => 'Microfinance';
+
+  @override
+  String get partnerKindInsurer => 'Insurance company';
+
+  @override
+  String get partnerKindWallet => 'Digital wallet';
+
+  @override
+  String get partnerKindTraining => 'Training';
+
+  @override
+  String get partnerKindAgency => 'Recruitment agency';
+
+  @override
+  String get partnerKindGovernment => 'Government';
+
+  @override
+  String get consentTitle => 'Share your data — your choice';
+
+  @override
+  String consentIntro(String partner) {
+    return 'To apply, $partner needs to see some of your KaamSathi data. Read what will be shared before you agree.';
+  }
+
+  @override
+  String get consentPartner => 'Who gets it';
+
+  @override
+  String get consentPurpose => 'Why';
+
+  @override
+  String get consentPurposeLoan => 'To check if you can get this loan';
+
+  @override
+  String get consentPurposeInsurance => 'To offer you this insurance';
+
+  @override
+  String get consentPurposeEwa => 'To give you part of your earned salary early';
+
+  @override
+  String get consentScopes => 'What they can see';
+
+  @override
+  String get scopeEarnings => 'Your verified salary: monthly pay, months worked and employer names';
+
+  @override
+  String get scopeProfile => 'Your Skill Passport: name, skills, reliability score and verified work record';
+
+  @override
+  String get scopePassport => 'Your Skill Passport';
+
+  @override
+  String get scopeReferrals => 'Update the status of this application';
+
+  @override
+  String get consentNotShared => 'They will NOT see your citizenship or ID documents, or your bank account details.';
+
+  @override
+  String get consentDuration => 'For how long';
+
+  @override
+  String consentDurationUntil(String days, String date) {
+    return '$days days — until $date';
+  }
+
+  @override
+  String get consentRevoke => 'You can stop sharing at any time from Money → Sharing. Every time they look, you will see it there.';
+
+  @override
+  String consentNoLend(String partner) {
+    return 'KaamSathi does not lend you money and does not charge you. Any loan or insurance is between you and $partner.';
+  }
+
+  @override
+  String get consentAmount => 'Amount you need';
+
+  @override
+  String get consentNote => 'What is it for?';
+
+  @override
+  String consentAgree(String partner) {
+    return 'I agree to share this data with $partner for this purpose.';
+  }
+
+  @override
+  String get consentApply => 'Agree and apply';
+
+  @override
+  String get refsEmpty => 'You have not applied for any offer.';
+
+  @override
+  String get refStatusSubmitted => 'Sent';
+
+  @override
+  String get refStatusReview => 'Being reviewed';
+
+  @override
+  String get refStatusApproved => 'Approved';
+
+  @override
+  String get refStatusRejected => 'Not approved';
+
+  @override
+  String get refStatusDisbursed => 'Money given';
+
+  @override
+  String get refStatusClosed => 'Closed';
+
+  @override
+  String refAmountRequested(String amount) {
+    return 'Asked: $amount';
+  }
+
+  @override
+  String refAmountApproved(String amount) {
+    return 'Approved: $amount';
+  }
+
+  @override
+  String get grantsTitle => 'Who can see my data';
+
+  @override
+  String get grantsEmpty => 'You are not sharing data with any partner.';
+
+  @override
+  String get grantActive => 'Active';
+
+  @override
+  String get grantExpired => 'Ended';
+
+  @override
+  String get grantRevoked => 'Stopped';
+
+  @override
+  String grantRevokeConfirm(String partner) {
+    return 'Stop sharing with $partner? They will not be able to see your data any more.';
+  }
+
+  @override
+  String get grantRevokedMsg => 'Sharing stopped.';
+
+  @override
+  String get accessLog => 'When partners looked';
+
+  @override
+  String get accessEmpty => 'No partner has looked at your data.';
+
+  @override
+  String get scopeShortEarnings => 'Earnings';
+
+  @override
+  String get scopeShortProfile => 'Profile';
+
+  @override
+  String get scopeShortPassport => 'Skill Passport';
+
+  @override
+  String get scopeShortReferrals => 'Application status';
+
+  @override
+  String get privacyTitle => 'My data';
+
+  @override
+  String get privacyMenuSubtitle => 'Get a copy, correct it or delete it';
+
+  @override
+  String get privacyIntro => 'Under Nepal\'s Individual Privacy Act 2075, you can get a copy of your data, ask us to correct it, or ask us to delete it.';
+
+  @override
+  String get privacyExport => 'Get a copy of my data';
+
+  @override
+  String get privacyExportHint => 'We prepare a file with everything we hold about you. It can take a while. The download link works for a limited time.';
+
+  @override
+  String get privacyCorrection => 'Correct my data';
+
+  @override
+  String get privacyCorrectionHint => 'Tell us what is wrong. KaamSathi will check and fix it.';
+
+  @override
+  String get privacyCorrectionField => 'What should be corrected?';
+
+  @override
+  String get privacyDeletion => 'Delete my data';
+
+  @override
+  String get privacyDeletionHint => 'Remove your profile, photos and documents from KaamSathi.';
+
+  @override
+  String get privacyDeletionWarning => 'Please read before you continue: your name, phone number, photos and documents will be removed, and your Skill Passport and all data sharing will stop. Hajiri and payroll records that your employer must keep by law will stay, but without your name. This cannot be undone.';
+
+  @override
+  String get privacyDeletionConfirm => 'I understand. Delete my data.';
+
+  @override
+  String get privacyReason => 'Reason';
+
+  @override
+  String get privacyRequests => 'My requests';
+
+  @override
+  String get privacyRequestsEmpty => 'No requests yet.';
+
+  @override
+  String get privacyKindExport => 'Copy of data';
+
+  @override
+  String get privacyKindCorrection => 'Correction';
+
+  @override
+  String get privacyKindDeletion => 'Deletion';
+
+  @override
+  String get privacyStatusReceived => 'Received';
+
+  @override
+  String get privacyStatusInProgress => 'In progress';
+
+  @override
+  String get privacyStatusCompleted => 'Done';
+
+  @override
+  String get privacyStatusRejected => 'Not accepted';
+
+  @override
+  String get privacyDownload => 'Download';
+
+  @override
+  String get privacyDownloadExpired => 'Link ended — ask for a new copy';
+
+  @override
+  String get privacyOpenError => 'Saved, but no app on this phone can open the file.';
+
+  @override
+  String get privacySent => 'Request sent. We will let you know.';
+
+  @override
+  String get shiftsTitle => 'My shifts this week';
+
+  @override
+  String get shiftsMenuSubtitle => 'Your work roster for the week';
+
+  @override
+  String get shiftsOff => 'Day off';
+
+  @override
+  String get shiftsNone => 'No shift yet';
+
+  @override
+  String get shiftsEmpty => 'Your employer has not made a roster for this week yet.';
+
+  @override
+  String get weekPrev => 'Previous week';
+
+  @override
+  String get weekNext => 'Next week';
+
+  @override
+  String weekOf(String date) {
+    return 'Week from $date';
+  }
+
+  @override
+  String get rosterTitle => 'Shift roster';
+
+  @override
+  String get rosterMenuSubtitle => 'Who works which shift this week';
+
+  @override
+  String get rosterEmpty => 'No workers to roster at this site.';
+
+  @override
+  String get rosterTapHint => 'Tap a box to change the shift.';
+
+  @override
+  String get rosterClear => 'No shift';
+
+  @override
+  String get rosterOffShort => 'Off';
 }

@@ -242,7 +242,10 @@
       "vat": "VAT registered",
       "ssf_employer_no": "SSF employer no.",
       "weekly_off": "Weekly off",
-      "no_open_jobs": "No open jobs"
+      "no_open_jobs": "No open jobs",
+      "reputation": "Worker rating (pay · conditions)",
+      "reputation_hint": "{count} private worker ratings, out of 5",
+      "reputation_none": "Fewer than 3 ratings yet"
     }
   }
 }

@@ -5,6 +5,8 @@ import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useFormat } from "@/lib/use-format";
 import type { TradeRef, WorkerCard, WorkerSkill } from "@/lib/api/types";
+import type { WorkerTrustFields } from "@/lib/api/types-trust";
+import { ReliabilityBadge, TrustBadges, VerificationLevelBadge } from "@/components/trust/trust-badges";
 import { cn } from "@/lib/utils";
 import { VerificationBadge } from "./status-badge";
 
@@ -54,11 +56,15 @@ export function WorkerIdentity({
   worker,
   size = "md",
   showPhone = true,
+  showTrust = true,
   className,
 }: {
-  worker: Pick<WorkerCard, "full_name" | "photo" | "verification_status" | "district" | "phone_masked">;
+  worker: Pick<WorkerCard, "full_name" | "photo" | "verification_status" | "district" | "phone_masked"> &
+    WorkerTrustFields;
   size?: "sm" | "md" | "lg";
   showPhone?: boolean;
+  /** Verification level + reliability score badges (apps.trust). */
+  showTrust?: boolean;
   className?: string;
 }) {
   const f = useFormat();
@@ -82,7 +88,16 @@ export function WorkerIdentity({
             </span>
           ) : null}
           {showPhone && worker.phone_masked ? <span className="tabular">{worker.phone_masked}</span> : null}
+          {showTrust && size !== "lg" ? (
+            <span className="inline-flex items-center gap-1">
+              {(worker.verification_level ?? 0) >= 2 ? (
+                <VerificationLevelBadge level={worker.verification_level} compact className="px-1.5 py-0" />
+              ) : null}
+              <ReliabilityBadge score={worker.reliability_score} compact className="px-1.5 py-0" />
+            </span>
+          ) : null}
         </div>
+        {showTrust && size === "lg" ? <TrustBadges worker={worker} className="mt-1.5" /> : null}
       </div>
     </div>
   );
@@ -94,7 +109,7 @@ export function WorkerCardView({
   footer,
   className,
 }: {
-  worker: WorkerCard;
+  worker: WorkerCard & WorkerTrustFields;
   footer?: React.ReactNode;
   className?: string;
 }) {
@@ -102,8 +117,9 @@ export function WorkerCardView({
   const f = useFormat();
   return (
     <div className={cn("space-y-2.5", className)}>
-      <WorkerIdentity worker={worker} size="sm" />
+      <WorkerIdentity worker={worker} size="sm" showTrust={false} />
       <SkillChips skills={worker.skills} max={2} />
+      <TrustBadges worker={worker} />
       <div className="flex items-center gap-3 text-xs text-fg-muted">
         <span>
           {t("term.experience")}: {t("term.years", { count: worker.total_experience_years ?? 0 })}

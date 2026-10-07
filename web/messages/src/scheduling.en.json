@@ -1,0 +1,30 @@
+{
+  "scheduling": {
+    "title": "Roster",
+    "description": "Plan who works which shift this week. Workers see their shifts in the app.",
+    "description_supervisor": "Plan shifts for workers at your sites.",
+    "discard_confirm": "You have unsaved roster changes. Discard them?",
+    "saved_toast": "{count, plural, one {# shift saved} other {# shifts saved}}",
+    "copied_toast": "{count, plural, =0 {Nothing to copy from last week} one {Copied # shift} other {Copied # shifts}}",
+    "copy_previous": "Copy last week",
+    "save_count": "Save ({count})",
+    "save": "Save",
+    "prev_week": "Previous week",
+    "next_week": "Next week",
+    "this_week": "This week",
+    "discard": "Discard changes",
+    "empty_title": "No workers for this week",
+    "empty_body": "Active workers at the selected site appear here.",
+    "no_shifts_title": "No shifts set up",
+    "no_shifts_body": "Add your shifts (e.g. Morning 6–2, Evening 2–10) to build a roster.",
+    "add_shifts": "Add shifts",
+    "copy_title": "Copy last week's roster?",
+    "copy_body": "Last week's shifts are copied to this week, replacing any shifts already set for the same days.",
+    "copy_confirm": "Copy",
+    "worker": "Worker",
+    "cell_label": "Shift for {name} on {date}",
+    "unassigned": "—",
+    "off": "Off",
+    "off_hint": "= weekly off / day off"
+  }
+}

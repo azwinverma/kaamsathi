@@ -1,0 +1,267 @@
+# KaamSathi production / staging stack.
+#
+#   docker compose --env-file deploy/.env.prod -f deploy/docker-compose.prod.yml up -d --build
+#   (or: make deploy-up            ENV_FILE=deploy/.env.prod)
+#   staging on the same images:    make deploy-up ENV_FILE=deploy/.env.staging PROJECT=kaamsathi-staging
+#
+# Topology:  internet ─▶ caddy :80/:443 (automatic HTTPS)
+#              ├─ ${DOMAIN}      ─▶ web:3000      (Next.js standalone; talks to backend over the private network)
+#              └─ ${API_DOMAIN}  ─▶ backend:8000  (gunicorn; mobile app + signed file URLs + admin)
+#            backend / celery-worker / celery-beat ─▶ db (postgres 16) + redis (password)
+#            backup ─▶ nightly pg_dump (+ media tar) → /backups volume (+ optional S3 upload)
+# Only caddy publishes ports. Everything else lives on the internal network.
+
+name: ${PROJECT:-kaamsathi}
+
+x-restart: &restart
+  restart: unless-stopped
+
+x-hardening: &hardening
+  security_opt:
+    - no-new-privileges:true
+
+x-logging: &logging
+  logging:
+    driver: json-file
+    options:
+      max-size: "20m"
+      max-file: "5"
+
+x-backend-env: &backend-env
+  DJANGO_SETTINGS_MODULE: config.settings.prod
+  DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY}
+  DJANGO_SECRET_KEY_FALLBACKS: ${DJANGO_SECRET_KEY_FALLBACKS:-}
+  JWT_SIGNING_KEY: ${JWT_SIGNING_KEY:?set JWT_SIGNING_KEY}
+  DJANGO_ADMIN_URL: ${DJANGO_ADMIN_URL:-admin/}
+  DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-${API_DOMAIN},backend,localhost,127.0.0.1}
+  CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://${DOMAIN}}
+  CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-https://${API_DOMAIN},https://${DOMAIN}}
+  PUBLIC_WEB_URL: https://${DOMAIN:?set DOMAIN}
+  API_PUBLIC_URL: https://${API_DOMAIN:?set API_DOMAIN}
+  # Caddy terminates TLS and redirects HTTP→HTTPS; the web container calls the API over the
+  # private network (plain HTTP), so Django must not redirect itself.
+  SECURE_SSL_REDIRECT: "false"
+  NUM_PROXIES: "1"
+  DATABASE_URL: postgres://${POSTGRES_USER:-kaamsathi}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-kaamsathi}
+  REDIS_URL: redis://:${REDIS_PASSWORD:?set REDIS_PASSWORD}@redis:6379/0
+  CELERY_BROKER_URL: redis://:${REDIS_PASSWORD}@redis:6379/1
+  CELERY_TASK_ALWAYS_EAGER: "false"
+  MEDIA_ROOT: /app/media
+  LOG_JSON: "true"
+  LOG_LEVEL: ${LOG_LEVEL:-INFO}
+  RELEASE: ${RELEASE:-}
+  SENTRY_DSN: ${SENTRY_DSN:-}
+  SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT:-production}
+  SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-0.0}
+  SMS_BACKEND: ${SMS_BACKEND:-console}
+  SMS_SENDER_ID: ${SMS_SENDER_ID:-KaamSathi}
+  SPARROW_SMS_TOKEN: ${SPARROW_SMS_TOKEN:-}
+  SPARROW_SMS_FROM: ${SPARROW_SMS_FROM:-InfoSMS}
+  AAKASH_SMS_TOKEN: ${AAKASH_SMS_TOKEN:-}
+  AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME:-}
+  AWS_PRIVATE_BUCKET_NAME: ${AWS_PRIVATE_BUCKET_NAME:-}
+  AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL:-}
+  AWS_S3_REGION_NAME: ${AWS_S3_REGION_NAME:-}
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+  FILE_URL_TTL_SECONDS: ${FILE_URL_TTL_SECONDS:-600}
+  PRIVACY_EXPORT_TTL_HOURS: ${PRIVACY_EXPORT_TTL_HOURS:-72}
+  PAYOUT_PROVIDERS: ${PAYOUT_PROVIDERS:-bank_file}
+  PAYOUT_WEBHOOK_SECRETS: ${PAYOUT_WEBHOOK_SECRETS:-}
+  THROTTLE_ANON: ${THROTTLE_ANON:-120/minute}
+  THROTTLE_USER: ${THROTTLE_USER:-600/minute}
+  THROTTLE_OTP: ${THROTTLE_OTP:-30/hour}
+  THROTTLE_PUBLIC: ${THROTTLE_PUBLIC:-60/minute}
+
+x-backend: &backend
+  <<: [*restart, *hardening, *logging]
+  image: ${BACKEND_IMAGE:-kaamsathi-backend:${RELEASE:-latest}}
+  build:
+    context: ../backend
+    args:
+      RELEASE: ${RELEASE:-}
+  cap_drop: [ALL]
+  environment:
+    <<: *backend-env
+  volumes:
+    - media:/app/media
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+  db:
+    <<: [*restart, *hardening, *logging]
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-kaamsathi}
+      POSTGRES_USER: ${POSTGRES_USER:-kaamsathi}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      TZ: Asia/Kathmandu
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    shm_size: 256m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits: { cpus: "1.5", memory: 1536M }
+
+  redis:
+    <<: [*restart, *hardening, *logging]
+    image: redis:7-alpine
+    # Celery broker + cache. noeviction: never silently drop queued tasks.
+    command:
+      - sh
+      - -c
+      - exec redis-server --requirepass "$$REDIS_PASSWORD" --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?set REDIS_PASSWORD}
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD-SHELL", "REDISCLI_AUTH=$$REDIS_PASSWORD redis-cli ping | grep -q PONG"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    deploy:
+      resources:
+        limits: { cpus: "0.5", memory: 384M }
+
+  backend:
+    <<: *backend
+    environment:
+      <<: *backend-env
+      RUN_MIGRATIONS: "true"
+      GUNICORN_WORKERS: ${GUNICORN_WORKERS:-3}
+      GUNICORN_THREADS: ${GUNICORN_THREADS:-2}
+      GUNICORN_TIMEOUT: ${GUNICORN_TIMEOUT:-60}
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request as u,sys; r=u.urlopen(u.Request('http://127.0.0.1:8000/api/v1/readiness', headers={'Host':'localhost'}), timeout=5); sys.exit(r.status!=200)"
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+    deploy:
+      resources:
+        limits: { cpus: "2", memory: 1536M }
+
+  celery-worker:
+    <<: *backend
+    command: celery -A config worker -l info --concurrency ${CELERY_CONCURRENCY:-2} --max-tasks-per-child 200
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A config inspect ping -d celery@$$HOSTNAME --timeout 10 | grep -q pong"]
+      interval: 60s
+      timeout: 20s
+      start_period: 60s
+      retries: 3
+    deploy:
+      resources:
+        limits: { cpus: "1", memory: 1024M }
+
+  celery-beat:
+    <<: *backend
+    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler --pidfile /tmp/celerybeat.pid
+    volumes: []
+    deploy:
+      resources:
+        limits: { cpus: "0.25", memory: 256M }
+
+  web:
+    <<: [*restart, *hardening, *logging]
+    image: ${WEB_IMAGE:-kaamsathi-web:${RELEASE:-latest}}
+    build:
+      context: ../web
+      args:
+        NEXT_PUBLIC_SITE_URL: https://${DOMAIN}
+    cap_drop: [ALL]
+    environment:
+      API_BASE_URL: http://backend:8000/api/v1
+      NEXT_PUBLIC_SITE_URL: https://${DOMAIN}
+      COOKIE_SECURE: "true"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3000/robots.txt || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+    deploy:
+      resources:
+        limits: { cpus: "1", memory: 768M }
+
+  caddy:
+    <<: [*restart, *logging]
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN}
+      API_DOMAIN: ${API_DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:2019/config/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits: { cpus: "0.5", memory: 256M }
+
+  backup:
+    <<: [*restart, *hardening, *logging]
+    build: ./backup
+    image: kaamsathi-backup:latest
+    environment:
+      PGHOST: db
+      PGDATABASE: ${POSTGRES_DB:-kaamsathi}
+      PGUSER: ${POSTGRES_USER:-kaamsathi}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      TZ: Asia/Kathmandu
+      BACKUP_HOUR: ${BACKUP_HOUR:-2}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
+      BACKUP_MEDIA: ${BACKUP_MEDIA:-true}
+      BACKUP_PASSPHRASE: ${BACKUP_PASSPHRASE:-}
+      BACKUP_S3_BUCKET: ${BACKUP_S3_BUCKET:-}
+      BACKUP_S3_PREFIX: ${BACKUP_S3_PREFIX:-kaamsathi}
+      BACKUP_S3_ENDPOINT: ${BACKUP_S3_ENDPOINT:-}
+      AWS_ACCESS_KEY_ID: ${BACKUP_AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${BACKUP_AWS_SECRET_ACCESS_KEY:-}
+      AWS_DEFAULT_REGION: ${BACKUP_AWS_REGION:-us-east-1}
+    volumes:
+      - backups:/backups
+      - media:/media:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits: { cpus: "0.5", memory: 512M }
+
+volumes:
+  pgdata:
+  redisdata:
+  media:
+  backups:
+  caddy_data:
+  caddy_config:

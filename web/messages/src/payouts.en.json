@@ -1,0 +1,61 @@
+{
+  "payouts": {
+    "title": "Pay out (Bhuktani)",
+    "description": "Pay net salaries through your bank or a wallet. Money goes from your account straight to workers — KaamSathi never holds it.",
+    "approve_first": "Approve this payroll run to pay workers through a bank file or wallet.",
+    "batches": "Payout batches",
+    "never_hold_funds": "When every payment is marked paid, the payroll run is marked paid automatically and workers get an SMS.",
+    "provider": {
+      "bank_file": "Bank file",
+      "esewa": "eSewa",
+      "khalti": "Khalti",
+      "connectips": "ConnectIPS"
+    },
+    "not_enabled": "Not enabled",
+    "eligible": "{count, plural, =0 {No workers} one {# worker} other {# workers}}",
+    "excluded_cash": "{count} paid in cash",
+    "excluded_missing": "{count} missing bank details",
+    "excluded_batched": "{count} already in a batch",
+    "create_batch": "Create batch",
+    "created_toast": "{count, plural, one {Batch created for # worker} other {Batch created for # workers}}",
+    "use_bank_file": "Wallet payouts need a merchant agreement — use the bank file for now.",
+    "status": {
+      "draft": "Draft",
+      "submitted": "Submitted",
+      "processing": "Processing",
+      "completed": "Completed",
+      "partially_failed": "Some failed",
+      "cancelled": "Cancelled"
+    },
+    "paid_of": "{paid}/{total} paid",
+    "submit_bank": "Mark file uploaded",
+    "submit": "Send",
+    "submitted_toast": "Batch submitted",
+    "reconcile": "Upload bank result",
+    "cancel": "Cancel batch",
+    "bank_steps": "1. Download the CSV/XLSX · 2. Upload it in your bank's bulk-transfer screen · 3. Click “Mark file uploaded” · 4. Upload the bank's result file or mark each payment.",
+    "cancel_title": "Cancel this batch?",
+    "cancel_body": "Its workers become available for a new batch. Nothing is sent to anyone.",
+    "no_items": "No payments in this batch.",
+    "col_worker": "Worker",
+    "col_destination": "Account / wallet",
+    "col_amount": "Amount",
+    "col_status": "Status",
+    "col_mark": "Mark",
+    "item_status": {
+      "pending": "Pending",
+      "sent": "Sent",
+      "paid": "Paid",
+      "failed": "Failed"
+    },
+    "mark_paid": "Paid",
+    "mark_failed": "Mark failed",
+    "fail_title": "Payment failed — {name}",
+    "fail_reason": "Reason (from the bank)",
+    "reconcile_title": "Upload bank result file",
+    "reconcile_body": "We match each row by reference, or by account number and amount, and mark payments paid or failed.",
+    "result_file": "Result file (CSV)",
+    "result_hint": "Columns we read: reference, account, amount, status, bank_ref, remarks.",
+    "reconciled_toast": "Matched: {paid} paid, {failed} failed, {unmatched} unmatched rows"
+  }
+}

@@ -16,6 +16,7 @@ import { WorkerForm } from "@/components/ops/worker-form";
 import { WorkerDocs } from "@/components/ops/worker-docs";
 import { VerifyActions } from "@/components/ops/verify-actions";
 import { AvailabilityBadge, InfoRow } from "@/components/ops/ops-ui";
+import { WorkerCredentialsPanel } from "@/components/credentials/worker-panel";
 import { useOpsWorker, useUpdateOpsWorker } from "@/lib/api/hooks/ops";
 import { useFormat } from "@/lib/use-format";
 
@@ -128,6 +129,8 @@ export default function OpsWorkerDetailPage() {
               <WorkerDocs worker={w} editable />
             </CardBody>
           </Card>
+
+          <WorkerCredentialsPanel worker={w} />
 
           <Card>
             <CardHeader title={tw("record")} />

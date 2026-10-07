@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { Providers } from "@/components/providers/providers";
 import { THEME_STORAGE_KEY } from "@/lib/cookies";
+import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
 const inter = Inter({
@@ -22,12 +23,26 @@ const mukta = Mukta({
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("app");
+  const locale = await getLocale();
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
+    metadataBase: new URL(siteUrl()),
     title: { default: `${t("name")} — ${t("tagline")}`, template: `%s · ${t("name")}` },
     description: t("tagline"),
     applicationName: t("name"),
-    icons: { icon: "/icon.svg" },
+    icons: {
+      icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+      apple: [{ url: "/apple-icon", type: "image/png", sizes: "180x180" }],
+    },
+    // og:image comes from app/opengraph-image.tsx; /apple-icon is app/apple-icon.tsx.
+    openGraph: {
+      type: "website",
+      siteName: t("name"),
+      title: `${t("name")} — ${t("tagline")}`,
+      description: t("tagline"),
+      locale: locale === "ne" ? "ne_NP" : "en_US",
+      alternateLocale: locale === "ne" ? ["en_US"] : ["ne_NP"],
+    },
+    twitter: { card: "summary_large_image" },
   };
 }
 

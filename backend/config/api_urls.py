@@ -4,6 +4,7 @@ from django.urls import include, path, re_path
 
 from apps.accounts import views as accounts
 from apps.billing import views as billing
+from apps.core import views as core
 from apps.core.routers import Router
 from apps.geo import views as ref
 from apps.hiring import views as hiring
@@ -42,6 +43,9 @@ def p(route, view, name):
 
 urlpatterns = [
     p("health", ref.HealthView, "health"),
+    p("readiness", core.ReadinessView, "readiness"),
+    # private documents via short-lived signed tokens (apps.core.files)
+    re_path(r"^files/(?P<token>[A-Za-z0-9_\-:.]+)/?$", core.FileDownloadView.as_view(), name="file-download"),
     # reference data
     p("ref/provinces", ref.ProvinceListView, "ref-provinces"),
     p("ref/districts", ref.DistrictListView, "ref-districts"),

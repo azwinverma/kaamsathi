@@ -370,6 +370,514 @@
     "submit": "Create organization",
     "created": "{name} is ready"
   },
+  "compliance": {
+    "title": "Compliance",
+    "description": "Labour Act, SSF and minimum-wage checks for your organization — what's done and what needs action.",
+    "forbidden": "Only owners, admins and HR can see compliance.",
+    "disclaimer": "KaamSathi prepares files and reminders to help you comply; it is not legal advice. Contract templates should be reviewed with a labour lawyer.",
+    "score": {
+      "title": "Compliance score",
+      "description": "Based on the checks on this page.",
+      "aria": "Compliance score {score} out of 100",
+      "band_success": "In good shape",
+      "band_warning": "Needs attention",
+      "band_danger": "Act now",
+      "count_action": "{count, plural, =0 {No actions} one {# action} other {# actions}}",
+      "count_warning": "{count, plural, =0 {No warnings} one {# warning} other {# warnings}}",
+      "count_ok": "{count} ok"
+    },
+    "items": {
+      "title": "Action items",
+      "description": "Fix the red items first — they carry legal risk.",
+      "hide_ok": "Hide passed checks",
+      "show_ok": "Show {count} passed checks",
+      "all_good_title": "Nothing needs action",
+      "all_good_body": "All compliance checks have passed.",
+      "label": {
+        "ssf_employer_registered": "SSF employer registration",
+        "workers_missing_ssf_id": "Workers without SSF ID",
+        "ssf_filings_overdue": "SSF contribution filing",
+        "below_minimum_wage": "Minimum wage",
+        "contracts_missing": "Written contracts",
+        "contracts_unaccepted": "Contract acceptance",
+        "attendance_unmarked_7d": "Hajiri (last 7 days)",
+        "payroll_not_run_last_month": "Last month's payroll",
+        "credentials_expiring": "Expiring certificates"
+      },
+      "fix": {
+        "ssf_employer_registered": "Add SSF number",
+        "workers_missing_ssf_id": "Update workers",
+        "ssf_filings_overdue": "Open SSF filings",
+        "below_minimum_wage": "Review wages",
+        "contracts_missing": "Generate contracts",
+        "contracts_unaccepted": "Follow up",
+        "attendance_unmarked_7d": "Mark hajiri",
+        "payroll_not_run_last_month": "Run payroll",
+        "credentials_expiring": "See certificates"
+      }
+    },
+    "credentials": {
+      "title": "Certificates expiring soon",
+      "description": "Worker certificates (NSTB, licences, safety) expiring in the next 30 days.",
+      "none": "No certificates expire in the next 30 days.",
+      "expires": "Expires"
+    },
+    "ssf": {
+      "title": "SSF filings",
+      "description": "Monthly Social Security Fund contribution files (11% worker + 20% employer). Download, upload to the SSF portal, then record the receipt.",
+      "overdue": "Overdue",
+      "status_prepared": "Prepared",
+      "status_submitted": "Submitted",
+      "status_acknowledged": "Receipt recorded",
+      "not_prepared": "Not prepared",
+      "prepared_toast": "SSF file prepared",
+      "saved_toast": "SSF filing updated",
+      "empty_title": "No approved payroll yet",
+      "empty_body": "Approve a payroll run to prepare its SSF contribution file.",
+      "go_payroll": "Go to payroll",
+      "col_month": "Month",
+      "col_due": "Due date",
+      "col_status": "Status",
+      "col_workers": "Workers",
+      "col_total": "Total (31%)",
+      "receipt": "Receipt {no}",
+      "missing_ids": "{count, plural, one {# without SSF ID} other {# without SSF ID}}",
+      "prepare": "Prepare file",
+      "regenerate": "Re-prepare",
+      "xlsx": "Excel",
+      "csv": "CSV",
+      "mark_submitted": "Mark submitted",
+      "record_receipt": "Record receipt",
+      "how": "Due date = end of the BS month + 15 days. Workers without an SSF ID are listed on a separate sheet — register them on the SSF portal first.",
+      "submit_title": "SSF filing — {month}",
+      "submit_body": "Record when you uploaded the file to the SSF portal. Add the receipt number once SSF acknowledges it.",
+      "submitted_on": "Submitted on",
+      "receipt_no": "SSF receipt number",
+      "receipt_hint": "Leave empty if you have not received it yet.",
+      "open_compliance": "Open",
+      "filing_button": "SSF filing"
+    },
+    "contract": {
+      "title": "Appointment letter (contract)",
+      "description": "Bilingual letter with Labour Act 2074 essentials — wages, hours, leave, SSF, notice.",
+      "generated_toast": "Contract version {version} ready",
+      "view_pdf": "View PDF",
+      "empty_title": "No written contract yet",
+      "empty_body": "Generate an appointment letter from this worker's current terms. The worker can accept it in the KaamSathi app.",
+      "generate": "Generate contract",
+      "version": "Version {version}",
+      "generated_on": "Generated {date}",
+      "terms_changed": "Wage, designation or site changed since the last version.",
+      "generate_new": "Generate new version",
+      "waiting_body": "Waiting for the worker to accept in the app. Signed on paper? Record it here.",
+      "paper_toast": "Paper acceptance recorded",
+      "record_paper": "Signed on paper",
+      "hide_versions": "Hide versions",
+      "show_versions": "All versions ({count})",
+      "regenerate": "Regenerate",
+      "lawyer_note": "Template — review with a labour lawyer before relying on it.",
+      "not_accepted": "Not accepted yet",
+      "accepted_via": "Accepted ({channel})",
+      "channel_app": "app",
+      "channel_sms": "SMS",
+      "channel_paper": "paper",
+      "language": "Language",
+      "lang_both": "English + नेपाली",
+      "lang_ne": "नेपाली",
+      "lang_en": "English"
+    },
+    "contractors": {
+      "title": "Contractors (Thekedar)",
+      "description": "Labour contractors who supply workers, with headcount, days and wages per BS month.",
+      "add": "Add contractor",
+      "search": "Search name or phone",
+      "no_results": "No contractors match your search",
+      "empty_title": "No contractors yet",
+      "empty_body": "Add a thekedar to track the workers they supply and what they cost each month.",
+      "col_name": "Contractor",
+      "col_phone": "Phone",
+      "col_trades": "Trades",
+      "col_workers": "Active workers",
+      "col_status": "Status",
+      "edit": "Edit",
+      "active": "Active",
+      "inactive": "Inactive",
+      "created_toast": "Contractor added",
+      "edit_title": "Edit contractor",
+      "add_title": "Add contractor",
+      "dialog_body": "The contractor's own workers stay your employees on KaamSathi — this only groups them.",
+      "name": "Contractor / company name",
+      "trades": "Trades",
+      "trades_hint": "What kind of workers they supply.",
+      "add_trade": "Add a trade",
+      "remove_trade": "Remove {trade}",
+      "is_active": "Active contractor",
+      "lead": "Team lead (Naike)",
+      "summary_title": "Monthly summary",
+      "headcount": "Headcount",
+      "days_worked": "Days worked",
+      "wages": "Gross wages",
+      "wages_hint": "Net {net} · employer cost {cost}",
+      "no_payroll": "No payroll run for this month yet.",
+      "col_worker": "Worker",
+      "col_days": "Days",
+      "col_gross": "Gross",
+      "col_net": "Net",
+      "workers_title": "Assigned workers",
+      "workers_body": "Active workers supplied by this contractor.",
+      "assign": "Assign workers",
+      "no_workers": "No workers assigned yet",
+      "unassigned_toast": "Worker removed from contractor",
+      "unassign": "Remove",
+      "assigned_toast": "{count, plural, one {# worker assigned} other {# workers assigned}}",
+      "assign_title": "Assign workers",
+      "assign_body": "Pick the workers this contractor supplied. A worker belongs to one contractor at a time.",
+      "assign_confirm": "{count, plural, =0 {Assign} one {Assign # worker} other {Assign # workers}}"
+    }
+  },
+  "credentials": {
+    "kind": {
+      "nstb": "NSTB skill certificate",
+      "ctevt_training": "CTEVT training",
+      "training_course": "Training course",
+      "license": "License",
+      "safety": "Safety training",
+      "language": "Language",
+      "other": "Other"
+    },
+    "status": {
+      "pending": "Pending",
+      "verified": "Verified",
+      "rejected": "Rejected",
+      "expired": "Expired"
+    },
+    "method": {
+      "document": "Document checked",
+      "ops_call": "Phone call to issuer",
+      "issuer_partner": "Issuing partner",
+      "issuer_registry": "Issuer registry (NSTB)"
+    },
+    "method_hint": {
+      "document": "The certificate looks genuine and matches the worker's identity.",
+      "ops_call": "You called the issuer and they confirmed the certificate.",
+      "issuer_partner": "Confirmed by a training partner that issued it.",
+      "issuer_registry": "Automatic NSTB lookup — not available until a data agreement is signed."
+    },
+    "result": {
+      "pass": "Passed",
+      "fail": "Not passed"
+    },
+    "purpose": {
+      "job": "Job application",
+      "recruitment_agency": "Recruitment agency",
+      "bank": "Bank",
+      "other": "Other"
+    },
+    "level": {
+      "0": "Phone verified",
+      "1": "Identity verified",
+      "2": "Employment verified",
+      "3": "Skills assessed",
+      "4": "Certification verified",
+      "5": "Highly trusted"
+    },
+    "queue": {
+      "title": "Credentials",
+      "subtitle": "Check certificates and licences workers upload, and record skill assessments.",
+      "tab_queue": "Verification queue",
+      "tab_assessments": "Skill assessments",
+      "filter_label": "Status",
+      "filter_all": "All",
+      "search_placeholder": "Search worker, certificate no., issuer…",
+      "remaining": "{count, plural, =0 {Queue clear} one {# waiting} other {# waiting}}",
+      "reviewed_session": "{count} reviewed this session",
+      "oldest_first": "Oldest first",
+      "list_label": "Credentials",
+      "empty_title": "No credentials waiting",
+      "empty_body": "New uploads from workers will appear here for review.",
+      "empty_filtered": "No credentials match these filters.",
+      "done_title": "All caught up",
+      "done_body": "You reviewed {count} credentials. Nice work.",
+      "select_prompt": "Select a credential to review",
+      "back_to_queue": "Back to queue",
+      "uploaded_ago": "Uploaded {time} ago",
+      "no_document": "No document attached",
+      "more_after": "More waiting — finish these first."
+    },
+    "review": {
+      "worker": "Worker",
+      "issuer": "Issuer",
+      "certificate_no": "Certificate no.",
+      "level": "Level",
+      "issued_on": "Issued",
+      "expires_on": "Valid until",
+      "no_expiry": "No expiry",
+      "expires_in": "{days, plural, =0 {Expires today} one {Expires in # day} other {Expires in # days}}",
+      "expired_ago": "{days, plural, one {Expired # day ago} other {Expired # days ago}}",
+      "document": "Document",
+      "open_document": "Open document",
+      "pdf_document": "PDF document",
+      "pdf_hint": "PDFs open in a new tab. The link works for 10 minutes.",
+      "no_document_hint": "The worker did not attach a document. Call the issuer before verifying.",
+      "method_label": "How did you verify it?",
+      "note_label": "Note",
+      "note_hint": "required to reject",
+      "note_placeholder": "e.g. Called NSTB Bhaktapur, certificate confirmed",
+      "note_required": "Add a note explaining why the credential is rejected.",
+      "verify": "Verify",
+      "reject": "Reject",
+      "verified_toast": "{title} verified",
+      "rejected_toast": "{title} rejected",
+      "decision": "Decision",
+      "decided_by": "Decided by {name}",
+      "change_decision": "Change decision",
+      "view_worker": "Open worker profile",
+      "identity_unverified": "The worker's identity is not verified yet. Verify identity first if you can.",
+      "shortcuts": "Shortcuts: Alt+V verify · Alt+R reject · Alt+J next · Alt+K previous"
+    },
+    "assessments": {
+      "title": "Skill assessments",
+      "subtitle": "Practical tests run by KaamSathi or a partner. Passing raises the worker's verification level.",
+      "record": "Record assessment",
+      "empty_title": "No assessments yet",
+      "empty_body": "Record the result after a practical skill test.",
+      "worker": "Worker",
+      "worker_search": "Search worker by name or phone",
+      "worker_required": "Choose a worker",
+      "change_worker": "Change",
+      "trade": "Trade",
+      "trade_required": "Choose a trade",
+      "assessed_on": "Assessed on",
+      "result": "Result",
+      "score": "Score",
+      "score_hint": "0–100, optional",
+      "score_invalid": "Enter a score from 0 to 100",
+      "level": "Level reached",
+      "level_placeholder": "e.g. Level 2",
+      "notes": "Assessor notes",
+      "assessor": "Assessor",
+      "saved": "Assessment recorded",
+      "filter_result": "Result"
+    },
+    "panel": {
+      "title": "Credentials & passport",
+      "description": "Certificates, licences and assessments for this worker.",
+      "credentials": "Credentials",
+      "assessments": "Assessments",
+      "none_credentials": "No credentials uploaded.",
+      "none_assessments": "No skill assessments yet.",
+      "passport": "Skill Passport",
+      "passport_public": "Public",
+      "passport_private": "Private",
+      "passport_none": "Not created yet",
+      "open_passport": "Open public passport",
+      "active_shares": "{count, plural, =0 {No active share links} one {# active share link} other {# active share links}}",
+      "review": "Review",
+      "record_assessment": "Record assessment"
+    },
+    "expiring": {
+      "title": "Expiring credentials",
+      "days_left": "{count, plural, =0 {today} one {in # day} other {in # days}}"
+    },
+    "passport": {
+      "brand": "KAAM ID",
+      "title": "Skill Passport",
+      "meta_title": "{name} — KaamSathi Skill Passport",
+      "meta_description": "Verified skills and work record of {name}, checked by KaamSathi.",
+      "verified_by": "Verified by KaamSathi",
+      "verified": "Verified",
+      "not_verified": "Not verified",
+      "level_label": "Verification level",
+      "level_n": "Level {n} of 5",
+      "reliability": "Reliability score",
+      "reliability_hint": "From attendance, employer feedback, job completion and verified skills. Not a credit score.",
+      "reliability_none": "Not enough work history yet",
+      "identity": "Identity checks",
+      "citizenship": "Citizenship / National ID",
+      "phone": "Phone number",
+      "address": "Address",
+      "skills": "Skills",
+      "years": "{count, plural, =0 {Less than a year} one {# year} other {# years}}",
+      "nstb": "NSTB {level}",
+      "credentials": "Verified certificates",
+      "no_credentials": "No verified certificates yet.",
+      "issued": "Issued {date}",
+      "valid_until": "Valid until {date}",
+      "no_expiry": "Does not expire",
+      "certificate_no": "Certificate no. {no}",
+      "assessments": "Skill tests passed",
+      "assessed_on": "Tested {date}",
+      "work": "Work record on KaamSathi",
+      "work_hint": "Recorded by employers on the platform — not self-reported.",
+      "employers": "Employers",
+      "months": "Months worked",
+      "completed_jobs": "Jobs completed",
+      "attendance": "Attendance (180 days)",
+      "not_enough_data": "—",
+      "availability": "Availability",
+      "available": "Available for work",
+      "not_available": "Not looking for work right now",
+      "expected_wage": "Expected monthly wage",
+      "contact": "Contact",
+      "call": "Call",
+      "contact_hidden": "Contact details are private. Ask the worker or their employer to connect you.",
+      "scan": "Scan to check this passport is genuine",
+      "verify_link": "Live record",
+      "generated": "Checked {date}",
+      "print": "Print / save PDF",
+      "shared_with": "Shared with {label}",
+      "share_expires": "Link expires {date}",
+      "worker_owns": "The worker controls this passport and can turn it off at any time. Every view is shown to them.",
+      "only_verified": "Only information verified by KaamSathi or recorded by employers is shown.",
+      "about": "What is KaamSathi?",
+      "about_body": "KaamSathi helps Nepali workers get verified, hired and paid on time.",
+      "not_found_title": "Passport not available",
+      "not_found_body": "This Skill Passport link has expired, was turned off by the worker, or does not exist.",
+      "not_found_hint": "Ask the worker to share a new link.",
+      "home": "Go to KaamSathi"
+    }
+  },
+  "crews": {
+    "ops_description": "Naike (team leads) and their crews. A naike earns a referral reward when a crew member joins a job and stays past the hold period — paid by KaamSathi, never taken from the worker.",
+    "tab_crews": "Crews",
+    "tab_referrals": "Referral rewards",
+    "search_placeholder": "Search crew, naike or phone…",
+    "active": "Active",
+    "inactive": "Inactive",
+    "empty_title": "No crews yet",
+    "empty_body": "A worker becomes a naike from the KaamSathi app and adds their crew members.",
+    "col_crew": "Crew",
+    "col_lead": "Naike",
+    "col_members": "Members",
+    "col_placed_90d": "Placed (90 days)",
+    "col_earned": "Rewards paid",
+    "col_pending": "Rewards due",
+    "detail_title": "Crew",
+    "led_by": "Team lead (Naike): {name}",
+    "since": "Since {date}",
+    "members_title": "Crew members",
+    "members_description": "Workers who joined through this naike. Each member gives their own consent when they first log in.",
+    "no_members": "No members yet",
+    "lead_title": "Naike",
+    "referral_status": {
+      "pending": "Pending",
+      "eligible": "Eligible",
+      "paid": "Paid",
+      "void": "Void"
+    },
+    "referrals": {
+      "title": "Referral rewards",
+      "policy": "Rewards are paid by KaamSathi to the naike — never deducted from the worker's wage.",
+      "empty_title": "No referral rewards",
+      "empty_body": "A reward is created when a crew member is hired through KaamSathi.",
+      "col_worker": "Worker",
+      "col_crew": "Crew",
+      "col_employer": "Employer / job",
+      "col_joined": "Joined",
+      "col_hold_until": "Eligible from",
+      "paid_ref": "Ref {ref} · {date}",
+      "mark_paid": "Mark paid",
+      "mark_paid_for": "Mark reward for {name} as paid",
+      "mark_paid_title": "Mark reward paid",
+      "mark_paid_description": "{amount} to the naike of {crew}",
+      "payout_ref": "Payment reference",
+      "payout_ref_hint": "eSewa/Khalti transaction ID or bank voucher number.",
+      "paid_toast": "Reward to {name} marked paid",
+      "void": "Void",
+      "void_for": "Void reward for {name}",
+      "void_title": "Void referral reward",
+      "void_reason": "Reason",
+      "void_toast": "Reward voided"
+    }
+  },
+  "finance": {
+    "title": "Finance referrals",
+    "subtitle": "Partner offers, worker referrals and outcomes reported by partners.",
+    "rules_note": "KaamSathi never lends, never holds funds and never charges workers. Offers sit on the partner's books; we store referrals and the statuses partners report.",
+    "tabs": {
+      "summary": "Summary",
+      "offers": "Offers",
+      "referrals": "Referrals"
+    },
+    "status": {
+      "submitted": "Submitted",
+      "under_review": "Under review",
+      "approved": "Approved",
+      "rejected": "Not approved",
+      "disbursed": "Disbursed",
+      "closed": "Closed"
+    },
+    "kind": {
+      "loan": "Loan",
+      "ewa": "Earned wage access",
+      "insurance": "Insurance",
+      "savings": "Savings",
+      "tool_finance": "Tool finance",
+      "vehicle_finance": "Vehicle finance"
+    },
+    "summary": {
+      "referrals": "Referrals",
+      "approval_rate": "Approval rate",
+      "approval_hint": "Approved or disbursed ÷ decided",
+      "disbursed": "Disbursed by partners",
+      "disbursed_hint": "As reported by partners",
+      "verified_workers": "Workers with verified earnings",
+      "active_offers": "{count, plural, one {# active offer} other {# active offers}}",
+      "by_status": "Referrals by status",
+      "by_partner": "By partner",
+      "none_yet": "No referrals yet."
+    },
+    "table": {
+      "status": "Status",
+      "count": "Count",
+      "partner": "Partner",
+      "total": "Total",
+      "open": "Open",
+      "actions": "Actions"
+    },
+    "all_partners": "All partners",
+    "all_statuses": "All statuses",
+    "offers": {
+      "new": "New offer",
+      "empty_title": "No offers yet",
+      "empty_body": "Add an offer a partner has agreed to publish — tool finance, wage advance, insurance…",
+      "title_col": "Offer",
+      "min_months": "Min. verified months",
+      "min_avg_net": "Min. avg. net pay",
+      "max_amount": "Max. amount",
+      "active": "Active",
+      "inactive": "Inactive",
+      "edit": "Edit {title}"
+    },
+    "referrals": {
+      "status_note": "Statuses are set only by the partner through the partner API.",
+      "empty_title": "No referrals yet",
+      "empty_body": "Referrals appear when a worker applies to an offer from the app.",
+      "worker": "Worker",
+      "offer": "Offer",
+      "requested": "Requested",
+      "approved_amount": "Approved",
+      "updated": "Updated"
+    },
+    "offer_form": {
+      "edit_title": "Edit offer",
+      "new_title": "New offer",
+      "description": "Thresholds are checked against the worker's verified earnings. Terms are the partner's, shown verbatim; we add no fees.",
+      "kind": "Type",
+      "title_en": "Title (English)",
+      "title_ne": "Title (Nepali)",
+      "desc_en": "Description (English)",
+      "desc_ne": "Description (Nepali)",
+      "min_months": "Min. verified months",
+      "min_months_hint": "Months with paid payslips",
+      "min_avg_net": "Min. average net pay (Rs.)",
+      "max_amount": "Max. amount (Rs.)",
+      "interest_note": "Partner-stated terms",
+      "interest_note_hint": "Shown to workers exactly as written.",
+      "is_active": "Visible to workers",
+      "is_active_hint": "Inactive offers are hidden in the app; existing referrals are kept."
+    }
+  },
   "hiring": {
     "jobs": {
       "description": "Post vacancies and follow candidates from shortlist to joining.",
@@ -510,6 +1018,427 @@
       "by": "by {name}",
       "move_to": "Move to:",
       "view_workers": "View in workers"
+    }
+  },
+  "insights": {
+    "chart": {
+      "show_table": "View as table",
+      "show_chart": "View as chart",
+      "suppressed": "Hidden — fewer than 5 workers",
+      "suppressed_short": "under 5",
+      "no_data": "No data for this period yet.",
+      "month": "Month"
+    },
+    "org": {
+      "title": "Analytics",
+      "subtitle": "Headcount, attendance, payroll and hiring trends for your organization.",
+      "range_label": "Period",
+      "range_months": "{count} months",
+      "joined_left": "{joined} joined, {left} left",
+      "gross_net": "Gross {gross} · Net {net}",
+      "no_site": "No site",
+      "workers_n": "{count, plural, one {# worker} other {# workers}}",
+      "rate_of_days": "{rate} of recorded days",
+      "active_now": "Active workers",
+      "attrition": "Attrition",
+      "attrition_hint": "Left ÷ average headcount over {months} months",
+      "avg_tenure": "Average tenure",
+      "months_value": "{value} mo",
+      "cost_per_hire": "Cost per hire",
+      "hires_n": "{count, plural, =0 {No hires via KaamSathi} one {# hire via KaamSathi} other {# hires via KaamSathi}}",
+      "time_to_shortlist": "Time to shortlist",
+      "time_to_fill": "Time to fill",
+      "days_value": "{value} days",
+      "headcount_title": "Headcount",
+      "headcount_desc": "Active workers at each month end.",
+      "active": "Active",
+      "joined": "Joined",
+      "left": "Left",
+      "attendance_title": "Attendance rate",
+      "attendance_desc": "Present days ÷ recorded working days (half day = ½).",
+      "attendance_rate": "Attendance rate",
+      "no_attendance": "No hajiri recorded in this period.",
+      "wage_bill_title": "Wage bill",
+      "wage_bill_desc": "Employer cost per payroll month (gross + employer SSF).",
+      "gross": "Gross",
+      "net": "Net",
+      "employer_cost": "Employer cost",
+      "no_payroll": "No payroll runs in this period.",
+      "overtime_title": "Overtime",
+      "overtime_desc": "Total overtime hours recorded each month.",
+      "overtime_hours": "Overtime hours",
+      "absence_by_site_title": "Absenteeism by site",
+      "absence_by_site_desc": "Absent days ÷ recorded working days.",
+      "site": "Site",
+      "absence_rate": "Absence rate",
+      "workers": "Workers",
+      "absence_weekday_title": "Absences by weekday",
+      "absence_weekday_desc": "Which days workers miss most.",
+      "weekday": "Day",
+      "absences": "Absences",
+      "weekday_hidden": "Shown once at least 5 workers have hajiri in this period.",
+      "privacy_note": "Aggregates only. Any figure covering fewer than {k} workers is hidden so no individual can be identified."
+    },
+    "market": {
+      "title": "Labour-market insights",
+      "subtitle": "Wages, demand, supply and skill shortages across KaamSathi — aggregates only.",
+      "export_csv": "Export CSV",
+      "export_failed": "Export failed",
+      "report": {
+        "wages": "Wage bands",
+        "demand": "Demand",
+        "supply": "Supply",
+        "shortages": "Shortages",
+        "certification_uplift": "Certification uplift",
+        "origin_districts": "Origin districts"
+      },
+      "all_districts": "All districts",
+      "district": "District",
+      "all_trades": "All trades",
+      "trade": "Trade",
+      "privacy_note": "No single worker is ever shown. Cells covering fewer than {k} workers are hidden (shown as “under 5”).",
+      "shortage_hint": "demand {demand}, supply {supply}",
+      "wage_tooltip": "{trade} · {district}: median {median} (P25 {p25} – P75 {p75}), {sample} workers",
+      "uplift_hint": "with {with} vs without {without}",
+      "pooled_districts": "Other districts (combined)",
+      "wages_title": "Monthly wage bands by trade and district",
+      "wages_desc": "Contracted monthly wage: bar = P25–P75, tick = median. Daily wages × 26.",
+      "hidden_cells": "{count, plural, one {# small cell hidden.} other {# small cells hidden.}}",
+      "median": "Median",
+      "sample": "Workers",
+      "wages_all_hidden": "Every trade × district cell has fewer than 5 workers for this filter.",
+      "demand_supply_title": "Demand vs supply",
+      "demand_supply_desc": "Open positions vs verified, available workers per trade.",
+      "open_positions": "Open positions",
+      "filled_90d": "Filled (90 days)",
+      "avg_days_to_fill": "Avg. days to fill",
+      "registered": "Registered",
+      "verified": "Verified",
+      "available": "Available",
+      "shortages_title": "Skill shortages",
+      "shortages_desc": "Demand minus available supply over the last 90 days.",
+      "demand": "Demand",
+      "supply": "Supply",
+      "shortage": "Shortage",
+      "no_shortages": "No shortages detected.",
+      "uplift_title": "Certification uplift",
+      "uplift_desc": "Median monthly net pay of certified workers vs uncertified (paid payslips, last 12 months).",
+      "certification": "Certification",
+      "median_with": "Median with",
+      "median_without": "Median without",
+      "uplift": "Uplift",
+      "no_payslips": "No paid payslips yet.",
+      "origin_title": "Where workers come from",
+      "origin_desc": "Workers by permanent district.",
+      "workers": "Workers",
+      "uplift_credential": "Verified credential: {kind}",
+      "uplift_group": {
+        "nstb_any": "Any NSTB level",
+        "nstb_level1": "NSTB Level 1",
+        "nstb_level2": "NSTB Level 2",
+        "nstb_level3": "NSTB Level 3"
+      }
+    }
+  },
+  "legal": {
+    "draft_title": "Draft — pending legal review",
+    "draft_body": "This document is a working draft. It has not yet been reviewed by a lawyer and may change before launch.",
+    "version": "Draft version · October 2026",
+    "contents": "Contents",
+    "placeholder": "placeholder",
+    "back_home": "Back to home",
+    "privacy_link": "Privacy Policy",
+    "terms_link": "Terms of Service",
+    "footer_note": "KaamSathi · Kathmandu, Nepal",
+    "contact": {
+      "title": "Grievance officer and contact",
+      "body": "For privacy questions, requests or complaints, contact our grievance officer. You can also raise a request in the KaamSathi app under Privacy requests.",
+      "officer_label": "Grievance officer",
+      "officer": "Privacy and Grievance Officer, KaamSathi",
+      "email_label": "Email",
+      "email": "privacy@kaamsathi.com",
+      "phone_label": "Phone",
+      "phone": "+977-01-XXXXXXX",
+      "address_label": "Address",
+      "address": "Kathmandu, Nepal",
+      "placeholder_note": "Contact details marked as placeholders will be confirmed before launch."
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "description": "How KaamSathi collects, uses, shares and protects personal information under Nepal's Individual Privacy Act, 2075.",
+      "intro": "KaamSathi helps workers in Nepal find work and get paid on time, and helps employers hire, track attendance and run payroll. This policy explains what personal information we hold, why, who can see it, and the choices you have. We follow the Individual Privacy Act, 2075 (वैयक्तिक गोपनीयता सम्बन्धी ऐन, २०७५) and the rules made under it.",
+      "sections": [
+        {
+          "id": "principles",
+          "title": "Our promises",
+          "body": [
+            "These promises apply to every part of KaamSathi:"
+          ],
+          "items": [
+            "Workers never pay KaamSathi any fee — not to register, apply, get verified or get paid.",
+            "You own your record. Sharing your information outside the organisation that employs you needs your explicit, revocable consent.",
+            "Every time someone views your full profile, it is logged and you can see it in the app.",
+            "We never sell personal data and we do not show advertising.",
+            "KaamSathi never lends money and never holds customer funds.",
+            "We do not recruit for jobs abroad."
+          ]
+        },
+        {
+          "id": "collect",
+          "title": "Information we collect",
+          "body": [
+            "We collect only what we need to run the service:"
+          ],
+          "items": [
+            "Workers: name, phone number, date of birth, gender, address and district, photo, citizenship or national ID number and photos of the ID document, skills, experience, training certificates, expected wage and availability.",
+            "Work records: job applications, employment details, attendance (hajiri), leave, advances (peski), payslips and Social Security Fund (SSF) details, ratings and disputes.",
+            "Location: only at the moment of an attendance check-in, to confirm you are at the work site. We do not track your location in the background.",
+            "Employers: organisation name, PAN, address, work sites, and the names and phone numbers of the people who use the portal.",
+            "Technical information: basic device and log data needed for security, and cookies that keep you signed in and remember your language and theme. We do not use advertising trackers."
+          ]
+        },
+        {
+          "id": "use",
+          "title": "How we use information",
+          "body": [
+            "We use personal information to:"
+          ],
+          "items": [
+            "match workers with suitable jobs and show employers the candidates who applied;",
+            "verify identity and skills so that employers can trust a profile;",
+            "record attendance and calculate wages, payslips, SSF and tax deductions;",
+            "calculate a reliability score from your verified work history;",
+            "prevent fraud, keep accounts secure and resolve disputes;",
+            "provide support and send service messages such as OTPs and pay notifications;",
+            "publish labour-market statistics that are aggregated and anonymised, so no individual can be identified."
+          ]
+        },
+        {
+          "id": "consent",
+          "title": "Your consent",
+          "body": [
+            "We ask for your consent separately for each purpose, and you can withdraw any of them at any time from the app. Withdrawing consent does not undo processing that was already lawful, and it does not remove records that the law requires us or your employer to keep."
+          ],
+          "items": [
+            "Data processing (data_processing): to create your account and run the service. Without it we cannot provide KaamSathi to you.",
+            "Profile sharing (profile_share): to show your profile to employers whose jobs you apply for.",
+            "Work history sharing (history_share): to show your verified work history and reliability score to prospective employers."
+          ]
+        },
+        {
+          "id": "who-sees",
+          "title": "Who can see your information",
+          "body": [
+            "Employers see what they need for employment: the profile details relevant to a job you applied for, and, while you work for them, your attendance, leave and pay records with that employer only. They do not see your records with other employers unless you have agreed to history sharing.",
+            "Identity documents such as citizenship photos are visible only to you and to KaamSathi verification staff. Employers see that you are verified, not the documents themselves.",
+            "Every view of your full profile — by an employer, a partner or KaamSathi staff — is logged with who viewed it and when, and you can see this log in the app."
+          ]
+        },
+        {
+          "id": "partners",
+          "title": "Sharing with partners",
+          "body": [
+            "Some services are provided by licensed partners: banks, insurers, training providers and licensed recruitment agencies. We share your information with a partner only when you give explicit consent on a screen that shows the partner's name, the purpose, exactly which information will be shared, and for how long.",
+            "Each consent is limited to that purpose and that period, and you can revoke it at any time in the app. Every partner access is logged and visible to you.",
+            "Loans, earned-wage access and insurance are provided by the partner on its own books. KaamSathi does not lend and does not hold your money. We share your passport with a licensed recruitment agency only when you ask us to, and we never match workers for jobs abroad."
+          ]
+        },
+        {
+          "id": "providers",
+          "title": "Service providers and authorities",
+          "body": [
+            "We use trusted service providers for hosting, SMS and payroll payments (payroll money moves from the employer through a licensed payment provider directly to the worker). They may process information only to provide their service to us and must protect it.",
+            "We disclose information to government authorities only when Nepali law requires it, for example under a court order or for SSF and tax filings."
+          ]
+        },
+        {
+          "id": "no-sale",
+          "title": "We never sell your data",
+          "body": [
+            "We do not sell, rent or trade personal information, and we do not use it for advertising. Our income comes from employer fees, not from your data."
+          ]
+        },
+        {
+          "id": "score",
+          "title": "Reliability score",
+          "body": [
+            "The reliability score summarises your verified work history, such as attendance, completed engagements and resolved disputes. It is not a credit score and KaamSathi does not use it to make lending decisions. You can see how your score is made up and raise a dispute if something is wrong."
+          ]
+        },
+        {
+          "id": "retention",
+          "title": "How long we keep information",
+          "body": [
+            "We keep your information while your account is active. If you delete your account, we anonymise your profile and delete your identity documents, photos and sharing permissions.",
+            "Payroll and attendance records must be kept for the periods required by the Labour Act, 2074, tax law and Social Security Fund rules. These records are kept after deletion but are linked only to an anonymised record. Data export files expire automatically after a short time, and security logs are kept only for a limited period."
+          ]
+        },
+        {
+          "id": "security",
+          "title": "How we protect information",
+          "body": [
+            "Information is encrypted in transit, access is limited by role, document links are short-lived, and staff access to worker records is logged. No system is perfectly secure; if a breach affects you, we will inform you and the relevant authority as required by law."
+          ]
+        },
+        {
+          "id": "rights",
+          "title": "Your rights",
+          "body": [
+            "You can make any of these requests in the app under Privacy requests, or by contacting our grievance officer. We will verify your identity and aim to respond within 30 days."
+          ],
+          "items": [
+            "Access and export: get a copy of the information we hold about you.",
+            "Correction: ask us to fix information that is wrong or incomplete.",
+            "Deletion: ask us to delete your account, subject to records the law requires us to keep.",
+            "Withdraw consent: stop any sharing at any time.",
+            "Complain: raise a grievance with us, and, if unresolved, with the relevant authority in Nepal."
+          ]
+        },
+        {
+          "id": "age",
+          "title": "Age limit",
+          "body": [
+            "KaamSathi is for people aged 18 and over. We do not knowingly register minors, and we remove any such account we find."
+          ]
+        },
+        {
+          "id": "changes",
+          "title": "Changes to this policy",
+          "body": [
+            "We will update this policy when our service or the law changes. If a change affects how your information is shared, we will tell you in the app and ask for fresh consent where required."
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "description": "The terms that apply to workers and employers using KaamSathi.",
+      "intro": "These terms are an agreement between you and KaamSathi. By creating an account or using the app or employer portal, you agree to them. Please read them together with our Privacy Policy.",
+      "sections": [
+        {
+          "id": "service",
+          "title": "What KaamSathi is",
+          "body": [
+            "KaamSathi is a platform that helps employers in Nepal hire verified workers, record attendance and run payroll, and helps workers find work and keep a verified record of their work."
+          ],
+          "items": [
+            "KaamSathi is not the employer of workers hired through the platform. The employing organisation is the employer.",
+            "KaamSathi is not a foreign employment agency and does not recruit for jobs abroad.",
+            "KaamSathi is not a bank or lender and never holds customer funds. Wages move from the employer through a licensed payment provider to the worker."
+          ]
+        },
+        {
+          "id": "accounts",
+          "title": "Accounts",
+          "body": [
+            "You must be at least 18 years old. You sign in with your mobile number and a one-time code; keep your phone and codes secure. Information you give us must be true and up to date. If you use the employer portal, you confirm that you are authorised to act for your organisation."
+          ]
+        },
+        {
+          "id": "fees",
+          "title": "Fees",
+          "body": [
+            "Workers never pay any fee to KaamSathi. If anyone asks a worker for money in KaamSathi's name, please report it to us.",
+            "Employers pay the fees shown on our pricing page or agreed in writing, plus applicable taxes. Fees are not refundable except where stated or required by law."
+          ]
+        },
+        {
+          "id": "record",
+          "title": "The worker's record",
+          "body": [
+            "Workers own their record. Information is shared outside the employing organisation only with the worker's explicit, purpose-bound, time-limited and revocable consent, and every profile view is logged and visible to the worker. Our Privacy Policy explains this in detail."
+          ]
+        },
+        {
+          "id": "employers",
+          "title": "Employer obligations",
+          "body": [
+            "If you employ workers through KaamSathi, you must:"
+          ],
+          "items": [
+            "comply with the Labour Act, 2074, the Labour Rules, 2075 and other applicable laws;",
+            "pay at least the minimum wage set by the Government of Nepal, on time, for all work done;",
+            "register eligible workers with the Social Security Fund and deposit contributions as required by the Contribution-Based Social Security Act, 2074;",
+            "keep attendance and payroll records accurate and correct mistakes promptly;",
+            "provide a safe workplace and never use forced labour, child labour or discriminatory practices;",
+            "use worker information only for employment purposes and never charge workers any fee for a job."
+          ]
+        },
+        {
+          "id": "score",
+          "title": "Reliability score and ratings",
+          "body": [
+            "The reliability score reflects verified work history. It is not a credit score. Ratings must be honest and based on real work; either side can raise a dispute, which our team reviews."
+          ]
+        },
+        {
+          "id": "acceptable-use",
+          "title": "Acceptable use",
+          "body": [
+            "You must not:"
+          ],
+          "items": [
+            "create fake profiles, jobs, attendance or payroll entries;",
+            "post jobs that are illegal, discriminatory, or for work abroad;",
+            "ask workers for money, deposits or documents not needed for the job;",
+            "copy, scrape or resell information from KaamSathi;",
+            "harass, threaten or mislead other users;",
+            "try to get around our security or access accounts that are not yours."
+          ]
+        },
+        {
+          "id": "content",
+          "title": "Your content and our service",
+          "body": [
+            "You keep ownership of the information you add. You allow us to use it only to provide and improve KaamSathi as described in our Privacy Policy. The KaamSathi name, logo and software belong to us."
+          ]
+        },
+        {
+          "id": "suspension",
+          "title": "Suspension and closing accounts",
+          "body": [
+            "We may suspend or close an account that breaks these terms or the law, after notice where reasonable. You can close your account at any time from the app or by contacting us. Records the law requires to be kept are retained as described in the Privacy Policy."
+          ]
+        },
+        {
+          "id": "disclaimer",
+          "title": "Disclaimers",
+          "body": [
+            "Verification reduces risk but cannot guarantee everything about a person or an employer. We do not guarantee that a job will be filled or that a worker will be hired. The service is provided as it is, and we work to keep it available but cannot promise it will always be error-free."
+          ]
+        },
+        {
+          "id": "liability",
+          "title": "Limitation of liability",
+          "body": [
+            "To the extent allowed by Nepali law, KaamSathi is not liable for indirect or consequential losses, and our total liability to an employer is limited to the fees that employer paid us in the 12 months before the claim. Nothing in these terms limits liability that cannot be limited by law, or any right a worker has under labour law against their employer.",
+            "Employers are responsible for their obligations as employers and agree to compensate KaamSathi for losses caused by their breach of labour law or of these terms."
+          ]
+        },
+        {
+          "id": "law",
+          "title": "Governing law and disputes",
+          "body": [
+            "These terms are governed by the laws of Nepal. Please contact our grievance officer first; we will try to resolve any complaint quickly. Disputes that cannot be resolved will be handled by the competent courts in Kathmandu, Nepal."
+          ]
+        },
+        {
+          "id": "changes",
+          "title": "Changes to these terms",
+          "body": [
+            "We may update these terms. We will give notice in the app or by SMS before important changes take effect. If you keep using KaamSathi after that, the updated terms apply."
+          ]
+        }
+      ]
+    },
+    "error": {
+      "not_found_title": "Page not found",
+      "not_found_body": "The page you are looking for does not exist or has moved.",
+      "error_title": "Something went wrong",
+      "error_body": "An unexpected error occurred. Please try again.",
+      "retry": "Try again",
+      "go_home": "Go to home",
+      "reference": "Reference: {digest}"
     }
   },
   "ops": {
@@ -755,7 +1684,10 @@
       "vat": "VAT registered",
       "ssf_employer_no": "SSF employer no.",
       "weekly_off": "Weekly off",
-      "no_open_jobs": "No open jobs"
+      "no_open_jobs": "No open jobs",
+      "reputation": "Worker rating (pay · conditions)",
+      "reputation_hint": "{count} private worker ratings, out of 5",
+      "reputation_none": "Fewer than 3 ratings yet"
     }
   },
   "dashboard": {
@@ -987,6 +1919,200 @@
     "cta_body": "Log in with your mobile number — set up your organization in two minutes.",
     "footer_place": "Kathmandu, Nepal"
   },
+  "partners": {
+    "title": "Partners",
+    "subtitle": "Licensed banks, insurers, training providers and agencies that read worker data only with the worker's consent.",
+    "api_docs": "API docs",
+    "new": "New partner",
+    "search_placeholder": "Search partners…",
+    "all_kinds": "All types",
+    "empty_title": "No partners yet",
+    "empty_body": "Add a licensed partner, then issue it an API key.",
+    "active": "Active",
+    "inactive": "Inactive",
+    "kind": {
+      "bank": "Bank",
+      "microfinance": "Microfinance",
+      "insurer": "Insurer",
+      "wallet": "Wallet / payment provider",
+      "training": "Training provider",
+      "recruitment_agency": "Recruitment agency",
+      "government": "Government"
+    },
+    "regulator": {
+      "nrb": "Nepal Rastra Bank",
+      "beema_samiti": "Nepal Insurance Authority",
+      "dofe": "Department of Foreign Employment",
+      "ctevt": "CTEVT",
+      "other": "Other regulator"
+    },
+    "scope": {
+      "profile_read": "Read a consenting worker's verified profile",
+      "earnings_read": "Read a consenting worker's verified earnings",
+      "passport_read": "Read a consenting worker's Skill Passport",
+      "referrals_write": "Update the status of referrals sent to this partner"
+    },
+    "stats": {
+      "active_keys": "Active keys",
+      "active_grants": "Active consents",
+      "offers": "Offers",
+      "referrals": "Referrals"
+    },
+    "form": {
+      "created": "Partner created",
+      "edit_title": "Edit partner",
+      "new_title": "New partner",
+      "description": "Only licensed, regulated organisations. They never receive data without a worker's consent.",
+      "webhook_secret": "Webhook signing secret",
+      "webhook_secret_once": "Copy this secret now and share it securely with the partner. It will not be shown again.",
+      "name": "Organisation name",
+      "kind": "Type",
+      "regulator": "Regulator",
+      "license_no": "Licence no.",
+      "contact_phone": "Contact phone",
+      "contact_email": "Contact email",
+      "webhook_url": "Webhook URL",
+      "webhook_hint": "We POST signed referral events here (HTTPS).",
+      "is_active": "Active",
+      "is_active_hint": "Inactive partners cannot use their keys and are hidden from workers."
+    },
+    "keys": {
+      "done": "I have stored it",
+      "created_title": "API key created",
+      "new_title": "New API key",
+      "new_desc": "Choose only the scopes this partner needs.",
+      "key": "API key",
+      "shown_once": "This is the only time the full key is shown. We store only a hash — if it is lost, revoke it and create a new one.",
+      "usage": "Send it on every request as: {header}",
+      "name": "Label",
+      "name_hint": "e.g. Production, Sandbox",
+      "scopes": "Scopes",
+      "create": "Create key",
+      "intro": "Keys authenticate the partner. A worker's consent is still required for every read.",
+      "new": "New key",
+      "empty_title": "No API keys",
+      "empty_body": "Create a key to let this partner call the partner API.",
+      "revoked": "Revoked",
+      "created_at": "Created {date}",
+      "last_used": "last used {date}",
+      "never_used": "never used",
+      "revoked_at": "revoked {date}",
+      "revoke": "Revoke",
+      "revoke_title": "Revoke API key?",
+      "revoke_body": "{key} will stop working immediately. This cannot be undone.",
+      "revoked_toast": "Key revoked",
+      "revoke_failed": "Could not revoke the key"
+    },
+    "detail": {
+      "loading": "Partner",
+      "overview": "Overview",
+      "keys": "API keys",
+      "access_log": "Access log",
+      "grants": "Consents",
+      "no_webhook": "Not set — referrals are visible via GET /partner/referrals",
+      "created": "Added",
+      "edit": "Edit",
+      "rotate_secret": "Rotate webhook secret",
+      "rotate_confirm": "The old secret stops working at once; the partner must update their verification.",
+      "rotate_failed": "Could not rotate the secret"
+    },
+    "log": {
+      "empty_title": "No access yet",
+      "empty_body": "Every partner API request — allowed or denied — appears here and in the worker's app.",
+      "when": "When",
+      "worker": "Worker",
+      "endpoint": "Request",
+      "result": "Result",
+      "allowed": "allowed",
+      "denied": "denied"
+    },
+    "grants": {
+      "empty_title": "No consents yet",
+      "empty_body": "Workers grant consent from the KaamSathi app when they apply to an offer or share their profile.",
+      "worker": "Worker",
+      "purpose": "Purpose",
+      "expires": "Expires",
+      "status": "Status",
+      "hidden_worker": "Hidden (consent ended)"
+    },
+    "docs": {
+      "eyebrow": "For licensed partners",
+      "title": "KaamSathi Partner API",
+      "intro": "Read verified work and earnings data — only for workers who have explicitly consented, only for the purpose they agreed to, and only until they revoke.",
+      "rule_consent": "No consent, no data. Workers can revoke instantly.",
+      "rule_funds": "KaamSathi never lends or holds funds and never charges workers. Your product stays on your books.",
+      "rule_logged": "Every request is logged and visible to the worker.",
+      "contents": "Contents",
+      "toc_consent": "Consent model",
+      "toc_auth": "Authentication",
+      "toc_scopes": "Scopes",
+      "toc_endpoints": "Endpoints",
+      "toc_errors": "Errors",
+      "toc_webhooks": "Webhooks & signatures",
+      "consent_1": "A worker grants consent in the KaamSathi app — usually by applying to one of your offers. The consent names your organisation, the purpose, the data scopes and how long it lasts.",
+      "consent_2": "The worker can revoke at any time; from that moment your reads return 403. They also see a log of every request you make about them.",
+      "footer_note": "The earnings summary is verified income data, not a credit score. Lending, insurance and wage-advance decisions, pricing and disclosures remain the partner's regulated responsibility."
+    }
+  },
+  "payouts": {
+    "title": "Pay out (Bhuktani)",
+    "description": "Pay net salaries through your bank or a wallet. Money goes from your account straight to workers — KaamSathi never holds it.",
+    "approve_first": "Approve this payroll run to pay workers through a bank file or wallet.",
+    "batches": "Payout batches",
+    "never_hold_funds": "When every payment is marked paid, the payroll run is marked paid automatically and workers get an SMS.",
+    "provider": {
+      "bank_file": "Bank file",
+      "esewa": "eSewa",
+      "khalti": "Khalti",
+      "connectips": "ConnectIPS"
+    },
+    "not_enabled": "Not enabled",
+    "eligible": "{count, plural, =0 {No workers} one {# worker} other {# workers}}",
+    "excluded_cash": "{count} paid in cash",
+    "excluded_missing": "{count} missing bank details",
+    "excluded_batched": "{count} already in a batch",
+    "create_batch": "Create batch",
+    "created_toast": "{count, plural, one {Batch created for # worker} other {Batch created for # workers}}",
+    "use_bank_file": "Wallet payouts need a merchant agreement — use the bank file for now.",
+    "status": {
+      "draft": "Draft",
+      "submitted": "Submitted",
+      "processing": "Processing",
+      "completed": "Completed",
+      "partially_failed": "Some failed",
+      "cancelled": "Cancelled"
+    },
+    "paid_of": "{paid}/{total} paid",
+    "submit_bank": "Mark file uploaded",
+    "submit": "Send",
+    "submitted_toast": "Batch submitted",
+    "reconcile": "Upload bank result",
+    "cancel": "Cancel batch",
+    "bank_steps": "1. Download the CSV/XLSX · 2. Upload it in your bank's bulk-transfer screen · 3. Click “Mark file uploaded” · 4. Upload the bank's result file or mark each payment.",
+    "cancel_title": "Cancel this batch?",
+    "cancel_body": "Its workers become available for a new batch. Nothing is sent to anyone.",
+    "no_items": "No payments in this batch.",
+    "col_worker": "Worker",
+    "col_destination": "Account / wallet",
+    "col_amount": "Amount",
+    "col_status": "Status",
+    "col_mark": "Mark",
+    "item_status": {
+      "pending": "Pending",
+      "sent": "Sent",
+      "paid": "Paid",
+      "failed": "Failed"
+    },
+    "mark_paid": "Paid",
+    "mark_failed": "Mark failed",
+    "fail_title": "Payment failed — {name}",
+    "fail_reason": "Reason (from the bank)",
+    "reconcile_title": "Upload bank result file",
+    "reconcile_body": "We match each row by reference, or by account number and amount, and mark payments paid or failed.",
+    "result_file": "Result file (CSV)",
+    "result_hint": "Columns we read: reference, account, amount, status, bank_ref, remarks.",
+    "reconciled_toast": "Matched: {paid} paid, {failed} failed, {unmatched} unmatched rows"
+  },
   "payroll_page": {
     "meta_title": "Payroll",
     "meta_run_title": "Wage sheet",
@@ -1168,11 +2294,332 @@
       "saved": "Payslip updated"
     }
   },
+  "privacy": {
+    "kind": {
+      "export": "Data export",
+      "correction": "Correction",
+      "deletion": "Deletion"
+    },
+    "status": {
+      "received": "Received",
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "rejected": "Rejected"
+    },
+    "ops": {
+      "title": "Privacy requests",
+      "subtitle": "Data export, correction and deletion requests from workers under the Individual Privacy Act, 2075.",
+      "count": "{count, plural, one {# request} other {# requests}}",
+      "open_count": "{count, plural, one {# awaiting action} other {# awaiting action}}",
+      "filter_status": "Status",
+      "filter_kind": "Request type",
+      "all_statuses": "All statuses",
+      "all_kinds": "All types",
+      "col_worker": "Worker",
+      "col_kind": "Type",
+      "col_status": "Status",
+      "col_created": "Received",
+      "col_details": "Details",
+      "col_actions": "Actions",
+      "no_details": "No details given",
+      "no_worker": "No worker profile",
+      "requested_by": "Requested by {name}",
+      "handled_by": "Handled by {name}",
+      "response_note": "Response",
+      "completed_on": "Completed {date}",
+      "approve": "Approve",
+      "reject": "Reject",
+      "download": "Download export",
+      "download_expires": "Link expires {date}",
+      "export_preparing": "Export is being prepared",
+      "export_expired": "Export file expired",
+      "approve_title": "Approve {kind} request",
+      "reject_title": "Reject {kind} request",
+      "approve_export": "An export bundle of everything we hold on {name} will be generated. The worker can download it from the app until the link expires.",
+      "approve_correction": "Confirm that the correction for {name} has been made (or routed to the dispute flow). The worker will be notified.",
+      "approve_deletion": "{name}'s profile and documents will be anonymised and deleted, and all sharing permissions revoked. Payroll and attendance records required by law are kept, linked to the anonymised record. This cannot be undone.",
+      "reject_body": "Explain why this request is being rejected. The worker will see this note.",
+      "note_label": "Note to worker",
+      "note_optional": "optional",
+      "note_placeholder": "e.g. Correction made to date of birth as per citizenship",
+      "note_required": "A note is required when rejecting a request.",
+      "approved_toast": "Request approved",
+      "rejected_toast": "Request rejected",
+      "already_handled": "This request has already been handled. The list has been refreshed.",
+      "empty_title": "No privacy requests",
+      "empty_body": "Requests that workers make from the app will appear here."
+    }
+  },
+  "scheduling": {
+    "title": "Roster",
+    "description": "Plan who works which shift this week. Workers see their shifts in the app.",
+    "description_supervisor": "Plan shifts for workers at your sites.",
+    "discard_confirm": "You have unsaved roster changes. Discard them?",
+    "saved_toast": "{count, plural, one {# shift saved} other {# shifts saved}}",
+    "copied_toast": "{count, plural, =0 {Nothing to copy from last week} one {Copied # shift} other {Copied # shifts}}",
+    "copy_previous": "Copy last week",
+    "save_count": "Save ({count})",
+    "save": "Save",
+    "prev_week": "Previous week",
+    "next_week": "Next week",
+    "this_week": "This week",
+    "discard": "Discard changes",
+    "empty_title": "No workers for this week",
+    "empty_body": "Active workers at the selected site appear here.",
+    "no_shifts_title": "No shifts set up",
+    "no_shifts_body": "Add your shifts (e.g. Morning 6–2, Evening 2–10) to build a roster.",
+    "add_shifts": "Add shifts",
+    "copy_title": "Copy last week's roster?",
+    "copy_body": "Last week's shifts are copied to this week, replacing any shifts already set for the same days.",
+    "copy_confirm": "Copy",
+    "worker": "Worker",
+    "cell_label": "Shift for {name} on {date}",
+    "unassigned": "—",
+    "off": "Off",
+    "off_hint": "= weekly off / day off"
+  },
   "shell": {
     "switch_org": "Switch organization",
     "organizations": "Your organizations",
     "new_org": "Add organization",
     "account_menu": "Account menu"
+  },
+  "training": {
+    "kind": {
+      "ctevt_affiliated": "CTEVT affiliated",
+      "private": "Private institute",
+      "ngo": "NGO",
+      "employer": "Employer",
+      "government": "Government"
+    },
+    "level": {
+      "basic": "Basic",
+      "level1": "Level 1",
+      "level2": "Level 2",
+      "level3": "Level 3",
+      "refresher": "Refresher"
+    },
+    "mode": {
+      "classroom": "Classroom",
+      "on_site": "On site",
+      "online": "Online"
+    },
+    "course_status": {
+      "open": "Open",
+      "closed": "Closed",
+      "completed": "Completed"
+    },
+    "enrollment_status": {
+      "applied": "Applied",
+      "enrolled": "Enrolled",
+      "completed": "Completed",
+      "dropped": "Dropped out",
+      "rejected": "Not selected"
+    },
+    "ops": {
+      "title": "Training",
+      "subtitle": "Training providers, courses and enrolments — steered by where workers are short.",
+      "tab_providers": "Providers",
+      "tab_courses": "Courses",
+      "tab_enrollments": "Enrolments",
+      "tab_shortages": "Shortages"
+    },
+    "providers": {
+      "add": "Add provider",
+      "edit": "Edit provider",
+      "name": "Name",
+      "name_ne": "Name in Nepali",
+      "kind": "Type",
+      "affiliation_no": "CTEVT affiliation no.",
+      "affiliation_required": "Required for CTEVT affiliated providers",
+      "district": "District",
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email",
+      "active": "Active",
+      "inactive": "Inactive",
+      "active_hint": "Inactive providers' courses are hidden from workers and employers.",
+      "courses_count": "{count, plural, =0 {No courses} one {# course} other {# courses}}",
+      "empty_title": "No training providers yet",
+      "empty_body": "Add CTEVT-affiliated schools, private institutes and NGOs that run courses.",
+      "saved": "Provider saved",
+      "deleted": "Provider deleted",
+      "delete_confirm": "Delete {name}? Providers with enrolments can only be made inactive.",
+      "search": "Search providers…",
+      "name_required": "Enter the provider name",
+      "phone_required": "Enter a phone number",
+      "district_required": "Choose a district"
+    },
+    "courses": {
+      "add": "Add course",
+      "edit": "Edit course",
+      "provider": "Provider",
+      "all_providers": "All providers",
+      "trade": "Trade",
+      "title_en": "Course title",
+      "title_ne": "Title in Nepali",
+      "description": "Description",
+      "level": "Level",
+      "duration_days": "Duration (days)",
+      "days": "{count, plural, one {# day} other {# days}}",
+      "fee": "Fee",
+      "free": "Free",
+      "sponsor_note": "Sponsorship note",
+      "sponsor_note_placeholder": "e.g. 50% fee waiver for women trainees",
+      "mode": "Mode",
+      "district": "District",
+      "starts_on": "Starts",
+      "seats": "Seats",
+      "seats_taken": "{taken} / {seats} seats",
+      "applied": "{count} applied",
+      "status": "Status",
+      "leads_to_nstb": "Prepares for the NSTB skill test",
+      "nstb_badge": "NSTB prep",
+      "empty_title": "No courses yet",
+      "empty_body": "Add a course for a provider. Start with trades in short supply.",
+      "saved": "Course saved",
+      "deleted": "Course deleted",
+      "delete_confirm": "Delete {title}? Courses with enrolments can only be closed.",
+      "search": "Search courses…",
+      "required": "Required",
+      "invalid_number": "Enter a whole number above 0"
+    },
+    "enrollments": {
+      "worker": "Worker",
+      "course": "Course",
+      "status": "Status",
+      "applied_at": "Applied",
+      "sponsor": "Sponsored by",
+      "self_applied": "Self",
+      "completed_on": "Completed",
+      "change_status": "Change status",
+      "to": {
+        "enrolled": "Mark enrolled",
+        "completed": "Mark completed",
+        "dropped": "Mark dropped out",
+        "rejected": "Mark not selected"
+      },
+      "completed_toast": "Completed — a verified training credential was added to {name}'s passport",
+      "status_toast": "{name}: {status}",
+      "credential": "Credential added",
+      "empty_title": "No enrolments yet",
+      "empty_body": "Workers apply from the app; employers can sponsor their workers.",
+      "all_courses": "All courses",
+      "all_statuses": "All statuses",
+      "complete_confirm_title": "Mark course completed?",
+      "complete_confirm_body": "{name} gets a verified \"{course}\" credential on their Skill Passport."
+    },
+    "shortages": {
+      "title": "Where workers are short",
+      "subtitle": "Open demand from employers against available verified workers. Plan courses for the biggest gaps.",
+      "district": "District",
+      "all_districts": "All of Nepal",
+      "window": "Window",
+      "days": "{count} days",
+      "demand": "Demand",
+      "supply": "Available verified",
+      "shortage": "Shortage",
+      "fill_rate": "Filled",
+      "open_jobs": "{count, plural, one {# open job} other {# open jobs}}",
+      "empty_title": "No demand data yet",
+      "empty_body": "Shortages appear once employers open jobs in this area.",
+      "legend_demand": "Openings not yet filled",
+      "legend_supply": "Available verified workers",
+      "plan_course": "Add a course"
+    },
+    "employer": {
+      "title": "Training",
+      "subtitle": "Upskill your team with CTEVT and NSTB-aligned courses near your sites.",
+      "tab_browse": "Courses",
+      "tab_sponsored": "Sponsored workers",
+      "recommended": "Recommended",
+      "recommended_hint": "Matches your team's trades or a skill in short supply",
+      "only_recommended": "Recommended only",
+      "all_trades": "All trades",
+      "sponsor": "Sponsor workers",
+      "sponsor_title": "Sponsor workers for {course}",
+      "sponsor_desc": "Choose active workers from your team. The provider will contact them to confirm a seat.",
+      "fee_note": "You pay the provider directly. KaamSathi does not charge you or the worker for training.",
+      "fee_total": "Estimated fee: {amount}",
+      "search_workers": "Search your workers…",
+      "no_workers": "No active workers found.",
+      "selected": "{count} selected",
+      "sponsored_toast": "{count, plural, one {# worker sponsored} other {# workers sponsored}}",
+      "skipped": "{count, plural, one {# skipped (already enrolled or not active)} other {# skipped (already enrolled or not active)}}",
+      "starts": "Starts {date}",
+      "seats_left": "{count, plural, =0 {Full} one {# seat left} other {# seats left}}",
+      "provider_contact": "Provider phone",
+      "empty_title": "No open courses right now",
+      "empty_body": "New courses are added every month. Check back soon.",
+      "sponsored_empty_title": "You have not sponsored anyone yet",
+      "sponsored_empty_body": "Sponsor workers from the Courses tab. Trained workers stay longer and earn verified certificates.",
+      "trained_badge": "Certificate added"
+    }
+  },
+  "trust": {
+    "level": {
+      "0": "Phone verified",
+      "1": "Identity verified",
+      "2": "Employment verified",
+      "3": "Skills assessed",
+      "4": "Certification verified",
+      "5": "Highly trusted"
+    },
+    "level_short": "L{level}",
+    "level_tooltip": "Verification level {level} of 5: {name}",
+    "level_aria": "Verification level {level}: {name}",
+    "reliability_value": "Reliability {score}",
+    "reliability_tooltip": "Reliability score (0–100) from employer feedback, hajiri, completed jobs, verified skills, rehiring and tenure. It is not a credit score.",
+    "reliability_aria": "Reliability score {score} out of 100",
+    "dispute_status": {
+      "open": "Open",
+      "employer_responded": "Employer responded",
+      "resolved": "Resolved",
+      "rejected": "Rejected"
+    },
+    "dispute_kind": {
+      "attendance": "Attendance (hajiri)",
+      "wage": "Wage / payslip",
+      "employment_dates": "Employment dates",
+      "rating": "Rating",
+      "identity": "Identity details",
+      "other": "Other"
+    },
+    "disputes": {
+      "org_description": "Workers can question their hajiri, wages or work record. Reply with what your records show — KaamSathi reviews and closes each dispute.",
+      "ops_description": "Disputes raised by workers. Check the employer's reply, correct records through the normal screens if needed, then resolve or reject.",
+      "tab_active": "Needs action",
+      "tab_open": "Open",
+      "tab_employer_responded": "Employer responded",
+      "tab_closed": "Closed",
+      "tab_all": "All",
+      "search_placeholder": "Search worker or text…",
+      "empty_title": "No disputes here",
+      "empty_org": "When a worker questions a record, it appears here for your reply.",
+      "empty_ops": "Nothing waiting. New disputes from workers will appear here.",
+      "no_employer": "No employer",
+      "payslip_month": "Payslip {month}",
+      "respond": "Respond",
+      "update_response": "Edit response",
+      "decide": "Resolve…",
+      "raised": "Raised",
+      "attendance_date": "Hajiri date",
+      "decided": "Closed",
+      "employer_note": "Employer's response",
+      "resolution_note": "KaamSathi decision",
+      "respond_title": "Respond to dispute",
+      "your_response": "Your response",
+      "response_hint": "Explain what your records show. The worker and KaamSathi will see this.",
+      "send_response": "Send response",
+      "responded_toast": "Response sent",
+      "decide_title": "Close dispute",
+      "decision": "Decision",
+      "resolve": "Resolve",
+      "reject": "Reject",
+      "resolved_toast": "Dispute resolved",
+      "rejected_toast": "Dispute rejected",
+      "no_auto_edit": "Closing a dispute does not change hajiri or payslips. Correct those records through the attendance or payroll screens first."
+    }
   },
   "workforce": {
     "common": {

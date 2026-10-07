@@ -1,0 +1,58 @@
+# KaamSathi reverse proxy — automatic HTTPS (Let's Encrypt / ZeroSSL) for both hosts.
+#   {$DOMAIN}      → Next.js web (marketing, employer portal /app, ops console /ops)
+#   {$API_DOMAIN}  → Django API (/api/v1 for the mobile app, signed file URLs, admin, static)
+# Caddy redirects HTTP→HTTPS itself and sets X-Forwarded-For/-Proto (Django trusts 1 proxy).
+
+{
+	email {$ACME_EMAIL}
+	# Uncomment while testing to avoid Let's Encrypt rate limits:
+	# acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+(common) {
+	encode zstd gzip
+	header {
+		-Server
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+	}
+	log {
+		output stdout
+		format json
+	}
+}
+
+{$DOMAIN} {
+	import common
+	reverse_proxy web:3000 {
+		health_uri /robots.txt
+		health_interval 30s
+	}
+}
+
+www.{$DOMAIN} {
+	redir https://{$DOMAIN}{uri} permanent
+}
+
+{$API_DOMAIN} {
+	import common
+	# Uploads (ID photos, imports) are capped at 10 MB by Django; allow some multipart overhead.
+	request_body {
+		max_size 12MB
+	}
+	header {
+		X-Frame-Options "DENY"
+		Referrer-Policy "same-origin"
+		X-Robots-Tag "noindex, nofollow"
+	}
+	reverse_proxy backend:8000 {
+		health_uri /api/v1/health
+		health_headers {
+			Host localhost
+		}
+		health_interval 30s
+		transport http {
+			read_timeout 90s
+		}
+	}
+}

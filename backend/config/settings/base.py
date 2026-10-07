@@ -16,6 +16,8 @@ for candidate in (BASE_DIR / ".env", BASE_DIR.parent / ".env"):
         environ.Env.read_env(str(candidate), overwrite=False)
 
 SECRET_KEY = env("DJANGO_SECRET_KEY", default="insecure-dev-key-change-me")
+# Older keys still accepted for signatures (sessions, signed file URLs) during key rotation.
+SECRET_KEY_FALLBACKS = env.list("DJANGO_SECRET_KEY_FALLBACKS", default=[])
 DEBUG = env.bool("DJANGO_DEBUG", default=False)
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
@@ -74,6 +76,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "config.urls"
+# Django admin lives at a non-default path in production (e.g. "ks-ops-7f3a/"); staff only.
+DJANGO_ADMIN_URL = env("DJANGO_ADMIN_URL", default="admin/").strip("/") + "/"
+# Release identifier (git SHA / tag) — set by the deploy; shown in /readiness and Sentry.
+RELEASE = env("RELEASE", default="")
 
 TEMPLATES = [
     {
@@ -119,21 +125,51 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = Path(env("MEDIA_ROOT", default=str(BASE_DIR / "media")))
 
+# Media is PRIVATE by default: citizenship ID photos, worker photos, certificates, contracts
+# and privacy exports are served only through short-lived signed URLs (apps.core.files,
+# GET /api/v1/files/<token>). Only these prefixes may be served/linked directly:
+PUBLIC_MEDIA_PREFIXES = env.list("PUBLIC_MEDIA_PREFIXES", default=["org-logos/"])
+FILE_URL_TTL_SECONDS = env.int("FILE_URL_TTL_SECONDS", default=600)
+# Absolute origin used in signed file URLs, e.g. https://api.kaamsathi.com (empty = request host).
+API_PUBLIC_URL = env("API_PUBLIC_URL", default="")
+# S3 only: redirect /files/<token> to a 60 s presigned URL instead of streaming through Django.
+FILES_S3_REDIRECT = env.bool("FILES_S3_REDIRECT", default=False)
+
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    # New sensitive documents (privacy exports, …): FileField(storage=apps.core.files.private_storage)
+    "private": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {"location": str(MEDIA_ROOT / "private"), "base_url": None},
+    },
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
 }
 # Optional S3-compatible media storage (e.g. AWS S3, DigitalOcean Spaces, MinIO).
+# The bucket must be PRIVATE (block all public access). Objects are written without an ACL
+# (bucket-owner only) and every URL boto3 generates is a presigned, expiring URL.
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default="")
 if AWS_STORAGE_BUCKET_NAME:
-    STORAGES["default"] = {"BACKEND": "storages.backends.s3.S3Storage"}
     AWS_S3_ENDPOINT_URL = env("AWS_S3_ENDPOINT_URL", default=None)
     AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME", default=None)
     AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default=None)
     AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default=None)
     AWS_DEFAULT_ACL = None
     AWS_QUERYSTRING_AUTH = True
+    AWS_QUERYSTRING_EXPIRE = FILE_URL_TTL_SECONDS
     AWS_S3_FILE_OVERWRITE = False
+    AWS_S3_SIGNATURE_VERSION = "s3v4"
+    STORAGES["default"] = {"BACKEND": "storages.backends.s3.S3Storage"}
+    STORAGES["private"] = {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "bucket_name": env("AWS_PRIVATE_BUCKET_NAME", default=AWS_STORAGE_BUCKET_NAME),
+            "location": "private",
+            "default_acl": None,
+            "querystring_auth": True,
+            "querystring_expire": 60,
+            "file_overwrite": False,
+        },
+    }
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
@@ -167,7 +203,16 @@ REST_FRAMEWORK = {
         "anon": env("THROTTLE_ANON", default="120/minute"),
         "user": env("THROTTLE_USER", default="600/minute"),
         "otp": env("THROTTLE_OTP", default="30/hour"),
+        # Unauthenticated public pages (Skill Passport, /public/*).
+        "public": env("THROTTLE_PUBLIC", default="60/minute"),
+        # Signed file downloads (/files/<token>).
+        "files": env("THROTTLE_FILES", default="240/minute"),
+        # Privacy requests (export/deletion) — expensive, rarely needed.
+        "privacy": env("THROTTLE_PRIVACY", default="10/hour"),
     },
+    # Number of trusted reverse proxies in front of Django (Caddy = 1) so throttles key on the
+    # real client IP from X-Forwarded-For instead of the proxy's address.
+    "NUM_PROXIES": env.int("NUM_PROXIES", default=None),
     "COERCE_DECIMAL_TO_STRING": True,
     "DATETIME_FORMAT": "iso-8601",
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
@@ -191,6 +236,8 @@ SPECTACULAR_SETTINGS = {
     "SCHEMA_PATH_PREFIX": r"/api/v1",
     "COMPONENT_SPLIT_REQUEST": True,
     "DISABLE_ERRORS_AND_WARNINGS": True,
+    # Schema-generation hints are not deploy/security issues; keep `check --deploy` signal clean.
+    "ENABLE_DJANGO_DEPLOY_CHECK": False,
 }
 
 # --- CORS / CSRF ------------------------------------------------------------
@@ -289,6 +336,11 @@ SSF_DUE_DAYS = env.int("SSF_DUE_DAYS", default=15)  # days after BS month end; v
 PAYOUT_PROVIDERS = env.list("PAYOUT_PROVIDERS", default=["bank_file"])  # + esewa, khalti, connectips
 PAYOUT_WEBHOOK_SECRETS = env.dict("PAYOUT_WEBHOOK_SECRETS", default={})
 PARTNER_GRANT_MAX_DAYS = env.int("PARTNER_GRANT_MAX_DAYS", default=90)
+# Devanagari TTF for PDFs (contracts, passport, privacy export). Bundled Mukta is used when unset;
+# install `uharfbuzz` (in requirements) so conjunct letters are shaped correctly.
+PDF_DEVANAGARI_FONT = env(
+    "PDF_DEVANAGARI_FONT", default=str(BASE_DIR / "assets" / "fonts" / "Mukta-Regular.ttf")
+)
 PUBLIC_WEB_URL = env("PUBLIC_WEB_URL", default="http://localhost:3000")
 PRIVACY_EXPORT_TTL_HOURS = env.int("PRIVACY_EXPORT_TTL_HOURS", default=72)
 

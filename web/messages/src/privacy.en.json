@@ -1,0 +1,58 @@
+{
+  "privacy": {
+    "kind": {
+      "export": "Data export",
+      "correction": "Correction",
+      "deletion": "Deletion"
+    },
+    "status": {
+      "received": "Received",
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "rejected": "Rejected"
+    },
+    "ops": {
+      "title": "Privacy requests",
+      "subtitle": "Data export, correction and deletion requests from workers under the Individual Privacy Act, 2075.",
+      "count": "{count, plural, one {# request} other {# requests}}",
+      "open_count": "{count, plural, one {# awaiting action} other {# awaiting action}}",
+      "filter_status": "Status",
+      "filter_kind": "Request type",
+      "all_statuses": "All statuses",
+      "all_kinds": "All types",
+      "col_worker": "Worker",
+      "col_kind": "Type",
+      "col_status": "Status",
+      "col_created": "Received",
+      "col_details": "Details",
+      "col_actions": "Actions",
+      "no_details": "No details given",
+      "no_worker": "No worker profile",
+      "requested_by": "Requested by {name}",
+      "handled_by": "Handled by {name}",
+      "response_note": "Response",
+      "completed_on": "Completed {date}",
+      "approve": "Approve",
+      "reject": "Reject",
+      "download": "Download export",
+      "download_expires": "Link expires {date}",
+      "export_preparing": "Export is being prepared",
+      "export_expired": "Export file expired",
+      "approve_title": "Approve {kind} request",
+      "reject_title": "Reject {kind} request",
+      "approve_export": "An export bundle of everything we hold on {name} will be generated. The worker can download it from the app until the link expires.",
+      "approve_correction": "Confirm that the correction for {name} has been made (or routed to the dispute flow). The worker will be notified.",
+      "approve_deletion": "{name}'s profile and documents will be anonymised and deleted, and all sharing permissions revoked. Payroll and attendance records required by law are kept, linked to the anonymised record. This cannot be undone.",
+      "reject_body": "Explain why this request is being rejected. The worker will see this note.",
+      "note_label": "Note to worker",
+      "note_optional": "optional",
+      "note_placeholder": "e.g. Correction made to date of birth as per citizenship",
+      "note_required": "A note is required when rejecting a request.",
+      "approved_toast": "Request approved",
+      "rejected_toast": "Request rejected",
+      "already_handled": "This request has already been handled. The list has been refreshed.",
+      "empty_title": "No privacy requests",
+      "empty_body": "Requests that workers make from the app will appear here."
+    }
+  }
+}

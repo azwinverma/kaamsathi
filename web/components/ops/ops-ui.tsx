@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { useFormat } from "@/lib/use-format";
+import { mediaSrc } from "@/lib/media";
 import { cn } from "@/lib/utils";
 import { SHORTLIST_SLA_HOURS, slaTone } from "./helpers";
 
@@ -71,6 +72,7 @@ export function DocImage({
   className?: string;
   tall?: boolean;
 }) {
+  src = mediaSrc(src);
   const t = useTranslations("ops.common");
   const tc = useTranslations("common");
   const [open, setOpen] = React.useState(false);

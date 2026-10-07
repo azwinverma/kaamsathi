@@ -104,10 +104,21 @@ def district_ref(district):
 
 
 def file_url(request, field):
+    """URL for an uploaded file.
+
+    Files under ``PUBLIC_MEDIA_PREFIXES`` (org logos) use their storage URL; everything else is
+    private and gets a short-lived signed ``/files/<token>`` URL bound to the request user (see
+    ``apps.core.files``). Callers must only render this for users allowed to see the file; for
+    worker documents use ``apps.core.files.worker_file_url`` which applies the access rules.
+    """
     if not field:
         return None
+    from .files import is_public_name, request_user, signed_url
+
+    if not is_public_name(field.name or ""):
+        return signed_url(field, request_user(request), request)
     try:
         url = field.url
     except ValueError:
         return None
-    return request.build_absolute_uri(url) if request is not None else url
+    return request.build_absolute_uri(url) if request is not None and url.startswith("/") else url

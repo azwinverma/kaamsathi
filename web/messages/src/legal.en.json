@@ -1,0 +1,293 @@
+{
+  "legal": {
+    "draft_title": "Draft — pending legal review",
+    "draft_body": "This document is a working draft. It has not yet been reviewed by a lawyer and may change before launch.",
+    "version": "Draft version · October 2026",
+    "contents": "Contents",
+    "placeholder": "placeholder",
+    "back_home": "Back to home",
+    "privacy_link": "Privacy Policy",
+    "terms_link": "Terms of Service",
+    "footer_note": "KaamSathi · Kathmandu, Nepal",
+    "contact": {
+      "title": "Grievance officer and contact",
+      "body": "For privacy questions, requests or complaints, contact our grievance officer. You can also raise a request in the KaamSathi app under Privacy requests.",
+      "officer_label": "Grievance officer",
+      "officer": "Privacy and Grievance Officer, KaamSathi",
+      "email_label": "Email",
+      "email": "privacy@kaamsathi.com",
+      "phone_label": "Phone",
+      "phone": "+977-01-XXXXXXX",
+      "address_label": "Address",
+      "address": "Kathmandu, Nepal",
+      "placeholder_note": "Contact details marked as placeholders will be confirmed before launch."
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "description": "How KaamSathi collects, uses, shares and protects personal information under Nepal's Individual Privacy Act, 2075.",
+      "intro": "KaamSathi helps workers in Nepal find work and get paid on time, and helps employers hire, track attendance and run payroll. This policy explains what personal information we hold, why, who can see it, and the choices you have. We follow the Individual Privacy Act, 2075 (वैयक्तिक गोपनीयता सम्बन्धी ऐन, २०७५) and the rules made under it.",
+      "sections": [
+        {
+          "id": "principles",
+          "title": "Our promises",
+          "body": ["These promises apply to every part of KaamSathi:"],
+          "items": [
+            "Workers never pay KaamSathi any fee — not to register, apply, get verified or get paid.",
+            "You own your record. Sharing your information outside the organisation that employs you needs your explicit, revocable consent.",
+            "Every time someone views your full profile, it is logged and you can see it in the app.",
+            "We never sell personal data and we do not show advertising.",
+            "KaamSathi never lends money and never holds customer funds.",
+            "We do not recruit for jobs abroad."
+          ]
+        },
+        {
+          "id": "collect",
+          "title": "Information we collect",
+          "body": ["We collect only what we need to run the service:"],
+          "items": [
+            "Workers: name, phone number, date of birth, gender, address and district, photo, citizenship or national ID number and photos of the ID document, skills, experience, training certificates, expected wage and availability.",
+            "Work records: job applications, employment details, attendance (hajiri), leave, advances (peski), payslips and Social Security Fund (SSF) details, ratings and disputes.",
+            "Location: only at the moment of an attendance check-in, to confirm you are at the work site. We do not track your location in the background.",
+            "Employers: organisation name, PAN, address, work sites, and the names and phone numbers of the people who use the portal.",
+            "Technical information: basic device and log data needed for security, and cookies that keep you signed in and remember your language and theme. We do not use advertising trackers."
+          ]
+        },
+        {
+          "id": "use",
+          "title": "How we use information",
+          "body": ["We use personal information to:"],
+          "items": [
+            "match workers with suitable jobs and show employers the candidates who applied;",
+            "verify identity and skills so that employers can trust a profile;",
+            "record attendance and calculate wages, payslips, SSF and tax deductions;",
+            "calculate a reliability score from your verified work history;",
+            "prevent fraud, keep accounts secure and resolve disputes;",
+            "provide support and send service messages such as OTPs and pay notifications;",
+            "publish labour-market statistics that are aggregated and anonymised, so no individual can be identified."
+          ]
+        },
+        {
+          "id": "consent",
+          "title": "Your consent",
+          "body": [
+            "We ask for your consent separately for each purpose, and you can withdraw any of them at any time from the app. Withdrawing consent does not undo processing that was already lawful, and it does not remove records that the law requires us or your employer to keep."
+          ],
+          "items": [
+            "Data processing (data_processing): to create your account and run the service. Without it we cannot provide KaamSathi to you.",
+            "Profile sharing (profile_share): to show your profile to employers whose jobs you apply for.",
+            "Work history sharing (history_share): to show your verified work history and reliability score to prospective employers."
+          ]
+        },
+        {
+          "id": "who-sees",
+          "title": "Who can see your information",
+          "body": [
+            "Employers see what they need for employment: the profile details relevant to a job you applied for, and, while you work for them, your attendance, leave and pay records with that employer only. They do not see your records with other employers unless you have agreed to history sharing.",
+            "Identity documents such as citizenship photos are visible only to you and to KaamSathi verification staff. Employers see that you are verified, not the documents themselves.",
+            "Every view of your full profile — by an employer, a partner or KaamSathi staff — is logged with who viewed it and when, and you can see this log in the app."
+          ]
+        },
+        {
+          "id": "partners",
+          "title": "Sharing with partners",
+          "body": [
+            "Some services are provided by licensed partners: banks, insurers, training providers and licensed recruitment agencies. We share your information with a partner only when you give explicit consent on a screen that shows the partner's name, the purpose, exactly which information will be shared, and for how long.",
+            "Each consent is limited to that purpose and that period, and you can revoke it at any time in the app. Every partner access is logged and visible to you.",
+            "Loans, earned-wage access and insurance are provided by the partner on its own books. KaamSathi does not lend and does not hold your money. We share your passport with a licensed recruitment agency only when you ask us to, and we never match workers for jobs abroad."
+          ]
+        },
+        {
+          "id": "providers",
+          "title": "Service providers and authorities",
+          "body": [
+            "We use trusted service providers for hosting, SMS and payroll payments (payroll money moves from the employer through a licensed payment provider directly to the worker). They may process information only to provide their service to us and must protect it.",
+            "We disclose information to government authorities only when Nepali law requires it, for example under a court order or for SSF and tax filings."
+          ]
+        },
+        {
+          "id": "no-sale",
+          "title": "We never sell your data",
+          "body": [
+            "We do not sell, rent or trade personal information, and we do not use it for advertising. Our income comes from employer fees, not from your data."
+          ]
+        },
+        {
+          "id": "score",
+          "title": "Reliability score",
+          "body": [
+            "The reliability score summarises your verified work history, such as attendance, completed engagements and resolved disputes. It is not a credit score and KaamSathi does not use it to make lending decisions. You can see how your score is made up and raise a dispute if something is wrong."
+          ]
+        },
+        {
+          "id": "retention",
+          "title": "How long we keep information",
+          "body": [
+            "We keep your information while your account is active. If you delete your account, we anonymise your profile and delete your identity documents, photos and sharing permissions.",
+            "Payroll and attendance records must be kept for the periods required by the Labour Act, 2074, tax law and Social Security Fund rules. These records are kept after deletion but are linked only to an anonymised record. Data export files expire automatically after a short time, and security logs are kept only for a limited period."
+          ]
+        },
+        {
+          "id": "security",
+          "title": "How we protect information",
+          "body": [
+            "Information is encrypted in transit, access is limited by role, document links are short-lived, and staff access to worker records is logged. No system is perfectly secure; if a breach affects you, we will inform you and the relevant authority as required by law."
+          ]
+        },
+        {
+          "id": "rights",
+          "title": "Your rights",
+          "body": [
+            "You can make any of these requests in the app under Privacy requests, or by contacting our grievance officer. We will verify your identity and aim to respond within 30 days."
+          ],
+          "items": [
+            "Access and export: get a copy of the information we hold about you.",
+            "Correction: ask us to fix information that is wrong or incomplete.",
+            "Deletion: ask us to delete your account, subject to records the law requires us to keep.",
+            "Withdraw consent: stop any sharing at any time.",
+            "Complain: raise a grievance with us, and, if unresolved, with the relevant authority in Nepal."
+          ]
+        },
+        {
+          "id": "age",
+          "title": "Age limit",
+          "body": [
+            "KaamSathi is for people aged 18 and over. We do not knowingly register minors, and we remove any such account we find."
+          ]
+        },
+        {
+          "id": "changes",
+          "title": "Changes to this policy",
+          "body": [
+            "We will update this policy when our service or the law changes. If a change affects how your information is shared, we will tell you in the app and ask for fresh consent where required."
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "description": "The terms that apply to workers and employers using KaamSathi.",
+      "intro": "These terms are an agreement between you and KaamSathi. By creating an account or using the app or employer portal, you agree to them. Please read them together with our Privacy Policy.",
+      "sections": [
+        {
+          "id": "service",
+          "title": "What KaamSathi is",
+          "body": [
+            "KaamSathi is a platform that helps employers in Nepal hire verified workers, record attendance and run payroll, and helps workers find work and keep a verified record of their work."
+          ],
+          "items": [
+            "KaamSathi is not the employer of workers hired through the platform. The employing organisation is the employer.",
+            "KaamSathi is not a foreign employment agency and does not recruit for jobs abroad.",
+            "KaamSathi is not a bank or lender and never holds customer funds. Wages move from the employer through a licensed payment provider to the worker."
+          ]
+        },
+        {
+          "id": "accounts",
+          "title": "Accounts",
+          "body": [
+            "You must be at least 18 years old. You sign in with your mobile number and a one-time code; keep your phone and codes secure. Information you give us must be true and up to date. If you use the employer portal, you confirm that you are authorised to act for your organisation."
+          ]
+        },
+        {
+          "id": "fees",
+          "title": "Fees",
+          "body": [
+            "Workers never pay any fee to KaamSathi. If anyone asks a worker for money in KaamSathi's name, please report it to us.",
+            "Employers pay the fees shown on our pricing page or agreed in writing, plus applicable taxes. Fees are not refundable except where stated or required by law."
+          ]
+        },
+        {
+          "id": "record",
+          "title": "The worker's record",
+          "body": [
+            "Workers own their record. Information is shared outside the employing organisation only with the worker's explicit, purpose-bound, time-limited and revocable consent, and every profile view is logged and visible to the worker. Our Privacy Policy explains this in detail."
+          ]
+        },
+        {
+          "id": "employers",
+          "title": "Employer obligations",
+          "body": ["If you employ workers through KaamSathi, you must:"],
+          "items": [
+            "comply with the Labour Act, 2074, the Labour Rules, 2075 and other applicable laws;",
+            "pay at least the minimum wage set by the Government of Nepal, on time, for all work done;",
+            "register eligible workers with the Social Security Fund and deposit contributions as required by the Contribution-Based Social Security Act, 2074;",
+            "keep attendance and payroll records accurate and correct mistakes promptly;",
+            "provide a safe workplace and never use forced labour, child labour or discriminatory practices;",
+            "use worker information only for employment purposes and never charge workers any fee for a job."
+          ]
+        },
+        {
+          "id": "score",
+          "title": "Reliability score and ratings",
+          "body": [
+            "The reliability score reflects verified work history. It is not a credit score. Ratings must be honest and based on real work; either side can raise a dispute, which our team reviews."
+          ]
+        },
+        {
+          "id": "acceptable-use",
+          "title": "Acceptable use",
+          "body": ["You must not:"],
+          "items": [
+            "create fake profiles, jobs, attendance or payroll entries;",
+            "post jobs that are illegal, discriminatory, or for work abroad;",
+            "ask workers for money, deposits or documents not needed for the job;",
+            "copy, scrape or resell information from KaamSathi;",
+            "harass, threaten or mislead other users;",
+            "try to get around our security or access accounts that are not yours."
+          ]
+        },
+        {
+          "id": "content",
+          "title": "Your content and our service",
+          "body": [
+            "You keep ownership of the information you add. You allow us to use it only to provide and improve KaamSathi as described in our Privacy Policy. The KaamSathi name, logo and software belong to us."
+          ]
+        },
+        {
+          "id": "suspension",
+          "title": "Suspension and closing accounts",
+          "body": [
+            "We may suspend or close an account that breaks these terms or the law, after notice where reasonable. You can close your account at any time from the app or by contacting us. Records the law requires to be kept are retained as described in the Privacy Policy."
+          ]
+        },
+        {
+          "id": "disclaimer",
+          "title": "Disclaimers",
+          "body": [
+            "Verification reduces risk but cannot guarantee everything about a person or an employer. We do not guarantee that a job will be filled or that a worker will be hired. The service is provided as it is, and we work to keep it available but cannot promise it will always be error-free."
+          ]
+        },
+        {
+          "id": "liability",
+          "title": "Limitation of liability",
+          "body": [
+            "To the extent allowed by Nepali law, KaamSathi is not liable for indirect or consequential losses, and our total liability to an employer is limited to the fees that employer paid us in the 12 months before the claim. Nothing in these terms limits liability that cannot be limited by law, or any right a worker has under labour law against their employer.",
+            "Employers are responsible for their obligations as employers and agree to compensate KaamSathi for losses caused by their breach of labour law or of these terms."
+          ]
+        },
+        {
+          "id": "law",
+          "title": "Governing law and disputes",
+          "body": [
+            "These terms are governed by the laws of Nepal. Please contact our grievance officer first; we will try to resolve any complaint quickly. Disputes that cannot be resolved will be handled by the competent courts in Kathmandu, Nepal."
+          ]
+        },
+        {
+          "id": "changes",
+          "title": "Changes to these terms",
+          "body": [
+            "We may update these terms. We will give notice in the app or by SMS before important changes take effect. If you keep using KaamSathi after that, the updated terms apply."
+          ]
+        }
+      ]
+    },
+    "error": {
+      "not_found_title": "Page not found",
+      "not_found_body": "The page you are looking for does not exist or has moved.",
+      "error_title": "Something went wrong",
+      "error_body": "An unexpected error occurred. Please try again.",
+      "retry": "Try again",
+      "go_home": "Go to home",
+      "reference": "Reference: {digest}"
+    }
+  }
+}

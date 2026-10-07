@@ -36,11 +36,21 @@ def diff(before: dict, after: dict) -> dict:
 
 
 def client_ip(request):
+    """Client IP, trusting X-Forwarded-For only for the configured number of proxies.
+
+    Mirrors DRF throttling (REST_FRAMEWORK["NUM_PROXIES"]): the leftmost entries of the header are
+    client-supplied and can be forged, so we take the address appended by our outermost proxy.
+    """
     if request is None:
         return None
+    from django.conf import settings
+
+    num_proxies = settings.REST_FRAMEWORK.get("NUM_PROXIES")
     forwarded = request.META.get("HTTP_X_FORWARDED_FOR")
-    if forwarded:
-        return forwarded.split(",")[0].strip() or None
+    if forwarded and num_proxies:
+        addrs = [a.strip() for a in forwarded.split(",") if a.strip()]
+        if addrs:
+            return addrs[-min(num_proxies, len(addrs))]
     return request.META.get("REMOTE_ADDR") or None
 
 

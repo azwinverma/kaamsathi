@@ -280,3 +280,668 @@ msgstr "अङ्ग्रेजी"
 
 msgid "Nepali"
 msgstr "नेपाली"
+
+# --- trust + crews (msgctxt) ---
+msgctxt "trust"
+msgid "Job application"
+msgstr "जागिर आवेदन"
+
+msgctxt "trust"
+msgid "Employment record"
+msgstr "रोजगारी अभिलेख"
+
+msgctxt "trust"
+msgid "KaamSathi staff"
+msgstr "कामसाथी कर्मचारी"
+
+msgctxt "trust"
+msgid "Partner (with your consent)"
+msgstr "साझेदार संस्था (तपाईंको सहमतिमा)"
+
+msgctxt "trust"
+msgid "Skill Passport link"
+msgstr "सीप राहदानी लिङ्क"
+
+msgctxt "trust"
+msgid "Crew lead"
+msgstr "नाइके"
+
+msgctxt "trust"
+msgid "Phone verified"
+msgstr "फोन प्रमाणित"
+
+msgctxt "trust"
+msgid "Identity verified"
+msgstr "परिचय प्रमाणित"
+
+msgctxt "trust"
+msgid "Employment verified"
+msgstr "रोजगारी प्रमाणित"
+
+msgctxt "trust"
+msgid "Skills assessed"
+msgstr "सीप परीक्षण भएको"
+
+msgctxt "trust"
+msgid "Certification verified"
+msgstr "प्रमाणपत्र प्रमाणित"
+
+msgctxt "trust"
+msgid "Highly trusted"
+msgstr "अति भरपर्दो"
+
+msgctxt "trust"
+msgid "Attendance (hajiri)"
+msgstr "हाजिरी"
+
+msgctxt "trust"
+msgid "Wage / payslip"
+msgstr "तलब / तलब विवरण"
+
+msgctxt "trust"
+msgid "Employment dates"
+msgstr "रोजगारी मिति"
+
+msgctxt "trust"
+msgid "Rating"
+msgstr "मूल्याङ्कन"
+
+msgctxt "trust"
+msgid "Identity details"
+msgstr "परिचय विवरण"
+
+msgctxt "trust"
+msgid "Other"
+msgstr "अन्य"
+
+msgctxt "trust"
+msgid "Open"
+msgstr "खुला"
+
+msgctxt "trust"
+msgid "Employer responded"
+msgstr "रोजगारदाताले जवाफ दिएको"
+
+msgctxt "trust"
+msgid "Resolved"
+msgstr "समाधान भयो"
+
+msgctxt "trust"
+msgid "Rejected"
+msgstr "अस्वीकृत"
+
+msgctxt "trust"
+msgid "Get your citizenship card verified by KaamSathi."
+msgstr "आफ्नो नागरिकता प्रमाणपत्र कामसाथीबाट प्रमाणित गराउनुहोस्।"
+
+msgctxt "trust"
+msgid "Work 30 days with an employer that records hajiri on KaamSathi."
+msgstr "कामसाथीमा हाजिरी राख्ने रोजगारदातासँग ३० दिन काम गर्नुहोस्।"
+
+msgctxt "trust"
+msgid "Take a skill assessment for your trade."
+msgstr "आफ्नो पेसाको सीप परीक्षण दिनुहोस्।"
+
+msgctxt "trust"
+msgid "Upload your NSTB certificate."
+msgstr "आफ्नो सीप परीक्षण (NSTB) प्रमाणपत्र अपलोड गर्नुहोस्।"
+
+msgctxt "trust"
+msgid "Keep your hajiri regular — absences lower your reliability score."
+msgstr "हाजिरी नियमित राख्नुहोस् — अनुपस्थितिले तपाईंको भरपर्दो अंक घटाउँछ।"
+
+msgctxt "trust"
+msgid "Staying longer with one employer raises your reliability score."
+msgstr "एउटै रोजगारदातासँग लामो समय काम गर्दा भरपर्दो अंक बढ्छ।"
+
+msgctxt "trust"
+msgid "You can rate an employer after 30 days of work or when the job ends."
+msgstr "३० दिन काम गरेपछि वा काम सकिएपछि मात्र रोजगारदाताको मूल्याङ्कन गर्न सकिन्छ।"
+
+msgctxt "trust"
+msgid "You have already rated this employer."
+msgstr "तपाईंले यो रोजगारदाताको मूल्याङ्कन गरिसक्नुभएको छ।"
+
+msgctxt "trust"
+msgid "This employment is not yours."
+msgstr "यो रोजगारी तपाईंको होइन।"
+
+msgctxt "trust"
+msgid "This payslip is not yours."
+msgstr "यो तलब विवरण तपाईंको होइन।"
+
+msgctxt "trust"
+msgid "This dispute is already closed."
+msgstr "यो उजुरी पहिले नै बन्द भइसकेको छ।"
+
+msgctxt "trust"
+msgid "Only open disputes can be answered."
+msgstr "खुला उजुरीको मात्र जवाफ दिन सकिन्छ।"
+
+msgctxt "trust"
+msgid "Choose the employment or payslip this dispute is about."
+msgstr "यो उजुरी कुन रोजगारी वा तलब विवरणसँग सम्बन्धित हो छान्नुहोस्।"
+
+msgctxt "crews"
+msgid "Pending"
+msgstr "बाँकी"
+
+msgctxt "crews"
+msgid "Eligible"
+msgstr "योग्य"
+
+msgctxt "crews"
+msgid "Paid"
+msgstr "भुक्तानी भयो"
+
+msgctxt "crews"
+msgid "Void"
+msgstr "रद्द"
+
+msgctxt "crews"
+msgid "You do not lead a crew yet."
+msgstr "तपाईं अहिलेसम्म कुनै टोलीको नाइके हुनुहुन्न।"
+
+msgctxt "crews"
+msgid "You already lead a crew."
+msgstr "तपाईं पहिले नै एउटा टोलीको नाइके हुनुहुन्छ।"
+
+msgctxt "crews"
+msgid "This worker is already in another naike's crew."
+msgstr "यो कामदार पहिले नै अर्को नाइकेको टोलीमा हुनुहुन्छ।"
+
+msgctxt "crews"
+msgid "You cannot add yourself to your own crew."
+msgstr "तपाईं आफैँलाई आफ्नो टोलीमा थप्न सक्नुहुन्न।"
+
+msgctxt "crews"
+msgid "This worker is not in your crew."
+msgstr "यो कामदार तपाईंको टोलीमा हुनुहुन्न।"
+
+msgctxt "crews"
+msgid "Your crew is not active."
+msgstr "तपाईंको टोली सक्रिय छैन।"
+
+msgctxt "crews"
+msgid "Only eligible referrals can be marked paid."
+msgstr "योग्य सिफारिस मात्र भुक्तानी भएको चिन्ह लगाउन सकिन्छ।"
+
+msgctxt "crews"
+msgid "Only pending or eligible referrals can be voided."
+msgstr "बाँकी वा योग्य सिफारिस मात्र रद्द गर्न सकिन्छ।"
+
+msgctxt "crews"
+msgid "Employment ended before the hold period."
+msgstr "रोक अवधि पुग्नु अघि नै रोजगारी अन्त्य भयो।"
+
+msgctxt "crews"
+msgid "No employment found for this placement."
+msgstr "यो नियुक्तिको रोजगारी फेला परेन।"
+
+msgctxt "crews"
+msgid "Enter a valid 10-digit mobile number (97/98…)."
+msgstr "मान्य १० अङ्कको मोबाइल नम्बर (९७/९८…) लेख्नुहोस्।"
+
+# --- partners / finance / insights ---
+msgid "Bank"
+msgstr "बैंक"
+
+msgid "Microfinance"
+msgstr "लघुवित्त"
+
+msgid "Insurer"
+msgstr "बीमा कम्पनी"
+
+msgid "Wallet / payment provider"
+msgstr "वालेट / भुक्तानी सेवा प्रदायक"
+
+msgid "Training provider"
+msgstr "तालिम प्रदायक"
+
+msgid "Recruitment agency"
+msgstr "म्यानपावर / भर्ना एजेन्सी"
+
+msgid "Government"
+msgstr "सरकारी निकाय"
+
+msgid "Nepal Rastra Bank"
+msgstr "नेपाल राष्ट्र बैंक"
+
+msgid "Nepal Insurance Authority"
+msgstr "नेपाल बीमा प्राधिकरण"
+
+msgid "Department of Foreign Employment"
+msgstr "वैदेशिक रोजगार विभाग"
+
+msgid "CTEVT"
+msgstr "प्राविधिक शिक्षा तथा व्यावसायिक तालिम परिषद् (CTEVT)"
+
+msgid "Other regulator"
+msgstr "अन्य नियामक"
+
+msgid "Read your verified profile"
+msgstr "तपाईंको प्रमाणित प्रोफाइल हेर्न"
+
+msgid "Read your verified earnings"
+msgstr "तपाईंको प्रमाणित आम्दानी हेर्न"
+
+msgid "Read your Skill Passport"
+msgstr "तपाईंको सीप पासपोर्ट हेर्न"
+
+msgid "Update referral status"
+msgstr "सिफारिसको स्थिति अद्यावधिक गर्न"
+
+msgid "Loan assessment"
+msgstr "कर्जा मूल्याङ्कन"
+
+msgid "Insurance"
+msgstr "बीमा"
+
+msgid "Earned wage access"
+msgstr "कमाएको तलब अग्रिम"
+
+msgid "Recruitment"
+msgstr "भर्ना"
+
+msgid "Training"
+msgstr "तालिम"
+
+msgid "Verification"
+msgstr "प्रमाणीकरण"
+
+msgid "Revoked"
+msgstr "फिर्ता लिइएको"
+
+msgid "Expired"
+msgstr "म्याद सकिएको"
+
+msgid "Loan"
+msgstr "कर्जा"
+
+msgid "Savings"
+msgstr "बचत"
+
+msgid "Tool finance"
+msgstr "औजार कर्जा"
+
+msgid "Vehicle finance"
+msgstr "सवारी कर्जा"
+
+msgid "Submitted"
+msgstr "पेश गरिएको"
+
+msgid "Under review"
+msgstr "समीक्षामा"
+
+msgid "Not approved"
+msgstr "स्वीकृत भएन"
+
+msgid "Disbursed"
+msgstr "रकम दिइएको"
+
+msgid "This offer is not available right now."
+msgstr "यो प्रस्ताव अहिले उपलब्ध छैन।"
+
+#, python-format
+msgid "Needs %(need)s months of verified (paid) payslips — you have %(have)s."
+msgstr "%(need)s महिनाको प्रमाणित (भुक्तानी भएको) तलबपत्र चाहिन्छ — तपाईंसँग %(have)s महिनाको छ।"
+
+#, python-format
+msgid "Needs average monthly net pay of at least %(amount)s."
+msgstr "औसत मासिक खुद तलब कम्तीमा %(amount)s हुनुपर्छ।"
+
+#, python-format
+msgid "Maximum is %(amount)s."
+msgstr "बढीमा %(amount)s।"
+
+msgid "You already have an open request for this offer."
+msgstr "यो प्रस्तावका लागि तपाईंको अनुरोध पहिले नै खुला छ।"
+
+#, python-format
+msgid "Offered by %(partner)s, regulated by %(regulator)s"
+msgstr "%(partner)s द्वारा प्रस्तावित, %(regulator)s द्वारा नियमन गरिएको"
+
+#, python-format
+msgid "Offered by %(partner)s"
+msgstr "%(partner)s द्वारा प्रस्तावित"
+
+msgid "This partner is not active."
+msgstr "यो साझेदार सक्रिय छैन।"
+
+msgid "Choose at least one valid data scope."
+msgstr "कम्तीमा एउटा मान्य डाटा अनुमति छान्नुहोस्।"
+
+#, python-format
+msgid "Must be between 1 and %(max)s days."
+msgstr "१ देखि %(max)s दिनसम्म हुनुपर्छ।"
+
+msgid "Partner not found."
+msgstr "साझेदार भेटिएन।"
+
+# --- compliance / payouts / scheduling ---
+msgid "SSF filing can be prepared only for approved or paid payroll runs."
+msgstr "स्वीकृत वा भुक्तानी भएको तलबी मात्र सामाजिक सुरक्षा कोष विवरण तयार गर्न सकिन्छ।"
+
+msgid "This SSF filing is already submitted."
+msgstr "यो सामाजिक सुरक्षा कोष विवरण पहिल्यै बुझाइसकिएको छ।"
+
+msgid "An SSF filing cannot move back to an earlier status."
+msgstr "सामाजिक सुरक्षा कोष विवरणलाई अघिल्लो अवस्थामा फर्काउन मिल्दैन।"
+
+msgid "Your organization is registered with SSF."
+msgstr "तपाईंको संस्था सामाजिक सुरक्षा कोषमा दर्ता छ।"
+
+msgid "Add your SSF employer registration number in organization settings."
+msgstr "संस्थाको सेटिङमा सामाजिक सुरक्षा कोषको रोजगारदाता दर्ता नम्बर थप्नुहोस्।"
+
+msgid "Every SSF-enrolled worker has an SSF ID."
+msgstr "सामाजिक सुरक्षा कोषमा सूचीकृत सबै कामदारको परिचय नम्बर छ।"
+
+#, python-format
+msgid "%(count)s SSF filings are overdue."
+msgstr "%(count)s वटा सामाजिक सुरक्षा कोष विवरणको म्याद नाघेको छ।"
+
+#, python-format
+msgid "%(count)s SSF filings are due within 5 days."
+msgstr "%(count)s वटा सामाजिक सुरक्षा कोष विवरण ५ दिनभित्र बुझाउनुपर्छ।"
+
+msgid "SSF filings are up to date."
+msgstr "सामाजिक सुरक्षा कोष विवरण अद्यावधिक छन्।"
+
+msgid "Everyone is paid at least the minimum wage."
+msgstr "सबैलाई कम्तीमा न्यूनतम पारिश्रमिक दिइएको छ।"
+
+msgid "Every worker has a written contract."
+msgstr "सबै कामदारको लिखित सम्झौता छ।"
+
+msgid "All contracts are accepted."
+msgstr "सबै सम्झौता स्वीकार भएका छन्।"
+
+msgid "Hajiri is marked for the last 7 days."
+msgstr "पछिल्ला ७ दिनको हाजिरी भरिएको छ।"
+
+#, python-format
+msgid "Payroll for %(month)s is done."
+msgstr "%(month)s को तलबी सम्पन्न भयो।"
+
+msgid "No certificates expire in the next 30 days."
+msgstr "आउँदो ३० दिनमा कुनै प्रमाणपत्रको म्याद सकिँदैन।"
+
+#, python-format
+msgid "%(count)s SSF-enrolled workers have no SSF ID."
+msgstr "सामाजिक सुरक्षा कोषमा सूचीकृत %(count)s जना कामदारको परिचय नम्बर छैन।"
+
+#, python-format
+msgid "%(count)s workers are paid below the minimum wage."
+msgstr "%(count)s जना कामदारलाई न्यूनतम पारिश्रमिकभन्दा कम दिइएको छ।"
+
+#, python-format
+msgid "%(count)s workers have no written contract."
+msgstr "%(count)s जना कामदारको लिखित सम्झौता छैन।"
+
+#, python-format
+msgid "%(count)s contracts are waiting for the worker's acceptance."
+msgstr "%(count)s वटा सम्झौता कामदारको स्वीकृतिको पर्खाइमा छन्।"
+
+#, python-format
+msgid "%(count)s worker-days of hajiri are not marked in the last 7 days."
+msgstr "पछिल्ला ७ दिनमा %(count)s कामदार-दिनको हाजिरी भरिएको छैन।"
+
+#, python-format
+msgid "Payroll for %(month)s is still a draft."
+msgstr "%(month)s को तलबी अझै मस्यौदामा छ।"
+
+#, python-format
+msgid "Payroll for %(month)s has not been run."
+msgstr "%(month)s को तलबी चलाइएको छैन।"
+
+#, python-format
+msgid "%(count)s worker certificates expire within 30 days."
+msgstr "%(count)s वटा कामदार प्रमाणपत्रको म्याद ३० दिनभित्र सकिन्छ।"
+
+msgid "Enter the SSF receipt number."
+msgstr "सामाजिक सुरक्षा कोषको रसिद नम्बर लेख्नुहोस्।"
+
+msgid "Prepared"
+msgstr "तयार भयो"
+
+msgid "Acknowledged"
+msgstr "प्राप्ति स्वीकार भयो"
+
+msgid "Payouts can be created only for approved payroll runs."
+msgstr "स्वीकृत तलबीको मात्र भुक्तानी ब्याच बनाउन सकिन्छ।"
+
+msgid "No payslips in this run can be paid with this provider."
+msgstr "यो तलबीका कुनै पनि तलब विवरण यो माध्यमबाट भुक्तानी गर्न मिल्दैन।"
+
+msgid "A batch with paid items cannot be cancelled."
+msgstr "भुक्तानी भइसकेका विवरण भएको ब्याच रद्द गर्न मिल्दैन।"
+
+msgid "Submit the batch before marking payments."
+msgstr "भुक्तानी चिन्ह लगाउनुअघि ब्याच पठाउनुहोस्।"
+
+msgid "A paid item cannot be changed."
+msgstr "भुक्तानी भइसकेको विवरण बदल्न मिल्दैन।"
+
+msgid "Only bank-file batches are reconciled from a file."
+msgstr "फाइलबाट बैंक फाइल ब्याच मात्र मिलान गर्न सकिन्छ।"
+
+msgid "Rejected by bank"
+msgstr "बैंकले अस्वीकार गर्‍यो"
+
+msgid "No eligible payslips."
+msgstr "योग्य तलब विवरण छैन।"
+
+msgid "Bank file"
+msgstr "बैंक फाइल"
+
+msgid "ConnectIPS"
+msgstr "कनेक्टआइपीएस"
+
+msgid "Processing"
+msgstr "प्रक्रियामा"
+
+msgid "Completed"
+msgstr "सम्पन्न"
+
+msgid "Partially failed"
+msgstr "आंशिक रूपमा असफल"
+
+msgid "Cancelled"
+msgstr "रद्द"
+
+msgid "Sent"
+msgstr "पठाइयो"
+
+msgid "Failed"
+msgstr "असफल"
+
+msgid "Bank file payouts have no webhook; upload the bank's result file instead."
+msgstr "बैंक फाइल भुक्तानीमा वेबहुक हुँदैन; बैंकको नतिजा फाइल अपलोड गर्नुहोस्।"
+
+msgid "This payout provider is not configured."
+msgstr "यो भुक्तानी माध्यम मिलाइएको छैन।"
+
+#, python-format
+msgid "%(provider)s payouts are not enabled yet. Use the bank file instead."
+msgstr "%(provider)s बाट भुक्तानी अहिले खुला छैन। बैंक फाइल प्रयोग गर्नुहोस्।"
+
+msgid "The file is empty."
+msgstr "फाइल खाली छ।"
+
+# --- credentials & training (docs/CONTRACT-ECOSYSTEM.md §3–4) ---
+msgid "NSTB skill certificate"
+msgstr "राष्ट्रिय सीप परीक्षण प्रमाणपत्र (NSTB)"
+
+msgid "CTEVT training"
+msgstr "सीटीईभीटी तालिम"
+
+msgid "Training course"
+msgstr "तालिम कोर्स"
+
+msgid "License"
+msgstr "लाइसेन्स"
+
+msgid "Safety training"
+msgstr "सुरक्षा तालिम"
+
+msgid "Language"
+msgstr "भाषा"
+
+msgid "Document checked"
+msgstr "कागजात जाँच गरिएको"
+
+msgid "Issuer registry"
+msgstr "जारीकर्ताको अभिलेख"
+
+msgid "Issuing partner"
+msgstr "जारी गर्ने साझेदार"
+
+msgid "Phone call to issuer"
+msgstr "जारीकर्तालाई फोन गरी"
+
+msgid "Passed"
+msgstr "उत्तीर्ण"
+
+msgid "Not passed"
+msgstr "अनुत्तीर्ण"
+
+msgid "None"
+msgstr "छैन"
+
+msgid "Elementary"
+msgstr "प्रारम्भिक"
+
+msgid "Level 1"
+msgstr "तह १"
+
+msgid "Level 2"
+msgstr "तह २"
+
+msgid "Level 3"
+msgstr "तह ३"
+
+msgid "Upload a PDF or a photo (JPG, PNG)."
+msgstr "PDF वा फोटो (JPG, PNG) अपलोड गर्नुहोस्।"
+
+msgid "File is too large (maximum 10 MB)."
+msgstr "फाइल धेरै ठूलो भयो (बढीमा १० MB)।"
+
+msgid "Assessment date cannot be in the future."
+msgstr "परीक्षण मिति भविष्यको हुन सक्दैन।"
+
+msgid "Expiry date cannot be before the issue date."
+msgstr "म्याद सकिने मिति जारी मितिभन्दा अघि हुन सक्दैन।"
+
+msgid "Issue date cannot be in the future."
+msgstr "जारी मिति भविष्यको हुन सक्दैन।"
+
+#, python-format
+msgid "KaamSathi: your %(title)s expires in %(days)s days (%(date)s). Renew it and upload the new certificate in the app."
+msgstr "कामसाथी: तपाईंको %(title)s को म्याद %(days)s दिनमा (%(date)s) सकिँदैछ। नवीकरण गरी नयाँ प्रमाणपत्र एपमा अपलोड गर्नुहोस्।"
+
+msgid "Only credentials waiting for verification can be deleted."
+msgstr "प्रमाणीकरण बाँकी रहेका प्रमाणपत्र मात्र हटाउन मिल्छ।"
+
+msgid "Registry verification is not available yet. Verify by document or a call to the issuer."
+msgstr "अभिलेखबाट प्रमाणीकरण अहिले उपलब्ध छैन। कागजात हेरेर वा जारीकर्तालाई फोन गरेर प्रमाणित गर्नुहोस्।"
+
+msgid "Enter a number of days from 1 to 365."
+msgstr "१ देखि ३६५ सम्मको दिन संख्या लेख्नुहोस्।"
+
+msgid "CTEVT affiliated"
+msgstr "सीटीईभीटी सम्बन्धन प्राप्त"
+
+msgid "Private institute"
+msgstr "निजी संस्था"
+
+msgid "NGO"
+msgstr "गैरसरकारी संस्था"
+
+msgid "Employer"
+msgstr "रोजगारदाता"
+
+msgid "Basic"
+msgstr "आधारभूत"
+
+msgid "Refresher"
+msgstr "पुनर्ताजगी"
+
+msgid "Classroom"
+msgstr "कक्षाकोठा"
+
+msgid "On site"
+msgstr "कार्यस्थलमै"
+
+msgid "Online"
+msgstr "अनलाइन"
+
+msgid "Applied"
+msgstr "आवेदन दिइएको"
+
+msgid "Enrolled"
+msgstr "भर्ना भएको"
+
+msgid "Completion date cannot be in the future."
+msgstr "पूरा भएको मिति भविष्यको हुन सक्दैन।"
+
+msgid "CTEVT affiliated providers need an affiliation number."
+msgstr "सीटीईभीटी सम्बन्धन प्राप्त संस्थाको सम्बन्धन नम्बर चाहिन्छ।"
+
+msgid "This course is not open for applications."
+msgstr "यो कोर्समा अहिले आवेदन खुला छैन।"
+
+msgid "This provider has enrolments. Mark it inactive instead."
+msgstr "यो संस्थामा भर्ना भइसकेका छन्। बरु निष्क्रिय बनाउनुहोस्।"
+
+msgid "This course has enrolments. Close it instead."
+msgstr "यो कोर्समा भर्ना भइसकेका छन्। बरु बन्द गर्नुहोस्।"
+
+msgid "You have already applied for this course."
+msgstr "तपाईंले यो कोर्सका लागि पहिले नै आवेदन दिनुभएको छ।"
+
+msgid "Not an active worker in your organization."
+msgstr "तपाईंको संस्थामा हाल कार्यरत कामदार होइन।"
+
+msgid "Already applied or enrolled."
+msgstr "पहिले नै आवेदन वा भर्ना भइसकेको।"
+
+msgid "Enter a number of days from 1 to 730."
+msgstr "१ देखि ७३० सम्मको दिन संख्या लेख्नुहोस्।"
+
+msgid "All seats in this course are taken."
+msgstr "यो कोर्सका सबै सिट भरिइसके।"
+
+# --- privacy (Individual Privacy Act 2075) & private files ---
+msgid "Copy of my data"
+msgstr "मेरो डाटाको प्रतिलिपि"
+
+msgid "Correct my data"
+msgstr "मेरो विवरण सच्याउनुहोस्"
+
+msgid "Delete my data"
+msgstr "मेरो डाटा मेटाउनुहोस्"
+
+msgid "Received"
+msgstr "प्राप्त भयो"
+
+msgid "In progress"
+msgstr "प्रक्रियामा"
+
+msgid "This link has expired."
+msgstr "यो लिङ्कको म्याद सकियो।"
+
+msgid "No export file is available."
+msgstr "डाउनलोड गर्न कुनै फाइल उपलब्ध छैन।"
+
+msgid "Tell us what needs to be corrected."
+msgstr "के सच्याउनुपर्ने हो, लेख्नुहोस्।"
+
+msgid "Give the reason for rejecting."
+msgstr "अस्वीकार गर्नुको कारण लेख्नुहोस्।"
+
+msgid "You already have an open request of this kind."
+msgstr "तपाईंको यस्तै अनुरोध पहिल्यै प्रक्रियामा छ।"
+
+msgid "This request has already been handled."
+msgstr "यो अनुरोध पहिल्यै टुङ्गो लागिसकेको छ।"

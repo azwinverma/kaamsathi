@@ -3,9 +3,19 @@
 <plist version="1.0">
 <dict>
 	<key>NSCameraUsageDescription</key>
-	<string>KaamSathi uses the camera to scan your work site's QR code when you check in or check out.</string>
+	<string>KaamSathi uses the camera to scan your work site's QR code for hajiri (attendance check-in and check-out) and to photograph your documents.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>KaamSathi checks your location when you check in or check out, to confirm you are at your work site.</string>
+	<string>KaamSathi checks your location when you check in or check out, to confirm you are at your work site. Your location is only used while the app is open.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>KaamSathi lets you choose photos of your ID card or certificates to upload to your profile.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<!-- HTTPS is enforced everywhere. Only local-network hosts (localhost,
+		     .local, LAN IPs) may use HTTP, for the dev backend. Never add
+		     NSAllowsArbitraryLoads. -->
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>

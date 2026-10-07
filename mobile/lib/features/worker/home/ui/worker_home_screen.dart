@@ -9,10 +9,13 @@ import '../../../../core/l10n/l10n.dart';
 import '../../../../core/router/router.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
+import '../../../../core/widgets/eco.dart';
 import '../../checkin/data/check_in_service.dart';
 import '../../data/worker_models.dart';
 import '../../data/worker_repository.dart';
 import '../../my_hajiri/ui/my_hajiri_screen.dart';
+import '../../trust/trust_data.dart';
+import '../../trust/ui/trust_card.dart';
 
 class WorkerHomeScreen extends ConsumerWidget {
   const WorkerHomeScreen({super.key});
@@ -31,6 +34,7 @@ class WorkerHomeScreen extends ConsumerWidget {
       ref.invalidate(workerProfileProvider);
       ref.invalidate(myAttendanceProvider);
       ref.invalidate(payslipsProvider);
+      ref.invalidate(trustProvider);
       try {
         await ref.read(currentMonthAttendanceProvider.future);
       } catch (_) {}
@@ -58,7 +62,17 @@ class WorkerHomeScreen extends ConsumerWidget {
             const SizedBox(height: KsSpace.s4),
             const _MonthSummary(),
             const SizedBox(height: KsSpace.s4),
+            const TrustCard(),
+            const SizedBox(height: KsSpace.s4),
             const _LatestPayslip(),
+            const SizedBox(height: KsSpace.s2),
+            Card(
+              child: MenuTile(
+                icon: LucideIcons.calendarRange,
+                title: l.shiftsTitle,
+                onTap: () => context.push(Routes.workerShifts),
+              ),
+            ),
           ],
         ),
       ),

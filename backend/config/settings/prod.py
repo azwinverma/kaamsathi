@@ -1,5 +1,5 @@
 from .base import *  # noqa: F401,F403
-from .base import LOGGING, env
+from .base import LOGGING, RELEASE, env
 
 DEBUG = False
 SECRET_KEY = env("DJANGO_SECRET_KEY")  # required in production
@@ -10,7 +10,7 @@ OTP_DEV_CODE = ""  # never in production
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=True)
-SECURE_REDIRECT_EXEMPT = [r"^api/v1/health/?$"]
+SECURE_REDIRECT_EXEMPT = [r"^api/v1/health/?$", r"^api/v1/readiness/?$", r"^health/?$", r"^readiness/?$"]
 SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", default=60 * 60 * 24 * 365)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
@@ -21,6 +21,8 @@ SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SECURE = True
 X_FRAME_OPTIONS = "DENY"
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_AGE = 60 * 60 * 8  # admin sessions: one working day
 
 LOGGING["handlers"]["console"]["formatter"] = "json" if env.bool("LOG_JSON", default=True) else "plain"
 
@@ -36,4 +38,5 @@ if SENTRY_DSN:
         traces_sample_rate=env.float("SENTRY_TRACES_SAMPLE_RATE", default=0.0),
         send_default_pii=False,
         environment=env("SENTRY_ENVIRONMENT", default="production"),
+        release=RELEASE or None,
     )

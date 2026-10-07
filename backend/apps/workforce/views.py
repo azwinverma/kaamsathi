@@ -56,6 +56,29 @@ def employment_queryset():
     ).prefetch_related(*[f"worker__{p}" for p in WORKER_CARD_PREFETCH])
 
 
+def _log_profile_view(request, org, employment):
+    """Trust log of a full-profile view (CONTRACT-ECOSYSTEM §1); no-op until apps.trust exists."""
+    try:
+        from apps.trust.services import log_profile_view
+    except ImportError:
+        return
+    log_profile_view(
+        employment.worker,
+        context="employment",
+        organization=org,
+        viewer=request.user,
+        object_id=employment.id,
+    )
+
+
+def _rostered_shifts(employments, day):
+    try:
+        from apps.scheduling.services import rostered_for
+    except ImportError:
+        return {}
+    return rostered_for(employments, day)
+
+
 class SupervisorScopeMixin:
     def scope_employments(self, qs, field="site_id"):
         if self.is_supervisor:
@@ -109,6 +132,8 @@ class EmploymentViewSet(OrgScopedMixin, SupervisorScopeMixin, AuditedViewSetMixi
             qs = qs.filter(trade_id=p["trade"])
         if p.get("wage_type"):
             qs = qs.filter(wage_type=p["wage_type"])
+        if p.get("contractor"):
+            qs = qs.filter(contractor_assignment__contractor_id=p["contractor"])
         if p.get("q"):
             q = p["q"]
             qs = qs.filter(
@@ -121,6 +146,11 @@ class EmploymentViewSet(OrgScopedMixin, SupervisorScopeMixin, AuditedViewSetMixi
 
     def get_serializer_class(self):
         return EmploymentCreateSerializer if self.action == "create" else EmploymentSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        employment = self.get_object()
+        _log_profile_view(request, self.org, employment)
+        return Response(self.get_serializer(employment).data)
 
     def create(self, request, *args, **kwargs):
         s = EmploymentCreateSerializer(data=request.data, context=self.get_serializer_context())
@@ -239,6 +269,7 @@ class AttendanceDayView(OrgScopedMixin, SupervisorScopeMixin, APIView):
             qs = qs.filter(site_id=request.query_params["site"])
         emps = list(qs.order_by("worker__full_name"))
         records = {a.employment_id: a for a in Attendance.objects.filter(employment__in=emps, date=day)}
+        rostered = _rostered_shifts(emps, day)
         holiday = _holiday_map(self.org, day, day).get(day)
         lang_ne = getattr(request, "LANGUAGE_CODE", "en") == "ne"
         rows, summary = [], {"present": 0, "absent": 0, "half_day": 0, "leave": 0, "not_marked": 0}
@@ -261,6 +292,7 @@ class AttendanceDayView(OrgScopedMixin, SupervisorScopeMixin, APIView):
                     "designation": e.designation,
                     "site_id": str(e.site_id) if e.site_id else None,
                     "record": AttendanceSerializer(rec).data if rec else None,
+                    "rostered_shift": rostered.get(e.id),
                 }
             )
         return Response(

@@ -160,6 +160,22 @@ class ApiClient {
   Future<void> postNoContent(String path, {Object? data}) =>
       _call(() => dio.post<dynamic>(path, data: data ?? const {}));
 
+  Future<T> put<T>(String path, {Object? data}) =>
+      _call(() => dio.put<T>(path, data: data ?? const {}));
+
+  Future<void> delete(String path) => _call(() => dio.delete<dynamic>(path));
+
+  /// Downloads any file to [savePath]; returns the response `Content-Type`
+  /// (e.g. to pick a file extension for a privacy export bundle).
+  Future<String?> downloadFile(String path, String savePath) async {
+    try {
+      final r = await dio.download(path, savePath);
+      return r.headers.value(Headers.contentTypeHeader);
+    } catch (e) {
+      throw ApiException.from(e);
+    }
+  }
+
   /// Downloads binary content (e.g. payslip PDF) to [savePath].
   Future<void> download(String path, String savePath) => _call(
     () => dio.download(

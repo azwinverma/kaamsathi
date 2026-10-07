@@ -64,6 +64,16 @@ class MoreScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: KsSpace.s4),
+          Card(
+            child: ListTile(
+              leading: const Icon(LucideIcons.calendarRange),
+              title: Text(l.rosterTitle),
+              subtitle: Text(l.rosterMenuSubtitle),
+              trailing: const Icon(LucideIcons.chevronRight),
+              onTap: () => context.push(Routes.supRoster),
+            ),
+          ),
+          const SizedBox(height: KsSpace.s4),
           const Card(child: Padding(padding: EdgeInsets.all(KsSpace.s4), child: LanguageSelector())),
           const SizedBox(height: KsSpace.s4),
           Card(

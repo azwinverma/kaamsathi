@@ -393,3 +393,55 @@ String initials(String? name) {
   if (parts.length == 1) return first(parts.first).toUpperCase();
   return (first(parts.first) + first(parts.last)).toUpperCase();
 }
+
+// ---------------------------------------------------------------------------
+// Ecosystem helpers (trust, roster, money)
+// ---------------------------------------------------------------------------
+
+/// Sunday that starts the week containing [d] (Nepal's week runs Sun–Sat;
+/// the roster API's `week_start`).
+DateTime weekStartSunday(DateTime d) {
+  final day = DateTime(d.year, d.month, d.day);
+  return day.subtract(Duration(days: day.weekday % 7));
+}
+
+/// A 0–1 fraction as a whole percent: `0.824` → `82%` / `८२%`.
+/// Values are clamped to 0–100.
+String formatPercent(num fraction, String lang) {
+  final p = (fraction * 100).round().clamp(0, 100);
+  return localizeDigits('$p%', lang);
+}
+
+/// Prefers the API's `x_bs` string; otherwise converts the AD `x` date.
+/// Empty when both are missing.
+String formatBsOrAd(String? bs, String? ad, String lang) {
+  if (bs != null && BsDate.tryParse(bs) != null) return formatBsString(bs, lang);
+  final d = parseIsoDate(ad);
+  return d == null ? '' : formatBsDate(BsDate.fromAd(d), lang);
+}
+
+/// BS date of an API datetime (e.g. `created_at`), in Nepal time.
+String formatBsDateTime(DateTime? t, String lang) {
+  if (t == null) return '';
+  return formatBsDate(BsDate.fromAd(nepalToday(t)), lang);
+}
+
+/// Masks all but the last 3 digits: `9812345678` → `98XXXXX678`.
+String maskPhone(String? phone) {
+  if (phone == null) return '';
+  final p = normalizePhone(phone);
+  if (p.length != 10) return phone;
+  return '${p.substring(0, 2)}XXXXX${p.substring(7)}';
+}
+
+/// API clock time (`"07:00:00"` / `"19:30"`) → `7:00 AM` / `७:०० AM`.
+/// Returns the input unchanged when it can't be parsed.
+String formatClock(String? hhmm, String lang) {
+  if (hhmm == null) return '';
+  final m = RegExp(r'^(\d{1,2}):(\d{2})').firstMatch(hhmm.trim());
+  if (m == null) return hhmm;
+  final h = int.parse(m.group(1)!);
+  final min = int.parse(m.group(2)!);
+  if (h > 23 || min > 59) return hhmm;
+  return formatTime(DateTime(2000, 1, 1, h, min), lang);
+}

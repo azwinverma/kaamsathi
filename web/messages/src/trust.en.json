@@ -1,0 +1,67 @@
+{
+  "trust": {
+    "level": {
+      "0": "Phone verified",
+      "1": "Identity verified",
+      "2": "Employment verified",
+      "3": "Skills assessed",
+      "4": "Certification verified",
+      "5": "Highly trusted"
+    },
+    "level_short": "L{level}",
+    "level_tooltip": "Verification level {level} of 5: {name}",
+    "level_aria": "Verification level {level}: {name}",
+    "reliability_value": "Reliability {score}",
+    "reliability_tooltip": "Reliability score (0–100) from employer feedback, hajiri, completed jobs, verified skills, rehiring and tenure. It is not a credit score.",
+    "reliability_aria": "Reliability score {score} out of 100",
+    "dispute_status": {
+      "open": "Open",
+      "employer_responded": "Employer responded",
+      "resolved": "Resolved",
+      "rejected": "Rejected"
+    },
+    "dispute_kind": {
+      "attendance": "Attendance (hajiri)",
+      "wage": "Wage / payslip",
+      "employment_dates": "Employment dates",
+      "rating": "Rating",
+      "identity": "Identity details",
+      "other": "Other"
+    },
+    "disputes": {
+      "org_description": "Workers can question their hajiri, wages or work record. Reply with what your records show — KaamSathi reviews and closes each dispute.",
+      "ops_description": "Disputes raised by workers. Check the employer's reply, correct records through the normal screens if needed, then resolve or reject.",
+      "tab_active": "Needs action",
+      "tab_open": "Open",
+      "tab_employer_responded": "Employer responded",
+      "tab_closed": "Closed",
+      "tab_all": "All",
+      "search_placeholder": "Search worker or text…",
+      "empty_title": "No disputes here",
+      "empty_org": "When a worker questions a record, it appears here for your reply.",
+      "empty_ops": "Nothing waiting. New disputes from workers will appear here.",
+      "no_employer": "No employer",
+      "payslip_month": "Payslip {month}",
+      "respond": "Respond",
+      "update_response": "Edit response",
+      "decide": "Resolve…",
+      "raised": "Raised",
+      "attendance_date": "Hajiri date",
+      "decided": "Closed",
+      "employer_note": "Employer's response",
+      "resolution_note": "KaamSathi decision",
+      "respond_title": "Respond to dispute",
+      "your_response": "Your response",
+      "response_hint": "Explain what your records show. The worker and KaamSathi will see this.",
+      "send_response": "Send response",
+      "responded_toast": "Response sent",
+      "decide_title": "Close dispute",
+      "decision": "Decision",
+      "resolve": "Resolve",
+      "reject": "Reject",
+      "resolved_toast": "Dispute resolved",
+      "rejected_toast": "Dispute rejected",
+      "no_auto_edit": "Closing a dispute does not change hajiri or payslips. Correct those records through the attendance or payroll screens first."
+    }
+  }
+}

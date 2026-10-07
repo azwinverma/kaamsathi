@@ -19,7 +19,16 @@ class TalabScreen extends ConsumerWidget {
     final l = context.l10n;
     final value = ref.watch(payslipsProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(l.talabTitle)),
+      appBar: AppBar(
+        title: Text(l.talabTitle),
+        actions: [
+          TextButton.icon(
+            onPressed: () => context.push(Routes.workerMoney),
+            icon: const Icon(LucideIcons.handCoins, size: 18),
+            label: Text(l.moneyTitle),
+          ),
+        ],
+      ),
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(payslipsProvider);

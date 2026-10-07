@@ -1,6 +1,12 @@
 import uuid
 
+from django.conf import settings
 from django.db import models
+from django.utils import timezone
+
+from apps.core import labels
+
+from . import labels as plabels
 
 
 class Partner(models.Model):
@@ -37,9 +43,117 @@ class Partner(models.Model):
     webhook_url = models.URLField(blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    # Shared secret for signing outbound webhooks (X-KaamSathi-Signature). Ops can rotate it.
+    webhook_secret = models.CharField(max_length=64, blank=True, default="")
 
     class Meta:
         ordering = ["name"]
 
     def __str__(self):
         return self.name
+
+
+def new_webhook_secret() -> str:
+    import secrets
+
+    return "whsec_" + secrets.token_urlsafe(32)
+
+
+class PartnerAPIKey(models.Model):
+    """Partner API credential. Only a SHA-256 hash of the full key is stored; the key itself
+    (``ks_<prefix>_<secret>``) is shown once at creation."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    partner = models.ForeignKey(Partner, on_delete=models.CASCADE, related_name="api_keys")
+    name = models.CharField(max_length=100, blank=True, default="")
+    prefix = models.CharField(max_length=8, unique=True)
+    key_hash = models.CharField(max_length=64)
+    scopes = models.JSONField(default=list)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_used_at = models.DateTimeField(null=True, blank=True)
+    revoked_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Partner API key"
+
+    def __str__(self):
+        return f"{self.partner} · ks_{self.prefix}_…"
+
+    @property
+    def is_active(self) -> bool:
+        return self.revoked_at is None
+
+
+class ConsentGrantQuerySet(models.QuerySet):
+    def active(self, at=None):
+        at = at or timezone.now()
+        return self.filter(revoked_at__isnull=True, expires_at__gt=at)
+
+
+class ConsentGrant(models.Model):
+    """A worker's explicit, purpose-bound, revocable permission for one partner to read data."""
+
+    PURPOSES = labels.choices(plabels.PURPOSE)
+    CHANNELS = [("app", "App"), ("sms", "SMS"), ("ops", "Ops")]
+    STATUSES = labels.choices(plabels.GRANT_STATUS)
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    worker = models.ForeignKey("workers.Worker", on_delete=models.CASCADE, related_name="partner_grants")
+    partner = models.ForeignKey(Partner, on_delete=models.CASCADE, related_name="grants")
+    purpose = models.CharField(max_length=20, choices=PURPOSES)
+    scopes = models.JSONField(default=list)
+    granted_at = models.DateTimeField(default=timezone.now)
+    expires_at = models.DateTimeField()
+    revoked_at = models.DateTimeField(null=True, blank=True)
+    channel = models.CharField(max_length=10, choices=CHANNELS, default="app")
+    # Denormalised for listing; access checks always use revoked_at/expires_at.
+    status = models.CharField(max_length=10, choices=STATUSES, default="active")
+
+    objects = ConsentGrantQuerySet.as_manager()
+
+    class Meta:
+        ordering = ["-granted_at"]
+        indexes = [models.Index(fields=["worker", "partner", "expires_at"])]
+
+    def __str__(self):
+        return f"{self.worker} → {self.partner} ({self.purpose})"
+
+    def is_active_at(self, at=None) -> bool:
+        at = at or timezone.now()
+        return self.revoked_at is None and self.expires_at > at
+
+    @property
+    def current_status(self) -> str:
+        if self.revoked_at:
+            return "revoked"
+        if self.expires_at <= timezone.now():
+            return "expired"
+        return "active"
+
+
+class PartnerAccessLog(models.Model):
+    """One row per partner API request (granted or denied). Visible to the worker concerned."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    partner = models.ForeignKey(Partner, on_delete=models.CASCADE, related_name="access_logs")
+    api_key = models.ForeignKey(
+        PartnerAPIKey, on_delete=models.SET_NULL, null=True, blank=True, related_name="access_logs"
+    )
+    worker = models.ForeignKey(
+        "workers.Worker", on_delete=models.CASCADE, null=True, blank=True, related_name="partner_access_logs"
+    )
+    endpoint = models.CharField(max_length=255)
+    method = models.CharField(max_length=8, default="GET")
+    scope = models.CharField(max_length=30, blank=True, default="")
+    status_code = models.PositiveSmallIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.partner} {self.method} {self.endpoint} → {self.status_code}"

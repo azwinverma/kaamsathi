@@ -42,6 +42,8 @@ import { isApiError } from "@/lib/api/errors";
 import type { PayrollRun, Payslip } from "@/lib/api/types";
 import { toastError } from "@/lib/forms";
 import { useFormat } from "@/lib/use-format";
+import { SSFFilingButton } from "@/components/compliance/ssf-filings";
+import { PayoutPanel } from "@/components/payouts/payout-panel";
 import { MarkPaidDialog } from "./mark-paid-dialog";
 import { PayrollGate, useDownloader } from "./payroll-gate";
 import { PayslipDrawer } from "./payslip-drawer";
@@ -155,6 +157,7 @@ function RunView({ run }: { run: PayrollRun }) {
           </Button>
         </>
       ) : null}
+      <SSFFilingButton run={run} />
       {run.status === "approved" ? (
         <Button onClick={() => setPaidOpen(true)}>
           <Wallet aria-hidden />
@@ -232,6 +235,8 @@ function RunView({ run }: { run: PayrollRun }) {
           hint={t("detail.stat_employer_cost_hint", { ssf: f.money(totals.ssf_employer) })}
         />
       </div>
+
+      <PayoutPanel run={run} />
 
       <section aria-labelledby="wage-sheet-title">
         <Toolbar className="sm:justify-between">

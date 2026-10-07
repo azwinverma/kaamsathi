@@ -1,0 +1,4 @@
+/* Permission prompts shown by iOS (English). Keep in sync with Info.plist. */
+"NSCameraUsageDescription" = "KaamSathi uses the camera to scan your work site's QR code for hajiri (attendance check-in and check-out) and to photograph your documents.";
+"NSLocationWhenInUseUsageDescription" = "KaamSathi checks your location when you check in or check out, to confirm you are at your work site. Your location is only used while the app is open.";
+"NSPhotoLibraryUsageDescription" = "KaamSathi lets you choose photos of your ID card or certificates to upload to your profile.";

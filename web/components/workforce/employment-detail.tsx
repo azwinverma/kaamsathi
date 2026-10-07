@@ -20,6 +20,7 @@ import { todayBs, todayIso } from "@/lib/format";
 import { useFormat } from "@/lib/use-format";
 import { CreateAdvanceDialog, EditAdvanceDialog, outstandingOf } from "./advance-dialogs";
 import { EditEmploymentDialog, EndEmploymentDialog, RateDialog } from "./employment-dialogs";
+import { ContractPanel } from "@/components/compliance/contract-panel";
 import { Notice } from "./shared";
 import { parseAmount } from "./utils";
 
@@ -107,6 +108,7 @@ export function EmploymentDetail({ id }: { id: string }) {
         <div className="space-y-6 lg:col-span-2">
           <EmploymentPanel emp={emp} />
           {canManage ? <WagePanel emp={emp} onEdit={active ? () => setDialog("edit") : undefined} /> : null}
+          {canManage ? <ContractPanel employmentId={emp.id} active={active} /> : null}
           <AttendancePanel emp={emp} />
           {canManage ? <AdvancesPanel emp={emp} /> : null}
         </div>

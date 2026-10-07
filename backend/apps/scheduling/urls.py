@@ -1,5 +1,14 @@
-from apps.core.routers import Router
+from django.urls import re_path
 
-router = Router()
+from . import views
 
-urlpatterns = [*router.urls]
+
+def p(route, view, name):
+    return re_path(rf"^{route}/?$", view.as_view(), name=name)
+
+
+urlpatterns = [
+    p("org/roster", views.RosterView, "org-roster"),
+    p("org/roster/copy-week", views.RosterCopyWeekView, "org-roster-copy-week"),
+    p("me/roster", views.MeRosterView, "me-roster"),
+]

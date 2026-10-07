@@ -231,7 +231,11 @@ export default async function Home() {
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-6 text-xs text-fg-subtle sm:flex-row sm:justify-between sm:px-6">
           <span>© KaamSathi · {t("landing.footer_place")}</span>
-          <span>{t("app.tagline")}</span>
+          <span className="flex gap-4">
+            <Link href="/privacy" className="hover:text-fg">{t("legal.privacy_link")}</Link>
+            <Link href="/terms" className="hover:text-fg">{t("legal.terms_link")}</Link>
+            <span>{t("app.tagline")}</span>
+          </span>
         </div>
       </footer>
     </div>

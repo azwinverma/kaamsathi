@@ -54,6 +54,7 @@ dependencies:
   path: ^1.9.1
   path_provider: ^2.1.5
   open_filex: ^4.7.0
+  image_picker: ^1.2.1
 
 dev_dependencies:
   flutter_test:

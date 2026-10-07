@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:open_filex/open_filex.dart';
 
 import '../../../../core/format.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/router/router.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../data/worker_models.dart';
 import '../../data/worker_repository.dart';
+import '../../trust/ui/disputes_screen.dart';
 
 class PayslipDetailScreen extends ConsumerWidget {
   const PayslipDetailScreen({super.key, required this.id});
@@ -165,6 +168,15 @@ class _DetailState extends ConsumerState<_Detail> {
               ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
               : const Icon(LucideIcons.fileDown),
           label: Text(l.talabOpenPdf),
+        ),
+        const SizedBox(height: KsSpace.s2),
+        TextButton.icon(
+          onPressed: () => context.push(
+            Routes.workerDisputeNew,
+            extra: DisputeFormArgs(kind: 'wage', payslipId: p.id),
+          ),
+          icon: const Icon(LucideIcons.messageSquareWarning, size: 18),
+          label: Text(l.disputeRaise),
         ),
         const SizedBox(height: KsSpace.s6),
       ],

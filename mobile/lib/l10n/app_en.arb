@@ -378,5 +378,750 @@
         "type": "String"
       }
     }
-  }
+  },
+  "ecoComingSoon": "This feature is coming soon. Please check again later.",
+  "ecoOfflineCached": "Offline — showing your last saved information.",
+  "ecoPdfNotReady": "The PDF is not ready yet. Please try again later.",
+  "ecoCopied": "Copied",
+  "ecoCopyLink": "Copy link",
+  "ecoSubmit": "Submit",
+  "ecoRequired": "Please fill this in.",
+  "ecoOptional": "{label} (optional)",
+  "@ecoOptional": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "ecoAdd": "Add",
+  "ecoRemove": "Remove",
+  "ecoRevoke": "Revoke",
+  "ecoView": "View",
+  "ecoNone": "None",
+  "ecoDays": "{days} days",
+  "@ecoDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "ecoUntil": "Until {date}",
+  "@ecoUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "ecoOn": "On {date}",
+  "@ecoOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "ecoStatus": "Status",
+  "ecoGroupWork": "My work",
+  "ecoGroupSkills": "Skills & training",
+  "ecoGroupMoney": "Money",
+  "ecoGroupPrivacy": "Privacy & help",
+  "ecoChooseDate": "Choose date",
+  "ecoYears": "{years} yrs",
+  "@ecoYears": {
+    "placeholders": {
+      "years": {
+        "type": "String"
+      }
+    }
+  },
+  "trustTitle": "My reliability",
+  "trustScoreLabel": "Reliability score",
+  "trustScoreOutOf": "{score} out of 100",
+  "@trustScoreOutOf": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "trustScoreNone": "Your score appears after your first job on KaamSathi.",
+  "trustLevelN": "Level {level}",
+  "@trustLevelN": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "trustLevel0": "Phone verified",
+  "trustLevel1": "Identity verified",
+  "trustLevel2": "Employment verified",
+  "trustLevel3": "Skills assessed",
+  "trustLevel4": "Certificate verified",
+  "trustLevel5": "Highly trusted",
+  "trustBreakdown": "What makes up your score",
+  "trustCompEmployerFeedback": "Employer feedback",
+  "trustCompAttendance": "Hajiri (attendance)",
+  "trustCompCompletion": "Jobs completed",
+  "trustCompSkills": "Skills verified",
+  "trustCompRepeatHiring": "Hired again",
+  "trustCompStability": "Stability",
+  "trustNextSteps": "How to raise your score",
+  "trustNotCredit": "This score comes only from your verified work record — hajiri, ratings and skills.",
+  "profileViewsTitle": "Who viewed my profile",
+  "profileViewsHint": "Every time an employer, partner or the KaamSathi team opens your full profile, it is listed here.",
+  "profileViewsEmpty": "Nobody has opened your full profile yet.",
+  "viewByKaamSathi": "KaamSathi team or shared link",
+  "viewCtxApplication": "Job application",
+  "viewCtxEmployment": "Your employer",
+  "viewCtxOps": "KaamSathi verification",
+  "viewCtxPartner": "Partner (with your consent)",
+  "viewCtxPassport": "Skill Passport link",
+  "viewCtxCrew": "Your team lead",
+  "disputesTitle": "Complaints",
+  "disputesHint": "Something wrong in your hajiri, talab or work record? Tell us. Your employer will be asked to respond and KaamSathi will review it.",
+  "disputesEmpty": "You have not raised any complaint.",
+  "disputeRaise": "Raise a complaint",
+  "disputeKindLabel": "What is it about?",
+  "disputeKindAttendance": "Hajiri (attendance)",
+  "disputeKindWage": "Talab (wage)",
+  "disputeKindEmploymentDates": "Job start/end dates",
+  "disputeKindRating": "Rating",
+  "disputeKindIdentity": "My identity details",
+  "disputeKindOther": "Something else",
+  "disputeStatusOpen": "Open",
+  "disputeStatusResponded": "Employer replied",
+  "disputeStatusResolved": "Resolved",
+  "disputeStatusRejected": "Not accepted",
+  "disputeEmployment": "Which job?",
+  "disputePayslip": "Which payslip?",
+  "disputeDate": "Which date?",
+  "disputeDescription": "What is wrong?",
+  "disputeDescriptionHint": "Explain in your own words. For example: I worked on this day but it shows absent.",
+  "disputeDescriptionShort": "Please write at least 10 letters.",
+  "disputeSent": "Complaint sent. We will let you know.",
+  "disputeEmployerNote": "Employer's reply",
+  "disputeResolution": "KaamSathi decision",
+  "disputeRaisedOn": "Raised on {date}",
+  "@disputeRaisedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "disputeReviewNote": "Records are changed only after your employer and KaamSathi check them.",
+  "rateTitle": "Rate employer",
+  "rateHint": "Your rating helps other workers. Only averages from several workers are used — your name is never shown to the employer.",
+  "ratePayOnTime": "Paid on time",
+  "rateConditions": "Working conditions",
+  "rateComment": "Comment",
+  "ratePickStars": "Please choose stars for both questions.",
+  "rateSent": "Thank you! Your rating was saved.",
+  "rateAlready": "You have already rated this employer for this job.",
+  "rateNotYet": "You can rate after 30 days of work or when the job ends.",
+  "empActive": "Current job",
+  "empEnded": "Ended",
+  "empDetails": "Job details",
+  "empDesignation": "Position",
+  "empStart": "Started",
+  "empEndDate": "Ended on",
+  "empWage": "Wage",
+  "empWageMonthly": "{amount} per month",
+  "@empWageMonthly": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "empWageDaily": "{amount} per day",
+  "@empWageDaily": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "empSsfYes": "Enrolled",
+  "empSsfNo": "Not enrolled",
+  "empRated": "You have rated this employer.",
+  "contractTitle": "Employment contract",
+  "contractAccepted": "Accepted on {date}",
+  "@contractAccepted": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "contractNotAccepted": "Not accepted yet",
+  "contractUnknown": "Open the contract to read it. Accept it here when you agree.",
+  "contractNone": "Your employer has not made a contract for this job yet.",
+  "contractOpenPdf": "Open contract (PDF)",
+  "contractReview": "Review and accept",
+  "contractVersion": "Version {version}",
+  "@contractVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "contractAcceptTitle": "Accept your contract",
+  "contractSummaryIntro": "Please read this summary. This is what your employer promises you.",
+  "contractReadIn": "Read in",
+  "csEmployer": "Employer: {org}",
+  "@csEmployer": {
+    "placeholders": {
+      "org": {
+        "type": "String"
+      }
+    }
+  },
+  "csPosition": "Position: {designation}",
+  "@csPosition": {
+    "placeholders": {
+      "designation": {
+        "type": "String"
+      }
+    }
+  },
+  "csSite": "Work site: {site}",
+  "@csSite": {
+    "placeholders": {
+      "site": {
+        "type": "String"
+      }
+    }
+  },
+  "csStart": "Start date: {date}",
+  "@csStart": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "csWageMonthly": "Basic salary {basic} + dearness allowance {da} = {total} per month.",
+  "@csWageMonthly": {
+    "placeholders": {
+      "basic": {
+        "type": "String"
+      },
+      "da": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "csWageDaily": "Daily wage (jyala): {amount}.",
+  "@csWageDaily": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "csAllowance": "Other allowance: {amount} per month.",
+  "@csAllowance": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "csHours": "Working hours: 8 hours a day, 48 hours a week, with one weekly day off.",
+  "csOvertime": "Overtime is paid at 1.5 times your hourly rate.",
+  "csLeave": "Leave: 1 day home leave for every 20 days worked, 12 days sick leave a year, 13 days mourning leave, 98 days maternity or 15 days paternity leave.",
+  "csFestival": "Dashain allowance: one month's basic salary each year.",
+  "csSsfYes": "You are enrolled in SSF: 11% of basic salary is deducted and your employer adds 20%.",
+  "csSsfNo": "You are not enrolled in SSF yet. Ask your employer about it.",
+  "csGrievance": "If something is wrong, you can raise a complaint in KaamSathi at any time.",
+  "csPdfNote": "The full contract (PDF) has all the details, including probation and notice period. Open it before you accept.",
+  "contractAgree": "I have read and understood my contract.",
+  "contractAccept": "Accept contract",
+  "contractAcceptedMsg": "Contract accepted. A copy stays in your KaamSathi.",
+  "crewTitle": "My team (Naike)",
+  "crewMenuSubtitle": "Add your workers and see referral rewards",
+  "crewBecomeTitle": "Become a team lead (Naike)",
+  "crewBecomeBody": "Bring your team to KaamSathi. When a worker you added gets a job and stays, KaamSathi pays you a referral reward. It is never taken from the worker's pay.",
+  "crewName": "Team name",
+  "crewNameHint": "For example: Ram's mason team",
+  "crewCreate": "Start my team",
+  "crewCreated": "Your team is ready. Add your members.",
+  "crewMembers": "Members",
+  "crewPlaced": "Got jobs (90 days)",
+  "crewEarned": "Earned",
+  "crewPending": "Pending",
+  "crewAddMember": "Add member",
+  "crewMemberName": "Full name",
+  "crewTrade": "Trade",
+  "crewYears": "Years of experience",
+  "crewAdded": "Added. We sent them an SMS invite.",
+  "crewMemberConsentNote": "They will be asked to agree when they first log in. Their details are not shared before that.",
+  "crewRemoveConfirm": "Remove {name} from your team?",
+  "@crewRemoveConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "crewRemoved": "Removed from your team.",
+  "crewAvailable": "Available for work",
+  "crewWorkingAt": "Working at {employer}",
+  "@crewWorkingAt": {
+    "placeholders": {
+      "employer": {
+        "type": "String"
+      }
+    }
+  },
+  "crewNotAvailable": "Not available",
+  "crewEmpty": "No members yet. Add the workers in your team.",
+  "crewReferrals": "Referral rewards",
+  "crewReferralsEmpty": "No referral rewards yet.",
+  "crewRefPending": "Waiting",
+  "crewRefEligible": "Ready to pay",
+  "crewRefPaid": "Paid",
+  "crewRefVoid": "Cancelled",
+  "crewRefEligibleOn": "Ready on {date}",
+  "@crewRefEligibleOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "crewWorkersNeverPay": "Workers never pay. Rewards are paid by KaamSathi.",
+  "credTitle": "Certificates & licences",
+  "credMenuSubtitle": "NSTB, training certificates, driving licence",
+  "credEmpty": "Add your NSTB certificate, training certificate or licence. Verified certificates raise your reliability score.",
+  "credAdd": "Add certificate",
+  "credKind": "Type",
+  "credKindNstb": "Skill certificate (NSTB)",
+  "credKindCtevt": "CTEVT training",
+  "credKindCourse": "Training course",
+  "credKindLicense": "Licence",
+  "credKindSafety": "Safety training",
+  "credKindLanguage": "Language",
+  "credKindOther": "Other",
+  "credName": "Certificate name",
+  "credIssuer": "Issued by",
+  "credNumber": "Certificate number",
+  "credLevel": "Level",
+  "credIssuedOn": "Issued on",
+  "credExpiresOn": "Expires on",
+  "credPhoto": "Photo of the document",
+  "credTakePhoto": "Take photo",
+  "credChoosePhoto": "Choose from gallery",
+  "credPhotoNeeded": "Please add a clear photo of the document.",
+  "credPhotoError": "Could not open the camera or gallery.",
+  "credSaved": "Sent for checking. We will let you know.",
+  "credStatusPending": "Checking",
+  "credStatusVerified": "Verified",
+  "credStatusRejected": "Not accepted",
+  "credStatusExpired": "Expired",
+  "credDeleteConfirm": "Delete this certificate?",
+  "credDeleted": "Deleted.",
+  "credExpires": "Expires {date}",
+  "@credExpires": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "credVerifyNote": "KaamSathi checks every document before it is marked verified.",
+  "nstbElementary": "Elementary",
+  "nstbLevelN": "Level {level}",
+  "@nstbLevelN": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "passportTitle": "Skill Passport",
+  "passportMenuSubtitle": "Your verified skills and work record to show employers",
+  "passportIntro": "Your Skill Passport shows only verified information. You decide who sees it.",
+  "passportPublic": "Anyone with my passport code can view it",
+  "passportPublicHint": "Turn off to keep it private. Your share links still work until they end.",
+  "passportShowContact": "Show my phone number",
+  "passportShowContactHint": "Only on your public passport. Each share link has its own setting.",
+  "passportCode": "Passport code: {code}",
+  "@passportCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "passportOpenPdf": "Download PDF",
+  "passportPreview": "What others see",
+  "passportShares": "Share links",
+  "passportSharesEmpty": "No share links yet. Create one to send your passport to an employer.",
+  "passportNewShare": "Create share link",
+  "shareAudience": "Who is it for?",
+  "shareAudienceHint": "For example: Hotel Everest HR",
+  "sharePurpose": "Why are you sharing?",
+  "sharePurposeJob": "Job application",
+  "sharePurposeAgency": "Recruitment agency",
+  "sharePurposeBank": "Bank",
+  "sharePurposeOther": "Other",
+  "shareAgencyNote": "KaamSathi does not find jobs abroad. Share with a licensed agency only if you choose to.",
+  "shareDays": "Link works for",
+  "shareIncludeContact": "Include my phone number",
+  "shareCreated": "Link created and copied. Paste it in a message to send.",
+  "shareViews": "{count} views",
+  "@shareViews": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "shareExpired": "Ended",
+  "shareRevoked": "Stopped",
+  "shareActive": "Active",
+  "shareRevokeConfirm": "Stop this link? Anyone who has it will no longer see your passport.",
+  "shareRevokedMsg": "Link stopped.",
+  "ppIdentity": "Identity checks",
+  "ppCitizenship": "Citizenship",
+  "ppPhone": "Phone",
+  "ppAddress": "Address",
+  "ppSkills": "Skills",
+  "ppCredentials": "Verified certificates",
+  "ppWork": "Verified work",
+  "ppEmployers": "Employers",
+  "ppMonths": "Months worked",
+  "ppJobsDone": "Jobs completed",
+  "ppAttendance": "Attendance",
+  "ppAvailable": "Available for work",
+  "ppNotAvailable": "Not looking for work now",
+  "ppExpectedWage": "Expected wage",
+  "ppVerifyAt": "Anyone can check it at",
+  "trainTitle": "Training",
+  "trainMenuSubtitle": "Courses that lead to better jobs",
+  "trainCourses": "Courses",
+  "trainMine": "My enrolments",
+  "trainRecommended": "Recommended for you",
+  "trainEmpty": "No open courses right now. Please check again later.",
+  "trainMineEmpty": "You have not applied for any course yet.",
+  "trainApply": "Apply",
+  "trainApplyConfirm": "Apply for \"{course}\"?",
+  "@trainApplyConfirm": {
+    "placeholders": {
+      "course": {
+        "type": "String"
+      }
+    }
+  },
+  "trainApplied": "Applied! The training centre will contact you.",
+  "trainAlreadyApplied": "Applied",
+  "trainFee": "Fee: {amount}",
+  "@trainFee": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "trainFree": "Free",
+  "trainStarts": "Starts {date}",
+  "@trainStarts": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "trainSeats": "{count} seats",
+  "@trainSeats": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "trainLeadsNstb": "Leads to NSTB skill test",
+  "trainModeClassroom": "Classroom",
+  "trainModeOnSite": "At work site",
+  "trainModeOnline": "Online",
+  "trainLevelBasic": "Basic",
+  "trainLevelRefresher": "Refresher",
+  "trainFeeNote": "Any fee is paid to the training centre, never to KaamSathi.",
+  "trainStatusApplied": "Applied",
+  "trainStatusEnrolled": "Enrolled",
+  "trainStatusCompleted": "Completed",
+  "trainStatusDropped": "Left",
+  "trainStatusRejected": "Not accepted",
+  "trainCompletedOn": "Completed on {date}",
+  "@trainCompletedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "moneyTitle": "Money",
+  "moneyMenuSubtitle": "Verified earnings and offers from licensed partners",
+  "moneyNoLend": "KaamSathi does not lend money or charge you anything. Offers come from licensed partners.",
+  "moneyTabEarnings": "Earnings",
+  "moneyTabOffers": "Offers",
+  "moneyTabApplications": "Applied",
+  "moneyTabSharing": "Sharing",
+  "finVerifiedMonths": "Verified months",
+  "finAvgNet": "Average monthly pay",
+  "finStability": "Income stability",
+  "finStabilityHigh": "Steady",
+  "finStabilityMedium": "Changes a little",
+  "finStabilityLow": "Changes a lot",
+  "finEmployers": "Employers",
+  "finSsfMonths": "Months with SSF",
+  "finRange": "Lowest {min} · Highest {max}",
+  "@finRange": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "finMonthly": "Salary by month",
+  "finPaid": "Paid",
+  "finUnpaid": "Not paid yet",
+  "finEmpty": "Your verified earnings appear after your first salary is paid through KaamSathi.",
+  "finHint": "Built only from salaries your employer paid and recorded on KaamSathi.",
+  "offerByRegulated": "Offered by {partner}, regulated by {regulator}",
+  "@offerByRegulated": {
+    "placeholders": {
+      "partner": {
+        "type": "String"
+      },
+      "regulator": {
+        "type": "String"
+      }
+    }
+  },
+  "offerBy": "Offered by {partner}",
+  "@offerBy": {
+    "placeholders": {
+      "partner": {
+        "type": "String"
+      }
+    }
+  },
+  "regNrb": "Nepal Rastra Bank (NRB)",
+  "regBeema": "Nepal Insurance Authority",
+  "regDofe": "Department of Foreign Employment",
+  "regCtevt": "CTEVT",
+  "offerKindLoan": "Loan",
+  "offerKindEwa": "Early salary (already earned)",
+  "offerKindInsurance": "Insurance",
+  "offerKindSavings": "Savings",
+  "offerKindTool": "Tool finance",
+  "offerKindVehicle": "Vehicle finance",
+  "offerEligible": "You qualify",
+  "offerNotEligible": "Not yet",
+  "offerUpTo": "Up to {amount}",
+  "@offerUpTo": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "offerMinMonths": "Needs {months} verified months",
+  "@offerMinMonths": {
+    "placeholders": {
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "offerMinAvg": "Needs average pay of {amount}",
+  "@offerMinAvg": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "offerTerms": "Partner's terms: {note}",
+  "@offerTerms": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "offerApply": "Apply",
+  "offersEmpty": "No offers right now.",
+  "offerApplied": "Application sent to {partner}. They will contact you.",
+  "@offerApplied": {
+    "placeholders": {
+      "partner": {
+        "type": "String"
+      }
+    }
+  },
+  "partnersTitle": "Our partners",
+  "partnerKindBank": "Bank",
+  "partnerKindMicrofinance": "Microfinance",
+  "partnerKindInsurer": "Insurance company",
+  "partnerKindWallet": "Digital wallet",
+  "partnerKindTraining": "Training",
+  "partnerKindAgency": "Recruitment agency",
+  "partnerKindGovernment": "Government",
+  "consentTitle": "Share your data — your choice",
+  "consentIntro": "To apply, {partner} needs to see some of your KaamSathi data. Read what will be shared before you agree.",
+  "@consentIntro": {
+    "placeholders": {
+      "partner": {
+        "type": "String"
+      }
+    }
+  },
+  "consentPartner": "Who gets it",
+  "consentPurpose": "Why",
+  "consentPurposeLoan": "To check if you can get this loan",
+  "consentPurposeInsurance": "To offer you this insurance",
+  "consentPurposeEwa": "To give you part of your earned salary early",
+  "consentScopes": "What they can see",
+  "scopeEarnings": "Your verified salary: monthly pay, months worked and employer names",
+  "scopeProfile": "Your Skill Passport: name, skills, reliability score and verified work record",
+  "scopePassport": "Your Skill Passport",
+  "scopeReferrals": "Update the status of this application",
+  "consentNotShared": "They will NOT see your citizenship or ID documents, or your bank account details.",
+  "consentDuration": "For how long",
+  "consentDurationUntil": "{days} days — until {date}",
+  "@consentDurationUntil": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "consentRevoke": "You can stop sharing at any time from Money → Sharing. Every time they look, you will see it there.",
+  "consentNoLend": "KaamSathi does not lend you money and does not charge you. Any loan or insurance is between you and {partner}.",
+  "@consentNoLend": {
+    "placeholders": {
+      "partner": {
+        "type": "String"
+      }
+    }
+  },
+  "consentAmount": "Amount you need",
+  "consentNote": "What is it for?",
+  "consentAgree": "I agree to share this data with {partner} for this purpose.",
+  "@consentAgree": {
+    "placeholders": {
+      "partner": {
+        "type": "String"
+      }
+    }
+  },
+  "consentApply": "Agree and apply",
+  "refsEmpty": "You have not applied for any offer.",
+  "refStatusSubmitted": "Sent",
+  "refStatusReview": "Being reviewed",
+  "refStatusApproved": "Approved",
+  "refStatusRejected": "Not approved",
+  "refStatusDisbursed": "Money given",
+  "refStatusClosed": "Closed",
+  "refAmountRequested": "Asked: {amount}",
+  "@refAmountRequested": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "refAmountApproved": "Approved: {amount}",
+  "@refAmountApproved": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "grantsTitle": "Who can see my data",
+  "grantsEmpty": "You are not sharing data with any partner.",
+  "grantActive": "Active",
+  "grantExpired": "Ended",
+  "grantRevoked": "Stopped",
+  "grantRevokeConfirm": "Stop sharing with {partner}? They will not be able to see your data any more.",
+  "@grantRevokeConfirm": {
+    "placeholders": {
+      "partner": {
+        "type": "String"
+      }
+    }
+  },
+  "grantRevokedMsg": "Sharing stopped.",
+  "accessLog": "When partners looked",
+  "accessEmpty": "No partner has looked at your data.",
+  "scopeShortEarnings": "Earnings",
+  "scopeShortProfile": "Profile",
+  "scopeShortPassport": "Skill Passport",
+  "scopeShortReferrals": "Application status",
+  "privacyTitle": "My data",
+  "privacyMenuSubtitle": "Get a copy, correct it or delete it",
+  "privacyIntro": "Under Nepal's Individual Privacy Act 2075, you can get a copy of your data, ask us to correct it, or ask us to delete it.",
+  "privacyExport": "Get a copy of my data",
+  "privacyExportHint": "We prepare a file with everything we hold about you. It can take a while. The download link works for a limited time.",
+  "privacyCorrection": "Correct my data",
+  "privacyCorrectionHint": "Tell us what is wrong. KaamSathi will check and fix it.",
+  "privacyCorrectionField": "What should be corrected?",
+  "privacyDeletion": "Delete my data",
+  "privacyDeletionHint": "Remove your profile, photos and documents from KaamSathi.",
+  "privacyDeletionWarning": "Please read before you continue: your name, phone number, photos and documents will be removed, and your Skill Passport and all data sharing will stop. Hajiri and payroll records that your employer must keep by law will stay, but without your name. This cannot be undone.",
+  "privacyDeletionConfirm": "I understand. Delete my data.",
+  "privacyReason": "Reason",
+  "privacyRequests": "My requests",
+  "privacyRequestsEmpty": "No requests yet.",
+  "privacyKindExport": "Copy of data",
+  "privacyKindCorrection": "Correction",
+  "privacyKindDeletion": "Deletion",
+  "privacyStatusReceived": "Received",
+  "privacyStatusInProgress": "In progress",
+  "privacyStatusCompleted": "Done",
+  "privacyStatusRejected": "Not accepted",
+  "privacyDownload": "Download",
+  "privacyDownloadExpired": "Link ended — ask for a new copy",
+  "privacyOpenError": "Saved, but no app on this phone can open the file.",
+  "privacySent": "Request sent. We will let you know.",
+  "shiftsTitle": "My shifts this week",
+  "shiftsMenuSubtitle": "Your work roster for the week",
+  "shiftsOff": "Day off",
+  "shiftsNone": "No shift yet",
+  "shiftsEmpty": "Your employer has not made a roster for this week yet.",
+  "weekPrev": "Previous week",
+  "weekNext": "Next week",
+  "weekOf": "Week from {date}",
+  "@weekOf": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "rosterTitle": "Shift roster",
+  "rosterMenuSubtitle": "Who works which shift this week",
+  "rosterEmpty": "No workers to roster at this site.",
+  "rosterTapHint": "Tap a box to change the shift.",
+  "rosterClear": "No shift",
+  "rosterOffShort": "Off"
 }

@@ -16,8 +16,9 @@ import datetime as dt
 import random
 from decimal import Decimal
 
+from django.conf import settings
 from django.core.management import call_command
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.utils import timezone
 
@@ -34,6 +35,20 @@ WORKER_USER_PHONE = "9800000010"
 
 HOTEL = "Hotel Annapurna View Pvt. Ltd."
 BUILDERS = "Shivam Builders & Construction"
+
+# Ecosystem apps may ship ``apps/<app>/demo.py`` with ``seed(stdout, rng)``; run in this order.
+ECOSYSTEM_DEMOS = (
+    "trust",
+    "crews",
+    "credentials",
+    "training",
+    "compliance",
+    "payouts",
+    "scheduling",
+    "partners",
+    "finance",
+    "privacy",
+)
 
 # fmt: off
 # (key, full_name, full_name_ne, gender, [(trade, years, nstb)], permanent_district, current_district, birth_year)  # noqa: E501
@@ -137,9 +152,20 @@ class Command(BaseCommand):
         parser.add_argument(
             "--reset", action="store_true", help="Delete demo orgs/workers first, then rebuild."
         )
+        parser.add_argument(
+            "--allow-production",
+            action="store_true",
+            help="Allow running with DEBUG=False (demo users with known phones; never on live data).",
+        )
 
     # ------------------------------------------------------------------ entry
     def handle(self, *args, **opts):
+        if not settings.DEBUG and not opts["allow_production"]:
+            raise CommandError(
+                "seed_demo refuses to run with DEBUG=False (production). Demo data creates users with "
+                "known phone numbers and fake workers. Use `seed_reference` for reference data, or pass "
+                "--allow-production on a throwaway staging database."
+            )
         call_command("seed_reference", stdout=self.stdout)
         self.rng = random.Random(SEED)
         self.today = timezone.localdate()
@@ -158,7 +184,26 @@ class Command(BaseCommand):
                 )
             else:
                 self._activity()
+        self._ecosystem()
         self._summary()
+
+    def _ecosystem(self):
+        """Call each ecosystem app's optional ``apps/<app>/demo.py: seed(stdout, rng)``."""
+        import importlib
+
+        for app in ECOSYSTEM_DEMOS:
+            module_name = f"apps.{app}.demo"
+            try:
+                module = importlib.import_module(module_name)
+            except ImportError as exc:
+                if getattr(exc, "name", None) != module_name:
+                    self.stdout.write(self.style.WARNING(f"  {app}: demo skipped ({exc})"))
+                continue
+            seed = getattr(module, "seed", None)
+            if seed is None:
+                continue
+            with transaction.atomic():
+                seed(self.stdout, random.Random(f"{SEED}-{app}"))
 
     # ------------------------------------------------------------------ reset
     def _reset(self):
@@ -170,6 +215,17 @@ class Command(BaseCommand):
 
         orgs = Organization.objects.filter(name__in=[HOTEL, BUILDERS])
         phones = [self._worker_phone(i) for i in range(len(WORKERS))]
+        # Ecosystem rows that PROTECT workers/payslips must go first (real data keeps them on purpose).
+        from django.apps import apps as registry
+
+        for label, lookup in (
+            ("finance.Referral", "worker__phone__in"),
+            ("partners.ConsentGrant", "worker__phone__in"),
+            ("crews.Referral", "worker__phone__in"),
+            ("crews.Referral", "crew__lead__phone__in"),
+        ):
+            if registry.is_installed(f"apps.{label.split('.')[0]}"):
+                registry.get_model(label).objects.filter(**{lookup: phones}).delete()
         Payslip.objects.filter(run__organization__in=orgs).delete()
         Payslip.objects.filter(worker__phone__in=phones).delete()
         PayrollRun.objects.filter(organization__in=orgs).delete()

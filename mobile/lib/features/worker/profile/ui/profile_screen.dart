@@ -9,6 +9,7 @@ import '../../../../core/l10n/l10n.dart';
 import '../../../../core/router/router.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
+import '../../../../core/widgets/eco.dart';
 import '../../../../core/widgets/language_toggle.dart';
 import '../../../common/account_actions.dart';
 import '../../data/worker_models.dart';
@@ -48,20 +49,9 @@ class ProfileScreen extends ConsumerWidget {
             },
             const SizedBox(height: KsSpace.s4),
             const Card(child: Padding(padding: EdgeInsets.all(KsSpace.s4), child: LanguageSelector())),
+            const _ProfileMenu(),
             const SizedBox(height: KsSpace.s4),
-            Card(
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: const Icon(LucideIcons.briefcase),
-                    title: Text(l.historyTitle),
-                    trailing: const Icon(LucideIcons.chevronRight),
-                    onTap: () => context.go(Routes.workerHistory),
-                  ),
-                  const ModeSwitchTile(),
-                ],
-              ),
-            ),
+            const Card(child: ModeSwitchTile()),
             const SizedBox(height: KsSpace.s6),
             OutlinedButton.icon(
               onPressed: () => confirmLogout(context, ref),
@@ -279,6 +269,103 @@ class _ConsentsCardState extends ConsumerState<_ConsentsCard> {
             ),
         ],
       ),
+    );
+  }
+}
+
+/// Grouped entries for the worker's ecosystem features. Kept here (not in the
+/// bottom nav) so the nav stays at four tabs on small phones.
+class _ProfileMenu extends StatelessWidget {
+  const _ProfileMenu();
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        GroupLabel(l.ecoGroupWork),
+        Card(
+          child: Column(
+            children: [
+              MenuTile(
+                icon: LucideIcons.briefcase,
+                title: l.historyTitle,
+                subtitle: l.contractTitle,
+                onTap: () => context.go(Routes.workerHistory),
+              ),
+              MenuTile(
+                icon: LucideIcons.calendarRange,
+                title: l.shiftsTitle,
+                onTap: () => context.push(Routes.workerShifts),
+              ),
+              MenuTile(
+                icon: LucideIcons.users,
+                title: l.crewTitle,
+                subtitle: l.crewMenuSubtitle,
+                onTap: () => context.push(Routes.workerCrew),
+              ),
+              MenuTile(
+                icon: LucideIcons.messageSquareWarning,
+                title: l.disputesTitle,
+                onTap: () => context.push(Routes.workerDisputes),
+              ),
+            ],
+          ),
+        ),
+        GroupLabel(l.ecoGroupSkills),
+        Card(
+          child: Column(
+            children: [
+              MenuTile(
+                icon: LucideIcons.idCard,
+                title: l.passportTitle,
+                subtitle: l.passportMenuSubtitle,
+                onTap: () => context.push(Routes.workerPassport),
+              ),
+              MenuTile(
+                icon: LucideIcons.award,
+                title: l.credTitle,
+                subtitle: l.credMenuSubtitle,
+                onTap: () => context.push(Routes.workerCredentials),
+              ),
+              MenuTile(
+                icon: LucideIcons.graduationCap,
+                title: l.trainTitle,
+                subtitle: l.trainMenuSubtitle,
+                onTap: () => context.push(Routes.workerTraining),
+              ),
+            ],
+          ),
+        ),
+        GroupLabel(l.ecoGroupMoney),
+        Card(
+          child: MenuTile(
+            icon: LucideIcons.handCoins,
+            title: l.moneyTitle,
+            subtitle: l.moneyMenuSubtitle,
+            onTap: () => context.push(Routes.workerMoney),
+          ),
+        ),
+        GroupLabel(l.ecoGroupPrivacy),
+        Card(
+          child: Column(
+            children: [
+              MenuTile(
+                icon: LucideIcons.eye,
+                title: l.profileViewsTitle,
+                onTap: () => context.push(Routes.workerProfileViews),
+              ),
+              MenuTile(
+                icon: LucideIcons.shieldCheck,
+                title: l.privacyTitle,
+                subtitle: l.privacyMenuSubtitle,
+                onTap: () => context.push(Routes.workerPrivacy),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

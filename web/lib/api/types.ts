@@ -857,6 +857,7 @@ export interface OpsOrganizationMember {
 export interface OpsOrganizationDetail extends OpsOrganization {
   unpaid_total?: Money;
   members?: OpsOrganizationMember[];
+  employer_reputation?: { pay_on_time_avg: number; conditions_avg: number; count: number } | null;
 }
 
 // ---------------------------------------------------------------- hiring (extras returned by the API)

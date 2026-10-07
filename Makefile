@@ -5,7 +5,8 @@ MANAGE  := cd $(BACKEND) && .venv/bin/python manage.py
 COMPOSE := docker compose
 
 .PHONY: help env up down logs db seed seed-docker setup backend-setup web-setup \
-        dev-backend dev-web dev-worker translations test test-backend test-web lint fmt check
+        dev-backend dev-web dev-worker translations test test-backend test-web lint fmt check \
+        deploy-config deploy-up deploy-down deploy-logs deploy-ps backup-now backup-list restore
 
 help:
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-16s %s\n", $$1, $$2}'
@@ -73,3 +74,42 @@ fmt: ## Auto-format backend and web
 	cd web && pnpm format
 
 check: lint test ## Everything CI runs
+
+# ---------------------------------------------------------------- production (deploy/)
+# ENV_FILE=deploy/.env.staging PROJECT=kaamsathi-staging make deploy-up   → staging on the same compose file
+ENV_FILE ?= deploy/.env.prod
+PROJECT  ?= kaamsathi
+RELEASE  ?= $(shell git rev-parse --short HEAD 2>/dev/null)
+PROD     := RELEASE=$(RELEASE) PROJECT=$(PROJECT) $(COMPOSE) --env-file $(ENV_FILE) -f deploy/docker-compose.prod.yml -p $(PROJECT)
+
+deploy-config: ## Validate + print the production compose config
+	@test -f $(ENV_FILE) || { echo "Missing $(ENV_FILE) — copy deploy/.env.prod.example"; exit 1; }
+	$(PROD) config --quiet && echo "compose config OK"
+
+deploy-up: deploy-config ## Build and (re)start the production stack (migrations run on backend start)
+	$(PROD) up -d --build --remove-orphans
+	$(PROD) ps
+
+deploy-down: ## Stop the production stack (volumes are kept)
+	$(PROD) down
+
+deploy-logs: ## Tail production logs (S=backend to filter one service)
+	$(PROD) logs -f --tail=200 $(S)
+
+deploy-ps: ## Production container status + health
+	$(PROD) ps
+
+backup-now: ## Run a database (+media) backup immediately
+	$(PROD) exec backup /usr/local/bin/backup.sh
+
+backup-list: ## List backups in the backup volume
+	$(PROD) exec backup ls -lh /backups
+
+restore: ## Restore DB from FILE=/backups/db-....sql.gz[.gpg] (DESTRUCTIVE; asks for confirmation)
+	@test -n "$(FILE)" || { echo "usage: make restore FILE=/backups/db-<db>-<stamp>.sql.gz[.gpg]"; exit 1; }
+	@echo "This will STOP the app and OVERWRITE database '$(PROJECT)' from $(FILE)."
+	@printf "Type the project name ($(PROJECT)) to continue: "; read ans; [ "$$ans" = "$(PROJECT)" ] || { echo "aborted"; exit 1; }
+	$(PROD) stop web backend celery-worker celery-beat
+	$(PROD) exec backup /usr/local/bin/backup.sh
+	$(PROD) exec backup /usr/local/bin/restore.sh $(FILE)
+	$(PROD) up -d backend celery-worker celery-beat web

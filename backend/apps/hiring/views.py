@@ -93,6 +93,21 @@ class ApplicationViewSet(
     def get_serializer_class(self):
         return ApplicationDetailSerializer if self.action == "retrieve" else ApplicationSerializer
 
+    def retrieve(self, request, *args, **kwargs):
+        application = self.get_object()
+        data = self.get_serializer(application).data
+        if data.get("profile_visible"):
+            from apps.trust.services import log_profile_view
+
+            log_profile_view(
+                application.worker,
+                context="application",
+                organization=self.org,
+                viewer=request.user,
+                object_id=application.id,
+            )
+        return Response(data)
+
     @action(detail=True, methods=["post"])
     def move(self, request, pk=None):
         application = self.get_object()

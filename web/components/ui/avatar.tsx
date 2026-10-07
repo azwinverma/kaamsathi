@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { initials } from "@/lib/format";
+import { mediaSrc } from "@/lib/media";
 
 const PALETTE = [
   "bg-primary-100 text-primary-800",
@@ -32,7 +33,7 @@ export function Avatar({
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src={src}
+        src={mediaSrc(src) ?? undefined}
         alt=""
         className={cn("shrink-0 rounded-full object-cover ring-1 ring-border", dims, className)}
       />

@@ -1,0 +1,90 @@
+{
+  "finance": {
+    "title": "Finance referrals",
+    "subtitle": "Partner offers, worker referrals and outcomes reported by partners.",
+    "rules_note": "KaamSathi never lends, never holds funds and never charges workers. Offers sit on the partner's books; we store referrals and the statuses partners report.",
+    "tabs": {
+      "summary": "Summary",
+      "offers": "Offers",
+      "referrals": "Referrals"
+    },
+    "status": {
+      "submitted": "Submitted",
+      "under_review": "Under review",
+      "approved": "Approved",
+      "rejected": "Not approved",
+      "disbursed": "Disbursed",
+      "closed": "Closed"
+    },
+    "kind": {
+      "loan": "Loan",
+      "ewa": "Earned wage access",
+      "insurance": "Insurance",
+      "savings": "Savings",
+      "tool_finance": "Tool finance",
+      "vehicle_finance": "Vehicle finance"
+    },
+    "summary": {
+      "referrals": "Referrals",
+      "approval_rate": "Approval rate",
+      "approval_hint": "Approved or disbursed ÷ decided",
+      "disbursed": "Disbursed by partners",
+      "disbursed_hint": "As reported by partners",
+      "verified_workers": "Workers with verified earnings",
+      "active_offers": "{count, plural, one {# active offer} other {# active offers}}",
+      "by_status": "Referrals by status",
+      "by_partner": "By partner",
+      "none_yet": "No referrals yet."
+    },
+    "table": {
+      "status": "Status",
+      "count": "Count",
+      "partner": "Partner",
+      "total": "Total",
+      "open": "Open",
+      "actions": "Actions"
+    },
+    "all_partners": "All partners",
+    "all_statuses": "All statuses",
+    "offers": {
+      "new": "New offer",
+      "empty_title": "No offers yet",
+      "empty_body": "Add an offer a partner has agreed to publish — tool finance, wage advance, insurance…",
+      "title_col": "Offer",
+      "min_months": "Min. verified months",
+      "min_avg_net": "Min. avg. net pay",
+      "max_amount": "Max. amount",
+      "active": "Active",
+      "inactive": "Inactive",
+      "edit": "Edit {title}"
+    },
+    "referrals": {
+      "status_note": "Statuses are set only by the partner through the partner API.",
+      "empty_title": "No referrals yet",
+      "empty_body": "Referrals appear when a worker applies to an offer from the app.",
+      "worker": "Worker",
+      "offer": "Offer",
+      "requested": "Requested",
+      "approved_amount": "Approved",
+      "updated": "Updated"
+    },
+    "offer_form": {
+      "edit_title": "Edit offer",
+      "new_title": "New offer",
+      "description": "Thresholds are checked against the worker's verified earnings. Terms are the partner's, shown verbatim; we add no fees.",
+      "kind": "Type",
+      "title_en": "Title (English)",
+      "title_ne": "Title (Nepali)",
+      "desc_en": "Description (English)",
+      "desc_ne": "Description (Nepali)",
+      "min_months": "Min. verified months",
+      "min_months_hint": "Months with paid payslips",
+      "min_avg_net": "Min. average net pay (Rs.)",
+      "max_amount": "Max. amount (Rs.)",
+      "interest_note": "Partner-stated terms",
+      "interest_note_hint": "Shown to workers exactly as written.",
+      "is_active": "Visible to workers",
+      "is_active_hint": "Inactive offers are hidden in the app; existing referrals are kept."
+    }
+  }
+}

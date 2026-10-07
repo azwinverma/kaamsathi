@@ -13,22 +13,19 @@ Future<void> confirmLogout(BuildContext context, WidgetRef ref) async {
   final pending = ref.read(syncControllerProvider).records.length;
   final ok = await showDialog<bool>(
     context: context,
-    builder: (ctx) => AlertDialog(
-      title: Text(l.logoutConfirm),
-      content: pending > 0
-          ? Text(l.logoutPendingWarning(localizeDigits('$pending', ctx.lang)))
-          : null,
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.commonCancel)),
-        FilledButton(
-          style: pending > 0
-              ? FilledButton.styleFrom(backgroundColor: Theme.of(ctx).colorScheme.error)
-              : null,
-          onPressed: () => Navigator.pop(ctx, true),
-          child: Text(l.logout),
+    builder:
+        (ctx) => AlertDialog(
+          title: Text(l.logoutConfirm),
+          content: pending > 0 ? Text(l.logoutPendingWarning(localizeDigits('$pending', ctx.lang))) : null,
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.commonCancel)),
+            FilledButton(
+              style: pending > 0 ? FilledButton.styleFrom(backgroundColor: Theme.of(ctx).colorScheme.error) : null,
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(l.logout),
+            ),
+          ],
         ),
-      ],
-    ),
   );
   if (ok != true) return;
   await ref.read(syncControllerProvider.notifier).clearAll();
@@ -49,9 +46,7 @@ class ModeSwitchTile extends ConsumerWidget {
       leading: const Icon(LucideIcons.arrowLeftRight),
       title: Text(toWorker ? l.modeSwitchToWorker : l.modeSwitchToSupervisor),
       trailing: const Icon(LucideIcons.chevronRight),
-      onTap: () => ref
-          .read(sessionProvider.notifier)
-          .setMode(toWorker ? AppMode.worker : AppMode.supervisor),
+      onTap: () => ref.read(sessionProvider.notifier).setMode(toWorker ? AppMode.worker : AppMode.supervisor),
     );
   }
 }

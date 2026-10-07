@@ -97,6 +97,13 @@ class OpsWorkerViewSet(
             qs = qs.filter(is_available=p["is_available"] in ("true", "1"))
         return qs.distinct().order_by("full_name")
 
+    def retrieve(self, request, *args, **kwargs):
+        worker = self.get_object()
+        from apps.trust.services import log_profile_view
+
+        log_profile_view(worker, context="ops", viewer=request.user, object_id=worker.id)
+        return Response(self.get_serializer(worker).data)
+
     def perform_create(self, serializer):
         worker = serializer.save()
         log(self.request, "ops.worker.create", worker, organization=None, changes={"after": snapshot(worker)})
@@ -250,6 +257,9 @@ class OpsOrganizationViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, v
         from apps.billing.services import unpaid_total
 
         data["unpaid_total"] = f"{unpaid_total(org):.2f}"
+        from apps.trust.services import employer_reputation
+
+        data["employer_reputation"] = employer_reputation(org)
         data["members"] = [
             {
                 "id": str(m.id),

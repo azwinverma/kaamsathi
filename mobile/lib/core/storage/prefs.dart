@@ -60,9 +60,29 @@ class Prefs {
   Future<void> setCheckInState(Json? v) =>
       _set(_kCheckIn, v == null ? null : jsonEncode(v));
 
+  static const _kCachePrefix = 'cache:';
+
+  /// Last successful response for an offline-friendly screen (trust card,
+  /// my shifts, passport, financial profile). Small JSON only.
+  Json? cachedJson(String key) {
+    final s = _p.getString('$_kCachePrefix$key');
+    if (s == null) return null;
+    try {
+      return asJson(jsonDecode(s));
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> setCachedJson(String key, Json value) =>
+      _p.setString('$_kCachePrefix$key', jsonEncode(value));
+
   /// Clears everything tied to the signed-in user (keeps language).
   Future<void> clearSession() async {
     for (final k in [_kMode, _kOrg, _kSite, _kMe, _kCheckIn]) {
+      await _p.remove(k);
+    }
+    for (final k in _p.getKeys().where((k) => k.startsWith(_kCachePrefix)).toList()) {
       await _p.remove(k);
     }
   }

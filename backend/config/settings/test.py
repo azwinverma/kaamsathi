@@ -11,11 +11,19 @@ SMS_BACKEND = "console"
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.InMemoryStorage"},
+    "private": {"BACKEND": "django.core.files.storage.InMemoryStorage"},
     "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
 }
 REST_FRAMEWORK = {
     **REST_FRAMEWORK,
     "DEFAULT_THROTTLE_CLASSES": [],
-    "DEFAULT_THROTTLE_RATES": {"anon": None, "user": None, "otp": None},
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": None,
+        "user": None,
+        "otp": None,
+        "public": None,
+        "files": None,
+        "privacy": None,
+    },
 }
 LOGGING = {"version": 1, "disable_existing_loggers": False, "root": {"level": "WARNING"}}

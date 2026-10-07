@@ -3,7 +3,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Briefcase, Receipt, UserCog, Users } from "lucide-react";
+import { Briefcase, Receipt, Star, UserCog, Users } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardBody, CardHeader, DescriptionList } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -52,6 +52,8 @@ export default function OpsOrganizationDetailPage() {
   }
 
   const unpaid = Number(o.unpaid_total ?? 0);
+  // Workers' private ratings, aggregated by the API (null below 3 ratings).
+  const rep = o.employer_reputation ?? null;
   const location = [o.address, o.municipality, o.ward ? to("ward_n", { n: f.digits(o.ward) }) : null, district(o.district)]
     .filter(Boolean)
     .join(", ");
@@ -82,7 +84,7 @@ export default function OpsOrganizationDetailPage() {
         }
       />
 
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-5">
         <StatCard label={to("active_workers")} value={f.number(o.active_workers ?? 0)} icon={Users} tone="success" />
         <StatCard label={to("open_jobs")} value={f.number(o.open_jobs ?? 0)} icon={Briefcase} tone="brand" />
         <StatCard label={to("members")} value={f.number(o.members_count ?? o.members?.length ?? 0)} icon={UserCog} />
@@ -91,6 +93,12 @@ export default function OpsOrganizationDetailPage() {
           value={f.money(o.unpaid_total ?? 0)}
           icon={Receipt}
           tone={unpaid > 0 ? "warning" : "neutral"}
+        />
+        <StatCard
+          label={to("reputation")}
+          value={rep ? `${f.number(rep.pay_on_time_avg)} · ${f.number(rep.conditions_avg)}` : "—"}
+          icon={Star}
+          hint={rep ? to("reputation_hint", { count: rep.count }) : to("reputation_none")}
         />
       </div>
 

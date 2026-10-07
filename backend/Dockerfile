@@ -14,9 +14,15 @@ COPY . .
 RUN DJANGO_SETTINGS_MODULE=config.settings.prod DJANGO_SECRET_KEY=build-only DJANGO_ALLOWED_HOSTS=localhost \
     python manage.py collectstatic --noinput \
     && useradd --create-home --uid 1000 app \
-    && mkdir -p /app/media && chown -R app:app /app
+    && mkdir -p /app/media/private && chown -R app:app /app/media
+
+# Release id (git SHA/tag) for /readiness and Sentry; pass --build-arg RELEASE=$(git rev-parse --short HEAD)
+ARG RELEASE=""
+ENV RELEASE=${RELEASE}
 
 USER app
 EXPOSE 8000
+# Healthchecks are defined per service in deploy/docker-compose.prod.yml (celery shares this image).
 ENTRYPOINT ["./entrypoint.sh"]
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--access-logfile", "-"]
+# Workers/threads/timeouts come from gunicorn.conf.py (env-tunable).
+CMD ["gunicorn", "config.wsgi:application", "-c", "gunicorn.conf.py"]

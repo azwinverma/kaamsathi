@@ -7,8 +7,9 @@ from rest_framework import serializers
 
 from apps.core import labels
 from apps.core.bs import bs_str
+from apps.core.files import worker_file_url
 from apps.core.phone import is_valid_phone, mask_phone, normalize_phone
-from apps.core.serializers import BSModelSerializer, district_ref, file_url, trade_ref
+from apps.core.serializers import BSModelSerializer, district_ref, trade_ref
 from apps.geo.models import District
 
 from .models import Consent, Trade, Worker, WorkerSkill
@@ -19,6 +20,7 @@ WORKER_CARD_PREFETCH = (
     "employments__ratings",
     "employments__organization",
     "employments__trade",
+    "trust",
 )
 
 
@@ -40,16 +42,30 @@ def months_between(start, end) -> int:
     return max((end - start).days // 30, 0)
 
 
+def _trust_fields(worker: Worker) -> tuple[int, int | None]:
+    """(verification_level, reliability_score) from the cached WorkerTrust (apps.trust)."""
+    from django.core.exceptions import ObjectDoesNotExist
+
+    try:
+        trust = worker.trust
+    except ObjectDoesNotExist:
+        trust = None
+    if trust is None:  # not computed yet: identity check is the only level we know for sure
+        return (1 if worker.verification_status == "verified" else 0), None
+    return trust.verification_level, trust.reliability_score
+
+
 def worker_card(worker: Worker, request=None) -> dict:
     skills = list(worker.skills.all())
     employments = list(worker.employments.all())
     ratings = [x for x in (_employer_rating(e) for e in employments) if x is not None]
     district = worker.current_district or worker.permanent_district
+    level, reliability = _trust_fields(worker)
     return {
         "id": str(worker.id),
         "full_name": worker.full_name,
         "phone_masked": mask_phone(worker.phone),
-        "photo": file_url(request, worker.photo),
+        "photo": worker_file_url(request, worker, "photo"),
         "verification_status": worker.verification_status,
         "verification_status_label": labels.label(labels.VERIFICATION_STATUS, worker.verification_status),
         "district": district_ref(district),
@@ -64,6 +80,8 @@ def worker_card(worker: Worker, request=None) -> dict:
         "total_experience_years": max((s.years_experience for s in skills), default=0),
         "rating_avg": round(sum(ratings) / len(ratings), 1) if ratings else None,
         "placements_count": len(employments),
+        "verification_level": level,
+        "reliability_score": reliability,
     }
 
 
@@ -226,7 +244,7 @@ class WorkerDetailSerializer(BSModelSerializer):
         data["permanent_district"] = district_ref(instance.permanent_district)
         data["current_district"] = district_ref(instance.current_district)
         for f in ("photo", "id_front", "id_back"):
-            data[f] = file_url(request, getattr(instance, f))
+            data[f] = worker_file_url(request, instance, f)
         card = worker_card(instance, request)
         for k in (
             "phone_masked",
@@ -235,6 +253,8 @@ class WorkerDetailSerializer(BSModelSerializer):
             "rating_avg",
             "placements_count",
             "verification_status_label",
+            "verification_level",
+            "reliability_score",
         ):
             data[k] = card[k]
         data["payment_method_label"] = labels.label(labels.PAYMENT_METHOD, instance.payment_method)

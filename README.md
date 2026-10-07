@@ -50,3 +50,27 @@ See each app's README for development without Docker.
 - SSF: 11% employee + 20% employer on basic salary.
 - Income-tax slabs FY 2083/84 are seeded as editable data — confirm with a tax adviser each fiscal year.
 - National holiday dates for 2083 are approximate and editable.
+
+## Production
+
+Production runs as one Docker Compose stack behind Caddy (automatic HTTPS):
+`<domain>` → Next.js web, `api.<domain>` → Django API, plus Celery worker/beat, PostgreSQL 16,
+Redis (password) and a nightly encrypted backup job.
+
+```bash
+cp deploy/.env.prod.example deploy/.env.prod   # fill every value; chmod 600
+make deploy-up                                 # build, migrate, start, obtain certificates
+make deploy-ps / deploy-logs / backup-now / restore FILE=...
+```
+
+| Doc | What |
+| --- | --- |
+| [deploy/](deploy/) | `docker-compose.prod.yml`, `Caddyfile`, `.env.prod.example`, backup image |
+| [docs/RUNBOOK.md](docs/RUNBOOK.md) | Deploy, rollback, migrations, backups + restore drill, secret rotation, SMS failover, incidents, yearly reference-data checklist |
+| [docs/SECURITY.md](docs/SECURITY.md) | Data classification, ID-document access, consent, retention, breach response |
+| [mobile/README.md](mobile/README.md) | Release signing, `API_BASE_URL`, store builds |
+
+Personal data is handled under the Individual Privacy Act 2075: uploaded documents are served
+only through short-lived signed links, workers can export or delete their data
+(`/me/privacy-requests`, ops queue at `/ops/privacy`), and `seed_demo` refuses to run when
+`DEBUG` is off.

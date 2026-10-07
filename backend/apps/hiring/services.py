@@ -178,9 +178,18 @@ NSTB_POINTS = {"none": 0, "elementary": 0, "level1": 5, "level2": 10, "level3": 
 NSTB_LABEL = {"level1": "NSTB Level 1", "level2": "NSTB Level 2", "level3": "NSTB Level 3"}
 
 
+def _reliability_score(worker) -> int | None:
+    from django.core.exceptions import ObjectDoesNotExist
+
+    try:
+        return worker.trust.reliability_score
+    except ObjectDoesNotExist:
+        return None
+
+
 def match_score(job: JobOpening, worker) -> tuple[int, list[str]]:
     """Score 0–100: trade 50 + district 20 + verified 10 + NSTB 5/level (max 15)
-    + experience 1/yr (max 10) − 10 if expected wage > offer."""
+    + experience 1/yr (max 10) + floor(reliability score / 20) − 10 if expected wage > offer."""
     score, reasons = 0, []
     skills = list(worker.skills.all())
     skill = next((s for s in skills if s.trade_id == job.trade_id), None)
@@ -203,6 +212,12 @@ def match_score(job: JobOpening, worker) -> tuple[int, list[str]]:
         if exp:
             score += exp
             reasons.append(f"{skill.years_experience} yrs experience")
+    reliability = _reliability_score(worker)
+    if reliability is not None:
+        bonus = reliability // 20  # 0–5 (docs/CONTRACT-ECOSYSTEM.md §1 matching change)
+        score += bonus
+        if bonus >= 4:
+            reasons.append("Reliable")
     if worker.expected_monthly_wage:
         offer = D(job.wage_amount) * (30 if job.wage_type == "daily" else 1)
         if D(worker.expected_monthly_wage) > offer:

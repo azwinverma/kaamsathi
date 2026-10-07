@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Release (main) config: HTTPS only, system CAs only.
+     Debug and profile builds override this file via
+     src/debug/res/xml/ and src/profile/res/xml/ to allow local dev HTTP. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>
