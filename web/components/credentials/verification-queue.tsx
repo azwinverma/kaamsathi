@@ -11,6 +11,7 @@ import {
   FileQuestion,
   ListChecks,
   PencilLine,
+  RotateCcw,
   ShieldX,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -209,6 +210,7 @@ export function CredentialQueue({
                           {c.worker.full_name} · {c.kind_label}
                         </span>
                         <span className="mt-1 flex flex-wrap items-center gap-2">
+                          {c.resubmission_of ? <ResubmissionBadge /> : null}
                           {isQueue ? (
                             <span className="text-fg-muted text-xs">
                               {t("uploaded_ago", { time: f.hours(hoursSince(c.created_at)) })}
@@ -296,7 +298,9 @@ function CredentialReview({
           <div className="mt-1 flex flex-wrap items-center gap-2">
             <CredentialStatusBadge credential={c} />
             <ExpiryText days={c.days_to_expiry} />
+            {c.resubmission_of ? <ResubmissionBadge /> : null}
           </div>
+          {c.resubmission_of ? <PreviousRejection previous={c.resubmission_of} /> : null}
         </div>
         <div className="flex items-center gap-1">
           <span className="text-fg-muted tabular mr-1 text-xs">
@@ -524,6 +528,30 @@ function DecisionForm({
         </Button>
       </div>
       <p className="text-fg-muted hidden text-xs lg:block">{t("shortcuts")}</p>
+    </div>
+  );
+}
+
+/** G012 — this credential re-submits a previously rejected one. */
+function ResubmissionBadge() {
+  const t = useTranslations("moderation.resubmission");
+  return (
+    <Badge tone="accent" title={t("badge_hint")}>
+      <RotateCcw aria-hidden />
+      {t("badge")}
+    </Badge>
+  );
+}
+
+function PreviousRejection({ previous }: { previous: NonNullable<OpsCredential["resubmission_of"]> }) {
+  const t = useTranslations("moderation.resubmission");
+  const f = useFormat();
+  return (
+    <div className="border-border bg-surface-muted mt-2 rounded-md border px-3 py-2 text-sm">
+      <p className="text-fg-muted text-xs font-medium">
+        {t("previous_rejection")} · {f.dateTime(previous.created_at)}
+      </p>
+      <p className="text-fg mt-0.5 whitespace-pre-line">{previous.note || t("no_note")}</p>
     </div>
   );
 }

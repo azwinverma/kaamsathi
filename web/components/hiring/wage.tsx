@@ -9,6 +9,7 @@ import { minimumFor } from "./lib";
 /** Live minimum-wage check against GET /ref/minimum-wage. */
 export function useWageCheck() {
   const t = useTranslations("hiring.wage");
+  const tAll = useTranslations();
   const f = useFormat();
   const { data: mw, isLoading } = useMinimumWage();
   return React.useMemo(
@@ -20,6 +21,7 @@ export function useWageCheck() {
       hint: (wt: WageType): string | undefined => {
         if (!mw) return isLoading ? t("loading") : undefined;
         const date = f.bs(mw.effective_from_bs) || f.ad(mw.effective_from);
+        if (wt === "hourly") return tAll("wage_hourly.min_hourly", { amount: f.money(mw.hourly) });
         return wt === "monthly"
           ? t("minimum_monthly", {
               amount: f.money(mw.monthly_total),
@@ -36,6 +38,6 @@ export function useWageCheck() {
         return amount < m ? t("below", { amount: f.money(m) }) : undefined;
       },
     }),
-    [mw, isLoading, t, f],
+    [mw, isLoading, t, tAll, f],
   );
 }

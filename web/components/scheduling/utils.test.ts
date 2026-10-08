@@ -1,6 +1,15 @@
 import { describe, expect, it } from "vitest";
 import type { RosterRow } from "@/lib/api/types-scheduling";
-import { cellValue, editKey, editsToEntries, isActiveOn, OFF, weekStartOf } from "./utils";
+import {
+  cellValue,
+  cellWarningText,
+  editKey,
+  editsToEntries,
+  isActiveOn,
+  OFF,
+  summariseWarnings,
+  weekStartOf,
+} from "./utils";
 
 const row: RosterRow = {
   employment_id: "e1",
@@ -46,5 +55,49 @@ describe("roster utils", () => {
       { employment_id: "e1", date: "2026-10-05", is_off: false, shift_id: "night", site_id: null },
       { employment_id: "e1", date: "2026-10-06", is_off: true, shift_id: null, site_id: null },
     ]);
+  });
+});
+
+describe("roster warnings (O005)", () => {
+  it("maps cell warning codes to labels", () => {
+    expect(
+      cellWarningText(
+        { warnings: { "2026-10-04": ["on_leave", "conflict_elsewhere"] } },
+        "2026-10-04",
+        { on_leave: "On approved leave" },
+      ),
+    ).toEqual(["On approved leave", "conflict_elsewhere"]);
+    expect(cellWarningText({}, "2026-10-04", {})).toEqual([]);
+  });
+
+  it("groups save warnings per worker-day, sorted by name then date", () => {
+    const rows = [
+      { employment_id: "e1", worker_name: "Sita" },
+      { employment_id: "e2", worker_name: "Hari" },
+    ];
+    const out = summariseWarnings(
+      [
+        { employment_id: "e1", date: "2026-10-05", code: "holiday", message: "Public holiday" },
+        { employment_id: "e1", date: "2026-10-05", code: "on_leave", message: "On leave" },
+        { employment_id: "e1", date: "2026-10-05", code: "on_leave", message: "On leave" },
+        { employment_id: "e2", date: "2026-10-06", code: "weekly_off", message: "Weekly off" },
+        {
+          employment_id: "e1",
+          date: "2026-10-04",
+          code: "conflict_elsewhere",
+          message: "Elsewhere",
+        },
+        { employment_id: "zz", date: "2026-10-04", code: "holiday", message: "Public holiday" },
+      ],
+      rows,
+      "?",
+    );
+    expect(out.map((w) => [w.name, w.date, w.messages])).toEqual([
+      ["?", "2026-10-04", ["Public holiday"]],
+      ["Hari", "2026-10-06", ["Weekly off"]],
+      ["Sita", "2026-10-04", ["Elsewhere"]],
+      ["Sita", "2026-10-05", ["Public holiday", "On leave"]],
+    ]);
+    expect(summariseWarnings(undefined, rows)).toEqual([]);
   });
 });

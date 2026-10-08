@@ -4,7 +4,9 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tansta
 import { api, type QueryParams } from "../client";
 import type { Paginated } from "../types";
 import type {
+  AppealOutcome,
   Dispute,
+  DisputeEvidence,
   DisputeCreateInput,
   DisputeStatus,
   ProfileViewEntry,
@@ -22,7 +24,58 @@ export const trustKeys = {
   meTrust: ["me", "trust"] as const,
   meProfileViews: (q?: QueryParams) => ["me", "profile-views", q ?? {}] as const,
   meDisputes: ["me", "disputes"] as const,
+  evidence: (scope: DisputeScope, id: string) => [scope, "disputes", "evidence", id] as const,
 };
+
+/** Which side of the API a dispute screen talks to. */
+export type DisputeScope = "me" | "org" | "ops";
+const listKey = (scope: DisputeScope) =>
+  scope === "org" ? trustKeys.orgDisputesAll : scope === "ops" ? trustKeys.opsDisputesAll : trustKeys.meDisputes;
+
+// ---------------------------------------------------------------- evidence (N006) · appeals (N008)
+export function useDisputeEvidence(scope: DisputeScope, id: string, enabled = true) {
+  return useQuery({
+    queryKey: trustKeys.evidence(scope, id),
+    queryFn: () => api.get<DisputeEvidence[]>(`/${scope}/disputes/${id}/evidence`),
+    enabled,
+  });
+}
+
+export function useUploadDisputeEvidence(scope: DisputeScope) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, file, note }: { id: string; file: File; note?: string }) => {
+      const form = new FormData();
+      form.append("file", file);
+      if (note) form.append("note", note);
+      return api.upload<DisputeEvidence>(`/${scope}/disputes/${id}/evidence`, form);
+    },
+    onSuccess: (_ev, { id }) => {
+      qc.invalidateQueries({ queryKey: trustKeys.evidence(scope, id) });
+      qc.invalidateQueries({ queryKey: listKey(scope) });
+    },
+  });
+}
+
+/** Employer (managers) appeal of a resolved/rejected decision. */
+export function useAppealDispute(scope: Extract<DisputeScope, "me" | "org"> = "org") {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
+      api.post<Dispute>(`/${scope}/disputes/${id}/appeal`, { reason }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: listKey(scope) }),
+  });
+}
+
+/** Ops: decide an appeal. 403 when the same staff member made the first decision. */
+export function useDecideAppeal() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...body }: { id: string; outcome: AppealOutcome; note: string }) =>
+      api.post<Dispute>(`/ops/disputes/${id}/appeal-decision`, body),
+    onSuccess: () => qc.invalidateQueries({ queryKey: trustKeys.opsDisputesAll }),
+  });
+}
 
 // ---------------------------------------------------------------- employer
 export function useOrgDisputes(params?: QueryParams, enabled = true) {

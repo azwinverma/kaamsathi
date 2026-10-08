@@ -88,38 +88,61 @@ def rostered_for(employments, day: dt.date) -> dict:
 @transaction.atomic
 def upsert(entries: list[dict], user) -> dict:
     """entries: validated dicts {employment, date, shift|None, site|None, is_off, note}.
-    A cell with no shift and not off clears the entry."""
+    A cell with no shift and not off clears the entry.
+
+    Returns ``{saved, cleared, changed: [(employment, date)]}`` — ``changed`` lists cells whose
+    shift/site/off actually changed (drives worker notifications, O007)."""
     saved = cleared = 0
+    changed = []
     for e in entries:
+        existing = RosterEntry.objects.filter(employment=e["employment"], date=e["date"]).first()
         if e.get("shift") is None and not e.get("is_off"):
-            cleared += RosterEntry.objects.filter(employment=e["employment"], date=e["date"]).delete()[0]
+            if existing is not None:
+                existing.delete()
+                cleared += 1
+                changed.append((e["employment"], e["date"]))
             continue
+        is_off = bool(e.get("is_off"))
+        shift = None if is_off else e.get("shift")
+        site = e.get("site")
+        new_key = (shift.pk if shift else None, site.pk if site else None, is_off)
+        if existing is None or (existing.shift_id, existing.site_id, existing.is_off) != new_key:
+            changed.append((e["employment"], e["date"]))
         RosterEntry.objects.update_or_create(
             employment=e["employment"],
             date=e["date"],
             defaults={
-                "shift": None if e.get("is_off") else e.get("shift"),
-                "site": e.get("site"),
-                "is_off": bool(e.get("is_off")),
+                "shift": shift,
+                "site": site,
+                "is_off": is_off,
                 "note": e.get("note") or None,
                 "created_by": user,
             },
         )
         saved += 1
-    return {"saved": saved, "cleared": cleared}
+    return {"saved": saved, "cleared": cleared, "changed": changed}
 
 
 @transaction.atomic
-def copy_week(employments_qs, from_start: dt.date, to_start: dt.date, user) -> int:
+def copy_week(
+    employments_qs, from_start: dt.date, to_start: dt.date, user, changed: list | None = None
+) -> int:
+    """Copy one week's roster onto another. Changed target cells are appended to ``changed``."""
     delta = to_start - from_start
     source = RosterEntry.objects.filter(
         employment__in=employments_qs, date__range=(from_start, from_start + dt.timedelta(days=6))
-    ).select_related("employment")
+    ).select_related("employment__organization")
     copied = 0
     for src in source:
         target = src.date + delta
         if not src.employment.is_active_on(target):
             continue
+        existing = RosterEntry.objects.filter(employment=src.employment, date=target).first()
+        key = (src.shift_id, src.site_id, src.is_off)
+        if changed is not None and (
+            existing is None or (existing.shift_id, existing.site_id, existing.is_off) != key
+        ):
+            changed.append((src.employment, target))
         RosterEntry.objects.update_or_create(
             employment=src.employment,
             date=target,
@@ -133,3 +156,142 @@ def copy_week(employments_qs, from_start: dt.date, to_start: dt.date, user) -> i
         )
         copied += 1
     return copied
+
+
+# --------------------------------------------------------------------------- conflicts (O005)
+def conflict_labels() -> dict:
+    from django.utils.translation import pgettext
+
+    return {
+        "on_leave": pgettext("complete1", "Worker is on approved leave this day."),
+        "holiday": pgettext("complete1", "This day is a public holiday."),
+        "weekly_off": pgettext("complete1", "This day is the weekly day off."),
+        "conflict_elsewhere": pgettext(
+            "complete1", "Worker has another shift or attendance elsewhere this day."
+        ),
+    }
+
+
+def conflicts_for(pairs) -> dict:
+    """Warnings (never blocking) for rostered (employment, date) pairs.
+
+    ``{(employment_id, date): [code]}`` — ``on_leave`` (approved leave), ``holiday`` (national/org
+    holiday), ``weekly_off`` (org weekly off day) and ``conflict_elsewhere`` (the worker has another
+    active employment with a rostered shift or attendance that day; the other employer is never
+    named).
+    """
+    from apps.workforce.models import Attendance, Employment, Holiday, LeaveRequest
+
+    pairs = list(pairs)
+    if not pairs:
+        return {}
+    dates = [d for _, d in pairs]
+    lo, hi = min(dates), max(dates)
+    emps = {e.pk: e for e, _ in pairs}
+    worker_ids = {e.worker_id for e in emps.values()}
+    org_ids = {e.organization_id for e in emps.values()}
+
+    leaves = list(
+        LeaveRequest.objects.filter(
+            employment_id__in=list(emps), status="approved", from_date__lte=hi, to_date__gte=lo
+        ).values_list("employment_id", "from_date", "to_date")
+    )
+    holidays: dict = {}
+    for org_id, day in Holiday.objects.filter(
+        Q(organization__isnull=True) | Q(organization_id__in=org_ids), date__range=(lo, hi)
+    ).values_list("organization_id", "date"):
+        holidays.setdefault(day, set()).add(org_id)
+    others = dict(
+        Employment.objects.filter(worker_id__in=worker_ids, status="active")
+        .exclude(pk__in=list(emps))
+        .values_list("pk", "worker_id")
+    )
+    busy: set = set()  # (worker_id, date)
+    if others:
+        for emp_id, day in RosterEntry.objects.filter(
+            employment_id__in=list(others), date__range=(lo, hi), is_off=False
+        ).values_list("employment_id", "date"):
+            busy.add((others[emp_id], day))
+        for emp_id, day in Attendance.objects.filter(
+            employment_id__in=list(others), date__range=(lo, hi), status__in=["present", "half_day"]
+        ).values_list("employment_id", "date"):
+            busy.add((others[emp_id], day))
+
+    out: dict = {}
+    for emp, day in pairs:
+        codes = []
+        if any(eid == emp.pk and f <= day <= t for eid, f, t in leaves):
+            codes.append("on_leave")
+        orgs = holidays.get(day, set())
+        if None in orgs or emp.organization_id in orgs:
+            codes.append("holiday")
+        if js_weekday(day) == emp.organization.weekly_off_day:
+            codes.append("weekly_off")
+        if (emp.worker_id, day) in busy:
+            codes.append("conflict_elsewhere")
+        if codes:
+            out[(emp.pk, day)] = codes
+    return out
+
+
+def warnings_list(conflicts: dict) -> list[dict]:
+    names = conflict_labels()
+    rows = []
+    for (emp_id, day), codes in sorted(conflicts.items(), key=lambda x: (str(x[0][0]), x[0][1])):
+        for code in codes:
+            rows.append(
+                {
+                    "employment_id": str(emp_id),
+                    "date": day.isoformat(),
+                    "code": code,
+                    "message": str(names[code]),
+                }
+            )
+    return rows
+
+
+# --------------------------------------------------------------------------- notifications (O007)
+NOTIFY_DAYS = 7
+
+
+def notify_roster_changes(changed) -> int:
+    """One inbox/push notification per worker per save batch when their roster changed for
+    today … today+7 (debounced: one message per worker per request). Returns workers notified."""
+    from apps.core.bs import format_bs_en
+    from apps.workers.models import Worker
+
+    try:
+        from apps.notifications.services import notify
+    except ImportError:  # pragma: no cover
+        return 0
+    today = today_ad()
+    horizon = today + dt.timedelta(days=NOTIFY_DAYS)
+    by_worker: dict = {}
+    for emp, day in changed:
+        if today <= day <= horizon:
+            by_worker.setdefault(emp.worker_id, (emp, set()))[1].add(day)
+    if not by_worker:
+        return 0
+    users = {
+        w.pk: w.user
+        for w in Worker.objects.filter(pk__in=list(by_worker), user__isnull=False).select_related("user")
+    }
+    sent = 0
+    for worker_id, (emp, days) in by_worker.items():
+        user = users.get(worker_id)
+        if user is None:
+            continue
+        org = emp.organization.name
+        notify(
+            user,
+            "roster_changed",
+            f"Your shifts at {org} changed",
+            f"{len(days)} day(s) from {format_bs_en(min(days))} were updated. "
+            "Open KaamSathi to see your shifts.",
+            title_ne=f"{org} मा तपाईंको सिफ्ट परिवर्तन भयो",
+            body_ne=f"{len(days)} दिनको सिफ्ट अद्यावधिक भयो। सिफ्ट हेर्न KaamSathi खोल्नुहोस्।",
+            data={"employment_id": str(emp.pk), "dates": sorted(d.isoformat() for d in days)},
+            link="/me/roster",
+        )
+        sent += 1
+    return sent

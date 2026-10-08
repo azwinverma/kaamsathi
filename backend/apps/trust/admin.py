@@ -36,3 +36,13 @@ class DisputeAdmin(admin.ModelAdmin):
     list_filter = ["status", "kind"]
     search_fields = ["worker__full_name", "worker__phone", "organization__name", "description"]
     raw_id_fields = ["worker", "organization", "employment", "payslip", "resolved_by"]
+
+
+from .models import DisputeEvidence  # noqa: E402
+
+
+@admin.register(DisputeEvidence)
+class DisputeEvidenceAdmin(admin.ModelAdmin):
+    list_display = ["dispute", "party", "file_type", "created_at"]
+    list_filter = ["party", "file_type"]
+    raw_id_fields = ["dispute", "uploaded_by"]

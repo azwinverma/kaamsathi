@@ -1,10 +1,11 @@
+from django.utils.translation import pgettext
 from rest_framework import serializers
 
 from apps.core import labels
 from apps.core.bs import MONTHS_EN, MONTHS_NE
 from apps.core.serializers import BSModelSerializer, MoneyField
 
-from .models import PayrollRun, Payslip
+from .models import PayGroup, PayPolicy, PayrollRun, Payslip
 from .services import run_totals
 
 MONEY_FIELDS = [
@@ -45,6 +46,11 @@ class PayrollRunSerializer(BSModelSerializer):
         data["month_name_en"] = MONTHS_EN[instance.bs_month]
         data["month_name_ne"] = MONTHS_NE[instance.bs_month]
         data["status_label"] = labels.label(labels.PAYROLL_STATUS, instance.status)
+        data["pay_group"] = (
+            {"id": str(instance.pay_group_id), "name": instance.pay_group.name}
+            if instance.pay_group_id
+            else None
+        )
         data["approved_by"] = (
             {"id": str(instance.approved_by_id), "full_name": instance.approved_by.full_name}
             if instance.approved_by_id
@@ -57,7 +63,17 @@ class PayrollRunSerializer(BSModelSerializer):
 class PayrollRunCreateSerializer(serializers.Serializer):
     bs_year = serializers.IntegerField(min_value=2000, max_value=2100)
     bs_month = serializers.IntegerField(min_value=1, max_value=12)
-    include_festival_allowance = serializers.BooleanField(default=False)
+    # Omitted / null → the pay policy decides (festival_month); false when no policy (contract default).
+    include_festival_allowance = serializers.BooleanField(required=False, allow_null=True, default=None)
+    pay_group_id = serializers.PrimaryKeyRelatedField(
+        source="pay_group", queryset=PayGroup.objects.none(), required=False, allow_null=True, default=None
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        org = self.context.get("org")
+        if org is not None:
+            self.fields["pay_group_id"].queryset = PayGroup.objects.filter(organization=org)
 
 
 class MarkPaidSerializer(serializers.Serializer):
@@ -81,6 +97,7 @@ class PayslipSerializer(serializers.ModelSerializer):
             "absent_days",
             "payable_days",
             "overtime_hours",
+            "regular_hours",
             *MONEY_FIELDS,
             "note",
             "payment_method",
@@ -126,6 +143,148 @@ class PayslipSerializer(serializers.ModelSerializer):
             "absent_days",
             "payable_days",
             "overtime_hours",
+            "regular_hours",
         ):
             data[f] = str(getattr(instance, f))
+        return data
+
+
+# --------------------------------------------------------------------------- pay policy & groups
+class PayPolicySerializer(serializers.ModelSerializer):
+    ot_multiplier = serializers.DecimalField(max_digits=4, decimal_places=2, required=False)
+    half_day_fraction = serializers.DecimalField(max_digits=3, decimal_places=2, required=False)
+    festival_custom_amount = MoneyField(required=False)
+
+    class Meta:
+        model = PayPolicy
+        fields = [
+            "ot_multiplier",
+            "festival_allowance_rule",
+            "festival_custom_amount",
+            "festival_month",
+            "rounding",
+            "weekly_off_paid",
+            "half_day_fraction",
+            "updated_at",
+        ]
+        read_only_fields = ["updated_at"]
+
+    def validate_ot_multiplier(self, value):
+        from decimal import Decimal
+
+        if value < Decimal("1.5"):
+            raise serializers.ValidationError(
+                pgettext("complete2", "Overtime must be paid at least 1.5× (Labour Act 2074).")
+            )
+        if value > Decimal("5"):
+            raise serializers.ValidationError(pgettext("complete2", "Must be 5× or less."))
+        return value
+
+    def validate_half_day_fraction(self, value):
+        from decimal import Decimal
+
+        if not Decimal("0") < value < Decimal("1"):
+            raise serializers.ValidationError(pgettext("complete2", "Must be between 0 and 1."))
+        return value
+
+    def validate_festival_custom_amount(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Cannot be negative.")
+        return value
+
+    def validate_festival_month(self, value):
+        if value is not None and not 1 <= value <= 12:
+            raise serializers.ValidationError(pgettext("complete2", "Must be a BS month from 1 to 12."))
+        return value
+
+    def validate(self, attrs):
+        rule = attrs.get("festival_allowance_rule", getattr(self.instance, "festival_allowance_rule", None))
+        amount = attrs.get("festival_custom_amount", getattr(self.instance, "festival_custom_amount", 0))
+        if rule == "custom_amount" and not amount:
+            raise serializers.ValidationError(
+                {"festival_custom_amount": [pgettext("complete2", "Enter the festival allowance amount.")]}
+            )
+        return attrs
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["ot_multiplier"] = f"{instance.ot_multiplier:.2f}"
+        data["half_day_fraction"] = f"{instance.half_day_fraction:.2f}"
+        data["is_default"] = instance.pk is None or instance._state.adding
+        return data
+
+
+class PayGroupSerializer(serializers.ModelSerializer):
+    site_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    wage_types = serializers.ListField(
+        child=serializers.ChoiceField(choices=list(labels.WAGE_TYPE)), required=False
+    )
+    contractor_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+
+    class Meta:
+        model = PayGroup
+        fields = [
+            "id",
+            "name",
+            "site_ids",
+            "wage_types",
+            "contractor_ids",
+            "pay_day",
+            "is_active",
+            "created_at",
+        ]
+        read_only_fields = ["id", "created_at"]
+
+    def validate_name(self, value):
+        value = (value or "").strip()
+        if not value:
+            raise serializers.ValidationError("This field may not be blank.")
+        org = self.context.get("org")
+        qs = PayGroup.objects.filter(organization=org, name__iexact=value)
+        if self.instance is not None:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError(
+                pgettext("complete2", "A pay group with this name already exists.")
+            )
+        return value
+
+    def validate_pay_day(self, value):
+        if value is not None and not 1 <= value <= 32:
+            raise serializers.ValidationError(pgettext("complete2", "Must be a day from 1 to 32."))
+        return value
+
+    def _own(self, ids, model, field):
+        org = self.context.get("org")
+        ids = sorted({str(i) for i in ids})
+        found = {
+            str(pk) for pk in model.objects.filter(organization=org, pk__in=ids).values_list("pk", flat=True)
+        }
+        missing = [i for i in ids if i not in found]
+        if missing:
+            raise serializers.ValidationError(
+                {field: [pgettext("complete2", "Unknown id: %(id)s") % {"id": missing[0]}]}
+            )
+        return ids
+
+    def validate(self, attrs):
+        from apps.orgs.models import Site
+
+        if "site_ids" in attrs:
+            attrs["site_ids"] = self._own(attrs["site_ids"], Site, "site_ids")
+        if "contractor_ids" in attrs:
+            from apps.compliance.models import Contractor
+
+            attrs["contractor_ids"] = self._own(attrs["contractor_ids"], Contractor, "contractor_ids")
+        if "wage_types" in attrs:
+            attrs["wage_types"] = sorted(set(attrs["wage_types"]))
+        return attrs
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        counts = self.context.get("member_counts")
+        if callable(counts):
+            counts = self.context["member_counts"] = counts()
+        if counts is not None:
+            data["employment_count"] = counts.get(instance.id, 0)
         return data

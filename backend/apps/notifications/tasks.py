@@ -35,16 +35,32 @@ def send_sms(self, phone: str, body: str, kind: str = "generic", log_body: str |
 
 
 @shared_task
-def interview_reminder(application_id: str):
+def interview_reminder(
+    application_id: str, interview_id: str | None = None, scheduled_for: str | None = None
+):
     from django.utils import timezone
 
     from apps.core.bs import format_bs_en
     from apps.hiring.models import Application
 
     app = Application.objects.select_related("job__organization", "worker").filter(pk=application_id).first()
-    if not app or app.stage != "interview" or not app.interview_at:
+    if interview_id:  # per-round reminder (L010): skip if the round was rescheduled, decided or removed
+        from apps.hiring.models import Interview
+
+        iv = Interview.objects.filter(
+            pk=interview_id, application_id=application_id, outcome="pending"
+        ).first()
+        if not app or app.stage in Application.TERMINAL or iv is None:
+            return False
+        import datetime as _dt
+
+        if scheduled_for and _dt.datetime.fromisoformat(scheduled_for) != iv.scheduled_at:
+            return False
+        when = timezone.localtime(iv.scheduled_at)
+    elif not app or app.stage != "interview" or not app.interview_at:
         return False
-    when = timezone.localtime(app.interview_at)
+    else:
+        when = timezone.localtime(app.interview_at)
     body = (
         f"KaamSathi: Reminder - interview for {app.job.title} at {app.job.organization.name} "
         f"today {when:%I:%M %p} ({format_bs_en(when.date())})."

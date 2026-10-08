@@ -83,11 +83,14 @@ def _district_wages(trade=None) -> dict[str, list[float]]:
         "dearness_allowance",
         "other_allowance",
         "daily_wage",
+        "hourly_wage",
         "start_date",
     ).order_by("start_date"):
         d = r["site__district_id"] or r["organization__district_id"]
         if r["wage_type"] == "daily":
             monthly = (r["daily_wage"] or 0) * DAILY_TO_MONTHLY_DAYS
+        elif r["wage_type"] == "hourly":
+            monthly = (r["hourly_wage"] or 0) * 8 * DAILY_TO_MONTHLY_DAYS
         else:
             monthly = (r["basic_salary"] or 0) + (r["dearness_allowance"] or 0) + (r["other_allowance"] or 0)
         if monthly and d:
@@ -170,7 +173,9 @@ def _avg_rating(rater: str, since) -> float | None:
     from apps.workers.models import Rating
 
     rows = list(
-        Rating.objects.filter(rater=rater, created_at__gte=since, voided=False).values_list("score_a", "score_b")
+        Rating.objects.filter(rater=rater, created_at__gte=since, voided=False).values_list(
+            "score_a", "score_b"
+        )
     )
     if not rows:
         return None

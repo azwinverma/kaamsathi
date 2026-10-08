@@ -34,6 +34,9 @@ class Employment(models.Model):
     dearness_allowance = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     other_allowance = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal("0"))
     daily_wage = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    hourly_wage = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    # Part-time hourly staff have a higher statutory hourly minimum (MinimumWage.hourly_part_time).
+    part_time = models.BooleanField(default=False)
     ssf_enrolled = models.BooleanField(default=False)
     supervisor = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
@@ -64,6 +67,8 @@ class Employment(models.Model):
     def monthly_gross(self) -> Decimal:
         if self.wage_type == "daily":
             return (self.daily_wage or Decimal("0")) * 30
+        if self.wage_type == "hourly":
+            return (self.hourly_wage or Decimal("0")) * 8 * 30
         return (
             (self.basic_salary or Decimal("0"))
             + (self.dearness_allowance or Decimal("0"))
@@ -90,6 +95,8 @@ class Attendance(models.Model):
     check_out_lng = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     method = models.CharField(max_length=12, choices=METHODS, default="supervisor")
     overtime_minutes = models.PositiveIntegerField(default=0)
+    # Hours actually worked (hourly wage type). Null = derive from check-in/out minus shift break.
+    hours_worked = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
     recorded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
     )

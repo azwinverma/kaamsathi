@@ -42,3 +42,18 @@ class EnrollmentAdmin(admin.ModelAdmin):
     search_fields = ["worker__full_name", "worker__phone", "course__title"]
     autocomplete_fields = ["worker"]
     readonly_fields = ["credential", "applied_at"]
+
+
+from .models import SessionAttendance, TrainingSession  # noqa: E402
+
+
+@admin.register(TrainingSession)
+class TrainingSessionAdmin(admin.ModelAdmin):
+    list_display = ["course", "date", "start_time", "end_time", "topic"]
+    raw_id_fields = ["course"]
+
+
+@admin.register(SessionAttendance)
+class SessionAttendanceAdmin(admin.ModelAdmin):
+    list_display = ["session", "enrollment", "present", "marked_at"]
+    raw_id_fields = ["session", "enrollment", "marked_by"]

@@ -2,6 +2,43 @@
 
 from django.utils.translation import pgettext_lazy
 
+from apps.core.labels import JOB_STATUS as _CORE_JOB_STATUS
+
+
+def _c(text):
+    return pgettext_lazy("complete1", text)
+
+
+# core statuses + ``paused`` (J006): hidden from recommendations/alerts, no new shortlists.
+JOB_STATUS = {**_CORE_JOB_STATUS, "paused": _c("Paused")}
+INTERVIEW_MODE = {
+    "in_person": _c("In person"),
+    "phone": _c("Phone"),
+    "video": _c("Video call"),
+    "trade_test": _c("Trade test"),
+}
+INTERVIEW_OUTCOME = {
+    "pending": _c("Scheduled"),
+    "passed": _c("Passed"),
+    "failed": _c("Did not pass"),
+    "no_show": _c("Did not attend"),
+}
+MESSAGES = {
+    "job_paused": _c("This job is paused. Resume it first."),
+    "job_not_open": _c("This job is not open."),
+    "invite_not_eligible": _c(
+        "You can invite workers who worked for you before, or who shared their Skill Passport with you."
+    ),
+    "share_invalid": _c("This Skill Passport link is expired or revoked."),
+    "already_in_pipeline": _c("This worker is already in this job's pipeline."),
+    "interview_stage": _c("Interviews can be scheduled for shortlisted or interview-stage candidates."),
+    "assignee_not_member": _c("The assignee must be an active member of your organization."),
+    "owner_not_staff": _c("The owner must be a KaamSathi staff member."),
+    "requirement_empty": _c("Pick a trade, credential, NSTB level or minimum years."),
+    "too_many_requirements": _c("A job can have at most 10 requirements."),
+    "too_many_tags": _c("An application can have at most 10 tags."),
+}
+
 SOURCE = {
     "ops": pgettext_lazy("growth", "KaamSathi match"),
     "worker_interest": pgettext_lazy("growth", "Worker applied"),

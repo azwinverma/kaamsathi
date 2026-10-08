@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext
 from rest_framework import serializers
 
 from apps.core import labels as core_labels
@@ -11,7 +12,7 @@ from apps.partners.models import Partner
 from apps.workers.models import Trade
 
 from . import labels
-from .models import Course, Enrollment, TrainingProvider
+from .models import Course, Enrollment, TrainingProvider, TrainingSession
 
 
 class ProviderSerializer(serializers.ModelSerializer):
@@ -39,8 +40,11 @@ class ProviderSerializer(serializers.ModelSerializer):
             "is_active",
             "courses_count",
             "created_at",
+            "verification_status",
+            "verified_at",
+            "verification_note",
         ]
-        read_only_fields = ["created_at"]
+        read_only_fields = ["created_at", "verification_status", "verified_at", "verification_note"]
 
     def get_kind_label(self, obj):
         return core_labels.label(labels.PROVIDER_KIND, obj.kind)
@@ -62,6 +66,10 @@ class ProviderSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data["district"] = district_ref(instance.district)
         data["partner"] = ref(instance.partner, "id", "name")
+        data["verification_status_label"] = core_labels.label(
+            labels.PROVIDER_VERIFICATION, instance.verification_status
+        )
+        data["verified_by"] = ref(instance.verified_by, "id", "full_name")
         return data
 
 
@@ -75,6 +83,8 @@ def provider_ref(p: TrainingProvider) -> dict:
         "ctevt_affiliation_no": p.ctevt_affiliation_no,
         "phone": p.phone,
         "district": district_ref(p.district),
+        "verification_status": p.verification_status,
+        "verified": p.verification_status == "verified",
     }
 
 
@@ -116,11 +126,16 @@ class CourseSerializer(BSModelSerializer):
             "status",
             "status_label",
             "leads_to_nstb",
+            "min_attendance_pct",
             "recommended",
             "created_at",
         ]
         read_only_fields = ["created_at"]
-        extra_kwargs = {"duration_days": {"min_value": 1}, "seats": {"min_value": 1}}
+        extra_kwargs = {
+            "duration_days": {"min_value": 1},
+            "seats": {"min_value": 1},
+            "min_attendance_pct": {"min_value": 0, "max_value": 100},
+        }
 
     def get_level_label(self, obj):
         return core_labels.label(labels.LEVEL, obj.level)
@@ -195,6 +210,9 @@ class EnrollmentSerializer(BSModelSerializer):
         data["course"] = course_ref(instance.course)
         data["sponsored_by_org"] = ref(instance.sponsored_by_org, "id", "name")
         data["credential_id"] = str(instance.credential_id) if instance.credential_id else None
+        from .services import attendance_summary
+
+        data["attendance"] = attendance_summary(instance)  # T006
         return data
 
 
@@ -219,3 +237,38 @@ class OrgEnrollSerializer(serializers.Serializer):
         queryset=Course.objects.select_related("provider", "trade")
     )
     worker_ids = serializers.ListField(child=serializers.UUIDField(), min_length=1, max_length=200)
+
+
+class ProviderVerifySerializer(serializers.Serializer):
+    status = serializers.ChoiceField(choices=["verified", "rejected", "pending"])
+    note = serializers.CharField(max_length=2000, required=False, allow_blank=True, allow_null=True)
+
+
+class SessionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TrainingSession
+        fields = ["id", "date", "start_time", "end_time", "topic", "created_at"]
+        read_only_fields = ["id", "created_at"]
+
+    def validate(self, attrs):
+        start = attrs.get("start_time", getattr(self.instance, "start_time", None))
+        end = attrs.get("end_time", getattr(self.instance, "end_time", None))
+        if start and end and end <= start:
+            raise serializers.ValidationError(
+                {"end_time": [pgettext("complete1", "End time must be after the start time.")]}
+            )
+        return attrs
+
+    def to_representation(self, instance):
+        from apps.core.bs import bs_str
+
+        data = super().to_representation(instance)
+        data["course_id"] = str(instance.course_id)
+        data["date_bs"] = bs_str(instance.date)
+        data["present_count"] = getattr(instance, "present_count", None)
+        return data
+
+
+class SessionAttendanceInputSerializer(serializers.Serializer):
+    enrollment_id = serializers.UUIDField()
+    present = serializers.BooleanField()

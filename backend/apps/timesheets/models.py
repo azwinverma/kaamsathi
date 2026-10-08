@@ -63,3 +63,51 @@ class Timesheet(models.Model):
 
     def __str__(self):
         return f"{self.employment_id} week {self.week_start} [{self.status}]"
+
+
+class AttendanceCorrection(models.Model):
+    """Worker's request to correct one day of hajiri (P008). A supervisor (own sites) or manager
+    approves it, which applies it through ``workforce.services.upsert_attendance`` (respects the
+    payroll lock). Lives here, next to timesheets, to keep the workforce app's migrations untouched."""
+
+    STATUSES = [("pending", "Pending"), ("approved", "Approved"), ("rejected", "Rejected")]
+    ATTENDANCE_STATUSES = [
+        ("present", "Present"),
+        ("absent", "Absent"),
+        ("half_day", "Half day"),
+        ("leave", "Leave"),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    employment = models.ForeignKey(
+        "workforce.Employment", on_delete=models.CASCADE, related_name="attendance_corrections"
+    )
+    date = models.DateField()
+    requested_status = models.CharField(max_length=12, choices=ATTENDANCE_STATUSES)
+    requested_check_in_at = models.DateTimeField(null=True, blank=True)
+    requested_check_out_at = models.DateTimeField(null=True, blank=True)
+    reason = models.TextField()
+    status = models.CharField(max_length=10, choices=STATUSES, default="pending", db_index=True)
+    current_status = models.CharField(max_length=12, blank=True, null=True)  # recorded status when raised
+    requested_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    decided_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    decided_at = models.DateTimeField(null=True, blank=True)
+    decision_note = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["employment", "date"],
+                condition=models.Q(status="pending"),
+                name="uniq_pending_attendance_correction",
+            )
+        ]
+
+    def __str__(self):
+        return f"Correction {self.employment_id} {self.date} → {self.requested_status} [{self.status}]"

@@ -24,6 +24,8 @@ import { useFormat } from "@/lib/use-format";
 import { cn } from "@/lib/utils";
 import { TRANSITIONS, actorName, ageFrom, isProfile } from "./lib";
 import { useStageMove } from "./move-stage";
+import { AssignmentSection, MatchScoreBadge } from "./application-pipeline";
+import { InterviewsSection } from "./interviews";
 
 /** Right-side drawer with a candidate's application: profile, history, stage events, move actions. */
 export function ApplicationDrawer({
@@ -48,6 +50,7 @@ export function ApplicationDrawer({
 function DrawerBody({ id, showJobLink }: { id: string; showJobLink: boolean }) {
   const t = useTranslations();
   const ta = useTranslations("hiring.application");
+  const tp = useTranslations("pipeline");
   const { data, isLoading, error, refetch } = useApplication(id);
   const mover = useStageMove();
 
@@ -95,6 +98,7 @@ function DrawerBody({ id, showJobLink }: { id: string; showJobLink: boolean }) {
             className="contents"
           />
           <OfferChip offer={(app as ApplicationOfferField).offer} />
+          <MatchScoreBadge app={app} />
           {showJobLink ? (
             <Link
               href={`/app/jobs/${app.job.id}`}
@@ -112,6 +116,18 @@ function DrawerBody({ id, showJobLink }: { id: string; showJobLink: boolean }) {
       <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-6 py-5">
         {app.stage === "interview" && app.interview_at ? (
           <InterviewBanner iso={app.interview_at} />
+        ) : null}
+
+        <Section title={tp("assign.section")}>
+          <AssignmentSection app={app} />
+        </Section>
+
+        {app.stage === "shortlisted" ||
+        app.stage === "interview" ||
+        (app.interviews?.length ?? 0) > 0 ? (
+          <Section title={tp("interviews.title")}>
+            <InterviewsSection app={app} />
+          </Section>
         ) : null}
 
         <Section title={ta("profile")}>

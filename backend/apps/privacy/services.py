@@ -56,6 +56,10 @@ LAZY_SOURCES = [
     ("partner_access_log", "partners", "PartnerAccessLog", "worker"),
     ("financial_profile", "finance", "FinancialProfile", "worker"),
     ("finance_referrals", "finance", "Referral", "worker"),
+    ("languages", "workers", "WorkerLanguage", "worker"),
+    ("dispute_evidence", "trust", "DisputeEvidence", "dispute__worker"),
+    ("attendance_corrections", "timesheets", "AttendanceCorrection", "employment__worker"),
+    ("training_session_attendance", "training", "SessionAttendance", "enrollment__worker"),
 ]
 
 # On deletion: rows removed outright (not legally required, purely the worker's own data).
@@ -66,6 +70,7 @@ DELETE_ON_ERASURE = [
     ("credentials", "Passport", "worker"),
     ("finance", "FinancialProfile", "worker"),
     ("trust", "WorkerTrust", "worker"),
+    ("workers", "WorkerLanguage", "worker"),
 ]
 # On deletion: rows kept for audit but revoked (consent grants to partners).
 REVOKE_ON_ERASURE = [

@@ -43,7 +43,40 @@ export interface ProfileViewEntry {
 }
 
 export type DisputeKind = "attendance" | "wage" | "employment_dates" | "rating" | "identity" | "other";
-export type DisputeStatus = "open" | "employer_responded" | "resolved" | "rejected";
+export type DisputeStatus =
+  | "open"
+  | "employer_responded"
+  | "resolved"
+  | "rejected"
+  | "appealed"
+  | "appeal_resolved";
+
+export type AppealOutcome = "upheld" | "overturned";
+
+/** N008 — one appeal per dispute, within 14 days of the first decision. */
+export interface DisputeAppeal {
+  reason: string;
+  party: "worker" | "employer";
+  appealed_at: ISODateTime;
+  outcome: AppealOutcome | null;
+  outcome_label: string | null;
+  resolution_note: string | null;
+  resolved_by: { id: UUID; full_name: string } | null;
+  resolved_at: ISODateTime | null;
+}
+
+/** N006 — `file_url` is a short-lived signed URL (rewrite with mediaSrc). */
+export interface DisputeEvidence {
+  id: UUID;
+  dispute_id: UUID;
+  file_url: string;
+  file_type: "image" | "pdf";
+  party: "worker" | "employer" | "ops";
+  party_label: string;
+  uploaded_by: { id: UUID; full_name: string } | null;
+  note: string | null;
+  created_at: ISODateTime;
+}
 
 export interface Dispute {
   id: UUID;
@@ -64,6 +97,12 @@ export interface Dispute {
   responded_at: ISODateTime | null;
   resolved_by: { id: UUID; full_name: string } | null;
   resolved_at: ISODateTime | null;
+  /** N006 */
+  evidence_count?: number | null;
+  /** N008 */
+  can_appeal?: boolean;
+  appeal_deadline?: ISODateTime | null;
+  appeal?: DisputeAppeal | null;
 }
 
 export interface DisputeCreateInput {

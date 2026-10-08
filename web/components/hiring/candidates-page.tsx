@@ -23,8 +23,14 @@ import type { ApplicationWithGrowth } from "@/lib/api/types-experience";
 import { ApplicationDrawer } from "./application-drawer";
 import { HiringGate } from "./gate";
 import { ALL_STAGES } from "./lib";
+import { MatchScoreBadge, TagsAndAssignee } from "./application-pipeline";
+import { useApplicationTags } from "@/lib/api/hooks/pipeline";
+import { useMembers } from "@/lib/api/hooks/org";
+import { listResults } from "@/lib/api/client";
+import { useSession } from "@/components/providers/session";
 
 const PAGE_SIZE = 25;
+const SOURCES = ["ops", "worker_interest", "employer_invite"] as const;
 
 export function CandidatesPage() {
   return (
@@ -37,6 +43,8 @@ export function CandidatesPage() {
 function CandidatesInner() {
   const t = useTranslations();
   const tc = useTranslations("hiring.candidates");
+  const tf = useTranslations("pipeline.filters");
+  const { me } = useSession();
   const f = useFormat();
   const router = useRouter();
   const pathname = usePathname();
@@ -50,6 +58,11 @@ function CandidatesInner() {
   const confirmations = stage === "confirmations";
   const [job, setJob] = React.useState(() => search.get("job") ?? "");
   const [q, setQ] = React.useState("");
+  const [tag, setTag] = React.useState(() => search.get("tag") ?? "");
+  const [assignee, setAssignee] = React.useState(() => search.get("assignee") ?? "");
+  const [source, setSource] = React.useState(() => search.get("source") ?? "");
+  const tags = useApplicationTags();
+  const members = useMembers();
   const [page, setPage] = React.useState(1);
 
   const jobs = useJobs({ page_size: 100, ordering: "-created_at" });
@@ -57,11 +70,18 @@ function CandidatesInner() {
     stage: stage === "all" || confirmations ? undefined : stage,
     job: job || undefined,
     q: q || undefined,
+    tag: tag || undefined,
+    assignee: assignee || undefined,
+    source: source || undefined,
     page,
     page_size: PAGE_SIZE,
     ordering: "-stage_changed_at",
   });
-  const filtered = (stage !== "all" && !confirmations) || !!job || !!q;
+  const filtered =
+    (stage !== "all" && !confirmations) || !!job || !!q || !!tag || !!assignee || !!source;
+  const memberOptions = listResults(members.data)
+    .filter((m) => m.is_active && m.user.id !== me.id)
+    .map((m) => ({ value: m.user.id, label: m.user.full_name }));
 
   const setOpen = (id: string | null) => {
     const sp = new URLSearchParams(search.toString());
@@ -120,6 +140,53 @@ function CandidatesInner() {
               className="sm:w-64"
               options={(jobs.data?.results ?? []).map((j) => ({ value: j.id, label: j.title }))}
             />
+            <Select
+              value={tag}
+              onValueChange={(v) => {
+                setTag(v);
+                setPage(1);
+              }}
+              allowEmpty
+              emptyLabel={tf("all_tags")}
+              placeholder={tf("all_tags")}
+              aria-label={tf("tag")}
+              disabled={tags.isLoading}
+              className="sm:w-44"
+              options={(tags.data ?? []).map((x) => ({
+                value: x.tag,
+                label: `${x.tag} (${f.digits(x.count)})`,
+              }))}
+            />
+            <Select
+              value={assignee}
+              onValueChange={(v) => {
+                setAssignee(v);
+                setPage(1);
+              }}
+              allowEmpty
+              emptyLabel={tf("assignee_all")}
+              placeholder={tf("assignee_all")}
+              aria-label={tf("assignee")}
+              className="sm:w-48"
+              options={[
+                { value: "me", label: tf("assignee_me") },
+                { value: "none", label: tf("assignee_none") },
+                ...memberOptions,
+              ]}
+            />
+            <Select
+              value={source}
+              onValueChange={(v) => {
+                setSource(v);
+                setPage(1);
+              }}
+              allowEmpty
+              emptyLabel={tf("source_all")}
+              placeholder={tf("source_all")}
+              aria-label={tf("source")}
+              className="sm:w-48"
+              options={SOURCES.map((s) => ({ value: s, label: tf(`sources.${s}`) }))}
+            />
             {filtered ? (
               <Button
                 variant="ghost"
@@ -127,6 +194,9 @@ function CandidatesInner() {
                 onClick={() => {
                   setStage("all");
                   setJob("");
+                  setTag("");
+                  setAssignee("");
+                  setSource("");
                   setQ("");
                   setPage(1);
                 }}
@@ -186,6 +256,7 @@ function CandidatesInner() {
                       >
                         <RowHeader>
                           <WorkerIdentity worker={a.worker} size="sm" />
+                          <TagsAndAssignee app={a} className="mt-1.5" />
                         </RowHeader>
                         <Td>
                           <Link
@@ -200,6 +271,7 @@ function CandidatesInner() {
                           <div className="flex flex-col items-start gap-1">
                             <StatusBadge status={a.stage} ns="stage" />
                             <ApplicationGrowthBadges application={a as ApplicationWithGrowth} />
+                            <MatchScoreBadge app={a} />
                             {a.stage === "interview" && a.interview_at ? (
                               <span className="text-fg-muted tabular text-xs">
                                 {f.dateTime(a.interview_at)}

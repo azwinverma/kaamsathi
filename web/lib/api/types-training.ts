@@ -6,6 +6,14 @@ export type CourseLevel = "basic" | "level1" | "level2" | "level3" | "refresher"
 export type CourseMode = "classroom" | "on_site" | "online";
 export type CourseStatus = "open" | "closed" | "completed";
 export type EnrollmentStatus = "applied" | "enrolled" | "completed" | "dropped" | "rejected";
+/** T002 provider verification. */
+export type ProviderVerificationStatus = "unverified" | "pending" | "verified" | "rejected";
+export const PROVIDER_VERIFICATION_STATUSES: ProviderVerificationStatus[] = [
+  "unverified",
+  "pending",
+  "verified",
+  "rejected",
+];
 
 export const PROVIDER_KINDS: ProviderKind[] = [
   "ctevt_affiliated",
@@ -41,6 +49,17 @@ export interface TrainingProvider {
   is_active: boolean;
   courses_count: number;
   created_at: ISODateTime;
+  /** T002 — read-only; change via POST /ops/training/providers/{id}/verify. */
+  verification_status?: ProviderVerificationStatus;
+  verification_status_label?: string;
+  verified_at?: ISODateTime | null;
+  verified_by?: { id: UUID; full_name: string } | null;
+  verification_note?: string | null;
+}
+
+export interface ProviderVerifyInput {
+  status: "verified" | "rejected" | "pending";
+  note?: string;
 }
 
 export interface ProviderInput {
@@ -65,6 +84,8 @@ export interface ProviderRef {
   ctevt_affiliation_no: string | null;
   phone: string;
   district: DistrictRef;
+  verification_status?: ProviderVerificationStatus;
+  verified?: boolean;
 }
 
 export interface Course {
@@ -91,6 +112,8 @@ export interface Course {
   status: CourseStatus;
   status_label: string;
   leads_to_nstb: boolean;
+  /** T006: minimum % of sessions attended to complete (0 = no requirement). */
+  min_attendance_pct?: number;
   /** True for the viewer's trades (worker) / workforce trades (employer) or top shortages. */
   recommended: boolean;
   created_at: ISODateTime;
@@ -112,6 +135,7 @@ export interface CourseInput {
   seats: number;
   status?: CourseStatus;
   leads_to_nstb?: boolean;
+  min_attendance_pct?: number;
 }
 
 export interface CourseRef {
@@ -141,6 +165,70 @@ export interface Enrollment {
   course: CourseRef;
   sponsored_by_org: { id: UUID; name: string } | null;
   credential_id: UUID | null;
+  /** T006 session attendance; `pct` is null when there are no sessions yet. */
+  attendance?: EnrollmentAttendance;
+}
+
+export interface EnrollmentAttendance {
+  sessions: number;
+  present: number;
+  pct: number | null;
+}
+
+/** T006 course session. Times are "HH:MM[:SS]". */
+export interface TrainingSession {
+  id: UUID;
+  course_id: UUID;
+  date: ISODate;
+  date_bs: string;
+  start_time: string | null;
+  end_time: string | null;
+  topic: string | null;
+  present_count?: number;
+  created_at: ISODateTime;
+}
+
+export interface SessionInput {
+  date: ISODate;
+  start_time?: string | null;
+  end_time?: string | null;
+  topic?: string | null;
+}
+
+export interface SessionAttendanceRow {
+  enrollment_id: UUID;
+  worker: { id: UUID; full_name: string };
+  status: EnrollmentStatus;
+  present: boolean | null;
+}
+
+export interface SessionAttendanceSheet {
+  session: TrainingSession;
+  rows: SessionAttendanceRow[];
+}
+
+/** T010 per-course outcomes; counts/rates < k are null; whole row null when `suppressed`. */
+export interface CourseOutcome {
+  course: CourseRef;
+  enrolled: number | null;
+  completed: number | null;
+  placed_90d: number | null;
+  retention_judged: number | null;
+  retained_90d: number | null;
+  /** Percent 0–100 with one decimal. */
+  completion_rate: number | null;
+  placement_rate: number | null;
+  retention_rate: number | null;
+  median_wage_before: Money | null;
+  median_wage_after: Money | null;
+  suppressed: boolean;
+}
+
+export interface OutcomesResponse {
+  k_anonymity: number;
+  placement_window_days: number;
+  retention_days: number;
+  courses: CourseOutcome[];
 }
 
 /** POST /org/enrollments → result */

@@ -90,6 +90,7 @@ urlpatterns = [
     path("", include("apps.training.urls")),
     path("", include("apps.compliance.urls")),
     path("", include("apps.payouts.urls")),
+    path("", include("apps.payroll.urls")),
     path("", include("apps.scheduling.urls")),
     path("", include("apps.partners.urls")),
     path("", include("apps.finance.urls")),
@@ -104,4 +105,5 @@ urlpatterns = [
     path("", include("apps.notifications.urls")),
     path("", include("apps.telemetry.urls")),
     path("", include("apps.billing.urls")),
+    path("", include("apps.hiring.urls")),
 ]

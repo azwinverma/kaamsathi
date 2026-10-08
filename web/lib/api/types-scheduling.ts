@@ -33,6 +33,19 @@ export interface RosterRow {
   start_date: ISODate;
   end_date: ISODate | null;
   cells: Record<ISODate, RosterCell | null>;
+  /** O005: soft warnings per rostered (not-off) day — never blocks saving. */
+  warnings?: Record<ISODate, RosterWarningCode[]>;
+}
+
+/** O005 roster warning codes. `conflict_elsewhere` never names the other employer. */
+export type RosterWarningCode = "on_leave" | "holiday" | "weekly_off" | "conflict_elsewhere";
+
+/** One warning from `PUT /org/roster`. */
+export interface RosterWarning {
+  employment_id: UUID;
+  date: ISODate;
+  code: RosterWarningCode;
+  message: string;
 }
 
 export interface RosterWeek {
@@ -43,6 +56,8 @@ export interface RosterWeek {
   days: RosterDay[];
   shifts: RosterShift[];
   rows: RosterRow[];
+  /** O005: code → localized text. */
+  warning_labels?: Partial<Record<RosterWarningCode, string>>;
 }
 
 export interface RosterEntryInput {
@@ -57,6 +72,14 @@ export interface RosterEntryInput {
 export interface RosterSaveResult {
   saved: number;
   cleared: number;
+  warnings?: RosterWarning[];
+  /** O007: workers sent a `roster_changed` notification. */
+  notified_workers?: number;
+}
+
+export interface RosterCopyResult {
+  copied: number;
+  notified_workers?: number;
 }
 
 /** Attendance day view row addition (`rostered_shift`). */

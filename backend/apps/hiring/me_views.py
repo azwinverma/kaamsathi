@@ -47,6 +47,25 @@ def job_summary(job: JobOpening) -> dict:
     }
 
 
+def _my_interview(iv) -> dict:
+    """Worker view of an interview round (no interviewer notes)."""
+    from django.utils import timezone
+
+    from . import labels as hl
+
+    local = timezone.localtime(iv.scheduled_at)
+    return {
+        "id": str(iv.id),
+        "scheduled_at": local.isoformat(),
+        "scheduled_at_bs": bs_str(local.date()),
+        "mode": iv.mode,
+        "mode_label": labels.label(hl.INTERVIEW_MODE, iv.mode),
+        "location": iv.location,
+        "outcome": iv.outcome,
+        "outcome_label": labels.label(hl.INTERVIEW_OUTCOME, iv.outcome),
+    }
+
+
 def my_application(app: Application) -> dict:
     return {
         "id": str(app.id),
@@ -58,6 +77,7 @@ def my_application(app: Application) -> dict:
         "worker_response_label": labels.label(hiring_labels.WORKER_RESPONSE, app.worker_response),
         "responded_at": app.responded_at.isoformat() if app.responded_at else None,
         "interview_at": app.interview_at.isoformat() if app.interview_at else None,
+        "interviews": [_my_interview(iv) for iv in app.interviews.all()],
         "created_at": app.created_at.isoformat(),
         "stage_changed_at": app.stage_changed_at.isoformat(),
         "can_respond": app.stage not in Application.TERMINAL and app.stage != "sourced",

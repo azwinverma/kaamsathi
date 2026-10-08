@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import PayrollRun, Payslip, TaxSlab
+from .models import PayGroup, PayPolicy, PayrollRun, Payslip, TaxSlab
 
 
 class PayslipInline(admin.TabularInline):
@@ -60,3 +60,16 @@ class TaxSlabAdmin(admin.ModelAdmin):
             },
         ),
     )
+
+
+@admin.register(PayPolicy)
+class PayPolicyAdmin(admin.ModelAdmin):
+    list_display = ["organization", "ot_multiplier", "festival_allowance_rule", "rounding", "weekly_off_paid"]
+    raw_id_fields = ["organization", "updated_by"]
+
+
+@admin.register(PayGroup)
+class PayGroupAdmin(admin.ModelAdmin):
+    list_display = ["name", "organization", "pay_day", "is_active", "created_at"]
+    list_filter = ["is_active"]
+    raw_id_fields = ["organization"]

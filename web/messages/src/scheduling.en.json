@@ -25,6 +25,12 @@
     "cell_label": "Shift for {name} on {date}",
     "unassigned": "—",
     "off": "Off",
-    "off_hint": "= weekly off / day off"
+    "off_hint": "= weekly off / day off",
+    "notified": "{count, plural, one {# worker notified} other {# workers notified}}",
+    "warning_label": "Warning for {name} on {date}: {warnings}",
+    "save_warnings_toast": "{count, plural, one {Saved with # warning} other {Saved with # warnings}}",
+    "save_warnings_title": "{count, plural, one {Check # shift} other {Check # shifts}}",
+    "save_warnings_hint": "The roster was saved. These are only reminders — change the shift if needed.",
+    "save_warnings_dismiss": "Dismiss warnings"
   }
 }

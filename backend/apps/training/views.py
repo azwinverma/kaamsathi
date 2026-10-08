@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from django.db import IntegrityError, transaction
 from django.db.models import Case, Count, IntegerField, Q, Value, When
+from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.utils.translation import pgettext
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -26,6 +28,9 @@ from .serializers import (
     MeEnrollSerializer,
     OrgEnrollSerializer,
     ProviderSerializer,
+    ProviderVerifySerializer,
+    SessionAttendanceInputSerializer,
+    SessionSerializer,
 )
 
 OPS_PERMS = [IsAuthenticated, IsOpsStaff]
@@ -200,7 +205,7 @@ class OpsProviderViewSet(AuditedViewSetMixin, viewsets.ModelViewSet):
     audit_prefix = "ops.training_provider"
 
     def get_queryset(self):
-        qs = TrainingProvider.objects.select_related("district", "partner").annotate(
+        qs = TrainingProvider.objects.select_related("district", "partner", "verified_by").annotate(
             courses_count=Count("courses")
         )
         p = self.request.query_params
@@ -212,7 +217,48 @@ class OpsProviderViewSet(AuditedViewSetMixin, viewsets.ModelViewSet):
             qs = qs.filter(district_id=p["district"])
         if p.get("is_active") in ("true", "false"):
             qs = qs.filter(is_active=p["is_active"] == "true")
+        if p.get("verification_status"):
+            qs = qs.filter(verification_status__in=p["verification_status"].split(","))
         return qs.order_by("name")
+
+    @action(detail=True, methods=["post"])
+    def verify(self, request, pk=None):
+        """T002 — ``{status: verified|rejected|pending, note?}``. Verifying a CTEVT-affiliated
+        provider needs its affiliation number on record (ops check the affiliation documents)."""
+        provider = self.get_object()
+        s = ProviderVerifySerializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        status = s.validated_data["status"]
+        if status == "verified" and provider.kind == "ctevt_affiliated" and not provider.ctevt_affiliation_no:
+            raise APIError(
+                "validation_error",
+                fields={
+                    "ctevt_affiliation_no": [
+                        pgettext("complete1", "Record the CTEVT affiliation number before verifying.")
+                    ]
+                },
+            )
+        if status == "rejected" and not s.validated_data.get("note"):
+            raise APIError(
+                "validation_error",
+                fields={"note": [pgettext("complete1", "Give a reason for the rejection.")]},
+            )
+        old = provider.verification_status
+        provider.verification_status = status
+        provider.verification_note = s.validated_data.get("note") or None
+        provider.verified_by = request.user if status != "pending" else None
+        provider.verified_at = timezone.now() if status != "pending" else None
+        provider.save(
+            update_fields=["verification_status", "verification_note", "verified_by", "verified_at"]
+        )
+        log(
+            request,
+            "ops.training_provider.verify",
+            provider,
+            organization=None,
+            changes={"verification_status": {"from": old, "to": status}, "note": provider.verification_note},
+        )
+        return Response(self.get_serializer(self.get_queryset().get(pk=provider.pk)).data)
 
     def perform_destroy(self, instance):
         if Enrollment.objects.filter(course__provider=instance).exists():
@@ -242,6 +288,27 @@ class OpsCourseViewSet(AuditedViewSetMixin, viewsets.ModelViewSet):
         if instance.enrollments.exists():
             raise InvalidState(message=_("This course has enrolments. Close it instead."))
         super().perform_destroy(instance)
+
+    @action(detail=True, methods=["get", "post"])
+    def sessions(self, request, pk=None):
+        """T006 — ``GET|POST /ops/training/courses/{id}/sessions {date, start_time?, end_time?, topic?}``."""
+        course = self.get_object()
+        if request.method == "GET":
+            qs = course.sessions.annotate(
+                present_count=Count("attendance", filter=Q(attendance__present=True))
+            ).order_by("date", "start_time")
+            return Response(SessionSerializer(qs, many=True).data)
+        s = SessionSerializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        session = s.save(course=course)
+        log(
+            request,
+            "ops.training_session.create",
+            session,
+            organization=None,
+            changes={"after": snapshot(session)},
+        )
+        return Response(SessionSerializer(session).data, status=201)
 
 
 class OpsEnrollmentViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -301,3 +368,111 @@ class OpsShortagesView(APIView):
             ) from exc
         district = p.get("district") or None
         return Response({"district": district, "days": days, "results": services.shortages(district, days)})
+
+
+class OpsSessionViewSet(
+    mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet
+):
+    """``GET|PATCH|DELETE /ops/training/sessions/{id}`` and ``GET|PUT …/{id}/attendance`` (T006)."""
+
+    permission_classes = OPS_PERMS
+    serializer_class = SessionSerializer
+    http_method_names = ["get", "patch", "put", "delete"]
+
+    def get_queryset(self):
+        from .models import TrainingSession
+
+        return TrainingSession.objects.select_related("course")
+
+    def perform_update(self, serializer):
+        before = snapshot(serializer.instance)
+        session = serializer.save()
+        from apps.audit.services import diff
+
+        log(
+            self.request,
+            "ops.training_session.update",
+            session,
+            organization=None,
+            changes=diff(before, snapshot(session)),
+        )
+
+    def perform_destroy(self, instance):
+        log(
+            self.request,
+            "ops.training_session.delete",
+            instance,
+            organization=None,
+            changes={"before": snapshot(instance)},
+        )
+        instance.delete()
+
+    @action(detail=True, methods=["get", "put"])
+    def attendance(self, request, pk=None):
+        from .models import SessionAttendance
+
+        session = self.get_object()
+        enrollments = list(
+            session.course.enrollments.filter(status__in=["enrolled", "completed"]).select_related("worker")
+        )
+        if request.method == "PUT":
+            raw = request.data.get("records") if isinstance(request.data, dict) else None
+            s = SessionAttendanceInputSerializer(data=raw if isinstance(raw, list) else [], many=True)
+            s.is_valid(raise_exception=True)
+            if not isinstance(raw, list):
+                raise APIError("validation_error", fields={"records": ["Expected a list of records."]})
+            allowed = {e.pk: e for e in enrollments}
+            bad = [str(r["enrollment_id"]) for r in s.validated_data if r["enrollment_id"] not in allowed]
+            if bad:
+                raise APIError(
+                    "validation_error", fields={"records": [f"Not enrolled in this course: {', '.join(bad)}"]}
+                )
+            for r in s.validated_data:
+                SessionAttendance.objects.update_or_create(
+                    session=session,
+                    enrollment=allowed[r["enrollment_id"]],
+                    defaults={"present": r["present"], "marked_by": request.user},
+                )
+            log(
+                request,
+                "ops.training_session.attendance",
+                session,
+                organization=None,
+                changes={
+                    "present": sum(1 for r in s.validated_data if r["present"]),
+                    "marked": len(s.validated_data),
+                },
+            )
+        marks = dict(
+            SessionAttendance.objects.filter(session=session).values_list("enrollment_id", "present")
+        )
+        return Response(
+            {
+                "session": SessionSerializer(session).data,
+                "rows": [
+                    {
+                        "enrollment_id": str(e.pk),
+                        "worker": {"id": str(e.worker_id), "full_name": e.worker.full_name},
+                        "status": e.status,
+                        "present": marks.get(e.pk),
+                    }
+                    for e in enrollments
+                ],
+            }
+        )
+
+
+class OpsOutcomesView(APIView):
+    """``GET /ops/training/outcomes?provider=&course=&trade=`` (T010, k-anonymity 5)."""
+
+    permission_classes = OPS_PERMS
+
+    def get(self, request):
+        p = request.query_params
+        return Response(
+            services.outcomes(
+                provider=p.get("provider") or None,
+                course=p.get("course") or None,
+                trade=p.get("trade") or None,
+            )
+        )

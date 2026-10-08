@@ -287,6 +287,7 @@ def wage_bands(district=None, trade=None, trades=None, districts=None) -> list[d
         "dearness_allowance",
         "other_allowance",
         "daily_wage",
+        "hourly_wage",
         "start_date",
     ).order_by("start_date")
     cells: dict[tuple, dict] = defaultdict(dict)
@@ -296,6 +297,8 @@ def wage_bands(district=None, trade=None, trades=None, districts=None) -> list[d
             continue
         if r["wage_type"] == "daily":
             monthly = (r["daily_wage"] or 0) * DAILY_TO_MONTHLY_DAYS
+        elif r["wage_type"] == "hourly":
+            monthly = (r["hourly_wage"] or 0) * 8 * DAILY_TO_MONTHLY_DAYS
         else:
             monthly = (r["basic_salary"] or 0) + (r["dearness_allowance"] or 0) + (r["other_allowance"] or 0)
         if monthly:

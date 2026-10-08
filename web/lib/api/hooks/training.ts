@@ -8,10 +8,15 @@ import type {
   CourseInput,
   Enrollment,
   EnrollmentStatus,
+  OutcomesResponse,
   ProviderInput,
+  ProviderVerifyInput,
+  SessionAttendanceSheet,
+  SessionInput,
   ShortagesResponse,
   SponsorResult,
   TrainingProvider,
+  TrainingSession,
 } from "../types-training";
 
 /** Org-scoped keys live under ["org", …] so they reset on org switch. */
@@ -24,6 +29,10 @@ export const trainingKeys = {
   enrollmentsAll: ["ops", "training", "enrollments"] as const,
   enrollments: (q?: QueryParams) => ["ops", "training", "enrollments", q ?? {}] as const,
   shortages: (q?: QueryParams) => ["ops", "training", "shortages", q ?? {}] as const,
+  sessions: (courseId: string) => ["ops", "training", "sessions", courseId] as const,
+  sessionAttendance: (sessionId: string) =>
+    ["ops", "training", "session-attendance", sessionId] as const,
+  outcomes: (q?: QueryParams) => ["ops", "training", "outcomes", q ?? {}] as const,
   orgCourses: (q?: QueryParams) => ["org", "training", "courses", q ?? {}] as const,
   orgEnrollmentsAll: ["org", "training", "enrollments"] as const,
   orgEnrollments: (q?: QueryParams) => ["org", "training", "enrollments", q ?? {}] as const,
@@ -59,6 +68,16 @@ export function useDeleteProvider() {
   });
 }
 
+/** T002 — verified / rejected (note required) / back to pending. Audited server-side. */
+export function useVerifyProvider() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...body }: ProviderVerifyInput & { id: string }) =>
+      api.post<TrainingProvider>(`/ops/training/providers/${id}/verify`, body),
+    onSuccess: () => qc.invalidateQueries({ queryKey: trainingKeys.opsAll }),
+  });
+}
+
 // ---------------------------------------------------------------- ops: courses
 export function useOpsCourses(params?: QueryParams) {
   return useQuery({
@@ -84,6 +103,70 @@ export function useDeleteCourse() {
   return useMutation({
     mutationFn: (id: string) => api.delete(`/ops/training/courses/${id}`),
     onSuccess: () => qc.invalidateQueries({ queryKey: trainingKeys.opsAll }),
+  });
+}
+
+// ---------------------------------------------------------------- ops: sessions (T006)
+export function useCourseSessions(courseId: string | null) {
+  return useQuery({
+    queryKey: trainingKeys.sessions(courseId ?? ""),
+    queryFn: () => api.get<TrainingSession[]>(`/ops/training/courses/${courseId}/sessions`),
+    enabled: !!courseId,
+  });
+}
+
+export function useSaveSession(courseId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...body }: SessionInput & { id?: string }) =>
+      id
+        ? api.patch<TrainingSession>(`/ops/training/sessions/${id}`, body)
+        : api.post<TrainingSession>(`/ops/training/courses/${courseId}/sessions`, body),
+    onSuccess: () => qc.invalidateQueries({ queryKey: trainingKeys.sessions(courseId) }),
+  });
+}
+
+export function useDeleteSession(courseId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.delete(`/ops/training/sessions/${id}`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: trainingKeys.sessions(courseId) });
+      qc.invalidateQueries({ queryKey: trainingKeys.enrollmentsAll });
+    },
+  });
+}
+
+export function useSessionAttendance(sessionId: string | null) {
+  return useQuery({
+    queryKey: trainingKeys.sessionAttendance(sessionId ?? ""),
+    queryFn: () =>
+      api.get<SessionAttendanceSheet>(`/ops/training/sessions/${sessionId}/attendance`),
+    enabled: !!sessionId,
+  });
+}
+
+export function useSaveSessionAttendance(sessionId: string, courseId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (records: { enrollment_id: string; present: boolean }[]) =>
+      api.put<SessionAttendanceSheet>(`/ops/training/sessions/${sessionId}/attendance`, {
+        records,
+      }),
+    onSuccess: (sheet) => {
+      qc.setQueryData(trainingKeys.sessionAttendance(sessionId), sheet);
+      qc.invalidateQueries({ queryKey: trainingKeys.sessions(courseId) });
+      qc.invalidateQueries({ queryKey: trainingKeys.enrollmentsAll });
+    },
+  });
+}
+
+// ---------------------------------------------------------------- ops: outcomes (T010)
+export function useTrainingOutcomes(params?: QueryParams) {
+  return useQuery({
+    queryKey: trainingKeys.outcomes(params),
+    queryFn: () => api.get<OutcomesResponse>("/ops/training/outcomes", params),
+    placeholderData: keepPreviousData,
   });
 }
 

@@ -445,6 +445,8 @@ class AttendanceBulkView(OrgScopedMixin, SupervisorScopeMixin, APIView):
                 "overtime_minutes": d.get("overtime_minutes") or 0,
                 "note": d.get("note"),
             }
+            if "hours_worked" in d:
+                values["hours_worked"] = d["hours_worked"]
             if d.get("check_in_at") is not None:
                 values["check_in_at"] = d["check_in_at"]
                 values["check_in_lat"], values["check_in_lng"] = d.get("lat"), d.get("lng")

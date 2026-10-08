@@ -1,6 +1,17 @@
 "use client";
 import * as React from "react";
-import { CheckCircle2, FileWarning, Info, Lock, MessageSquareReply, XCircle } from "lucide-react";
+import {
+  CheckCircle2,
+  ChevronDown,
+  FileWarning,
+  Gavel,
+  Info,
+  Lock,
+  MessageSquareReply,
+  Paperclip,
+  Scale,
+  XCircle,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useSession } from "@/components/providers/session";
@@ -21,16 +32,19 @@ import { isApiError } from "@/lib/api/errors";
 import { useOpsDisputes, useOrgDisputes, useResolveDispute, useRespondDispute } from "@/lib/api/hooks/trust";
 import type { Dispute, DisputeStatus } from "@/lib/api/types-trust";
 import { useFormat } from "@/lib/use-format";
+import { AppealBlock, AppealDialog, DecideAppealDialog } from "./dispute-appeal";
+import { EvidenceCountBadge, EvidencePanel } from "./dispute-evidence";
 
 const PAGE_SIZE = 20;
 type Mode = "org" | "ops";
-type Tab = "active" | "open" | "employer_responded" | "closed" | "all";
-const TABS: Tab[] = ["active", "open", "employer_responded", "closed", "all"];
+type Tab = "active" | "open" | "employer_responded" | "appealed" | "closed" | "all";
+const TABS: Tab[] = ["active", "open", "employer_responded", "appealed", "closed", "all"];
 const TAB_STATUS: Record<Tab, string | undefined> = {
-  active: "open,employer_responded",
+  active: "open,employer_responded,appealed",
   open: "open",
   employer_responded: "employer_responded",
-  closed: "resolved,rejected",
+  appealed: "appealed",
+  closed: "resolved,rejected,appeal_resolved",
   all: undefined,
 };
 
@@ -39,13 +53,18 @@ export const DISPUTE_TONE: Record<DisputeStatus, BadgeTone> = {
   employer_responded: "brand",
   resolved: "success",
   rejected: "danger",
+  appealed: "accent",
+  appeal_resolved: "success",
 };
 
 export function DisputeStatusBadge({ dispute }: { dispute: Pick<Dispute, "status" | "status_label"> }) {
   const t = useTranslations("trust.dispute_status");
+  const tm = useTranslations("moderation.dispute_status");
+  const fallback =
+    dispute.status === "appealed" || dispute.status === "appeal_resolved" ? tm(dispute.status) : t(dispute.status);
   return (
     <Badge tone={DISPUTE_TONE[dispute.status] ?? "neutral"} dot>
-      {dispute.status_label || t(dispute.status)}
+      {dispute.status_label || fallback}
     </Badge>
   );
 }
@@ -63,11 +82,14 @@ export function DisputesPage({ mode }: { mode: Mode }) {
 function DisputesQueue({ mode }: { mode: Mode }) {
   const t = useTranslations();
   const td = useTranslations("trust.disputes");
+  const tm = useTranslations("moderation");
   const [tab, setTab] = React.useState<Tab>("active");
   const [q, setQ] = React.useState("");
   const [page, setPage] = React.useState(1);
   const [responding, setResponding] = React.useState<Dispute | null>(null);
   const [resolving, setResolving] = React.useState<Dispute | null>(null);
+  const [appealing, setAppealing] = React.useState<Dispute | null>(null);
+  const [decidingAppeal, setDecidingAppeal] = React.useState<Dispute | null>(null);
   React.useEffect(() => setPage(1), [tab, q]);
 
   const params = { status: TAB_STATUS[tab], q: q || undefined, page, page_size: PAGE_SIZE };
@@ -88,7 +110,7 @@ function DisputesQueue({ mode }: { mode: Mode }) {
           <TabsList className="max-w-full overflow-x-auto">
             {TABS.map((s) => (
               <TabsTrigger key={s} value={s}>
-                {td(`tab_${s}`)}
+                {s === "appealed" ? tm("disputes.tab_appealed") : td(`tab_${s}`)}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -127,6 +149,8 @@ function DisputesQueue({ mode }: { mode: Mode }) {
                   mode={mode}
                   onRespond={() => setResponding(d)}
                   onResolve={() => setResolving(d)}
+                  onAppeal={() => setAppealing(d)}
+                  onDecideAppeal={() => setDecidingAppeal(d)}
                 />
               </li>
             ))}
@@ -137,6 +161,8 @@ function DisputesQueue({ mode }: { mode: Mode }) {
 
       <RespondDialog dispute={responding} onClose={() => setResponding(null)} />
       <ResolveDialog dispute={resolving} onClose={() => setResolving(null)} />
+      <AppealDialog dispute={appealing} onClose={() => setAppealing(null)} />
+      <DecideAppealDialog dispute={decidingAppeal} onClose={() => setDecidingAppeal(null)} />
     </div>
   );
 }
@@ -146,16 +172,23 @@ function DisputeCard({
   mode,
   onRespond,
   onResolve,
+  onAppeal,
+  onDecideAppeal,
 }: {
   dispute: Dispute;
   mode: Mode;
   onRespond: () => void;
   onResolve: () => void;
+  onAppeal: () => void;
+  onDecideAppeal: () => void;
 }) {
   const td = useTranslations("trust.disputes");
   const tk = useTranslations("trust.dispute_kind");
+  const tm = useTranslations("moderation");
   const f = useFormat();
-  const closed = d.status === "resolved" || d.status === "rejected";
+  const [showEvidence, setShowEvidence] = React.useState(false);
+  const firstDecisionPending = d.status === "open" || d.status === "employer_responded";
+  const evidencePanelId = `dispute-evidence-${d.id}`;
   return (
     <Card className="p-4 sm:p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -165,6 +198,7 @@ function DisputeCard({
             <span className="text-xs text-fg-muted tabular">{d.worker.phone_masked}</span>
             <Badge tone="outline">{d.kind_label || tk(d.kind)}</Badge>
             <DisputeStatusBadge dispute={d} />
+            <EvidenceCountBadge count={d.evidence_count} />
           </div>
           <p className="text-xs text-fg-muted">
             {[
@@ -177,16 +211,28 @@ function DisputeCard({
           </p>
         </div>
         <div className="flex shrink-0 flex-wrap gap-2">
-          {mode === "org" && !closed ? (
+          {mode === "org" && firstDecisionPending ? (
             <Button size="sm" variant={d.status === "open" ? "primary" : "secondary"} onClick={onRespond}>
               <MessageSquareReply aria-hidden />
               {d.status === "open" ? td("respond") : td("update_response")}
             </Button>
           ) : null}
-          {mode === "ops" && !closed ? (
+          {mode === "ops" && firstDecisionPending ? (
             <Button size="sm" onClick={onResolve}>
               <CheckCircle2 aria-hidden />
               {td("decide")}
+            </Button>
+          ) : null}
+          {mode === "org" && d.can_appeal ? (
+            <Button size="sm" variant="secondary" onClick={onAppeal}>
+              <Scale aria-hidden />
+              {tm("appeal.button")}
+            </Button>
+          ) : null}
+          {mode === "ops" && d.status === "appealed" ? (
+            <Button size="sm" onClick={onDecideAppeal}>
+              <Gavel aria-hidden />
+              {tm("appeal.decide")}
             </Button>
           ) : null}
         </div>
@@ -224,6 +270,27 @@ function DisputeCard({
       {d.resolution_note ? (
         <NoteBlock label={td("resolution_note")} when={d.resolved_at} text={d.resolution_note} tone="ops" />
       ) : null}
+      {d.appeal ? <AppealBlock appeal={d.appeal} /> : null}
+      {mode === "org" && d.can_appeal && d.appeal_deadline ? (
+        <p className="mt-2 text-xs text-fg-muted">
+          {tm("appeal.deadline_short", { date: f.dateTime(d.appeal_deadline) })}
+        </p>
+      ) : null}
+
+      <div className="mt-3">
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => setShowEvidence((v) => !v)}
+          aria-expanded={showEvidence}
+          aria-controls={evidencePanelId}
+        >
+          <Paperclip aria-hidden />
+          {tm("evidence.toggle", { count: d.evidence_count ?? 0 })}
+          <ChevronDown className={showEvidence ? "rotate-180 transition-transform" : "transition-transform"} aria-hidden />
+        </Button>
+        <div id={evidencePanelId}>{showEvidence ? <EvidencePanel dispute={d} scope={mode} /> : null}</div>
+      </div>
     </Card>
   );
 }

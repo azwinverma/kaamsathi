@@ -155,7 +155,9 @@ class SkillSerializer(serializers.ModelSerializer):
 
 class LanguageSerializer(serializers.Serializer):
     language = serializers.ChoiceField(choices=list(WorkerLanguage.LANGUAGES))
-    proficiency = serializers.ChoiceField(choices=list(WorkerLanguage.PROFICIENCIES), default="conversational")
+    proficiency = serializers.ChoiceField(
+        choices=list(WorkerLanguage.PROFICIENCIES), default="conversational"
+    )
 
 
 class WorkerDetailSerializer(BSModelSerializer):

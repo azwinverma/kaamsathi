@@ -59,7 +59,7 @@ export function useDeleteJob() {
   });
 }
 
-function useJobAction(action: "publish" | "close") {
+function useJobAction(action: "publish" | "close" | "pause" | "resume") {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => api.post<Job>(`/org/jobs/${id}/${action}`),
@@ -71,6 +71,10 @@ function useJobAction(action: "publish" | "close") {
 }
 export const usePublishJob = () => useJobAction("publish");
 export const useCloseJob = () => useJobAction("close");
+/** J006: open → paused. */
+export const usePauseJob = () => useJobAction("pause");
+/** J006: paused → open. */
+export const useResumeJob = () => useJobAction("resume");
 
 export function useApplications(params?: QueryParams, enabled = true) {
   return useQuery({

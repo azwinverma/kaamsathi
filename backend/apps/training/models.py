@@ -2,6 +2,7 @@
 
 import uuid
 
+from django.conf import settings
 from django.db import models
 
 from apps.core import labels as core_labels
@@ -26,6 +27,15 @@ class TrainingProvider(models.Model):
     )
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    # T002: ops verify the provider (documents incl. the CTEVT affiliation no.). CTEVT has no data
+    # agreement yet, so this is a manual document check.
+    VERIFICATION = core_labels.choices(labels.PROVIDER_VERIFICATION)
+    verification_status = models.CharField(max_length=12, choices=VERIFICATION, default="unverified")
+    verified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    verified_at = models.DateTimeField(null=True, blank=True)
+    verification_note = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ["name"]
@@ -55,6 +65,8 @@ class Course(models.Model):
     seats = models.PositiveSmallIntegerField(default=20)
     status = models.CharField(max_length=10, choices=STATUSES, default="open")
     leads_to_nstb = models.BooleanField(default=False)
+    # T006: completion requires at least this share of sessions attended (0 = not required).
+    min_attendance_pct = models.PositiveSmallIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -91,3 +103,39 @@ class Enrollment(models.Model):
 
     def __str__(self):
         return f"{self.worker.full_name} → {self.course.title} [{self.status}]"
+
+
+class TrainingSession(models.Model):
+    """One class day of a course (T006)."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="sessions")
+    date = models.DateField()
+    start_time = models.TimeField(null=True, blank=True)
+    end_time = models.TimeField(null=True, blank=True)
+    topic = models.CharField(max_length=200, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["date", "start_time"]
+
+    def __str__(self):
+        return f"{self.course_id} session {self.date}"
+
+
+class SessionAttendance(models.Model):
+    session = models.ForeignKey(TrainingSession, on_delete=models.CASCADE, related_name="attendance")
+    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE, related_name="session_attendance")
+    present = models.BooleanField(default=False)
+    marked_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    marked_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["session", "enrollment"], name="uniq_session_enrollment")
+        ]
+
+    def __str__(self):
+        return f"{self.enrollment_id} @ {self.session_id}: {'P' if self.present else 'A'}"

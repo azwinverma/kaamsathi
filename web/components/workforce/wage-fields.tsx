@@ -20,21 +20,38 @@ export interface WageFormValues {
   dearness_allowance: string;
   other_allowance: string;
   daily_wage: string;
+  hourly_wage?: string;
+  part_time?: boolean;
   ssf_enrolled: boolean;
 }
 
 export const wageShape = {
-  wage_type: z.enum(["monthly", "daily"]),
+  wage_type: z.enum(["monthly", "daily", "hourly"]),
   basic_salary: z.string(),
   dearness_allowance: z.string(),
   other_allowance: z.string(),
   daily_wage: z.string(),
+  hourly_wage: z.string().optional(),
+  part_time: z.boolean().optional(),
   ssf_enrolled: z.boolean(),
 };
 
+const AMOUNT_FIELD: Record<WageType, keyof WageFormValues> = {
+  monthly: "basic_salary",
+  daily: "daily_wage",
+  hourly: "hourly_wage",
+};
+
 /** zod superRefine body: required amounts per wage type + minimum-wage check. */
-export function refineWage(v: WageFormValues, ctx: z.RefinementCtx, mw: MinimumWage | undefined, t: T, money: (n: number) => string) {
-  const bad = (path: keyof WageFormValues, message: string) => ctx.addIssue({ code: "custom", path: [path], message });
+export function refineWage(
+  v: WageFormValues,
+  ctx: z.RefinementCtx,
+  mw: MinimumWage | undefined,
+  t: T,
+  money: (n: number) => string,
+) {
+  const bad = (path: keyof WageFormValues, message: string) =>
+    ctx.addIssue({ code: "custom", path: [path], message });
   const num = (s: string) => parseAmount(s);
   const checkNum = (k: keyof WageFormValues, required: boolean) => {
     const raw = String(v[k] ?? "").trim();
@@ -48,6 +65,8 @@ export function refineWage(v: WageFormValues, ctx: z.RefinementCtx, mw: MinimumW
   if (v.wage_type === "monthly") {
     checkNum("basic_salary", true);
     checkNum("dearness_allowance", false);
+  } else if (v.wage_type === "hourly") {
+    checkNum("hourly_wage", true);
   } else {
     checkNum("daily_wage", true);
   }
@@ -55,7 +74,7 @@ export function refineWage(v: WageFormValues, ctx: z.RefinementCtx, mw: MinimumW
   const check = checkMinimumWage(v, mw);
   if (check.ok === false && check.minimum !== null) {
     bad(
-      v.wage_type === "monthly" ? "basic_salary" : "daily_wage",
+      AMOUNT_FIELD[v.wage_type],
       t("workforce.wage.below_minimum", { min: money(check.minimum) }),
     );
   }
@@ -69,7 +88,9 @@ export function wagePayload(v: WageFormValues) {
     basic_salary: monthly ? moneyOrNull(v.basic_salary) : null,
     dearness_allowance: monthly ? (moneyOrNull(v.dearness_allowance) ?? "0.00") : null,
     other_allowance: moneyOrNull(v.other_allowance) ?? "0.00",
-    daily_wage: monthly ? null : moneyOrNull(v.daily_wage),
+    daily_wage: v.wage_type === "daily" ? moneyOrNull(v.daily_wage) : null,
+    hourly_wage: v.wage_type === "hourly" ? moneyOrNull(v.hourly_wage ?? "") : null,
+    part_time: v.wage_type === "hourly" ? !!v.part_time : false,
     ssf_enrolled: v.ssf_enrolled,
   };
 }
@@ -99,13 +120,18 @@ export function WageFields<TF extends FieldValues>({
   const values = watch() as unknown as WageFormValues;
   const check = checkMinimumWage(values, minWage);
   const set = (k: keyof WageFormValues, v: unknown) =>
-    setValue(p(k), v as PathValue<TF, Path<TF>>, { shouldDirty: true, shouldValidate: formState.isSubmitted });
+    setValue(p(k), v as PathValue<TF, Path<TF>>, {
+      shouldDirty: true,
+      shouldValidate: formState.isSubmitted,
+    });
 
   const fillMinimum = () => {
     if (!minWage) return;
     if (values.wage_type === "monthly") {
       set("basic_salary", moneyInput(minWage.monthly_basic));
       set("dearness_allowance", moneyInput(minWage.monthly_da));
+    } else if (values.wage_type === "hourly") {
+      set("hourly_wage", moneyInput(values.part_time ? minWage.hourly_part_time : minWage.hourly));
     } else {
       set("daily_wage", moneyInput(minWage.daily));
     }
@@ -114,7 +140,7 @@ export function WageFields<TF extends FieldValues>({
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-1.5">
-        <span className="text-sm font-medium text-fg" id={`${idPrefix}-wage-type`}>
+        <span className="text-fg text-sm font-medium" id={`${idPrefix}-wage-type`}>
           {t("term.wage_type")}
         </span>
         <Segmented<WageType>
@@ -124,6 +150,7 @@ export function WageFields<TF extends FieldValues>({
           options={[
             { value: "monthly", label: t("term.monthly") },
             { value: "daily", label: t("term.daily") },
+            { value: "hourly", label: t("wage_hourly.hourly") },
           ]}
           className="self-start"
         />
@@ -131,19 +158,57 @@ export function WageFields<TF extends FieldValues>({
 
       {values.wage_type === "monthly" ? (
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field id={`${idPrefix}-basic`} label={t("term.basic_salary")} error={errs.basic_salary?.message}>
-            <PrefixInput prefix={t("term.npr")} inputMode="decimal" {...register(p("basic_salary"))} />
+          <Field
+            id={`${idPrefix}-basic`}
+            label={t("term.basic_salary")}
+            error={errs.basic_salary?.message}
+          >
+            <PrefixInput
+              prefix={t("term.npr")}
+              inputMode="decimal"
+              {...register(p("basic_salary"))}
+            />
           </Field>
           <Field
             id={`${idPrefix}-da`}
             label={t("term.dearness_allowance")}
             error={errs.dearness_allowance?.message}
           >
-            <PrefixInput prefix={t("term.npr")} inputMode="decimal" {...register(p("dearness_allowance"))} />
+            <PrefixInput
+              prefix={t("term.npr")}
+              inputMode="decimal"
+              {...register(p("dearness_allowance"))}
+            />
           </Field>
         </div>
+      ) : values.wage_type === "hourly" ? (
+        <div className="space-y-3">
+          <Field
+            id={`${idPrefix}-hourly`}
+            label={t("wage_hourly.hourly_wage")}
+            error={errs.hourly_wage?.message}
+          >
+            <PrefixInput
+              prefix={t("term.npr")}
+              suffix={t("wage_hourly.per_hour")}
+              inputMode="decimal"
+              {...register(p("hourly_wage"))}
+            />
+          </Field>
+          <SwitchField
+            id={`${idPrefix}-part-time`}
+            label={t("wage_hourly.part_time")}
+            description={t("wage_hourly.part_time_hint")}
+            checked={!!values.part_time}
+            onCheckedChange={(v) => set("part_time", v)}
+          />
+        </div>
       ) : (
-        <Field id={`${idPrefix}-daily`} label={t("term.daily_wage")} error={errs.daily_wage?.message}>
+        <Field
+          id={`${idPrefix}-daily`}
+          label={t("term.daily_wage")}
+          error={errs.daily_wage?.message}
+        >
           <PrefixInput
             prefix={t("term.npr")}
             suffix={t("common.per_day")}
@@ -160,11 +225,15 @@ export function WageFields<TF extends FieldValues>({
         optionalLabel={t("common.optional")}
         error={errs.other_allowance?.message}
       >
-        <PrefixInput prefix={t("term.npr")} inputMode="decimal" {...register(p("other_allowance"))} />
+        <PrefixInput
+          prefix={t("term.npr")}
+          inputMode="decimal"
+          {...register(p("other_allowance"))}
+        />
       </Field>
 
       {minWage ? (
-        <div className="flex flex-col gap-2 rounded-md border border-border bg-surface-muted px-3 py-2.5 text-xs sm:flex-row sm:items-center sm:justify-between">
+        <div className="border-border bg-surface-muted flex flex-col gap-2 rounded-md border px-3 py-2.5 text-xs sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-0.5">
             <p className="text-fg-body">
               {values.wage_type === "monthly"
@@ -173,19 +242,28 @@ export function WageFields<TF extends FieldValues>({
                     basic: f.money(minWage.monthly_basic),
                     da: f.money(minWage.monthly_da),
                   })
-                : t("workforce.wage.min_daily", { amount: f.money(minWage.daily) })}
+                : values.wage_type === "hourly"
+                  ? t("wage_hourly.min_hourly", {
+                      amount: f.money(values.part_time ? minWage.hourly_part_time : minWage.hourly),
+                    })
+                  : t("workforce.wage.min_daily", { amount: f.money(minWage.daily) })}
             </p>
             {check.ok === true && check.amount !== null ? (
-              <p className="font-medium text-success">
+              <p className="text-success font-medium">
                 {t("workforce.wage.meets_minimum", { amount: f.money(check.amount) })}
               </p>
             ) : check.ok === false && check.amount !== null && check.minimum !== null ? (
-              <p className="font-medium text-danger">
+              <p className="text-danger font-medium">
                 {t("workforce.wage.short_by", { amount: f.money(check.minimum - check.amount) })}
               </p>
             ) : null}
           </div>
-          <Button variant="ghost" size="sm" onClick={fillMinimum} className="self-start sm:self-auto">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={fillMinimum}
+            className="self-start sm:self-auto"
+          >
             {t("workforce.wage.use_minimum")}
           </Button>
         </div>

@@ -32,6 +32,7 @@ ROUTE_ROLES: dict[str, frozenset[str]] = {
     "ops/mobility": frozenset({VERIFIER}),
     # support
     "ops/disputes": frozenset({SUPPORT}),
+    "ops/ratings": frozenset({SUPPORT}),  # rating-comment moderation (N004)
     "ops/support-cases": frozenset({SUPPORT}),
     "ops/privacy-requests": frozenset({SUPPORT}),
     "ops/support": frozenset({SUPPORT}),  # caller lookup, identity checks (ops/support-cases is separate)

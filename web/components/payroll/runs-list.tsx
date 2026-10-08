@@ -1,7 +1,8 @@
 "use client";
 import * as React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Banknote, Plus } from "lucide-react";
+import { Banknote, Plus, Settings2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,11 @@ import { bsField } from "./utils";
 
 /** List responses may carry totals or flat summary fields; read both. */
 function runSummary(run: PayrollRunListItem): { net?: string; workers?: number } {
-  const loose = run as PayrollRunListItem & { net_total?: string; workers?: number; workers_count?: number };
+  const loose = run as PayrollRunListItem & {
+    net_total?: string;
+    workers?: number;
+    workers_count?: number;
+  };
   return {
     net: run.totals?.net ?? loose.net_total,
     workers: run.totals?.workers ?? loose.workers ?? loose.workers_count,
@@ -38,13 +43,13 @@ export function PayrollRunsPage() {
 
 function RunsList() {
   const t = useTranslations("payroll_page.list");
+  const tc = useTranslations("payroll_config");
   const f = useFormat();
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const { data, isLoading, error, refetch } = usePayrollRuns();
   const runs = React.useMemo(
-    () =>
-      [...listResults(data)].sort((a, b) => b.bs_year - a.bs_year || b.bs_month - a.bs_month),
+    () => [...listResults(data)].sort((a, b) => b.bs_year - a.bs_year || b.bs_month - a.bs_month),
     [data],
   );
 
@@ -57,14 +62,33 @@ function RunsList() {
 
   return (
     <div>
-      <PageHeader title={t("title")} description={t("description")} actions={newRun} />
+      <PageHeader
+        title={t("title")}
+        description={t("description")}
+        actions={
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="secondary">
+              <Link href="/app/payroll/settings">
+                <Settings2 aria-hidden />
+                {tc("settings_link")}
+              </Link>
+            </Button>
+            {newRun}
+          </div>
+        }
+      />
 
       {isLoading ? (
         <TableSkeleton rows={4} cols={5} />
       ) : error ? (
         <ErrorState error={error} onRetry={() => void refetch()} />
       ) : runs.length === 0 ? (
-        <EmptyState icon={Banknote} title={t("empty_title")} description={t("empty_body")} action={newRun} />
+        <EmptyState
+          icon={Banknote}
+          title={t("empty_title")}
+          description={t("empty_body")}
+          action={newRun}
+        />
       ) : (
         <TableContainer>
           <Table className="min-w-[640px]">
@@ -91,18 +115,23 @@ function RunsList() {
                           e.preventDefault();
                           router.push(href);
                         }}
-                        className="font-medium text-fg hover:text-brand hover:underline"
+                        className="text-fg hover:text-brand font-medium hover:underline"
                         aria-label={t("open_run", { month })}
                       >
                         {month}
                       </a>
+                      {run.pay_group ? (
+                        <Badge tone="outline" className="ml-2">
+                          {run.pay_group.name}
+                        </Badge>
+                      ) : null}
                       {run.include_festival_allowance ? (
                         <Badge tone="accent" className="ml-2">
                           {t("festival_badge")}
                         </Badge>
                       ) : null}
                     </RowHeader>
-                    <Td className="text-xs whitespace-nowrap text-fg-muted">
+                    <Td className="text-fg-muted text-xs whitespace-nowrap">
                       <DateText ad={run.period_start} bs={bsField(run, "period_start")} inline /> –{" "}
                       <DateText ad={run.period_end} bs={bsField(run, "period_end")} inline />
                     </Td>
@@ -110,7 +139,7 @@ function RunsList() {
                       <StatusBadge status={run.status} ns="payroll" />
                     </Td>
                     <Td numeric>{s.workers !== undefined ? f.number(s.workers) : "—"}</Td>
-                    <Td numeric className="font-medium text-fg">
+                    <Td numeric className="text-fg font-medium">
                       <Money value={s.net} />
                     </Td>
                   </Tr>

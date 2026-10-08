@@ -1,0 +1,247 @@
+{
+  "moderation": {
+    "nav": {
+      "ops_ratings": "Ratings moderation",
+      "org_ratings": "What workers say"
+    },
+    "languages": {
+      "title": "Languages spoken",
+      "hint": "Languages the worker can speak at work, with how well they speak each.",
+      "add": "Add language",
+      "empty": "No languages added yet.",
+      "language": "Language",
+      "choose_language": "Choose a language",
+      "proficiency": "Proficiency",
+      "remove": "Remove language {n}",
+      "duplicate": "This language is already listed.",
+      "max_reached": "You can add at most {max} languages.",
+      "none": "None recorded",
+      "names": {
+        "ne": "Nepali",
+        "en": "English",
+        "hi": "Hindi",
+        "mai": "Maithili",
+        "bho": "Bhojpuri",
+        "new": "Newari (Nepal Bhasa)",
+        "tha": "Tharu",
+        "tam": "Tamang",
+        "mgp": "Magar",
+        "gvr": "Gurung",
+        "lim": "Limbu",
+        "bap": "Bantawa (Rai)",
+        "xsr": "Sherpa",
+        "dty": "Doteli",
+        "awa": "Awadhi",
+        "ur": "Urdu",
+        "ar": "Arabic",
+        "ms": "Malay",
+        "ja": "Japanese",
+        "ko": "Korean",
+        "zh": "Chinese"
+      },
+      "proficiency_options": {
+        "basic": "Basic",
+        "conversational": "Conversational",
+        "fluent": "Fluent",
+        "native": "Native"
+      }
+    },
+    "completeness": {
+      "title": "Profile completeness",
+      "hint": "Complete profiles are matched to more jobs.",
+      "all_done": "Everything is filled in.",
+      "percent_aria": "Profile {percent}% complete",
+      "done": "done",
+      "missing": "Missing",
+      "items": {
+        "photo": "Photo",
+        "identity": "Identity verified",
+        "skills": "Skills",
+        "languages": "Languages",
+        "availability": "Availability",
+        "verified_credential": "Verified credential",
+        "work_history": "Work history",
+        "payment_details": "Payment details"
+      }
+    },
+    "workers": {
+      "trade_q_label": "Search by trade or alias",
+      "trade_q_placeholder": "Trade or alias"
+    },
+    "aliases": {
+      "column": "Search aliases",
+      "add": "Add alias",
+      "add_aria": "Add a search alias for {name}",
+      "add_title": "Add search alias",
+      "alias": "Alias",
+      "alias_hint": "Another word people use for this trade, e.g. \"mistri\" or \"डकर्मी\". Searches match aliases too.",
+      "alias_too_short": "Enter at least 2 characters.",
+      "language": "Language",
+      "duplicate": "This trade already has that alias.",
+      "added_toast": "Added \"{alias}\" to {name}",
+      "remove_aria": "Remove alias {alias}",
+      "remove_title": "Remove alias?",
+      "remove_body": "\"{alias}\" will no longer match {name} in searches.",
+      "removed_toast": "Removed \"{alias}\"",
+      "languages": {
+        "en": "English",
+        "ne": "Nepali",
+        "ne_rom": "Romanised Nepali",
+        "hi": "Hindi",
+        "other": "Other"
+      }
+    },
+    "dispute_status": {
+      "appealed": "Appealed",
+      "appeal_resolved": "Appeal decided"
+    },
+    "disputes": {
+      "tab_appealed": "Appealed"
+    },
+    "evidence": {
+      "title": "Evidence",
+      "toggle": "Evidence ({count})",
+      "count": "{count, plural, one {# evidence file} other {# evidence files}}",
+      "empty": "No evidence has been added yet.",
+      "limit_reached": "This dispute already has the maximum of {max} files.",
+      "closed_hint": "Evidence can only be added while the dispute is open or under appeal.",
+      "open_pdf": "Open PDF",
+      "open_image": "Open image",
+      "file": "File",
+      "file_hint": "Photo (JPG, PNG, WebP) or PDF, up to 10 MB.",
+      "note": "Note",
+      "upload": "Upload evidence",
+      "uploaded_toast": "Evidence uploaded",
+      "file_required": "Choose a file to upload.",
+      "file_type": "Only JPG, PNG, WebP images or PDF files are accepted.",
+      "file_size": "The file is larger than 10 MB.",
+      "party": {
+        "worker": "Worker",
+        "employer": "Employer",
+        "ops": "KaamSathi team"
+      }
+    },
+    "appeal": {
+      "button": "Appeal decision",
+      "decide": "Decide appeal",
+      "block_title": "Appeal by {party}",
+      "party": {
+        "worker": "worker",
+        "employer": "employer"
+      },
+      "outcome": "Outcome",
+      "outcomes": {
+        "upheld": "Decision upheld",
+        "overturned": "Decision overturned"
+      },
+      "pending": "Waiting for a decision from a different KaamSathi staff member (within 7 days).",
+      "title": "Appeal this decision",
+      "once_hint": "You can appeal only once. A different staff member will review it within 7 days.",
+      "deadline": "Appeal by {date} ({days, plural, =0 {last day} one {# day left} other {# days left}}).",
+      "deadline_short": "You can appeal this decision until {date}.",
+      "reason": "Why should the decision be reviewed?",
+      "reason_hint": "Explain what was missed or wrong. Add new evidence below the dispute if you have it.",
+      "submit": "Submit appeal",
+      "appealed_toast": "Appeal submitted",
+      "decide_title": "Decide appeal",
+      "different_staff_hint": "Appeals must be decided by a different staff member from the one who made the first decision.",
+      "outcome_hint": {
+        "upheld": "The first decision stays as it is.",
+        "overturned": "The first decision is reversed. Make any record corrections separately."
+      },
+      "decision_note": "Decision note",
+      "decide_submit": "Record decision",
+      "upheld_toast": "Appeal decided: decision upheld",
+      "overturned_toast": "Appeal decided: decision overturned",
+      "same_staff": "You made the first decision on this dispute, so a different staff member must decide the appeal."
+    },
+    "comment_status": {
+      "visible": "Visible",
+      "flagged": "Flagged",
+      "hidden": "Hidden"
+    },
+    "scores": {
+      "employer_a": "Reliability",
+      "employer_b": "Skill",
+      "worker_a": "Paid on time",
+      "worker_b": "Working conditions",
+      "out_of_five": "{score}/5"
+    },
+    "ratings": {
+      "title": "Ratings moderation",
+      "description": "Review reported rating comments. Hiding a comment keeps the score; voiding removes the whole rating from every score.",
+      "tab_flagged": "Flagged",
+      "tab_hidden": "Hidden",
+      "tab_voided": "Voided",
+      "tab_all": "All",
+      "rater": "Rated by",
+      "any_rater": "Any rater",
+      "rater_employer": "Employer → worker",
+      "rater_worker": "Worker → employer",
+      "scores": "Scores",
+      "comment": "Comment",
+      "flag_reason": "Report reason",
+      "organization": "Organization",
+      "worker": "Worker",
+      "dates": "Dates",
+      "voided": "Voided",
+      "no_comment": "No comment",
+      "moderation_note": "Moderation note",
+      "void_reason": "Void reason",
+      "flagged_by": "Reported by {name}",
+      "rated_on": "Rated {date}",
+      "flagged_on": "Reported {date}",
+      "voided_on": "Voided {date}",
+      "hide": "Hide",
+      "restore": "Restore",
+      "void": "Void",
+      "hide_aria": "Hide comment on rating for {worker}",
+      "restore_aria": "Restore comment on rating for {worker}",
+      "void_aria": "Void rating for {worker}",
+      "empty_flagged": "No reported comments to review",
+      "empty_hidden": "No hidden comments",
+      "empty_voided": "No voided ratings",
+      "empty_all": "No ratings yet",
+      "void_reason_required": "Enter a reason for voiding this rating.",
+      "hide_title": "Hide comment",
+      "restore_title": "Restore comment",
+      "void_title": "Void rating",
+      "hide_explain": "The comment will be hidden from everyone. The scores keep counting.",
+      "restore_explain": "The comment will be visible again.",
+      "void_explain": "Voiding is permanent: this rating will stop counting toward the worker's reliability score, rating average, employer reputation and KPIs.",
+      "hide_confirm": "Hide comment",
+      "restore_confirm": "Restore comment",
+      "void_confirm": "Void rating",
+      "hide_toast": "Comment hidden",
+      "restore_toast": "Comment restored",
+      "void_toast": "Rating voided"
+    },
+    "org_ratings": {
+      "title": "What workers say",
+      "description": "Ratings and comments workers left about working with you.",
+      "anonymous_explain": "Ratings are anonymous: we don't show who wrote them or the exact date, only the month. They appear only once at least {min} workers have rated you, so no single worker can be identified.",
+      "empty_title": "No worker ratings to show yet",
+      "below_threshold": "{count, plural, =0 {No workers have rated you yet.} one {# worker has rated you so far.} other {# workers have rated you so far.}} Ratings are shown once there are at least {min}.",
+      "empty_body": "Ratings will appear here when workers rate you.",
+      "total": "{count, plural, one {# rating} other {# ratings}}",
+      "anonymous_worker": "A worker",
+      "comment_hidden": "This comment was hidden by KaamSathi moderators.",
+      "no_comment": "No comment",
+      "flagged_hint": "Reported. It stays visible until KaamSathi reviews it.",
+      "report": "Report",
+      "report_aria": "Report the comment from {month}",
+      "report_title": "Report comment",
+      "report_description": "KaamSathi will review it and may hide it if it breaks the rules. The rating's scores still count.",
+      "reason": "Reason",
+      "reason_hint": "For example: abusive language, personal details, or not about working here.",
+      "report_submit": "Send report",
+      "reported_toast": "Comment reported for review"
+    },
+    "resubmission": {
+      "badge": "Resubmission",
+      "badge_hint": "The worker re-submitted this after an earlier rejection.",
+      "previous_rejection": "Previous rejection",
+      "no_note": "No rejection note was given."
+    }
+  }
+}

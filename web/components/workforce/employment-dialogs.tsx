@@ -8,11 +8,21 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { BsDatePicker, DateText } from "@/components/ui/date";
-import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from "@/components/ui/dialog";
 import { Field, FormError } from "@/components/ui/field";
 import { Input, Textarea } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/select";
-import { useEndEmployment, useRateEmployment, useUpdateEmployment } from "@/lib/api/hooks/workforce";
+import {
+  useEndEmployment,
+  useRateEmployment,
+  useUpdateEmployment,
+} from "@/lib/api/hooks/workforce";
 import { useMinimumWage } from "@/lib/api/hooks/ref";
 import { isApiError } from "@/lib/api/errors";
 import type { Employment, EndReason } from "@/lib/api/types";
@@ -21,7 +31,14 @@ import { handleFormError } from "@/lib/forms";
 import { useFormat } from "@/lib/use-format";
 import { cn } from "@/lib/utils";
 import { Notice, WorkforceSiteSelect } from "./shared";
-import { moneyInput, refineWage, WageFields, wagePayload, wageShape, type WageFormValues } from "./wage-fields";
+import {
+  moneyInput,
+  refineWage,
+  WageFields,
+  wagePayload,
+  wageShape,
+  type WageFormValues,
+} from "./wage-fields";
 
 type Open = { open: boolean; onOpenChange: (o: boolean) => void; employment: Employment };
 
@@ -35,6 +52,8 @@ const EDIT_FIELDS = [
   "dearness_allowance",
   "other_allowance",
   "daily_wage",
+  "hourly_wage",
+  "part_time",
   "ssf_enrolled",
 ] as const;
 
@@ -55,7 +74,9 @@ export function EditEmploymentDialog({ open, onOpenChange, employment }: Open) {
           employee_code: z.string(),
           ...wageShape,
         })
-        .superRefine((v, ctx) => refineWage(v as WageFormValues, ctx, minWage, t, (n) => f.money(n))),
+        .superRefine((v, ctx) =>
+          refineWage(v as WageFormValues, ctx, minWage, t, (n) => f.money(n)),
+        ),
     [t, minWage, f],
   );
   type FormValues = z.input<typeof schema>;
@@ -70,6 +91,8 @@ export function EditEmploymentDialog({ open, onOpenChange, employment }: Open) {
       dearness_allowance: moneyInput(employment.dearness_allowance),
       other_allowance: moneyInput(employment.other_allowance),
       daily_wage: moneyInput(employment.daily_wage),
+      hourly_wage: moneyInput(employment.hourly_wage),
+      part_time: !!employment.part_time,
       ssf_enrolled: employment.ssf_enrolled,
     }),
     [employment],
@@ -115,29 +138,56 @@ export function EditEmploymentDialog({ open, onOpenChange, employment }: Open) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent size="lg" closeLabel={t("common.close")}>
         <form onSubmit={onSubmit} className="flex min-h-0 flex-col" noValidate>
-          <DialogHeader title={te("title")} description={te("description", { name: employment.worker.full_name })} />
+          <DialogHeader
+            title={te("title")}
+            description={te("description", { name: employment.worker.full_name })}
+          />
           <DialogBody className="space-y-6">
             <FormError message={formError} />
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field id="ee-designation" label={t("term.designation")} error={formState.errors.designation?.message}>
+              <Field
+                id="ee-designation"
+                label={t("term.designation")}
+                error={formState.errors.designation?.message}
+              >
                 <Input {...register("designation")} />
               </Field>
-              <Field id="ee-site" label={t("term.site")} optional optionalLabel={t("common.optional")}>
+              <Field
+                id="ee-site"
+                label={t("term.site")}
+                optional
+                optionalLabel={t("common.optional")}
+              >
                 <Controller
                   control={control}
                   name="site_id"
-                  render={({ field }) => <WorkforceSiteSelect value={field.value} onChange={field.onChange} allowAll={false} />}
+                  render={({ field }) => (
+                    <WorkforceSiteSelect
+                      value={field.value}
+                      onChange={field.onChange}
+                      allowAll={false}
+                    />
+                  )}
                 />
               </Field>
-              <Field id="ee-code" label={t("term.employee_code")} optional optionalLabel={t("common.optional")}>
+              <Field
+                id="ee-code"
+                label={t("term.employee_code")}
+                optional
+                optionalLabel={t("common.optional")}
+              >
                 <Input {...register("employee_code")} />
               </Field>
             </div>
             <WageFields form={form} minWage={minWage} idPrefix="ee" />
-            <p className="text-xs text-fg-muted">{te("payroll_hint")}</p>
+            <p className="text-fg-muted text-xs">{te("payroll_hint")}</p>
           </DialogBody>
           <DialogFooter>
-            <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={update.isPending}>
+            <Button
+              variant="secondary"
+              onClick={() => onOpenChange(false)}
+              disabled={update.isPending}
+            >
               {t("common.cancel")}
             </Button>
             <Button type="submit" loading={update.isPending}>
@@ -162,7 +212,8 @@ export function EndEmploymentDialog({ open, onOpenChange, employment }: Open) {
   const [errors, setErrors] = React.useState<{ end_date?: string; end_reason?: string }>({});
   const [formError, setFormError] = React.useState<string | null>(null);
   const today = todayIso();
-  const inWindow = !!employment.replacement_eligible_until && employment.replacement_eligible_until >= today;
+  const inWindow =
+    !!employment.replacement_eligible_until && employment.replacement_eligible_until >= today;
 
   React.useEffect(() => {
     if (open) {
@@ -191,7 +242,10 @@ export function EndEmploymentDialog({ open, onOpenChange, employment }: Open) {
         },
         onError: (err) => {
           if (isApiError(err)) {
-            setErrors({ end_date: err.fieldError("end_date"), end_reason: err.fieldError("end_reason") });
+            setErrors({
+              end_date: err.fieldError("end_date"),
+              end_reason: err.fieldError("end_reason"),
+            });
             setFormError(err.message || t(`errors.${err.code}`));
           } else setFormError(t("errors.server_error"));
         },
@@ -203,7 +257,10 @@ export function EndEmploymentDialog({ open, onOpenChange, employment }: Open) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent size="md" closeLabel={t("common.close")}>
         <form onSubmit={submit} className="flex min-h-0 flex-col" noValidate>
-          <DialogHeader title={tn("title")} description={tn("description", { name: employment.worker.full_name })} />
+          <DialogHeader
+            title={tn("title")}
+            description={tn("description", { name: employment.worker.full_name })}
+          />
           <DialogBody className="space-y-4">
             <FormError message={formError} />
             {inWindow ? (
@@ -224,10 +281,14 @@ export function EndEmploymentDialog({ open, onOpenChange, employment }: Open) {
                 options={END_REASONS.map((r) => ({ value: r, label: t(`end_reason.${r}`) }))}
               />
             </Field>
-            <p className="text-xs text-fg-muted">{tn("hint")}</p>
+            <p className="text-fg-muted text-xs">{tn("hint")}</p>
           </DialogBody>
           <DialogFooter>
-            <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={end.isPending}>
+            <Button
+              variant="secondary"
+              onClick={() => onOpenChange(false)}
+              disabled={end.isPending}
+            >
               {t("common.cancel")}
             </Button>
             <Button type="submit" variant="danger" loading={end.isPending}>
@@ -256,11 +317,16 @@ function StarInput({
   const [hover, setHover] = React.useState(0);
   const shown = hover || value;
   return (
-    <div role="radiogroup" aria-labelledby={`${id}-label`} className="flex gap-1" onMouseLeave={() => setHover(0)}>
+    <div
+      role="radiogroup"
+      aria-labelledby={`${id}-label`}
+      className="flex gap-1"
+      onMouseLeave={() => setHover(0)}
+    >
       {[1, 2, 3, 4, 5].map((n) => (
         <label
           key={n}
-          className="inline-flex size-10 cursor-pointer items-center justify-center rounded-md hover:bg-surface-hover has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ring"
+          className="hover:bg-surface-hover has-[:focus-visible]:outline-ring inline-flex size-10 cursor-pointer items-center justify-center rounded-md has-[:focus-visible]:outline-2"
           onMouseEnter={() => setHover(n)}
         >
           <input
@@ -273,7 +339,10 @@ function StarInput({
             aria-label={`${label}: ${f.digits(n)} / ${f.digits(5)}`}
           />
           <Star
-            className={cn("size-6", n <= shown ? "fill-warning text-warning" : "text-border-strong")}
+            className={cn(
+              "size-6",
+              n <= shown ? "fill-warning text-warning" : "text-border-strong",
+            )}
             aria-hidden
           />
         </label>
@@ -327,32 +396,52 @@ export function RateDialog({ open, onOpenChange, employment }: Open) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent size="md" closeLabel={t("common.close")}>
         <form onSubmit={submit} className="flex min-h-0 flex-col" noValidate>
-          <DialogHeader title={tr("title", { name: employment.worker.full_name })} description={tr("description")} />
+          <DialogHeader
+            title={tr("title", { name: employment.worker.full_name })}
+            description={tr("description")}
+          />
           <DialogBody className="space-y-5">
             <FormError message={error} />
             <div className="space-y-1.5">
-              <p id="rate-a-label" className="text-sm font-medium text-fg">
+              <p id="rate-a-label" className="text-fg text-sm font-medium">
                 {tr("score_a")}
               </p>
-              <p className="text-xs text-fg-muted">{tr("score_a_hint")}</p>
+              <p className="text-fg-muted text-xs">{tr("score_a_hint")}</p>
               <StarInput id="rate-a" value={a} onChange={setA} label={tr("score_a")} />
-              {touched && !a ? <p className="text-xs font-medium text-danger">{t("errors.required")}</p> : null}
+              {touched && !a ? (
+                <p className="text-danger text-xs font-medium">{t("errors.required")}</p>
+              ) : null}
             </div>
             <div className="space-y-1.5">
-              <p id="rate-b-label" className="text-sm font-medium text-fg">
+              <p id="rate-b-label" className="text-fg text-sm font-medium">
                 {tr("score_b")}
               </p>
-              <p className="text-xs text-fg-muted">{tr("score_b_hint")}</p>
+              <p className="text-fg-muted text-xs">{tr("score_b_hint")}</p>
               <StarInput id="rate-b" value={b} onChange={setB} label={tr("score_b")} />
-              {touched && !b ? <p className="text-xs font-medium text-danger">{t("errors.required")}</p> : null}
+              {touched && !b ? (
+                <p className="text-danger text-xs font-medium">{t("errors.required")}</p>
+              ) : null}
             </div>
-            <Field id="rate-comment" label={tr("comment")} optional optionalLabel={t("common.optional")}>
-              <Textarea value={comment} onChange={(e) => setComment(e.target.value)} maxLength={500} />
+            <Field
+              id="rate-comment"
+              label={tr("comment")}
+              optional
+              optionalLabel={t("common.optional")}
+            >
+              <Textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                maxLength={500}
+              />
             </Field>
             <Notice tone="locked">{tr("privacy")}</Notice>
           </DialogBody>
           <DialogFooter>
-            <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={rate.isPending}>
+            <Button
+              variant="secondary"
+              onClick={() => onOpenChange(false)}
+              disabled={rate.isPending}
+            >
               {t("common.cancel")}
             </Button>
             <Button type="submit" loading={rate.isPending}>

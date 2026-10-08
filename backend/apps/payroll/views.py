@@ -1,20 +1,23 @@
-from django.db.models import Q
+from django.db.models import ProtectedError, Q
 from django.http import HttpResponse
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from apps.audit.services import diff, log, snapshot
 from apps.core.bs import MONTHS_EN, BSDateError
 from apps.core.exceptions import APIError, InvalidState
 from apps.core.idempotency import idempotent
-from apps.core.permissions import OrgScopedMixin
+from apps.core.permissions import ADMINS, MANAGERS, OrgScopedMixin
 from apps.notifications.services import enqueue
 
 from . import exports, services
-from .models import PayrollRun, Payslip
+from .models import PayGroup, PayPolicy, PayrollRun, Payslip
 from .serializers import (
     MarkPaidSerializer,
+    PayGroupSerializer,
+    PayPolicySerializer,
     PayrollRunCreateSerializer,
     PayrollRunSerializer,
     PayslipSerializer,
@@ -47,19 +50,30 @@ class PayrollRunViewSet(
     def get_queryset(self):
         return (
             PayrollRun.objects.filter(organization=self.org)
-            .select_related("organization", "approved_by")
+            .select_related("organization", "approved_by", "pay_group")
             .order_by("-bs_year", "-bs_month")
         )
 
     @idempotent
     def create(self, request, *args, **kwargs):
-        s = PayrollRunCreateSerializer(data=request.data)
+        s = PayrollRunCreateSerializer(data=request.data, context={"org": self.org})
         s.is_valid(raise_exception=True)
         try:
             run = services.create_run(self.org, **s.validated_data)
         except BSDateError as exc:
             raise APIError("validation_error", fields={"bs_month": [str(exc)]}) from exc
-        log(request, "payroll.create", run, organization=self.org, changes=s.data)
+        log(
+            request,
+            "payroll.create",
+            run,
+            organization=self.org,
+            changes={
+                "bs_year": run.bs_year,
+                "bs_month": run.bs_month,
+                "include_festival_allowance": run.include_festival_allowance,
+                "pay_group": str(run.pay_group_id) if run.pay_group_id else None,
+            },
+        )
         return Response(PayrollRunSerializer(run).data, status=201)
 
     @action(detail=True, methods=["get"])
@@ -155,3 +169,93 @@ class PayslipViewSet(
         return file_response(
             exports.payslip_pdf(slip), "application/pdf", payslip_filename(slip), inline=True
         )
+
+
+class PayGroupViewSet(OrgScopedMixin, viewsets.ModelViewSet):
+    """/org/pay-groups CRUD (R001). Read: owner/admin/hr · write: owner/admin/hr."""
+
+    serializer_class = PayGroupSerializer
+    default_roles = MANAGERS
+    http_method_names = ["get", "post", "patch", "delete"]
+
+    def get_queryset(self):
+        return PayGroup.objects.filter(organization=self.org).order_by("created_at", "id")
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+        ctx["member_counts"] = self._member_counts  # lazy: evaluated once, after any save
+        return ctx
+
+    def _member_counts(self) -> dict:
+        from collections import Counter
+
+        from apps.workforce.models import Employment
+
+        emps = list(Employment.objects.filter(organization=self.org, status="active"))
+        assigned = services.assign_groups(self.org, emps)
+        return Counter(g.id for g in assigned.values() if g is not None)
+
+    def perform_create(self, serializer):
+        group = serializer.save(organization=self.org)
+        log(
+            self.request,
+            "payroll.pay_group.create",
+            group,
+            organization=self.org,
+            changes={"after": snapshot(group)},
+        )
+
+    def perform_update(self, serializer):
+        before = snapshot(serializer.instance)
+        group = serializer.save()
+        log(
+            self.request,
+            "payroll.pay_group.update",
+            group,
+            organization=self.org,
+            changes=diff(before, snapshot(group)),
+        )
+
+    def perform_destroy(self, instance):
+        try:
+            snap = snapshot(instance)
+            instance.delete()
+        except ProtectedError as exc:
+            raise InvalidState(
+                message="This pay group already has payroll runs. Deactivate it instead."
+            ) from exc
+        log(
+            self.request,
+            "payroll.pay_group.delete",
+            None,
+            organization=self.org,
+            object_type="paygroup",
+            changes={"before": snap},
+        )
+
+
+class PayPolicyView(OrgScopedMixin, APIView):
+    """GET /org/pay-policy (owner/admin/hr) · PATCH (owner/admin) — R003 configurable pay rules."""
+
+    role_rules = {"get": MANAGERS, "patch": ADMINS}
+
+    def _policy(self) -> PayPolicy:
+        return PayPolicy.objects.filter(organization=self.org).first() or PayPolicy(organization=self.org)
+
+    def get(self, request):
+        return Response(PayPolicySerializer(self._policy()).data)
+
+    def patch(self, request):
+        policy = self._policy()
+        before = snapshot(policy) if not policy._state.adding else {}
+        s = PayPolicySerializer(policy, data=request.data, partial=True)
+        s.is_valid(raise_exception=True)
+        policy = s.save(organization=self.org, updated_by=request.user)
+        log(
+            request,
+            "payroll.pay_policy.update",
+            policy,
+            organization=self.org,
+            changes=diff(before, snapshot(policy)),
+        )
+        return Response(PayPolicySerializer(policy).data)

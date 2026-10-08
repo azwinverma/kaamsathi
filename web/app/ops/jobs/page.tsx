@@ -20,8 +20,11 @@ import { listResults } from "@/lib/api/client";
 import type { OpsJob } from "@/lib/api/types";
 import { useFormat } from "@/lib/use-format";
 import { VerifiedEmployerBadge } from "@/components/kyb/kyb-badges";
+import { JobStatusBadge } from "@/components/hiring/job-bits";
+import type { OpsJobWithPipeline } from "@/lib/api/types-pipeline";
 
 type Scope = "all" | "overdue" | "no_shortlist";
+type Owner = "all" | "me" | "none";
 
 function shortlistedCount(j: OpsJob): number {
   const c = j.counts;
@@ -37,10 +40,21 @@ export default function OpsJobsPage() {
   const [q, setQ] = React.useState("");
   const [trade, setTrade] = React.useState("");
   const [scope, setScope] = React.useState<Scope>("all");
+  const [owner, setOwner] = React.useState<Owner>("all");
+  const tp = useTranslations("pipeline.ops");
 
-  const query = useOpsJobs({ status: "open", q, trade, page_size: 100 });
+  const query = useOpsJobs({
+    status: "open,paused",
+    q,
+    trade,
+    owner: owner === "all" ? undefined : owner,
+    page_size: 100,
+  });
   const all = React.useMemo(
-    () => [...listResults(query.data)].sort((a, b) => (b.hours_open ?? 0) - (a.hours_open ?? 0)),
+    () =>
+      [...(listResults(query.data) as OpsJobWithPipeline[])].sort(
+        (a, b) => (b.hours_open ?? 0) - (a.hours_open ?? 0),
+      ),
     [query.data],
   );
   const overdue = all.filter((j) => (j.hours_open ?? 0) > SHORTLIST_SLA_HOURS).length;
@@ -51,7 +65,7 @@ export default function OpsJobsPage() {
         ? !j.first_shortlist_at && shortlistedCount(j) === 0
         : true,
   );
-  const filtersActive = !!(q || trade || scope !== "all");
+  const filtersActive = !!(q || trade || scope !== "all" || owner !== "all");
 
   return (
     <>
@@ -61,7 +75,7 @@ export default function OpsJobsPage() {
         meta={
           query.data ? (
             <>
-              <Badge tone="brand">{tj("open_count", { count: all.length })}</Badge>
+              <Badge tone="brand">{tj("open_count", { count: all.filter((j) => j.status !== "paused").length })}</Badge>
               {overdue ? <Badge tone="danger">{tj("overdue_count", { count: overdue })}</Badge> : null}
             </>
           ) : null
@@ -84,6 +98,17 @@ export default function OpsJobsPage() {
             { value: "no_shortlist", label: tj("scope_no_shortlist") },
           ]}
         />
+        <Segmented
+          label={tp("owner_filter")}
+          value={owner}
+          onChange={setOwner}
+          className="self-start"
+          options={[
+            { value: "all", label: tp("owner_all") },
+            { value: "me", label: tp("owner_mine") },
+            { value: "none", label: tp("owner_unassigned") },
+          ]}
+        />
       </Toolbar>
 
       {query.isLoading ? (
@@ -101,6 +126,7 @@ export default function OpsJobsPage() {
                   setQ("");
                   setTrade("");
                   setScope("all");
+                  setOwner("all");
                 }}
               >
                 {t("common.clear_filters")}
@@ -118,6 +144,7 @@ export default function OpsJobsPage() {
                 <Th>{tj("job")}</Th>
                 <Th className="max-md:hidden">{tj("organization")}</Th>
                 <Th>{tj("hours_open")}</Th>
+                <Th className="max-lg:hidden">{tp("col_owner")}</Th>
                 <Th numeric>{tj("openings")}</Th>
                 <Th numeric className="max-sm:hidden">{tj("shortlisted")}</Th>
                 <Th numeric className="max-lg:hidden">{tj("wage")}</Th>
@@ -140,7 +167,10 @@ export default function OpsJobsPage() {
                         onClick={(e) => e.stopPropagation()}
                         className="block focus-visible:outline-2 focus-visible:outline-ring"
                       >
-                        <span className="block truncate font-medium text-fg">{j.title}</span>
+                        <span className="flex items-center gap-2">
+                          <span className="block truncate font-medium text-fg">{j.title}</span>
+                          {j.status === "paused" ? <JobStatusBadge job={j} /> : null}
+                        </span>
                         <span className="block truncate text-xs font-normal text-fg-muted">
                           {f.name(j.trade)}
                           <span className="md:hidden"> · {j.organization?.name}</span>
@@ -162,6 +192,13 @@ export default function OpsJobsPage() {
                     </Td>
                     <Td>
                       <HoursOpenBadge hours={j.hours_open} />
+                    </Td>
+                    <Td className="max-lg:hidden">
+                      {j.ops_owner ? (
+                        <span className="text-sm">{j.ops_owner.full_name}</span>
+                      ) : (
+                        <span className="text-fg-subtle text-sm">{tp("owner_none_short")}</span>
+                      )}
                     </Td>
                     <Td numeric>{f.number(j.openings_count)}</Td>
                     <Td numeric className="max-sm:hidden">

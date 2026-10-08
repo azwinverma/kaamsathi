@@ -216,7 +216,9 @@ def kyc_review_state(worker) -> dict | None:
     return {
         "required": True,
         "first_review_by": (
-            {"id": str(first.reviewer_id), "full_name": first.reviewer.full_name} if first.reviewer_id else None
+            {"id": str(first.reviewer_id), "full_name": first.reviewer.full_name}
+            if first.reviewer_id
+            else None
         ),
         "first_review_at": first.created_at.isoformat(),
     }

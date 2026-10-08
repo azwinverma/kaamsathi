@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.utils.translation import pgettext
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
@@ -56,11 +57,58 @@ class MeCredentialViewSet(
     serializer_class = CredentialSerializer
 
     def get_queryset(self):
-        return Credential.objects.filter(worker=current_worker(self.request)).order_by("-created_at")
+        return (
+            Credential.objects.filter(worker=current_worker(self.request))
+            .select_related("resubmission_of")
+            .prefetch_related("resubmissions")
+            .order_by("-created_at")
+        )
 
     def perform_create(self, serializer):
         cred = serializer.save(worker=current_worker(self.request), status="pending")
         log(self.request, "credential.create", cred, organization=None, changes={"after": snapshot(cred)})
+
+    @action(detail=True, methods=["post"])
+    def resubmit(self, request, pk=None):
+        """``POST /me/credentials/{id}/resubmit`` (multipart) — G012. Only for a rejected credential
+        without a pending/verified resubmission; unspecified fields are copied from the original."""
+        original = self.get_object()
+        if original.status != "rejected":
+            raise InvalidState(
+                message=pgettext("complete1", "Only a rejected credential can be resubmitted.")
+            )
+        if original.resubmissions.filter(status__in=["pending", "verified"]).exists():
+            raise InvalidState(message=pgettext("complete1", "This credential has already been resubmitted."))
+        copy = {
+            f: getattr(original, f)
+            for f in ("kind", "title", "issuer", "certificate_no", "level", "issued_on", "expires_on")
+        }
+        data = {k: v for k, v in copy.items() if v is not None}
+        for k, v in request.data.items():
+            data[k] = v
+        if "document" not in request.data and original.document:
+            data.pop("document", None)
+        s = CredentialSerializer(data=data, context={"request": request})
+        s.is_valid(raise_exception=True)
+        cred = s.save(worker=original.worker, status="pending", resubmission_of=original)
+        if not cred.document and original.document:
+            # no new file: copy the stored one (never share a file between records — deleting a
+            # pending credential deletes its file)
+            import os
+
+            from django.core.files.base import ContentFile
+
+            with original.document.open("rb") as fh:
+                content = fh.read()
+            cred.document.save(os.path.basename(original.document.name), ContentFile(content), save=True)
+        log(
+            request,
+            "credential.resubmit",
+            cred,
+            organization=None,
+            changes={"resubmission_of": str(original.id), "after": snapshot(cred)},
+        )
+        return Response(CredentialSerializer(cred, context={"request": request}).data, status=201)
 
     def perform_destroy(self, instance):
         if instance.status != "pending":
@@ -270,7 +318,9 @@ class OpsCredentialViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, vie
     ordering_fields = ["created_at", "expires_on", "issued_on"]
 
     def get_queryset(self):
-        qs = Credential.objects.select_related("worker", "verified_by")
+        qs = Credential.objects.select_related("worker", "verified_by", "resubmission_of").prefetch_related(
+            "resubmissions"
+        )
         p = self.request.query_params
         if p.get("status"):
             qs = qs.filter(status__in=p["status"].split(","))

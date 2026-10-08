@@ -24,11 +24,16 @@ import { SiteSelect, TradeSelect } from "@/components/shared/selects";
 import { listResults } from "@/lib/api/client";
 import { useCreateJob, usePublishJob, useUpdateJob } from "@/lib/api/hooks/hiring";
 import { useShifts } from "@/lib/api/hooks/org";
+import { useTrades } from "@/lib/api/hooks/ref";
+import { isApiError } from "@/lib/api/errors";
 import type { Job, JobInput, WageType } from "@/lib/api/types";
 import { toLatinDigits, todayIso } from "@/lib/format";
 import { handleFormError, zMoney } from "@/lib/forms";
 import { Bind } from "./bind";
 import { parseAmount } from "./lib";
+import { requirementToRow, rowProblem, rowToInput, type RequirementRow } from "./pipeline-lib";
+import { RequirementsEditor } from "./requirements";
+import { useFormat } from "@/lib/use-format";
 import { useWageCheck } from "./wage";
 
 const FIELDS = [
@@ -70,6 +75,9 @@ export function JobFormDialog({
 }) {
   const t = useTranslations();
   const tf = useTranslations("hiring.form");
+  const tr = useTranslations("pipeline.requirements");
+  const fmt = useFormat();
+  const trades = useTrades();
   const router = useRouter();
   const create = useCreateJob();
   const update = useUpdateJob();
@@ -77,6 +85,8 @@ export function JobFormDialog({
   const wage = useWageCheck();
   const shifts = useShifts();
   const [formError, setFormError] = React.useState<string | null>(null);
+  const [reqRows, setReqRows] = React.useState<RequirementRow[]>([]);
+  const [reqErrors, setReqErrors] = React.useState<Record<number, string | undefined>>({});
   const publishAfter = React.useRef(false);
   const isEdit = !!job;
 
@@ -89,7 +99,7 @@ export function JobFormDialog({
         site_id: z.string(),
         shift: z.string(),
         openings_count: intField(tf("openings_invalid"), 1, 1000),
-        wage_type: z.enum(["monthly", "daily"]),
+        wage_type: z.enum(["monthly", "daily", "hourly"]),
         wage_amount: zMoney(t("errors.invalid_number"), { min: 1 }),
         food_provided: z.boolean(),
         accommodation_provided: z.boolean(),
@@ -130,9 +140,13 @@ export function JobFormDialog({
     if (open) {
       reset(defaults());
       setFormError(null);
+      setReqRows((job?.requirements ?? []).map(requirementToRow));
+      setReqErrors({});
     }
-  }, [open, reset, defaults]);
+  }, [open, reset, defaults, job]);
 
+  const tradeCode = watch("trade");
+  const jobTrade = (trades.data ?? []).find((tr) => tr.code === tradeCode);
   const wageType = watch("wage_type") as WageType;
   const wageAmount = parseAmount(watch("wage_amount"));
   const liveBelow = wage.below(wageType, wageAmount);
@@ -140,6 +154,13 @@ export function JobFormDialog({
 
   const onSubmit = handleSubmit((v) => {
     setFormError(null);
+    const problems: Record<number, string | undefined> = {};
+    reqRows.forEach((row, i) => {
+      const p = rowProblem(row);
+      if (p) problems[i] = p === "empty" ? tr("empty_error") : tr("years_error");
+    });
+    setReqErrors(problems);
+    if (Object.keys(problems).length) return;
     const below = wage.below(v.wage_type, Number(v.wage_amount));
     if (below) {
       setError("wage_amount", { type: "min_wage", message: below });
@@ -158,8 +179,17 @@ export function JobFormDialog({
       accommodation_provided: v.accommodation_provided,
       start_date: v.start_date,
       min_experience_years: Number(v.min_experience_years),
+      requirements: reqRows.map(rowToInput),
     };
-    const onError = (err: unknown) =>
+    const onError = (err: unknown) => {
+      if (isApiError(err)) {
+        const rowErrs: Record<number, string | undefined> = {};
+        for (const [key, msgs] of Object.entries(err.fields)) {
+          const m = /^requirements\.(\d+)/.exec(key);
+          if (m) rowErrs[Number(m[1])] = msgs[0];
+        }
+        setReqErrors(rowErrs);
+      }
       setFormError(
         handleFormError(err, setError, t, {
           fields: FIELDS,
@@ -167,6 +197,7 @@ export function JobFormDialog({
           toast: false,
         }),
       );
+    };
     if (isEdit && job) {
       update.mutate(
         { id: job.id, ...body },
@@ -282,6 +313,7 @@ export function JobFormDialog({
                         options={[
                           { value: "monthly", label: t("term.monthly") },
                           { value: "daily", label: t("term.daily") },
+                          { value: "hourly", label: t("wage_hourly.hourly") },
                         ]}
                       />
                     )}
@@ -289,14 +321,26 @@ export function JobFormDialog({
                 </div>
                 <Field
                   id="job-wage"
-                  label={wageType === "monthly" ? tf("wage_monthly_label") : t("term.daily_wage")}
+                  label={
+                    wageType === "monthly"
+                      ? tf("wage_monthly_label")
+                      : wageType === "hourly"
+                        ? t("wage_hourly.hourly_wage")
+                        : t("term.daily_wage")
+                  }
                   error={errors.wage_amount?.message ?? liveBelow}
                   hint={wage.hint(wageType)}
                 >
                   <PrefixInput
                     prefix={t("term.npr")}
                     inputMode="decimal"
-                    suffix={wageType === "monthly" ? t("common.per_month") : t("common.per_day")}
+                    suffix={
+                      wageType === "monthly"
+                        ? t("common.per_month")
+                        : wageType === "hourly"
+                          ? t("wage_hourly.per_hour")
+                          : t("common.per_day")
+                    }
                     {...register("wage_amount")}
                   />
                 </Field>
@@ -404,6 +448,16 @@ export function JobFormDialog({
                 />
               </div>
             </Fieldset>
+
+            <RequirementsEditor
+              rows={reqRows}
+              onChange={(rows) => {
+                setReqRows(rows);
+                setReqErrors({});
+              }}
+              errors={reqErrors}
+              jobTradeName={jobTrade ? fmt.name(jobTrade) : null}
+            />
           </DialogBody>
           <DialogFooter>
             <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={pending}>

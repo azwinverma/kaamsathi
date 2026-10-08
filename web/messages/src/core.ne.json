@@ -69,7 +69,12 @@
     "ops_system": "प्रणाली स्वास्थ्य",
     "ops_billing": "बिलिङ र बिजक",
     "ops_analytics": "उत्पादन विश्लेषण",
-    "ops_notifications": "सन्देश टेम्प्लेट"
+    "ops_notifications": "सन्देश टेम्प्लेट",
+    "ops_flags": "फिचर फ्ल्याग",
+    "corrections": "हाजिरी सच्याउने अनुरोध",
+    "ratings": "मूल्याङ्कन",
+    "ops_ratings": "मूल्याङ्कन निगरानी",
+    "ops_matching": "मिलान सेटिङ"
   },
   "term": {
     "basic_salary": "आधारभूत तलब",

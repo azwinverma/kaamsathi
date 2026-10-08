@@ -12,6 +12,8 @@ import re
 # Emitted by the backend only (funnels rely on them, so clients cannot forge them).
 SERVER_EVENTS = frozenset(
     {
+        "offer_sent",
+        "offer_accepted",
         "user_registered",
         "org_created",
         "worker_profile_created",

@@ -13,3 +13,13 @@ class TimesheetAdmin(admin.ModelAdmin):
     list_display = ["employment", "week_start", "status", "regular_minutes", "overtime_minutes_claimed"]
     list_filter = ["status", "week_start"]
     raw_id_fields = ["employment", "submitted_by", "approved_by"]
+
+
+from .models import AttendanceCorrection  # noqa: E402
+
+
+@admin.register(AttendanceCorrection)
+class AttendanceCorrectionAdmin(admin.ModelAdmin):
+    list_display = ["employment", "date", "requested_status", "status", "created_at"]
+    list_filter = ["status"]
+    raw_id_fields = ["employment", "requested_by", "decided_by"]

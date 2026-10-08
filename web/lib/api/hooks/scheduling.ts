@@ -2,7 +2,12 @@
 /** Hooks for the scheduling area (docs/CONTRACT-ECOSYSTEM.md §7). Query keys live in this file. */
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../client";
-import type { RosterEntryInput, RosterSaveResult, RosterWeek } from "../types-scheduling";
+import type {
+  RosterCopyResult,
+  RosterEntryInput,
+  RosterSaveResult,
+  RosterWeek,
+} from "../types-scheduling";
 
 export const rosterKeys = {
   all: ["org", "roster"] as const,
@@ -33,7 +38,7 @@ export function useCopyRosterWeek() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (body: { from_week_start: string; to_week_start: string; site?: string | null }) =>
-      api.post<{ copied: number }>("/org/roster/copy-week", body),
+      api.post<RosterCopyResult>("/org/roster/copy-week", body),
     onSuccess: () => qc.invalidateQueries({ queryKey: rosterKeys.all }),
   });
 }

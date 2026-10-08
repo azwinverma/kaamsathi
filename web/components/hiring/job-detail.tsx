@@ -1,7 +1,14 @@
 "use client";
 import * as React from "react";
 import { useTranslations } from "next-intl";
-import { CalendarClock, ChevronDown, MoreHorizontal, Send, UserSearch } from "lucide-react";
+import {
+  CalendarClock,
+  ChevronDown,
+  MoreHorizontal,
+  PauseCircle,
+  Send,
+  UserSearch,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, DescriptionList } from "@/components/ui/card";
 import { DateText } from "@/components/ui/date";
@@ -24,7 +31,10 @@ import { cn } from "@/lib/utils";
 import { ApplicationDrawer } from "./application-drawer";
 import { HiringGate } from "./gate";
 import { JobActions } from "./job-actions";
-import { FillProgress, JobBenefits, JobWage } from "./job-bits";
+import { FillProgress, JobBenefits, JobStatusBadge, JobWage } from "./job-bits";
+import { RequirementChips } from "./requirements";
+import { InviteWorkerButton } from "./invite-dialog";
+import { MatchScoreBadge, TagsAndAssignee } from "./application-pipeline";
 import { CLOSED_STAGES, PIPELINE_STAGES, TRANSITIONS, daysSince } from "./lib";
 import { ApplicationGrowthBadges } from "@/components/experience/badges";
 import { OfferControls } from "@/components/experience/offer-dialog";
@@ -73,7 +83,7 @@ function JobDetailInner({ id }: { id: string }) {
         title={job.title}
         meta={
           <>
-            <StatusBadge status={job.status} label={job.status_label} />
+            <JobStatusBadge job={job} />
             <span className="text-fg-muted text-sm">
               {[f.name(job.trade), job.site?.name].filter(Boolean).join(" · ")}
             </span>
@@ -81,6 +91,23 @@ function JobDetailInner({ id }: { id: string }) {
         }
         actions={<JobActions job={job} primary redirectOnDelete="/app/jobs" />}
       />
+      {job.status === "paused" ? (
+        <div
+          role="status"
+          className="border-warning/30 bg-warning-subtle text-fg-body mb-4 flex items-start gap-2 rounded-lg border p-3 text-sm"
+        >
+          <PauseCircle className="text-warning mt-0.5 size-4 shrink-0" aria-hidden />
+          <span>
+            {t("pipeline.actions.paused_banner")}
+            {job.paused_at ? (
+              <span className="text-fg-muted">
+                {" "}
+                · {t("pipeline.actions.paused_since", { date: f.dateTime(job.paused_at) })}
+              </span>
+            ) : null}
+          </span>
+        </div>
+      ) : null}
       <div className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
         <JobSummary job={job} />
         <Pipeline job={job} />
@@ -130,6 +157,14 @@ function JobSummary({ job }: { job: Job }) {
             ...(job.first_shortlist_at
               ? [{ label: td("first_shortlist"), value: f.dateTime(job.first_shortlist_at) }]
               : []),
+            ...(job.requirements?.length
+              ? [
+                  {
+                    label: t("pipeline.requirements.detail_title"),
+                    value: <RequirementChips requirements={job.requirements} />,
+                  },
+                ]
+              : []),
             ...(job.description
               ? [
                   {
@@ -177,6 +212,7 @@ function Pipeline({ job }: { job: Job }) {
           </h2>
           <p className="text-fg-muted text-sm">{td("pipeline_hint")}</p>
         </div>
+        <InviteWorkerButton job={job} />
       </div>
 
       {isLoading ? (
@@ -319,6 +355,10 @@ function CandidateCard({
         className="mt-2 flex flex-wrap gap-1"
       />
       <OfferControls app={app as Application & ApplicationOfferField} />
+      <span className="mt-2 flex flex-wrap gap-1 empty:hidden">
+        <MatchScoreBadge app={app} />
+      </span>
+      <TagsAndAssignee app={app} className="mt-2" />
       {app.stage === "interview" && app.interview_at ? (
         <p className="bg-warning-subtle text-warning tabular mt-2 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium">
           <CalendarClock className="size-3.5" aria-hidden />

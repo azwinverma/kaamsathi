@@ -7,11 +7,14 @@ import {
   BarChart3,
   BookOpen,
   Building2,
+  CalendarDays,
   GraduationCap,
   MoreHorizontal,
   Pencil,
   Plus,
+  ShieldCheck,
   Trash2,
+  TrendingUp,
   Users,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -44,6 +47,7 @@ import { Segmented } from "@/components/ui/segmented";
 import { Table, TableContainer, TBody, Td, Th, THead, Tr, RowHeader } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DistrictSelect, TradeSelect } from "@/components/shared/selects";
+import { errorMessage } from "@/components/ui/feedback";
 import { isApiError } from "@/lib/api/errors";
 import {
   useDeleteCourse,
@@ -62,6 +66,7 @@ import {
   COURSE_STATUSES,
   ENROLLMENT_STATUSES,
   PROVIDER_KINDS,
+  PROVIDER_VERIFICATION_STATUSES,
   type Course,
   type CourseInput,
   type Enrollment,
@@ -74,10 +79,18 @@ import { toastError } from "@/lib/forms";
 import { todayIso } from "@/lib/format";
 import { useFormat } from "@/lib/use-format";
 import { cn } from "@/lib/utils";
+import { CourseSessionsSheet } from "./course-sessions";
+import { OutcomesTab } from "./outcomes-tab";
+import {
+  ProviderVerificationCell,
+  ProviderVerifiedBadge,
+  ProviderVerifyDialog,
+} from "./provider-verify";
 import { CourseStatusBadge, ENROLLMENT_NEXT, EnrollmentStatusBadge } from "./shared";
+import { attendanceSummary, parsePct } from "./utils";
 
 const PAGE_SIZE = 20;
-type Tab = "providers" | "courses" | "enrollments" | "shortages";
+type Tab = "providers" | "courses" | "enrollments" | "outcomes" | "shortages";
 
 function fieldErrors(err: unknown): { fields: Record<string, string>; message: string | null } {
   if (!isApiError(err)) return { fields: {}, message: String(err) };
@@ -109,6 +122,10 @@ export function OpsTrainingPage() {
             <Users aria-hidden />
             {t("tab_enrollments")}
           </TabsTrigger>
+          <TabsTrigger value="outcomes">
+            <TrendingUp aria-hidden />
+            {t("tab_outcomes")}
+          </TabsTrigger>
           <TabsTrigger value="shortages">
             <BarChart3 aria-hidden />
             {t("tab_shortages")}
@@ -122,6 +139,9 @@ export function OpsTrainingPage() {
         </TabsContent>
         <TabsContent value="enrollments">
           <EnrollmentsTab />
+        </TabsContent>
+        <TabsContent value="outcomes">
+          <OutcomesTab />
         </TabsContent>
         <TabsContent value="shortages">
           <ShortagesTab
@@ -142,14 +162,22 @@ function ProvidersTab() {
   const t = useTranslations("training.providers");
   const tk = useTranslations("training.kind");
   const tc = useTranslations("common");
+  const tv = useTranslations("training.verify");
   const tRoot = useTranslations();
   const f = useFormat();
   const [q, setQ] = React.useState("");
+  const [verification, setVerification] = React.useState("");
   const [page, setPage] = React.useState(1);
   const [editing, setEditing] = React.useState<TrainingProvider | "new" | null>(null);
   const [deleting, setDeleting] = React.useState<TrainingProvider | null>(null);
-  React.useEffect(() => setPage(1), [q]);
-  const query = useOpsProviders({ q: q || undefined, page, page_size: PAGE_SIZE });
+  const [verifying, setVerifying] = React.useState<TrainingProvider | null>(null);
+  React.useEffect(() => setPage(1), [q, verification]);
+  const query = useOpsProviders({
+    q: q || undefined,
+    verification_status: verification || undefined,
+    page,
+    page_size: PAGE_SIZE,
+  });
   const del = useDeleteProvider();
   const rows = query.data?.results ?? [];
 
@@ -161,6 +189,17 @@ function ProvidersTab() {
           onChange={setQ}
           placeholder={t("search")}
           className="sm:max-w-xs sm:flex-1"
+        />
+        <NativeSelect
+          aria-label={tv("filter_label")}
+          value={verification}
+          onChange={(e) => setVerification(e.target.value)}
+          placeholder={tv("all")}
+          className="sm:w-48"
+          options={PROVIDER_VERIFICATION_STATUSES.map((s) => ({
+            value: s,
+            label: tRoot(`status.${s}`),
+          }))}
         />
         <Button className="sm:ml-auto" onClick={() => setEditing("new")}>
           <Plus aria-hidden />
@@ -174,9 +213,13 @@ function ProvidersTab() {
       ) : rows.length === 0 ? (
         <EmptyState
           icon={Building2}
-          title={q ? tc("no_results") : t("empty_title")}
-          description={q ? undefined : t("empty_body")}
-          action={q ? undefined : <Button onClick={() => setEditing("new")}>{t("add")}</Button>}
+          title={q || verification ? tc("no_results") : t("empty_title")}
+          description={q || verification ? undefined : t("empty_body")}
+          action={
+            q || verification ? undefined : (
+              <Button onClick={() => setEditing("new")}>{t("add")}</Button>
+            )
+          }
         />
       ) : (
         <>
@@ -189,6 +232,7 @@ function ProvidersTab() {
                   <Th>{t("district")}</Th>
                   <Th>{t("phone")}</Th>
                   <Th numeric>{tRoot("training.ops.tab_courses")}</Th>
+                  <Th>{tv("column")}</Th>
                   <Th>{tc("status")}</Th>
                   <Th className="w-12">
                     <span className="sr-only">{tc("actions")}</span>
@@ -218,6 +262,9 @@ function ProvidersTab() {
                     <Td className="tabular">{f.phone(p.phone)}</Td>
                     <Td numeric>{f.digits(p.courses_count)}</Td>
                     <Td>
+                      <ProviderVerificationCell provider={p} />
+                    </Td>
+                    <Td>
                       <Badge tone={p.is_active ? "success" : "neutral"} dot>
                         {p.is_active ? t("active") : t("inactive")}
                       </Badge>
@@ -227,6 +274,11 @@ function ProvidersTab() {
                         label={tc("more_actions")}
                         items={[
                           { label: tc("edit"), icon: Pencil, onSelect: () => setEditing(p) },
+                          {
+                            label: tv("action"),
+                            icon: ShieldCheck,
+                            onSelect: () => setVerifying(p),
+                          },
                           {
                             label: tc("delete"),
                             icon: Trash2,
@@ -250,6 +302,7 @@ function ProvidersTab() {
         </>
       )}
       <ProviderDialog provider={editing} onClose={() => setEditing(null)} />
+      <ProviderVerifyDialog provider={verifying} onClose={() => setVerifying(null)} />
       <ConfirmDialog
         open={!!deleting}
         onOpenChange={(v) => !v && setDeleting(null)}
@@ -483,6 +536,7 @@ function CoursesTab({
   const [page, setPage] = React.useState(1);
   const [editing, setEditing] = React.useState<Course | "new" | null>(null);
   const [deleting, setDeleting] = React.useState<Course | null>(null);
+  const [sessionsFor, setSessionsFor] = React.useState<Course | null>(null);
   React.useEffect(() => setPage(1), [q, provider, status]);
   React.useEffect(() => {
     if (draft) setEditing("new");
@@ -568,7 +622,10 @@ function CoursesTab({
                       </span>
                     </RowHeader>
                     <Td>
-                      <span className="block">{c.provider.name}</span>
+                      <span className="flex flex-wrap items-center gap-1.5">
+                        {c.provider.name}
+                        <ProviderVerifiedBadge verified={c.provider.verified} />
+                      </span>
                       <span className="text-fg-muted block text-xs">
                         {f.name(c.district)} · {c.mode_label}
                       </span>
@@ -599,6 +656,11 @@ function CoursesTab({
                         items={[
                           { label: tc("edit"), icon: Pencil, onSelect: () => setEditing(c) },
                           {
+                            label: tRoot("training.sessions.title"),
+                            icon: CalendarDays,
+                            onSelect: () => setSessionsFor(c),
+                          },
+                          {
                             label: tc("delete"),
                             icon: Trash2,
                             danger: true,
@@ -620,6 +682,7 @@ function CoursesTab({
           />
         </>
       )}
+      <CourseSessionsSheet course={sessionsFor} onClose={() => setSessionsFor(null)} />
       <CourseDialog
         course={editing}
         draft={editing === "new" ? draft : null}
@@ -655,10 +718,11 @@ function CoursesTab({
   );
 }
 
-type CourseForm = Omit<CourseInput, "duration_days" | "seats" | "fee"> & {
+type CourseForm = Omit<CourseInput, "duration_days" | "seats" | "fee" | "min_attendance_pct"> & {
   duration_days: string;
   seats: string;
   fee: string;
+  min_attendance_pct: string;
 };
 
 function CourseDialog({
@@ -706,6 +770,7 @@ function CourseDialog({
             seats: String(existing.seats),
             status: existing.status,
             leads_to_nstb: existing.leads_to_nstb,
+            min_attendance_pct: String(existing.min_attendance_pct ?? 0),
           }
         : {
             provider_id: "",
@@ -723,6 +788,7 @@ function CourseDialog({
             seats: "20",
             status: "open",
             leads_to_nstb: false,
+            min_attendance_pct: "0",
           },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -743,6 +809,8 @@ function CourseDialog({
       if (!Number.isInteger(n) || n < 1) errs[k] = t("invalid_number");
     }
     if (!(Number(form.fee) >= 0)) errs.fee = t("invalid_number");
+    const minPct = parsePct(form.min_attendance_pct);
+    if (minPct === null) errs.min_attendance_pct = t("invalid_pct");
     setErrors(errs);
     if (Object.keys(errs).length) return;
     // Provider district is the natural default for a new course.
@@ -753,6 +821,7 @@ function CourseDialog({
         duration_days: Number(form.duration_days),
         seats: Number(form.seats),
         fee: String(form.fee || "0"),
+        min_attendance_pct: minPct ?? 0,
         title_ne: form.title_ne || null,
         description: form.description || null,
         sponsor_note: form.sponsor_note || null,
@@ -865,6 +934,18 @@ function CourseDialog({
                   onChange={(e) => set("fee", e.target.value)}
                 />
               </Field>
+              <Field
+                id="cs-min-att"
+                label={t("min_attendance_pct")}
+                error={errors.min_attendance_pct}
+                hint={t("min_attendance_hint")}
+              >
+                <Input
+                  inputMode="numeric"
+                  value={form.min_attendance_pct}
+                  onChange={(e) => set("min_attendance_pct", e.target.value)}
+                />
+              </Field>
               <Field id="cs-status" label={t("status")} error={errors.status}>
                 <NativeSelect
                   value={form.status ?? "open"}
@@ -933,7 +1014,9 @@ function EnrollmentsTab() {
   const [q, setQ] = React.useState("");
   const [page, setPage] = React.useState(1);
   const [completing, setCompleting] = React.useState<Enrollment | null>(null);
+  const [completeError, setCompleteError] = React.useState<string | null>(null);
   React.useEffect(() => setPage(1), [course, status, q]);
+  React.useEffect(() => setCompleteError(null), [completing]);
   const courses = useOpsCourses({ page_size: 100 });
   const query = useOpsEnrollments({
     course: course || undefined,
@@ -1005,6 +1088,7 @@ function EnrollmentsTab() {
                   <Th>{t("course")}</Th>
                   <Th>{t("sponsor")}</Th>
                   <Th>{t("applied_at")}</Th>
+                  <Th numeric>{t("attendance")}</Th>
                   <Th>{t("status")}</Th>
                   <Th className="w-12">
                     <span className="sr-only">{t("change_status")}</span>
@@ -1042,6 +1126,9 @@ function EnrollmentsTab() {
                       </Td>
                       <Td>
                         <DateText ad={e.applied_at.slice(0, 10)} inline />
+                      </Td>
+                      <Td numeric>
+                        <AttendanceCell enrollment={e} />
                       </Td>
                       <Td>
                         <div className="flex flex-wrap items-center gap-1.5">
@@ -1098,14 +1185,33 @@ function EnrollmentsTab() {
                 setCompleting(null);
               },
               onError: (err) => {
+                // invalid_state = below the course's minimum attendance: keep the dialog open.
+                if (isApiError(err) && err.code === "invalid_state") {
+                  setCompleteError(errorMessage(err, tRoot));
+                  return;
+                }
                 toastError(err, tRoot);
                 setCompleting(null);
               },
             },
           )
         }
-      />
+      >
+        {completeError ? <FormError message={completeError} /> : null}
+      </ConfirmDialog>
     </div>
+  );
+}
+
+function AttendanceCell({ enrollment: e }: { enrollment: Enrollment }) {
+  const t = useTranslations("training.enrollments");
+  const f = useFormat();
+  const text = attendanceSummary(e.attendance);
+  if (!text) return <span className="text-fg-subtle">—</span>;
+  return (
+    <span className="tabular whitespace-nowrap" title={t("attendance_hint")}>
+      {f.digits(text)}
+    </span>
   );
 }
 

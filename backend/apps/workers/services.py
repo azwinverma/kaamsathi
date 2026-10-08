@@ -92,7 +92,9 @@ def set_languages(worker: Worker, rows: list[dict]) -> None:
     keep = []
     for r in rows:
         obj, _ = WorkerLanguage.objects.update_or_create(
-            worker=worker, language=r["language"], defaults={"proficiency": r["proficiency"]}
+            worker=worker,
+            language=r["language"],
+            defaults={"proficiency": r.get("proficiency") or "conversational"},
         )
         keep.append(obj.pk)
     worker.languages.exclude(pk__in=keep).delete()

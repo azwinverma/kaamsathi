@@ -1,5 +1,11 @@
 import { addDays, weekdayOf } from "@/lib/format";
-import type { RosterCell, RosterEntryInput, RosterRow } from "@/lib/api/types-scheduling";
+import type {
+  RosterCell,
+  RosterEntryInput,
+  RosterRow,
+  RosterWarning,
+  RosterWarningCode,
+} from "@/lib/api/types-scheduling";
 
 /** Sunday that starts the week containing `iso` (Nepal's week runs Sunday–Saturday). */
 export function weekStartOf(iso: string): string {
@@ -43,4 +49,52 @@ export function editsToEntries(rows: RosterRow[], edits: RosterEdits): RosterEnt
     });
   }
   return out;
+}
+
+/** O005: human text for a cell's warnings, using the server's labels (falls back to the code). */
+export function cellWarningText(
+  row: Pick<RosterRow, "warnings">,
+  date: string,
+  labels: Partial<Record<RosterWarningCode, string>> | undefined,
+): string[] {
+  const codes = row.warnings?.[date] ?? [];
+  return codes.map((c) => labels?.[c] || c);
+}
+
+export interface WarningSummary {
+  employment_id: string;
+  name: string;
+  date: string;
+  messages: string[];
+}
+
+/**
+ * O005: group PUT /org/roster warnings into one line per worker-day, ordered by worker name then
+ * date, de-duplicating repeated messages. Unknown employments fall back to `unknownName`.
+ */
+export function summariseWarnings(
+  warnings: RosterWarning[] | undefined,
+  rows: Pick<RosterRow, "employment_id" | "worker_name">[],
+  unknownName = "—",
+): WarningSummary[] {
+  if (!warnings?.length) return [];
+  const names = new Map(rows.map((r) => [r.employment_id, r.worker_name]));
+  const byKey = new Map<string, WarningSummary>();
+  for (const w of warnings) {
+    const key = editKey(w.employment_id, w.date);
+    let entry = byKey.get(key);
+    if (!entry) {
+      entry = {
+        employment_id: w.employment_id,
+        name: names.get(w.employment_id) ?? unknownName,
+        date: w.date,
+        messages: [],
+      };
+      byKey.set(key, entry);
+    }
+    if (!entry.messages.includes(w.message)) entry.messages.push(w.message);
+  }
+  return [...byKey.values()].sort(
+    (a, b) => a.name.localeCompare(b.name) || a.date.localeCompare(b.date),
+  );
 }

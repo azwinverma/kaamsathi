@@ -2,6 +2,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, type QueryParams } from "../client";
 import { qk } from "../keys";
+import { track } from "../../telemetry";
 import type {
   BillingSummary,
   ChargeListItem,
@@ -74,7 +75,10 @@ export function useCreateMember() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (body: MemberCreate) => api.post<Member>("/org/members", body),
-    onSuccess: () => qc.invalidateQueries({ queryKey: qk.org.members }),
+    onSuccess: (_m, vars) => {
+      track("feature_used", { feature: "member_invited", role: vars.role });
+      qc.invalidateQueries({ queryKey: qk.org.members });
+    },
   });
 }
 export function useUpdateMember() {
@@ -164,7 +168,8 @@ export function useDeleteShift() {
 export function useHolidays(bsYear?: number) {
   return useQuery({
     queryKey: qk.org.holidays(bsYear),
-    queryFn: () => api.get<List<HolidayListItem>>("/org/holidays", { bs_year: bsYear, page_size: 100 }),
+    queryFn: () =>
+      api.get<List<HolidayListItem>>("/org/holidays", { bs_year: bsYear, page_size: 100 }),
   });
 }
 export function useCreateHoliday() {

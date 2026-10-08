@@ -176,7 +176,9 @@ class OpsJobViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.G
 
     def get_queryset(self):
         qs = annotate_counts(
-            JobOpening.objects.select_related("organization__district", "trade", "site__district", "shift")
+            JobOpening.objects.select_related(
+                "organization__district", "trade", "site__district", "shift", "ops_owner"
+            ).prefetch_related("requirements__trade")
         )
         p = self.request.query_params
         if p.get("status"):
@@ -209,8 +211,76 @@ class OpsJobViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.G
             limit = min(max(int(request.query_params.get("limit", 20)), 1), 100)
         except ValueError as exc:
             raise APIError("validation_error", fields={"limit": ["Must be an integer."]}) from exc
-        # matching v2 (docs/CONTRACT-EXTENSIONS.md §3): rows carry ``explain`` and ``interested``
-        return Response(job_matches(job, limit, request))
+        # matching v2.1: rows carry ``explain``, ``requirements``, ``interested``, ``rank``, ``run_id``.
+        # The scoring is persisted as a MatchRun (K010) and reused for 10 min unless ?refresh=1.
+        refresh = request.query_params.get("refresh") in ("1", "true")
+        rows = job_matches(job, limit, request, persist=True, refresh=refresh)
+        resp = Response(rows)
+        if rows:
+            resp["X-Match-Run-Id"] = rows[0]["run_id"]
+        from apps.hiring.matching import ALGORITHM_VERSION
+
+        resp["X-Match-Algorithm-Version"] = ALGORITHM_VERSION
+        return resp
+
+    @action(detail=True, methods=["get"], url_path="match-runs")
+    def match_runs(self, request, pk=None):
+        """Run history (K010/K012), paginated: ``{id, algorithm_version, config, candidates_count, …}``."""
+        from apps.hiring.matching import run_payload
+
+        job = self.get_object()
+        qs = job.match_runs.select_related("created_by").order_by("-created_at")
+        page = self.paginate_queryset(qs)
+        return self.get_paginated_response([run_payload(r) for r in page])
+
+    @action(detail=True, methods=["get"], url_path=r"match-runs/(?P<run_id>[0-9a-f-]{36})")
+    def match_run(self, request, pk=None, run_id=None):
+        from rest_framework.exceptions import NotFound
+
+        from apps.hiring.matching import run_payload
+
+        job = self.get_object()
+        run = job.match_runs.select_related("created_by").filter(pk=run_id).first()
+        if run is None:
+            raise NotFound()
+        return Response(run_payload(run, with_candidates=True, request=request))
+
+    @action(detail=True, methods=["post"])
+    def owner(self, request, pk=None):
+        """``POST /ops/jobs/{id}/owner {user_id: uuid|null}`` — assign the KaamSathi recruiter (L009)."""
+        from django.contrib.auth import get_user_model
+
+        from apps.hiring import labels as hiring_labels
+
+        job = self.get_object()
+        data = request.data if isinstance(request.data, dict) else {}
+        if "user_id" not in data:
+            raise APIError(
+                "validation_error", fields={"user_id": ["This field is required (null to clear)."]}
+            )
+        user = None
+        if data["user_id"]:
+            try:
+                user = (
+                    get_user_model().objects.filter(pk=data["user_id"], is_staff=True, is_active=True).first()
+                )
+            except Exception:  # noqa: BLE001 - malformed uuid
+                user = None
+            if user is None:
+                raise APIError(
+                    "validation_error", fields={"user_id": [str(hiring_labels.MESSAGES["owner_not_staff"])]}
+                )
+        old = str(job.ops_owner_id) if job.ops_owner_id else None
+        job.ops_owner = user
+        job.save(update_fields=["ops_owner"])
+        log(
+            request,
+            "ops.job.owner",
+            job,
+            organization=job.organization,
+            changes={"ops_owner": {"from": old, "to": str(user.pk) if user else None}},
+        )
+        return Response(self.get_serializer(self.get_queryset().get(pk=job.pk)).data)
 
     @action(detail=True, methods=["post"])
     @idempotent

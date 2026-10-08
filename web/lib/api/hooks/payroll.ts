@@ -5,6 +5,10 @@ import { qk } from "../keys";
 import { track } from "../../telemetry";
 import type {
   Paginated,
+  PayGroup,
+  PayGroupInput,
+  PayPolicy,
+  PayPolicyUpdate,
   PaymentMethod,
   PayrollRun,
   PayrollRunListItem,
@@ -43,10 +47,19 @@ export function usePayslips(runId: string | undefined, q?: string) {
 export function useCreatePayrollRun() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (body: { bs_year: number; bs_month: number; include_festival_allowance: boolean }) =>
-      api.post<PayrollRun>("/org/payroll-runs", body),
+    mutationFn: (body: {
+      bs_year: number;
+      bs_month: number;
+      include_festival_allowance: boolean;
+      /** Pay group (R001); omit/null = everyone not in a group. */
+      pay_group_id?: string | null;
+    }) => api.post<PayrollRun>("/org/payroll-runs", body),
     onSuccess: (run) => {
-      track("payroll_run_created", { bs_year: run.bs_year, bs_month: run.bs_month });
+      track("payroll_run_created", {
+        bs_year: run.bs_year,
+        bs_month: run.bs_month,
+        kind: run.pay_group ? "pay_group" : "all",
+      });
       qc.invalidateQueries({ queryKey: qk.org.payrollRuns });
       qc.invalidateQueries({ queryKey: qk.org.dashboard });
     },
@@ -58,7 +71,13 @@ function useRunAction<TBody = void>(action: "recalculate" | "approve" | "mark-pa
   return useMutation({
     mutationFn: ({ id, body }: { id: string; body?: TBody }) =>
       api.post<PayrollRun>(`/org/payroll-runs/${id}/${action}`, body ?? {}),
-    onSuccess: (_r, vars) => {
+    onSuccess: (run, vars) => {
+      if (action === "approve")
+        track("feature_used", {
+          feature: "payroll_approved",
+          bs_year: run?.bs_year,
+          bs_month: run?.bs_month,
+        });
       qc.invalidateQueries({ queryKey: qk.org.payrollRun(vars.id) });
       qc.invalidateQueries({ queryKey: qk.org.payrollRuns });
       qc.invalidateQueries({ queryKey: qk.org.dashboard });
@@ -81,5 +100,47 @@ export function useUpdatePayslip(runId: string) {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["org", "payroll-runs", runId] });
     },
+  });
+}
+
+// ---------------------------------------------------------------- pay groups (R001) & pay policy (R003)
+export const payGroupsKey = ["org", "pay-groups"] as const;
+export const payPolicyKey = ["org", "pay-policy"] as const;
+
+export function usePayGroups() {
+  return useQuery({
+    queryKey: payGroupsKey,
+    queryFn: () => fetchAllPages<PayGroup>("/org/pay-groups"),
+  });
+}
+
+export function useSavePayGroup() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...body }: PayGroupInput & { id?: string }) =>
+      id
+        ? api.patch<PayGroup>(`/org/pay-groups/${id}`, body)
+        : api.post<PayGroup>("/org/pay-groups", body),
+    onSuccess: () => qc.invalidateQueries({ queryKey: payGroupsKey }),
+  });
+}
+
+export function useDeletePayGroup() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.delete(`/org/pay-groups/${id}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: payGroupsKey }),
+  });
+}
+
+export function usePayPolicy() {
+  return useQuery({ queryKey: payPolicyKey, queryFn: () => api.get<PayPolicy>("/org/pay-policy") });
+}
+
+export function useUpdatePayPolicy() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: PayPolicyUpdate) => api.patch<PayPolicy>("/org/pay-policy", body),
+    onSuccess: (data) => qc.setQueryData(payPolicyKey, data),
   });
 }

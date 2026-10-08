@@ -8,9 +8,16 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { SwitchField } from "@/components/ui/checkbox";
 import { BsMonthPicker } from "@/components/ui/date";
-import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/field";
-import { useCreatePayrollRun } from "@/lib/api/hooks/payroll";
+import { NativeSelect } from "@/components/ui/select";
+import { useCreatePayrollRun, usePayGroups } from "@/lib/api/hooks/payroll";
 import { isApiError } from "@/lib/api/errors";
 import type { PayrollRunListItem } from "@/lib/api/types";
 import { todayBs } from "@/lib/format";
@@ -34,6 +41,13 @@ export function CreateRunDialog({
   const f = useFormat();
   const router = useRouter();
   const create = useCreatePayrollRun();
+  const tg = useTranslations("payroll_config.run_dialog");
+  const groups = usePayGroups();
+  const activeGroups = React.useMemo(
+    () => (groups.data ?? []).filter((g) => g.is_active),
+    [groups.data],
+  );
+  const [groupId, setGroupId] = React.useState("");
   const current = React.useMemo<YM>(() => {
     const b = todayBs();
     return { year: b.year, month: b.month };
@@ -49,12 +63,18 @@ export function CreateRunDialog({
       setFestival(isFestivalMonth(current.month));
       setFestivalTouched(false);
       setDuplicateOf(null);
+      setGroupId("");
       create.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  const existing = (ym: YM) => existingRuns.find((r) => r.bs_year === ym.year && r.bs_month === ym.month);
+  // One run per BS month per pay group (R001); "" = everyone not in a group.
+  const existing = (ym: YM) =>
+    existingRuns.find(
+      (r) =>
+        r.bs_year === ym.year && r.bs_month === ym.month && (r.pay_group?.id ?? "") === groupId,
+    );
   const alreadyExists = existing(month);
 
   const onMonthChange = (v: YM) => {
@@ -70,7 +90,12 @@ export function CreateRunDialog({
       return;
     }
     create.mutate(
-      { bs_year: month.year, bs_month: month.month, include_festival_allowance: festival },
+      {
+        bs_year: month.year,
+        bs_month: month.month,
+        include_festival_allowance: festival,
+        pay_group_id: groupId || null,
+      },
       {
         onSuccess: (run) => {
           toast.success(t("created", { month: f.bsMonth(month.year, month.month) }));
@@ -98,8 +123,27 @@ export function CreateRunDialog({
               <div role="group" aria-labelledby="run-month-label">
                 <BsMonthPicker value={month} onChange={onMonthChange} max={current} />
               </div>
-              <p className="text-xs text-fg-muted">{t("month_hint")}</p>
+              <p className="text-fg-muted text-xs">{t("month_hint")}</p>
             </div>
+
+            {activeGroups.length ? (
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="run-pay-group">{tg("group")}</Label>
+                <NativeSelect
+                  id="run-pay-group"
+                  value={groupId}
+                  onChange={(e) => {
+                    setGroupId(e.target.value);
+                    setDuplicateOf(null);
+                  }}
+                  options={[
+                    { value: "", label: tg("group_none") },
+                    ...activeGroups.map((g) => ({ value: g.id, label: g.name })),
+                  ]}
+                />
+                <p className="text-fg-muted text-xs">{tg("group_hint")}</p>
+              </div>
+            ) : null}
 
             <div className="space-y-2">
               <SwitchField
@@ -113,7 +157,7 @@ export function CreateRunDialog({
                 }}
               />
               {isFestivalMonth(month.month) ? (
-                <p className="flex items-start gap-1.5 text-xs text-brand">
+                <p className="text-brand flex items-start gap-1.5 text-xs">
                   <Sparkles className="mt-px size-3.5 shrink-0" aria-hidden />
                   {t("festival_suggest", { month: f.monthName(month.month) })}
                 </p>
@@ -123,7 +167,7 @@ export function CreateRunDialog({
             {duplicateOf || alreadyExists ? (
               <div
                 role="alert"
-                className="flex items-start gap-2 rounded-md border border-warning/30 bg-warning-subtle px-3 py-2.5 text-sm text-warning"
+                className="border-warning/30 bg-warning-subtle text-warning flex items-start gap-2 rounded-md border px-3 py-2.5 text-sm"
               >
                 <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
                 <div className="space-y-1">
@@ -142,7 +186,11 @@ export function CreateRunDialog({
             ) : null}
           </DialogBody>
           <DialogFooter>
-            <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={create.isPending}>
+            <Button
+              variant="secondary"
+              onClick={() => onOpenChange(false)}
+              disabled={create.isPending}
+            >
               {tAll("common.cancel")}
             </Button>
             <Button type="submit" loading={create.isPending} disabled={!!alreadyExists}>

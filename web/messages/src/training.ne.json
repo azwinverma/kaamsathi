@@ -14,8 +14,16 @@
       "level3": "तह ३",
       "refresher": "पुनर्ताजगी"
     },
-    "mode": { "classroom": "कक्षाकोठा", "on_site": "कार्यस्थलमै", "online": "अनलाइन" },
-    "course_status": { "open": "खुला", "closed": "बन्द", "completed": "सम्पन्न" },
+    "mode": {
+      "classroom": "कक्षाकोठा",
+      "on_site": "कार्यस्थलमै",
+      "online": "अनलाइन"
+    },
+    "course_status": {
+      "open": "खुला",
+      "closed": "बन्द",
+      "completed": "सम्पन्न"
+    },
     "enrollment_status": {
       "applied": "आवेदन दिइएको",
       "enrolled": "भर्ना भएको",
@@ -29,7 +37,8 @@
       "tab_providers": "प्रदायक",
       "tab_courses": "कोर्स",
       "tab_enrollments": "भर्ना",
-      "tab_shortages": "अभाव"
+      "tab_shortages": "अभाव",
+      "tab_outcomes": "नतिजा"
     },
     "providers": {
       "add": "प्रदायक थप्नुहोस्",
@@ -89,7 +98,10 @@
       "delete_confirm": "{title} हटाउने? भर्ना भइसकेका कोर्स बन्द मात्र गर्न मिल्छ।",
       "search": "कोर्स खोज्नुहोस्…",
       "required": "अनिवार्य",
-      "invalid_number": "० भन्दा ठूलो पूर्ण संख्या लेख्नुहोस्"
+      "invalid_number": "० भन्दा ठूलो पूर्ण संख्या लेख्नुहोस्",
+      "min_attendance_pct": "न्यूनतम उपस्थिति (%)",
+      "min_attendance_hint": "पूरा गर्न प्रशिक्षार्थी कति प्रतिशत सत्रमा उपस्थित हुनुपर्छ। ० = कुनै सर्त छैन।",
+      "invalid_pct": "० देखि १०० सम्मको पूर्ण संख्या लेख्नुहोस्"
     },
     "enrollments": {
       "worker": "कामदार",
@@ -114,7 +126,9 @@
       "all_courses": "सबै कोर्स",
       "all_statuses": "सबै अवस्था",
       "complete_confirm_title": "कोर्स पूरा भयो भनेर राख्ने?",
-      "complete_confirm_body": "{name} को सीप राहदानीमा प्रमाणित \"{course}\" प्रमाणपत्र थपिन्छ।"
+      "complete_confirm_body": "{name} को सीप राहदानीमा प्रमाणित \"{course}\" प्रमाणपत्र थपिन्छ।",
+      "attendance": "उपस्थिति",
+      "attendance_hint": "उपस्थित सत्र / सञ्चालित सत्र (प्रतिशत)"
     },
     "shortages": {
       "title": "कहाँ कामदार कम छन्",
@@ -161,6 +175,84 @@
       "sponsored_empty_title": "तपाईंले अहिलेसम्म कसैलाई प्रायोजन गर्नुभएको छैन",
       "sponsored_empty_body": "कोर्स ट्याबबाट कामदार प्रायोजन गर्नुहोस्। तालिम पाएका कामदार लामो समय टिक्छन् र प्रमाणित प्रमाणपत्र पाउँछन्।",
       "trained_badge": "प्रमाणपत्र थपियो"
+    },
+    "verify": {
+      "column": "प्रमाणीकरण",
+      "filter_label": "प्रमाणीकरण स्थिति",
+      "all": "सबै प्रमाणीकरण",
+      "action": "प्रमाणित गर्नुहोस्…",
+      "title": "प्रदायक प्रमाणित गर्नुहोस्",
+      "current": "हालको स्थिति:",
+      "decision": "निर्णय",
+      "decision_verified": "प्रमाणित",
+      "decision_rejected": "अस्वीकृत",
+      "decision_pending": "फेरि विचाराधीनमा",
+      "note": "टिप्पणी",
+      "note_hint_rejected": "कारण प्रदायकको रेकर्डमा राखिन्छ।",
+      "note_required": "अस्वीकृतिको कारण दिनुहोस्",
+      "submit_verified": "प्रमाणित गर्नुहोस्",
+      "submit_rejected": "अस्वीकार गर्नुहोस्",
+      "submit_pending": "फेरि विचाराधीनमा राख्नुहोस्",
+      "affiliation_check": "प्रमाणित गर्नुअघि CTEVT सम्बन्धन नं. {no} का कागजात जाँच गर्नुहोस्।",
+      "affiliation_missing": "प्रमाणित गर्नुअघि CTEVT सम्बन्धन नम्बर राख्नुहोस्।",
+      "by_at": "{name} · {at}",
+      "verified_short": "प्रमाणित",
+      "verified_provider": "प्रमाणित तालिम प्रदायक",
+      "toast": {
+        "verified": "{name} प्रमाणित भयो",
+        "rejected": "{name} अस्वीकृत भयो",
+        "pending": "{name} फेरि विचाराधीनमा राखियो"
+      }
+    },
+    "sessions": {
+      "title": "सत्रहरू",
+      "add": "सत्र थप्नुहोस्",
+      "edit": "सत्र सम्पादन गर्नुहोस्",
+      "min_attendance": "न्यूनतम उपस्थिति {pct}%",
+      "date": "मिति",
+      "time": "समय",
+      "topic": "विषय",
+      "present": "उपस्थित",
+      "start_time": "सुरु समय",
+      "end_time": "अन्त्य समय",
+      "date_required": "मिति छान्नुहोस्",
+      "end_after_start": "अन्त्य समय सुरु समयपछि हुनुपर्छ",
+      "empty_title": "अहिलेसम्म कुनै सत्र छैन",
+      "empty_body": "को उपस्थित भयो ट्र्याक गर्न हरेक कक्षाको दिन थप्नुहोस्।",
+      "attendance": "उपस्थिति",
+      "attendance_title": "सत्र उपस्थिति",
+      "mark_for": "{date} को सत्रको उपस्थिति लगाउनुहोस्",
+      "edit_for": "{date} को सत्र सम्पादन गर्नुहोस्",
+      "delete_for": "{date} को सत्र मेटाउनुहोस्",
+      "delete_confirm": "{date} को सत्र मेटाउने? यसको उपस्थिति पनि हट्छ।",
+      "saved": "सत्र सेभ भयो",
+      "deleted": "सत्र मेटाइयो",
+      "mark_all": "सबैलाई उपस्थित गर्नुहोस्",
+      "present_of": "{total} मध्ये {present} उपस्थित",
+      "present_for": "{name} उपस्थित",
+      "not_marked": "हाजिरी लागेको छैन",
+      "no_enrolled_title": "भर्ना भएका प्रशिक्षार्थी छैनन्",
+      "no_enrolled_body": "भर्ना भएका वा पूरा गरेका प्रशिक्षार्थी मात्र यहाँ देखिन्छन्।",
+      "save_attendance": "उपस्थिति सेभ गर्नुहोस्",
+      "attendance_saved": "{count, plural, =0 {उपस्थिति सेभ भयो — कोही उपस्थित छैनन्} one {उपस्थिति सेभ भयो — # जना उपस्थित} other {उपस्थिति सेभ भयो — # जना उपस्थित}}"
+    },
+    "outcomes": {
+      "title": "कोर्सको नतिजा",
+      "subtitle": "भर्ना → पूरा → {days} दिनभित्र रोजगारी → {retention} दिनपछि पनि काममा। गोपनीयताका लागि {k} जनाभन्दा कम कामदार भएका समूह लुकाइन्छन्।",
+      "all_trades": "सबै पेसा",
+      "course": "कोर्स",
+      "enrolled": "भर्ना",
+      "completed": "पूरा",
+      "placed": "९० दिनभित्र रोजगारी",
+      "retained": "९० दिन टिकेका",
+      "completion_rate": "पूरा दर",
+      "placement_rate": "रोजगारी दर",
+      "retention_rate": "टिकाउ दर",
+      "wage_before": "अघिको मध्यिका ज्याला",
+      "wage_after": "पछिको मध्यिका ज्याला",
+      "hidden": "लुकाइएको: {k} जनाभन्दा कम कामदार",
+      "empty_title": "रिपोर्ट गर्न कोर्स छैन",
+      "empty_body": "कोर्समा भर्ना भएपछि नतिजा देखिन्छ।"
     }
   }
 }

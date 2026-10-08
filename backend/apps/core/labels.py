@@ -53,7 +53,11 @@ END_REASON = {
     "absconded": _("Absconded"),
     "other": _("Other"),
 }
-WAGE_TYPE = {"monthly": _("Monthly salary"), "daily": _("Daily wage (Jyala)")}
+WAGE_TYPE = {
+    "monthly": _("Monthly salary"),
+    "daily": _("Daily wage (Jyala)"),
+    "hourly": pgettext_lazy("complete2", "Hourly wage"),
+}
 PAYMENT_METHOD = {
     "bank": _("Bank transfer"),
     "esewa": _("eSewa"),

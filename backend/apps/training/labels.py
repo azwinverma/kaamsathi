@@ -1,6 +1,14 @@
 """Localised labels for training enums (``*_label`` fields)."""
 
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
+
+PROVIDER_VERIFICATION = {
+    "unverified": pgettext_lazy("complete1", "Not verified"),
+    "pending": pgettext_lazy("complete1", "Verification pending"),
+    "verified": pgettext_lazy("complete1", "Verified provider"),
+    "rejected": pgettext_lazy("complete1", "Verification rejected"),
+}
 
 PROVIDER_KIND = {
     "ctevt_affiliated": _("CTEVT affiliated"),

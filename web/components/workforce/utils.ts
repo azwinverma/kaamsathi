@@ -1,4 +1,11 @@
-import type { Advance, AttendanceStatus, Employment, LeaveRequest, MinimumWage, WageType } from "@/lib/api/types";
+import type {
+  Advance,
+  AttendanceStatus,
+  Employment,
+  LeaveRequest,
+  MinimumWage,
+  WageType,
+} from "@/lib/api/types";
 import { toLatinDigits } from "@/lib/format";
 
 /** Parse a money/number string the user typed (accepts Devanagari digits, commas). */
@@ -18,7 +25,9 @@ export function moneyOrNull(v: string | null | undefined): string | null {
 }
 
 /** Employment id from a LeaveRequest/Advance, where `employment` may be an id or an object. */
-export function employmentIdOf(item: Pick<LeaveRequest | Advance, "employment" | "employment_id">): string {
+export function employmentIdOf(
+  item: Pick<LeaveRequest | Advance, "employment" | "employment_id">,
+): string {
   if (item.employment_id) return item.employment_id;
   const e = item.employment;
   return typeof e === "string" ? e : (e?.id ?? "");
@@ -53,6 +62,8 @@ export interface WageValues {
   basic_salary?: string;
   dearness_allowance?: string;
   daily_wage?: string;
+  hourly_wage?: string;
+  part_time?: boolean;
 }
 
 export interface WageCheck {
@@ -72,6 +83,13 @@ export function checkMinimumWage(v: WageValues, mw: MinimumWage | undefined): Wa
     if (b === null || min === null) return { ok: null, amount: null, minimum: min };
     const amount = b + d;
     return { ok: amount >= min, amount, minimum: min };
+  }
+  if (v.wage_type === "hourly") {
+    // R005: ≥ hourly minimum (101), or the part-time hourly minimum (107).
+    const hw = parseAmount(v.hourly_wage);
+    const hmin = parseAmount(v.part_time ? mw.hourly_part_time : mw.hourly);
+    if (hw === null || hmin === null) return { ok: null, amount: null, minimum: hmin };
+    return { ok: hw >= hmin, amount: hw, minimum: hmin };
   }
   const dw = parseAmount(v.daily_wage);
   const min = parseAmount(mw.daily);

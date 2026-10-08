@@ -2,19 +2,18 @@
 
 from __future__ import annotations
 
+from django.db import IntegrityError, transaction
 from django.db.models import Count, IntegerField, OuterRef, Q, Subquery
 from django.db.models.functions import Coalesce
-from django.db import IntegrityError, transaction
 from rest_framework import mixins, serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.audit.services import diff, log, snapshot
-from apps.core.permissions import IsOpsStaff
-
 from apps.core import labels
 from apps.core.exceptions import Duplicate
+from apps.core.permissions import IsOpsStaff
 
 from . import labels as worker_labels
 from .models import Trade, TradeAlias
@@ -78,7 +77,7 @@ class OpsTradeViewSet(
 ):
     permission_classes = [IsAuthenticated, IsOpsStaff]
     serializer_class = TradeSerializer
-    http_method_names = ["get", "post", "patch"]
+    http_method_names = ["get", "post", "patch", "delete"]  # delete: aliases only (no trade destroy)
     lookup_field = "code"
     lookup_value_regex = "[a-z0-9_-]+"
 

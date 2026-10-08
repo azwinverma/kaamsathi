@@ -2,6 +2,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, request, type QueryParams } from "../client";
 import { qk } from "../keys";
+import { track } from "../../telemetry";
 import type {
   Match,
   OpsDashboard,
@@ -18,7 +19,10 @@ import type {
 type List<T> = Paginated<T> | T[];
 
 export function useOpsDashboard() {
-  return useQuery({ queryKey: qk.ops.dashboard, queryFn: () => api.get<OpsDashboard>("/ops/dashboard") });
+  return useQuery({
+    queryKey: qk.ops.dashboard,
+    queryFn: () => api.get<OpsDashboard>("/ops/dashboard"),
+  });
 }
 
 export function useOpsWorkers(params?: QueryParams) {
@@ -82,7 +86,13 @@ export function useVerifyWorker() {
   return useMutation({
     mutationFn: ({ id, ...body }: { id: string; status: "verified" | "rejected"; note?: string }) =>
       api.post<OpsWorker>(`/ops/workers/${id}/verify`, body),
-    onSuccess: (w) => {
+    onSuccess: (w, vars) => {
+      // result = the status after the decision ("pending" while a four-eyes second review is due).
+      track("feature_used", {
+        feature: "worker_verification",
+        status: vars.status,
+        result: w?.verification_status,
+      });
       if (w?.id) qc.setQueryData(qk.ops.worker(w.id), w);
       qc.invalidateQueries({ queryKey: qk.ops.workersAll });
       qc.invalidateQueries({ queryKey: qk.ops.dashboard });

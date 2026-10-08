@@ -1,0 +1,70 @@
+# Pre-commit hooks (checklist A004). Install once:  pipx install pre-commit && pre-commit install
+# Run on everything:                                 pre-commit run --all-files
+# CI still runs the full linters/tests; these hooks catch the common misses before a push.
+default_install_hook_types: [pre-commit]
+exclude: ^(nepal-workforce-os/|web/messages/(en|ne)\.json$|backend/locale/.*\.mo$)
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+      - id: check-json
+        exclude: ^web/(tsconfig.*|\.vscode/.*)\.json$
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=1024]
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+  # Python (backend): same ruff config as CI (backend/ruff.toml).
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.10
+    hooks:
+      - id: ruff
+        args: [--fix, --config=backend/ruff.toml]
+        files: ^backend/
+      - id: ruff-format
+        args: [--config=backend/ruff.toml]
+        files: ^backend/
+
+  # Secrets: block committed keys/tokens (gitleaks default rules).
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.24.2
+    hooks:
+      - id: gitleaks
+
+  - repo: local
+    hooks:
+      # Web: prettier from web/node_modules (pnpm install first) so the tailwind plugin version matches.
+      - id: prettier-web
+        name: prettier (web)
+        language: system
+        entry: bash -c 'cd web && npx --no-install prettier --write --ignore-unknown "${@#web/}"' --
+        files: ^web/
+        exclude: ^web/(messages/(en|ne)\.json|pnpm-lock\.yaml|public/)
+      # Web messages: generated en.json/ne.json must match messages/src (and keys must match across locales).
+      - id: web-messages
+        name: web messages up to date
+        language: system
+        entry: bash -c 'cd web && node scripts/merge-messages.mjs --check'
+        files: ^web/messages/src/
+        pass_filenames: false
+      # Backend: no model change without its migration.
+      - id: django-migrations
+        name: django makemigrations --check
+        language: system
+        entry: bash -c 'cd backend && .venv/bin/python manage.py makemigrations --check --dry-run >/dev/null'
+        files: ^backend/apps/.*/models\.py$
+        pass_filenames: false
+      # Optional: Dart format check (only when Flutter is installed).
+      - id: dart-format
+        name: dart format (mobile, optional)
+        language: system
+        entry: bash -c 'command -v dart >/dev/null || exit 0; cd mobile && dart format --output=none --set-exit-if-changed lib test'
+        files: ^mobile/.*\.dart$
+        pass_filenames: false

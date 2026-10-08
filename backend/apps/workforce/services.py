@@ -9,6 +9,7 @@ from django.conf import settings
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.utils.translation import pgettext
 
 from apps.core.exceptions import APIError, BelowMinimumWage, Duplicate, InvalidState
 from apps.core.money import D, format_npr
@@ -19,8 +20,11 @@ from apps.workers.models import Worker
 from .models import Attendance, Employment, LeaveRequest
 
 
-def validate_wage(wage_type, basic=None, da=None, daily=None, on=None):
-    """Raise 400 below_minimum_wage when pay is under the current minimum wage."""
+def validate_wage(wage_type, basic=None, da=None, daily=None, on=None, hourly=None, part_time=False):
+    """Raise 400 below_minimum_wage when pay is under the current minimum wage.
+
+    Hourly (R005): ≥ ``MinimumWage.hourly`` (101), or ``hourly_part_time`` (107) for part-time staff.
+    """
     mw = MinimumWage.current(on)
     if wage_type == "monthly":
         missing = {}
@@ -45,8 +49,23 @@ def validate_wage(wage_type, basic=None, da=None, daily=None, on=None):
                 "amount": format_npr(mw.daily)
             }
             raise BelowMinimumWage(message=msg, fields={"daily_wage": [msg]})
+    elif wage_type == "hourly":
+        if hourly in (None, ""):
+            raise APIError(
+                "validation_error",
+                fields={"hourly_wage": [pgettext("complete2", "This field is required for hourly wage.")]},
+            )
+        minimum = (mw.hourly_part_time if part_time else mw.hourly) if mw else None
+        if minimum is not None and D(hourly) < minimum:
+            msg = pgettext("complete2", "Hourly wage must be at least %(amount)s (minimum wage).") % {
+                "amount": format_npr(minimum)
+            }
+            raise BelowMinimumWage(message=msg, fields={"hourly_wage": [msg]})
     else:
-        raise APIError("validation_error", fields={"wage_type": [_("Must be monthly or daily.")]})
+        raise APIError(
+            "validation_error",
+            fields={"wage_type": [pgettext("complete2", "Must be monthly, daily or hourly.")]},
+        )
 
 
 WORKER_INPUT_FIELDS = (
@@ -93,7 +112,14 @@ def get_or_create_worker(data: dict) -> tuple[Worker, bool]:
 
 def create_employment(org, worker, data: dict, application=None) -> Employment:
     wage_type = data.get("wage_type") or "monthly"
-    validate_wage(wage_type, data.get("basic_salary"), data.get("dearness_allowance"), data.get("daily_wage"))
+    validate_wage(
+        wage_type,
+        data.get("basic_salary"),
+        data.get("dearness_allowance"),
+        data.get("daily_wage"),
+        hourly=data.get("hourly_wage"),
+        part_time=bool(data.get("part_time")),
+    )
     if Employment.objects.filter(organization=org, worker=worker, status="active").exists():
         raise Duplicate(message=_("This worker already has an active employment in your organization."))
     start = data["start_date"]
@@ -115,6 +141,8 @@ def create_employment(org, worker, data: dict, application=None) -> Employment:
                 dearness_allowance=data.get("dearness_allowance") if wage_type == "monthly" else None,
                 other_allowance=data.get("other_allowance") or Decimal("0"),
                 daily_wage=data.get("daily_wage") if wage_type == "daily" else None,
+                hourly_wage=data.get("hourly_wage") if wage_type == "hourly" else None,
+                part_time=bool(data.get("part_time")) if wage_type == "hourly" else False,
                 ssf_enrolled=bool(data.get("ssf_enrolled")),
                 supervisor=data.get("supervisor"),
                 shift=data.get("shift"),

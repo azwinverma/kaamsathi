@@ -16,7 +16,9 @@ from apps.hiring.models import MinimumWage
 from apps.workforce.models import Advance, Attendance, Employment, Holiday, LeaveRequest
 
 from . import engine
-from .models import PayrollRun, Payslip, TaxSlab
+from .models import PayGroup, PayPolicy, PayrollRun, Payslip, TaxSlab
+
+DEFAULT_POLICY = PayPolicy()  # unsaved: the contract defaults
 
 
 def tax_bands_for(period_start: dt.date):
@@ -47,8 +49,78 @@ def employments_for_period(org, start, end):
     return (
         Employment.objects.filter(organization=org, start_date__lte=end)
         .filter(Q(end_date__isnull=True) | Q(end_date__gte=start))
-        .select_related("worker")
+        .select_related("worker", "shift")
     )
+
+
+# --------------------------------------------------------------------------- pay policy (R003)
+def policy_for(org) -> PayPolicy:
+    """The org's PayPolicy, or the (unsaved) contract defaults."""
+    return PayPolicy.objects.filter(organization=org).first() or DEFAULT_POLICY
+
+
+# --------------------------------------------------------------------------- pay groups (R001)
+def _contractor_map(org) -> dict:
+    try:
+        from apps.compliance.models import ContractorAssignment
+    except ImportError:  # pragma: no cover
+        return {}
+    return {
+        str(emp_id): str(c_id)
+        for emp_id, c_id in ContractorAssignment.objects.filter(employment__organization=org).values_list(
+            "employment_id", "contractor_id"
+        )
+    }
+
+
+def group_matches(group: PayGroup, emp, contractor_id: str | None) -> bool:
+    if group.site_ids and str(emp.site_id) not in {str(x) for x in group.site_ids}:
+        return False
+    if group.wage_types and emp.wage_type not in group.wage_types:
+        return False
+    if group.contractor_ids and contractor_id not in {str(x) for x in group.contractor_ids}:
+        return False
+    return True
+
+
+def assign_groups(org, employments) -> dict:
+    """employment id → PayGroup | None: the oldest active group whose criteria all match."""
+    groups = list(PayGroup.objects.filter(organization=org, is_active=True).order_by("created_at", "id"))
+    if not groups:
+        return {e.id: None for e in employments}
+    contractors = _contractor_map(org) if any(g.contractor_ids for g in groups) else {}
+    out = {}
+    for emp in employments:
+        cid = contractors.get(str(emp.id))
+        out[emp.id] = next((g for g in groups if group_matches(g, emp, cid)), None)
+    return out
+
+
+def employments_for_run(run: PayrollRun):
+    """Employments this run pays: its group's members (or every unassigned one for the null group),
+    minus anyone already on another run of the same org and month (never double-count)."""
+    emps = list(employments_for_period(run.organization, run.period_start, run.period_end))
+    groups = assign_groups(run.organization, emps)
+    wanted = run.pay_group_id
+    paid_elsewhere = set(
+        Payslip.objects.filter(
+            run__organization=run.organization, run__bs_year=run.bs_year, run__bs_month=run.bs_month
+        )
+        .exclude(run=run)
+        .values_list("employment_id", flat=True)
+    )
+    return [e for e in emps if getattr(groups.get(e.id), "id", None) == wanted and e.id not in paid_elsewhere]
+
+
+# --------------------------------------------------------------------------- hours (R005)
+def hours_worked(record, break_minutes: int) -> Decimal | None:
+    """Hours worked on an attendance day: explicit ``hours_worked``, else check-out − check-in − break."""
+    if record.hours_worked is not None:
+        return D(record.hours_worked)
+    if record.check_in_at and record.check_out_at and record.check_out_at > record.check_in_at:
+        minutes = (record.check_out_at - record.check_in_at).total_seconds() / 60 - (break_minutes or 0)
+        return q2(max(Decimal(str(minutes)), Decimal("0")) / 60)
+    return None
 
 
 def is_month_locked(org, day: dt.date) -> bool:
@@ -68,10 +140,18 @@ def build_input(employment, run_meta: dict, other_deductions=Decimal("0")) -> en
         while d <= lv.to_date:
             unpaid_dates.add(d)
             d += dt.timedelta(days=1)
+    hourly = employment.wage_type == "hourly"
+    break_minutes = employment.shift.break_minutes if hourly and employment.shift_id else 0
     attendance = {
-        r.date: engine.DayRecord(r.status, r.overtime_minutes, r.status == "leave" and r.date in unpaid_dates)
+        r.date: engine.DayRecord(
+            r.status,
+            r.overtime_minutes,
+            r.status == "leave" and r.date in unpaid_dates,
+            hours_worked(r, break_minutes) if hourly else None,
+        )
         for r in records
     }
+    policy = run_meta.get("policy") or DEFAULT_POLICY
     advances = tuple(
         engine.AdvanceBalance(a.recover_per_month, a.amount - a.recovered_amount)
         for a in Advance.objects.filter(employment=employment, given_on__lte=end).order_by("given_on")
@@ -88,6 +168,7 @@ def build_input(employment, run_meta: dict, other_deductions=Decimal("0")) -> en
         dearness_allowance=D(employment.dearness_allowance),
         other_allowance=D(employment.other_allowance),
         daily_wage=D(employment.daily_wage),
+        hourly_wage=D(employment.hourly_wage),
         ssf_enrolled=employment.ssf_enrolled,
         attendance=attendance,
         holidays=frozenset(run_meta["holidays"]),
@@ -98,6 +179,12 @@ def build_input(employment, run_meta: dict, other_deductions=Decimal("0")) -> en
         other_deductions=D(other_deductions),
         include_festival_allowance=run_meta["include_festival_allowance"],
         overtime_minutes_override=_approved_ot(employment, start, end),
+        ot_multiplier=D(policy.ot_multiplier),
+        festival_rule=policy.festival_allowance_rule,
+        festival_amount=D(policy.festival_custom_amount),
+        rounding=policy.rounding,
+        weekly_off_paid=policy.weekly_off_paid,
+        half_day_fraction=D(policy.half_day_fraction),
     )
 
 
@@ -120,6 +207,7 @@ def _run_meta(run: PayrollRun) -> dict:
         "basic_ratio": basic_ratio(run.period_end),
         "tax_bands": tax_bands_for(run.period_start),
         "include_festival_allowance": run.include_festival_allowance,
+        "policy": policy_for(run.organization),
     }
 
 
@@ -133,6 +221,7 @@ RESULT_FIELDS = [
     "absent_days",
     "payable_days",
     "overtime_hours",
+    "regular_hours",
     "basic_earned",
     "da_earned",
     "allowance_earned",
@@ -155,7 +244,7 @@ def compute_run(run: PayrollRun) -> PayrollRun:
     meta = _run_meta(run)
     existing = {p.employment_id: p for p in run.payslips.all()}
     seen = set()
-    for emp in employments_for_period(run.organization, run.period_start, run.period_end):
+    for emp in employments_for_run(run):
         prev = existing.get(emp.id)
         other = prev.other_deductions if prev else Decimal("0")
         result = engine.calculate(build_input(emp, meta, other))
@@ -173,9 +262,18 @@ def compute_run(run: PayrollRun) -> PayrollRun:
     return run
 
 
-def create_run(org, bs_year: int, bs_month: int, include_festival_allowance=False) -> PayrollRun:
-    if PayrollRun.objects.filter(organization=org, bs_year=bs_year, bs_month=bs_month).exists():
+def create_run(
+    org, bs_year: int, bs_month: int, include_festival_allowance=None, pay_group: PayGroup | None = None
+) -> PayrollRun:
+    if PayrollRun.objects.filter(
+        organization=org, bs_year=bs_year, bs_month=bs_month, pay_group=pay_group
+    ).exists():
         raise Duplicate(message="A payroll run already exists for this month.")
+    if include_festival_allowance is None:  # not sent: the pay policy's festival month decides
+        policy = policy_for(org)
+        include_festival_allowance = (
+            policy.festival_allowance_rule != "none" and policy.festival_month == bs_month
+        )
     month = BSMonth(bs_year, bs_month)
     with transaction.atomic():
         run = PayrollRun.objects.create(
@@ -185,6 +283,7 @@ def create_run(org, bs_year: int, bs_month: int, include_festival_allowance=Fals
             period_start=month.start,
             period_end=month.end,
             days_in_month=month.days,
+            pay_group=pay_group,
             include_festival_allowance=include_festival_allowance,
         )
         compute_run(run)

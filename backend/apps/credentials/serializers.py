@@ -64,8 +64,16 @@ class CredentialSerializer(BSModelSerializer):
             "note",
             "days_to_expiry",
             "created_at",
+            "resubmission_of",
         ]
-        read_only_fields = ["status", "verification_method", "verified_at", "note", "created_at"]
+        read_only_fields = [
+            "status",
+            "verification_method",
+            "verified_at",
+            "note",
+            "created_at",
+            "resubmission_of",
+        ]
 
     def get_kind_label(self, obj):
         return core_labels.label(labels.KIND, obj.kind)
@@ -114,6 +122,25 @@ class CredentialSerializer(BSModelSerializer):
         if issued and issued > today_ad():
             raise serializers.ValidationError({"issued_on": [_("Issue date cannot be in the future.")]})
         return attrs
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        prev = instance.resubmission_of if instance.resubmission_of_id else None
+        # G012: link to the rejected record (with its rejection note) and whether it can be resubmitted
+        data["resubmission_of"] = (
+            {
+                "id": str(prev.id),
+                "status": prev.status,
+                "note": prev.note,
+                "created_at": prev.created_at.isoformat(),
+            }
+            if prev
+            else None
+        )
+        data["can_resubmit"] = instance.status == "rejected" and not any(
+            r.status in ("pending", "verified") for r in instance.resubmissions.all()
+        )
+        return data
 
 
 class OpsCredentialSerializer(CredentialSerializer):

@@ -48,7 +48,7 @@ def test_roster_grid_and_upsert(owner_client, setup):
         format="json",
     )
     assert res.status_code == 200, res.json()
-    assert res.json() == {"saved": 3, "cleared": 0}
+    assert {k: res.json()[k] for k in ("saved", "cleared")} == {"saved": 3, "cleared": 0}
 
     grid = owner_client.get(f"/api/v1/org/roster?week_start={WEEK}").json()
     assert grid["week_start"] == WEEK.isoformat() and len(grid["days"]) == 7
@@ -65,7 +65,7 @@ def test_roster_grid_and_upsert(owner_client, setup):
         {"entries": [entry(s["ea"], WEEK, s["night"]), entry(s["ea"], WEEK + dt.timedelta(days=1))]},
         format="json",
     )
-    assert res.json() == {"saved": 1, "cleared": 1}
+    assert {k: res.json()[k] for k in ("saved", "cleared")} == {"saved": 1, "cleared": 1}
     assert RosterEntry.objects.get(employment=s["ea"], date=WEEK).shift == s["night"]
     assert not RosterEntry.objects.filter(employment=s["ea"], date=WEEK + dt.timedelta(days=1)).exists()
 
@@ -137,7 +137,7 @@ def test_copy_week(owner_client, setup, make_member):
         {"from_week_start": WEEK.isoformat(), "to_week_start": NEXT.isoformat()},
         format="json",
     )
-    assert res.status_code == 200 and res.json() == {"copied": 7}  # supervisor: site A only
+    assert res.status_code == 200 and res.json()["copied"] == 7  # supervisor: site A only
     assert RosterEntry.objects.get(employment=s["ea"], date=NEXT).shift == s["day"]
     assert RosterEntry.objects.get(employment=s["ea"], date=NEXT + dt.timedelta(days=6)).is_off
     assert not RosterEntry.objects.filter(employment=s["eb"], date__gte=NEXT).exists()
@@ -147,7 +147,7 @@ def test_copy_week(owner_client, setup, make_member):
         {"from_week_start": WEEK.isoformat(), "to_week_start": NEXT.isoformat()},
         format="json",
     )
-    assert res.json() == {"copied": 10}
+    assert res.json()["copied"] == 10
     assert RosterEntry.objects.filter(employment=s["eb"], date__gte=NEXT).count() == 3
     same = owner_client.post(
         "/api/v1/org/roster/copy-week",

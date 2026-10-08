@@ -9,7 +9,7 @@ from apps.workers.models import Consent, Trade
 from apps.workers.serializers import worker_card, worker_profile
 
 from . import labels as hiring_labels
-from .models import Application, JobAlert, JobOpening, StageEvent
+from .models import Application, Interview, JobAlert, JobOpening, JobRequirement, StageEvent
 from .services import validate_job_wage
 
 STAGES = [k for k in labels.STAGE]
@@ -24,6 +24,37 @@ def annotate_counts(qs):
     )
 
 
+class RequirementInputSerializer(serializers.Serializer):
+    trade = serializers.SlugRelatedField(
+        slug_field="code", queryset=Trade.objects.all(), required=False, allow_null=True
+    )
+    credential_kind = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    nstb_level_min = serializers.ChoiceField(
+        choices=["level1", "level2", "level3"], required=False, allow_null=True, allow_blank=True
+    )
+    min_years = serializers.IntegerField(required=False, allow_null=True, min_value=0, max_value=50)
+    required = serializers.BooleanField(default=True)
+
+    def validate_credential_kind(self, value):
+        if not value:
+            return None
+        from apps.credentials import labels as cred_labels
+
+        if value not in cred_labels.KIND:
+            raise serializers.ValidationError("Unknown credential kind.")
+        return value
+
+    def validate(self, attrs):
+        if not (
+            attrs.get("trade")
+            or attrs.get("credential_kind")
+            or attrs.get("nstb_level_min")
+            or attrs.get("min_years")
+        ):
+            raise serializers.ValidationError(str(hiring_labels.MESSAGES["requirement_empty"]))
+        return attrs
+
+
 class JobSerializer(BSModelSerializer):
     aliases = {"site": "site_id", "shift": "shift_id"}
 
@@ -35,6 +66,7 @@ class JobSerializer(BSModelSerializer):
         source="shift", queryset=Shift.objects.all(), required=False, allow_null=True, write_only=True
     )
     wage_amount = MoneyField()
+    requirements = RequirementInputSerializer(many=True, required=False)
 
     class Meta:
         model = JobOpening
@@ -56,8 +88,10 @@ class JobSerializer(BSModelSerializer):
             "created_at",
             "published_at",
             "first_shortlist_at",
+            "paused_at",
+            "requirements",
         ]
-        read_only_fields = ["id", "status", "created_at", "published_at", "first_shortlist_at"]
+        read_only_fields = ["id", "status", "created_at", "published_at", "first_shortlist_at", "paused_at"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -71,6 +105,29 @@ class JobSerializer(BSModelSerializer):
             raise serializers.ValidationError("Must be at least 1.")
         return value
 
+    def validate_requirements(self, value):
+        if len(value) > JobRequirement.MAX_PER_JOB:
+            raise serializers.ValidationError(str(hiring_labels.MESSAGES["too_many_requirements"]))
+        return value
+
+    def create(self, validated_data):
+        from .pipeline import set_requirements
+
+        reqs = validated_data.pop("requirements", None)
+        job = super().create(validated_data)
+        if reqs is not None:
+            set_requirements(job, reqs)
+        return job
+
+    def update(self, instance, validated_data):
+        from .pipeline import set_requirements
+
+        reqs = validated_data.pop("requirements", None)
+        job = super().update(instance, validated_data)
+        if reqs is not None:
+            set_requirements(job, reqs)
+        return job
+
     def validate(self, attrs):
         wage_type = attrs.get("wage_type", getattr(self.instance, "wage_type", "monthly"))
         amount = attrs.get("wage_amount", getattr(self.instance, "wage_amount", None))
@@ -83,7 +140,10 @@ class JobSerializer(BSModelSerializer):
         data["trade"] = trade_ref(instance.trade)
         data["site"] = ref(instance.site, "id", "name")
         data["shift"] = ref(instance.shift, "id", "name")
-        data["status_label"] = labels.label(labels.JOB_STATUS, instance.status)
+        data["status_label"] = labels.label(hiring_labels.JOB_STATUS, instance.status)
+        from .pipeline import requirement_payload
+
+        data["requirements"] = [requirement_payload(r, instance) for r in instance.requirements.all()]
         if hasattr(instance, "n_joined"):
             data["counts"] = {s: getattr(instance, f"n_{s}") for s in STAGES}
         else:
@@ -106,6 +166,12 @@ class OpsJobSerializer(JobSerializer):
         start = instance.published_at or instance.created_at
         end = timezone.now() if instance.status == "open" else (instance.first_shortlist_at or timezone.now())
         data["hours_open"] = round(max((end - start).total_seconds(), 0) / 3600, 1)
+        data["ops_owner"] = (
+            {"id": str(instance.ops_owner_id), "full_name": instance.ops_owner.full_name}
+            if instance.ops_owner_id
+            else None
+        )
+        data["invited_count"] = instance.applications.filter(source="employer_invite").count()
         data["interested_count"] = (
             instance.n_interested
             if hasattr(instance, "n_interested")
@@ -143,11 +209,19 @@ class ApplicationSerializer(serializers.ModelSerializer):
             "source",
             "worker_response",
             "responded_at",
+            "tags",
+            "match_score",
+            "match_algorithm_version",
         ]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
         request = self.context.get("request")
+        data["assignee"] = (
+            {"id": str(instance.assignee_id), "full_name": instance.assignee.full_name}
+            if instance.assignee_id
+            else None
+        )
         data["source_label"] = labels.label(hiring_labels.SOURCE, instance.source)
         data["worker_response_label"] = labels.label(hiring_labels.WORKER_RESPONSE, instance.worker_response)
         data["job"] = {"id": str(instance.job_id), "title": instance.job.title}
@@ -177,6 +251,9 @@ class ApplicationDetailSerializer(ApplicationSerializer):
         if data["profile_visible"]:
             data["worker"] = worker_profile(instance.worker, request)
         data["events"] = StageEventSerializer(instance.events.select_related("by"), many=True).data
+        from .pipeline import interview_payload
+
+        data["interviews"] = [interview_payload(iv) for iv in instance.interviews.all()]
         return data
 
 
@@ -184,12 +261,14 @@ class JoinEmploymentSerializer(serializers.Serializer):
     start_date = serializers.DateField()
     site_id = serializers.UUIDField(required=False, allow_null=True)
     designation = serializers.CharField(required=False, allow_blank=True)
-    wage_type = serializers.ChoiceField(choices=["monthly", "daily"])
+    wage_type = serializers.ChoiceField(choices=["monthly", "daily", "hourly"])
     basic_salary = MoneyField(required=False, allow_null=True)
     dearness_allowance = MoneyField(required=False, allow_null=True)
     other_allowance = MoneyField(required=False, allow_null=True)
     daily_wage = MoneyField(required=False, allow_null=True)
+    hourly_wage = MoneyField(required=False, allow_null=True)
     ssf_enrolled = serializers.BooleanField(default=False)
+    part_time = serializers.BooleanField(default=False)
     employee_code = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 
 
@@ -208,10 +287,11 @@ class MoveSerializer(serializers.Serializer):
 
 # --------------------------------------------------------------------------- offers & alerts
 class OfferInputSerializer(serializers.Serializer):
-    wage_type = serializers.ChoiceField(choices=["monthly", "daily"])
+    wage_type = serializers.ChoiceField(choices=["monthly", "daily", "hourly"])
     basic_salary = MoneyField(required=False, allow_null=True)
     dearness_allowance = MoneyField(required=False, allow_null=True)
     daily_wage = MoneyField(required=False, allow_null=True)
+    hourly_wage = MoneyField(required=False, allow_null=True)
     start_date = serializers.DateField()
     site_id = serializers.UUIDField(required=False, allow_null=True)
     designation = serializers.CharField(required=False, allow_blank=True, max_length=120)
@@ -252,6 +332,7 @@ def offer_payload(offer) -> dict:
         "basic_salary": m(offer.basic_salary),
         "dearness_allowance": m(offer.dearness_allowance),
         "daily_wage": m(offer.daily_wage),
+        "hourly_wage": m(offer.hourly_wage),
         "start_date": offer.start_date.isoformat(),
         "start_date_bs": bs_str(offer.start_date),
         "site": ref(offer.site, "id", "name"),
@@ -313,3 +394,10 @@ class JobAlertSerializer(serializers.ModelSerializer):
         data["districts"] = [district_ref(d) for d in instance.districts.all()]
         data["frequency_label"] = labels.label(hiring_labels.ALERT_FREQUENCY, instance.frequency)
         return data
+
+
+class InterviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Interview
+        fields = ["scheduled_at", "mode", "location", "interviewer_name", "outcome", "notes"]
+        extra_kwargs = {"outcome": {"required": False}}

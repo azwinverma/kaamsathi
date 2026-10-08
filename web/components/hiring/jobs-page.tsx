@@ -11,18 +11,17 @@ import { PageHeader, Toolbar } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import { SearchInput } from "@/components/ui/search-input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { StatusBadge } from "@/components/shared/status-badge";
 import { TradeSelect } from "@/components/shared/selects";
 import { useJobs } from "@/lib/api/hooks/hiring";
 import type { Job, JobStatus } from "@/lib/api/types";
 import { useFormat } from "@/lib/use-format";
 import { HiringGate } from "./gate";
 import { JobActions } from "./job-actions";
-import { FillProgress, JobBenefits, JobWage, PipelineCounts } from "./job-bits";
+import { FillProgress, JobBenefits, JobStatusBadge, JobWage, PipelineCounts } from "./job-bits";
 import { JobFormDialog } from "./job-form-dialog";
 
 const PAGE_SIZE = 20;
-const STATUS_TABS: ("all" | JobStatus)[] = ["all", "open", "draft", "filled", "closed"];
+const STATUS_TABS: ("all" | JobStatus)[] = ["all", "open", "paused", "draft", "filled", "closed"];
 
 export function JobsPage() {
   return (
@@ -76,7 +75,11 @@ function JobsPageInner() {
         <TabsList className="mb-4" aria-label={t("common.status")}>
           {STATUS_TABS.map((s) => (
             <TabsTrigger key={s} value={s}>
-              {s === "all" ? t("common.all") : t(`status.${s}`)}
+              {s === "all"
+                ? t("common.all")
+                : s === "paused"
+                  ? t("pipeline.status.paused")
+                  : t(`status.${s}`)}
             </TabsTrigger>
           ))}
         </TabsList>
@@ -166,7 +169,7 @@ function JobCard({ job }: { job: Job }) {
             >
               {job.title}
             </Link>
-            <StatusBadge status={job.status} label={job.status_label} />
+            <JobStatusBadge job={job} />
           </div>
           <div className="text-fg-muted flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
             <span className="text-fg-body">{f.name(job.trade)}</span>

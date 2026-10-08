@@ -2,7 +2,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Archive, MoreHorizontal, Pencil, Send, Trash2 } from "lucide-react";
+import { Archive, MoreHorizontal, Pause, Pencil, Play, Send, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -13,18 +13,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useCloseJob, useDeleteJob, usePublishJob } from "@/lib/api/hooks/hiring";
+import {
+  useCloseJob,
+  useDeleteJob,
+  usePauseJob,
+  usePublishJob,
+  useResumeJob,
+} from "@/lib/api/hooks/hiring";
 import type { Job } from "@/lib/api/types";
 import { toastError } from "@/lib/forms";
 import { JobFormDialog } from "./job-form-dialog";
 
-type Pending = "publish" | "close" | "delete" | null;
+type Pending = "publish" | "close" | "delete" | "pause" | "resume" | null;
 
 export function canEditJob(job: Job) {
-  return job.status === "draft" || job.status === "open";
+  return job.status === "draft" || job.status === "open" || job.status === "paused";
 }
 export function canCloseJob(job: Job) {
-  return job.status === "open" || job.status === "filled";
+  return job.status === "open" || job.status === "filled" || job.status === "paused";
 }
 
 /**
@@ -42,16 +48,21 @@ export function JobActions({
 }) {
   const t = useTranslations();
   const ta = useTranslations("hiring.actions");
+  const tp = useTranslations("pipeline.actions");
   const router = useRouter();
   const publish = usePublishJob();
   const close = useCloseJob();
   const del = useDeleteJob();
+  const pause = usePauseJob();
+  const resume = useResumeJob();
   const [confirm, setConfirm] = React.useState<Pending>(null);
   const [editing, setEditing] = React.useState(false);
 
   const isDraft = job.status === "draft";
   const editable = canEditJob(job);
   const closable = canCloseJob(job);
+  const pausable = job.status === "open";
+  const resumable = job.status === "paused";
   if (!isDraft && !editable && !closable) return null;
 
   const run = () => {
@@ -69,6 +80,16 @@ export function JobActions({
         onSuccess: done(ta("closed_toast")),
         onError: (e) => toastError(e, t),
       });
+    } else if (confirm === "pause") {
+      pause.mutate(job.id, {
+        onSuccess: done(tp("paused_toast")),
+        onError: (e) => toastError(e, t),
+      });
+    } else if (confirm === "resume") {
+      resume.mutate(job.id, {
+        onSuccess: done(tp("resumed_toast")),
+        onError: (e) => toastError(e, t),
+      });
     } else if (confirm === "delete") {
       del.mutate(job.id, {
         onSuccess: () => {
@@ -84,6 +105,8 @@ export function JobActions({
     publish: { title: ta("publish_title"), body: ta("publish_body"), label: ta("publish") },
     close: { title: ta("close_title"), body: ta("close_body"), label: ta("close") },
     delete: { title: ta("delete_title"), body: ta("delete_body"), label: ta("delete") },
+    pause: { title: tp("pause_title"), body: tp("pause_body"), label: tp("pause") },
+    resume: { title: tp("resume_title"), body: tp("resume_body"), label: tp("resume") },
   };
 
   return (
@@ -93,6 +116,11 @@ export function JobActions({
           <Button onClick={() => setConfirm("publish")}>
             <Send aria-hidden />
             {ta("publish")}
+          </Button>
+        ) : resumable ? (
+          <Button onClick={() => setConfirm("resume")}>
+            <Play aria-hidden />
+            {tp("resume")}
           </Button>
         ) : editable ? (
           <Button variant="secondary" onClick={() => setEditing(true)}>
@@ -124,6 +152,18 @@ export function JobActions({
               {ta("publish")}
             </DropdownMenuItem>
           ) : null}
+          {pausable ? (
+            <DropdownMenuItem onSelect={() => setConfirm("pause")}>
+              <Pause aria-hidden />
+              {tp("pause")}
+            </DropdownMenuItem>
+          ) : null}
+          {resumable ? (
+            <DropdownMenuItem onSelect={() => setConfirm("resume")}>
+              <Play aria-hidden />
+              {tp("resume")}
+            </DropdownMenuItem>
+          ) : null}
           {closable ? (
             <DropdownMenuItem onSelect={() => setConfirm("close")}>
               <Archive aria-hidden />
@@ -149,7 +189,13 @@ export function JobActions({
         description={confirm ? copy[confirm].body : undefined}
         confirmLabel={confirm ? copy[confirm].label : undefined}
         danger={confirm === "delete" || confirm === "close"}
-        loading={publish.isPending || close.isPending || del.isPending}
+        loading={
+          publish.isPending ||
+          close.isPending ||
+          del.isPending ||
+          pause.isPending ||
+          resume.isPending
+        }
         onConfirm={run}
       />
       {editable ? <JobFormDialog open={editing} onOpenChange={setEditing} job={job} /> : null}

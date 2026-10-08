@@ -28,23 +28,26 @@ const STATUSES: VerificationStatus[] = ["pending", "verified", "unverified", "re
 export default function OpsWorkersPage() {
   const t = useTranslations();
   const tw = useTranslations("ops.workers");
+  const tm = useTranslations("moderation.workers");
   const f = useFormat();
   const router = useRouter();
   const district = useDistrictLabel();
 
   const [q, setQ] = React.useState("");
   const [trade, setTrade] = React.useState("");
+  const [tradeQ, setTradeQ] = React.useState("");
   const [dist, setDist] = React.useState("");
   const [status, setStatus] = React.useState("");
   const [avail, setAvail] = React.useState("");
   const [page, setPage] = React.useState(1);
 
-  const filtersActive = !!(q || trade || dist || status || avail);
-  React.useEffect(() => setPage(1), [q, trade, dist, status, avail]);
+  const filtersActive = !!(q || trade || tradeQ || dist || status || avail);
+  React.useEffect(() => setPage(1), [q, trade, tradeQ, dist, status, avail]);
 
   const query = useOpsWorkers({
     q,
     trade,
+    trade_q: tradeQ,
     district: dist,
     verification_status: status,
     is_available: avail,
@@ -56,6 +59,7 @@ export default function OpsWorkersPage() {
   const clear = () => {
     setQ("");
     setTrade("");
+    setTradeQ("");
     setDist("");
     setStatus("");
     setAvail("");
@@ -84,6 +88,13 @@ export default function OpsWorkersPage() {
           <div className="sm:w-44">
             <TradeSelect value={trade} onChange={setTrade} allowEmpty aria-label={t("term.trade")} placeholder={tw("all_trades")} />
           </div>
+          <SearchInput
+            value={tradeQ}
+            onChange={setTradeQ}
+            placeholder={tm("trade_q_placeholder")}
+            label={tm("trade_q_label")}
+            className="sm:w-48"
+          />
           <div className="sm:w-44">
             <DistrictSelect value={dist} onChange={setDist} aria-label={t("term.district")} placeholder={tw("all_districts")} />
           </div>

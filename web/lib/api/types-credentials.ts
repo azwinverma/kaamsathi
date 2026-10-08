@@ -54,6 +54,9 @@ export interface Credential {
   note: string | null;
   days_to_expiry: number | null;
   created_at: ISODateTime;
+  /** G012: set when this credential re-submits a rejected one. */
+  resubmission_of?: { id: UUID; status: CredentialStatus; note: string | null; created_at: ISODateTime } | null;
+  can_resubmit?: boolean;
 }
 
 export interface OpsCredential extends Credential {

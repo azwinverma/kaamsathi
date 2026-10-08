@@ -382,9 +382,7 @@ def employer_reputation(organization) -> dict | None:
 
     agg = Rating.objects.filter(
         employment__organization=organization, rater="worker", voided=False
-    ).aggregate(
-        a=Avg("score_a"), b=Avg("score_b"), n=Count("id")
-    )
+    ).aggregate(a=Avg("score_a"), b=Avg("score_b"), n=Count("id"))
     if not agg["n"] or agg["n"] < REPUTATION_MIN_RATINGS:
         return None
     return {

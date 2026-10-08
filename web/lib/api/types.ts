@@ -4,6 +4,13 @@
  */
 
 import type { PendingLegal, StaffRole } from "./types-security";
+import type {
+  Interview,
+  JobRequirement,
+  JobRequirementInput,
+  UserRef,
+} from "./types-pipeline";
+import type { ProfileCompleteness, WorkerLanguage } from "./types-moderation";
 
 export type UUID = string;
 export type Money = string;
@@ -44,13 +51,7 @@ export type ApiErrorCode =
 // ---------------------------------------------------------------- enums
 export type Role = "owner" | "admin" | "hr" | "supervisor";
 export type Industry =
-  | "hospitality"
-  | "healthcare"
-  | "security"
-  | "construction"
-  | "manufacturing"
-  | "retail"
-  | "other";
+  "hospitality" | "healthcare" | "security" | "construction" | "manufacturing" | "retail" | "other";
 export type Gender = "male" | "female" | "other";
 export type VerificationStatus = "unverified" | "pending" | "verified" | "rejected";
 export type PaymentMethod = "bank" | "esewa" | "khalti" | "cash";
@@ -63,25 +64,14 @@ export type TradeCategory =
   | "manufacturing"
   | "transport"
   | "general";
-export type WageType = "monthly" | "daily";
-export type JobStatus = "draft" | "open" | "filled" | "closed";
+export type WageType = "monthly" | "daily" | "hourly";
+export type JobStatus = "draft" | "open" | "paused" | "filled" | "closed";
 export type Stage =
-  | "sourced"
-  | "shortlisted"
-  | "interview"
-  | "selected"
-  | "joined"
-  | "rejected"
-  | "dropped";
+  "sourced" | "shortlisted" | "interview" | "selected" | "joined" | "rejected" | "dropped";
 export type EmploymentStatus = "active" | "ended";
 export type EndReason = "resigned" | "terminated" | "contract_end" | "absconded" | "other";
 export type AttendanceStatus =
-  | "present"
-  | "absent"
-  | "half_day"
-  | "leave"
-  | "holiday"
-  | "weekly_off";
+  "present" | "absent" | "half_day" | "leave" | "holiday" | "weekly_off";
 export type AttendanceMethod = "qr" | "manual" | "supervisor" | "self";
 export type RegisterCell = "P" | "A" | "H" | "L" | "PH" | "WO" | null;
 export type LeaveType = "home" | "sick" | "maternity" | "paternity" | "mourning" | "unpaid";
@@ -241,7 +231,13 @@ export interface Dashboard {
     net_total: Money;
     status: PayrollStatus;
   } | null;
-  attendance_14d: { date: ISODate; date_bs: string; present: number; absent: number; leave: number }[];
+  attendance_14d: {
+    date: ISODate;
+    date_bs: string;
+    present: number;
+    absent: number;
+    leave: number;
+  }[];
   wage_bill_month_estimate: Money;
 }
 
@@ -399,6 +395,10 @@ export interface Job {
   published_at: ISODateTime | null;
   first_shortlist_at?: ISODateTime | null;
   counts: StageCounts;
+  /** J002 extra requirements. */
+  requirements?: JobRequirement[];
+  /** J006: set while the job is paused. */
+  paused_at?: ISODateTime | null;
 }
 export interface JobInput {
   title: string;
@@ -414,6 +414,8 @@ export interface JobInput {
   accommodation_provided: boolean;
   start_date: ISODate;
   min_experience_years: number;
+  /** J002: replaces the list (max 10). */
+  requirements?: JobRequirementInput[];
 }
 
 export interface StageEvent {
@@ -435,10 +437,19 @@ export interface Application {
   rejection_reason: string | null;
   created_at: ISODateTime;
   stage_changed_at: ISODateTime;
+  /** L008 tags (lower-cased). */
+  tags?: string[];
+  /** L009 assigned org member. */
+  assignee?: UserRef | null;
+  /** Set when ops shortlisted (matching score + algorithm version). */
+  match_score?: number | null;
+  match_algorithm_version?: string | null;
 }
 export interface ApplicationDetail extends Omit<Application, "worker"> {
   worker: WorkerProfile | WorkerCard;
   events: StageEvent[];
+  /** L010 interview rounds. */
+  interviews?: Interview[];
 }
 export interface EmploymentTermsInput {
   start_date: ISODate;
@@ -448,6 +459,8 @@ export interface EmploymentTermsInput {
   basic_salary?: string | null;
   dearness_allowance?: string | null;
   daily_wage?: string | null;
+  hourly_wage?: string | null;
+  part_time?: boolean;
   ssf_enrolled: boolean;
 }
 export interface MoveInput {
@@ -477,6 +490,9 @@ export interface Employment {
   dearness_allowance: Money | null;
   other_allowance: Money;
   daily_wage: Money | null;
+  /** Hourly wage type (R005). */
+  hourly_wage?: Money | null;
+  part_time?: boolean;
   monthly_gross: Money | null;
   ssf_enrolled: boolean;
   supervisor: { id: UUID; full_name: string } | UUID | null;
@@ -499,6 +515,8 @@ export interface EmploymentCreate {
   dearness_allowance?: string | null;
   other_allowance?: string | null;
   daily_wage?: string | null;
+  hourly_wage?: string | null;
+  part_time?: boolean;
   ssf_enrolled: boolean;
   employee_code?: string;
 }
@@ -512,6 +530,8 @@ export type EmploymentUpdate = Partial<
     | "dearness_allowance"
     | "other_allowance"
     | "daily_wage"
+    | "hourly_wage"
+    | "part_time"
     | "ssf_enrolled"
     | "employee_code"
   >
@@ -555,13 +575,25 @@ export interface AttendanceRegister {
   bs_month: number;
   month_name_en: string;
   month_name_ne: string;
-  days: { date: ISODate; bs_day: number; weekday: number; is_holiday: boolean; is_weekly_off: boolean }[];
+  days: {
+    date: ISODate;
+    bs_day: number;
+    weekday: number;
+    is_holiday: boolean;
+    is_weekly_off: boolean;
+  }[];
   rows: {
     employment_id: UUID;
     worker_name: string;
     designation: string;
     cells: Record<ISODate, RegisterCell>;
-    totals: { present: number; half_day: number; absent: number; leave: number; overtime_hours: number };
+    totals: {
+      present: number;
+      half_day: number;
+      absent: number;
+      leave: number;
+      overtime_hours: number;
+    };
   }[];
 }
 export interface AttendanceRecordInput {
@@ -657,6 +689,8 @@ export interface PayrollRunListItem {
   include_festival_allowance?: boolean;
   created_at?: ISODateTime;
   totals?: PayrollTotals;
+  /** Pay group (R001); null = everyone not in a group. */
+  pay_group?: { id: UUID; name: string } | null;
 }
 export interface PayrollTotals {
   workers: number;
@@ -692,6 +726,8 @@ export interface Payslip {
   absent_days: string | number;
   payable_days: string | number;
   overtime_hours: string | number;
+  /** Hourly wage type: regular (≤ 8 h/day) hours paid. */
+  regular_hours?: string | number;
   basic_earned: Money;
   da_earned: Money;
   allowance_earned: Money;
@@ -852,6 +888,10 @@ export interface OpsWorker extends Worker {
   placements_count?: number;
   verification_status_label?: string;
   payment_method_label?: string;
+  /** E004 */
+  languages?: WorkerLanguage[];
+  /** E008 */
+  profile_completeness?: ProfileCompleteness;
 }
 export type OpsWorkerDocField = "photo" | "id_front" | "id_back";
 export interface OpsShortlistResult {
@@ -877,3 +917,53 @@ export interface ApplicationExtras {
   /** Detail only: whether the full WorkerProfile was shared with this org. */
   profile_visible?: boolean;
 }
+
+// ---------------------------------------------------------------- payroll configuration (R001/R003)
+export type FestivalAllowanceRule = "one_month_basic" | "custom_amount" | "none";
+export type PayRounding = "two_decimals" | "nearest_rupee";
+export interface PayPolicy {
+  ot_multiplier: string;
+  festival_allowance_rule: FestivalAllowanceRule;
+  festival_custom_amount: Money;
+  festival_month: number | null;
+  rounding: PayRounding;
+  weekly_off_paid: boolean;
+  half_day_fraction: string;
+  updated_at: ISODateTime | null;
+  is_default: boolean;
+}
+export type PayPolicyUpdate = Partial<Omit<PayPolicy, "updated_at" | "is_default">>;
+export interface PayGroup {
+  id: UUID;
+  name: string;
+  site_ids: UUID[];
+  wage_types: WageType[];
+  contractor_ids: UUID[];
+  pay_day: number | null;
+  is_active: boolean;
+  created_at: ISODateTime;
+  employment_count?: number;
+}
+export type PayGroupInput = Partial<Omit<PayGroup, "id" | "created_at" | "employment_count">>;
+
+// ---------------------------------------------------------------- feature flags (C015/X012)
+export type FlagRollout = "all" | "orgs" | "percent";
+export interface FeatureFlag {
+  key: string;
+  description: string;
+  enabled: boolean;
+  rollout: FlagRollout;
+  org_ids: UUID[];
+  percent: number;
+  client_visible: boolean;
+  updated_at: ISODateTime;
+  updated_by: { id: UUID; full_name: string } | null;
+  has_settings_fallback: boolean;
+}
+export interface FeatureFlagList {
+  results: FeatureFlag[];
+  settings_defaults: { key: string; default: boolean }[];
+}
+export type FeatureFlagInput = Partial<
+  Omit<FeatureFlag, "updated_at" | "updated_by" | "has_settings_fallback">
+>;

@@ -8,7 +8,13 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { BsDatePicker } from "@/components/ui/date";
-import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from "@/components/ui/dialog";
 import { Field, FormError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
@@ -42,10 +48,18 @@ const FIELDS = [
   "dearness_allowance",
   "other_allowance",
   "daily_wage",
+  "hourly_wage",
+  "part_time",
   "ssf_enrolled",
 ] as const;
 
-export function AddWorkerDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
+export function AddWorkerDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+}) {
   const t = useTranslations();
   const tw = useTranslations("workforce.add");
   const f = useFormat();
@@ -75,11 +89,16 @@ export function AddWorkerDialog({ open, onOpenChange }: { open: boolean; onOpenC
         })
         .superRefine((v, ctx) => {
           if (v.mode === "new") {
-            if (!isValidPhone(v.phone)) ctx.addIssue({ code: "custom", path: ["phone"], message: t("errors.invalid_phone") });
+            if (!isValidPhone(v.phone))
+              ctx.addIssue({ code: "custom", path: ["phone"], message: t("errors.invalid_phone") });
             if (v.full_name.trim().length < 2)
               ctx.addIssue({ code: "custom", path: ["full_name"], message: t("errors.required") });
           } else if (!v.worker_id) {
-            ctx.addIssue({ code: "custom", path: ["worker_id"], message: tw("pick_worker_required") });
+            ctx.addIssue({
+              code: "custom",
+              path: ["worker_id"],
+              message: tw("pick_worker_required"),
+            });
           }
           refineWage(v as WageFormValues, ctx, minWage, t, (n) => f.money(n));
         }),
@@ -104,6 +123,8 @@ export function AddWorkerDialog({ open, onOpenChange }: { open: boolean; onOpenC
       dearness_allowance: "",
       other_allowance: "",
       daily_wage: "",
+      hourly_wage: "",
+      part_time: false,
       ssf_enrolled: false,
     }),
     [],
@@ -165,7 +186,12 @@ export function AddWorkerDialog({ open, onOpenChange }: { open: boolean; onOpenC
         }
         const msg = handleFormError(err, setError, t, {
           fields: FIELDS,
-          map: { "worker.phone": "phone", "worker.full_name": "full_name", "worker.citizenship_no": "citizenship_no", "worker.gender": "gender" },
+          map: {
+            "worker.phone": "phone",
+            "worker.full_name": "full_name",
+            "worker.citizenship_no": "citizenship_no",
+            "worker.gender": "gender",
+          },
           toast: false,
         });
         setFormError(msg);
@@ -181,7 +207,7 @@ export function AddWorkerDialog({ open, onOpenChange }: { open: boolean; onOpenC
           <DialogBody className="space-y-6">
             <FormError message={formError} />
             <section className="space-y-4">
-              <h3 className="text-sm font-semibold text-fg">{tw("worker_section")}</h3>
+              <h3 className="text-fg text-sm font-semibold">{tw("worker_section")}</h3>
               <Segmented<Mode>
                 label={tw("worker_section")}
                 value={mode}
@@ -193,21 +219,40 @@ export function AddWorkerDialog({ open, onOpenChange }: { open: boolean; onOpenC
               />
               {mode === "new" ? (
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field id="aw-phone" label={t("term.phone")} error={errors.phone?.message} hint={tw("phone_hint")}>
+                  <Field
+                    id="aw-phone"
+                    label={t("term.phone")}
+                    error={errors.phone?.message}
+                    hint={tw("phone_hint")}
+                  >
                     <Controller
                       control={control}
                       name="phone"
-                      render={({ field }) => <PhoneInput value={field.value} onChange={field.onChange} onBlur={field.onBlur} />}
+                      render={({ field }) => (
+                        <PhoneInput
+                          value={field.value}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                        />
+                      )}
                     />
                   </Field>
                   <Field id="aw-name" label={t("term.full_name")} error={errors.full_name?.message}>
                     <Input autoComplete="off" {...register("full_name")} />
                   </Field>
-                  <Field id="aw-gender" label={t("term.gender")} optional optionalLabel={t("common.optional")}>
+                  <Field
+                    id="aw-gender"
+                    label={t("term.gender")}
+                    optional
+                    optionalLabel={t("common.optional")}
+                  >
                     <NativeSelect
                       {...register("gender")}
                       placeholder={t("common.select")}
-                      options={(["male", "female", "other"] as const).map((g) => ({ value: g, label: t(`term.${g}`) }))}
+                      options={(["male", "female", "other"] as const).map((g) => ({
+                        value: g,
+                        label: t(`term.${g}`),
+                      }))}
                     />
                   </Field>
                   <Field
@@ -221,13 +266,20 @@ export function AddWorkerDialog({ open, onOpenChange }: { open: boolean; onOpenC
                   </Field>
                 </div>
               ) : (
-                <Field id="aw-existing" label={tw("existing_label")} hint={tw("existing_hint")} error={errors.worker_id?.message}>
+                <Field
+                  id="aw-existing"
+                  label={tw("existing_label")}
+                  hint={tw("existing_hint")}
+                  error={errors.worker_id?.message}
+                >
                   <EmploymentPicker
                     status="ended"
                     value={pickedEmployment}
                     onChange={(id, emp) => {
                       setPickedEmployment(id);
-                      setValue("worker_id", emp?.worker.id ?? "", { shouldValidate: formState.isSubmitted });
+                      setValue("worker_id", emp?.worker.id ?? "", {
+                        shouldValidate: formState.isSubmitted,
+                      });
                     }}
                     placeholder={tw("existing_placeholder")}
                   />
@@ -236,38 +288,68 @@ export function AddWorkerDialog({ open, onOpenChange }: { open: boolean; onOpenC
             </section>
 
             <section className="space-y-4">
-              <h3 className="text-sm font-semibold text-fg">{tw("job_section")}</h3>
+              <h3 className="text-fg text-sm font-semibold">{tw("job_section")}</h3>
               <div className="grid gap-4 sm:grid-cols-2">
-                <Field id="aw-designation" label={t("term.designation")} error={errors.designation?.message}>
+                <Field
+                  id="aw-designation"
+                  label={t("term.designation")}
+                  error={errors.designation?.message}
+                >
                   <Input placeholder={tw("designation_placeholder")} {...register("designation")} />
                 </Field>
-                <Field id="aw-site" label={t("term.site")} optional optionalLabel={t("common.optional")}>
+                <Field
+                  id="aw-site"
+                  label={t("term.site")}
+                  optional
+                  optionalLabel={t("common.optional")}
+                >
                   <Controller
                     control={control}
                     name="site_id"
-                    render={({ field }) => <WorkforceSiteSelect value={field.value} onChange={field.onChange} allowAll={false} />}
+                    render={({ field }) => (
+                      <WorkforceSiteSelect
+                        value={field.value}
+                        onChange={field.onChange}
+                        allowAll={false}
+                      />
+                    )}
                   />
                 </Field>
-                <Field id="aw-start" label={t("term.start_date")} error={errors.start_date?.message}>
+                <Field
+                  id="aw-start"
+                  label={t("term.start_date")}
+                  error={errors.start_date?.message}
+                >
                   <Controller
                     control={control}
                     name="start_date"
-                    render={({ field }) => <BsDatePicker value={field.value} onChange={field.onChange} />}
+                    render={({ field }) => (
+                      <BsDatePicker value={field.value} onChange={field.onChange} />
+                    )}
                   />
                 </Field>
-                <Field id="aw-code" label={t("term.employee_code")} optional optionalLabel={t("common.optional")}>
+                <Field
+                  id="aw-code"
+                  label={t("term.employee_code")}
+                  optional
+                  optionalLabel={t("common.optional")}
+                >
                   <Input {...register("employee_code")} />
                 </Field>
               </div>
             </section>
 
             <section className="space-y-4">
-              <h3 className="text-sm font-semibold text-fg">{tw("wage_section")}</h3>
+              <h3 className="text-fg text-sm font-semibold">{tw("wage_section")}</h3>
               <WageFields form={form} minWage={minWage} idPrefix="aw" />
             </section>
           </DialogBody>
           <DialogFooter>
-            <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={create.isPending}>
+            <Button
+              variant="secondary"
+              onClick={() => onOpenChange(false)}
+              disabled={create.isPending}
+            >
               {t("common.cancel")}
             </Button>
             <Button type="submit" loading={create.isPending}>

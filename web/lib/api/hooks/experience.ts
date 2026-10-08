@@ -4,6 +4,7 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tansta
 import { api, type QueryParams } from "../client";
 import type { Paginated } from "../types";
 import { qk } from "../keys";
+import { track } from "../../telemetry";
 import type {
   JobAlert,
   JobAlertInput,
@@ -134,7 +135,12 @@ export function useSendOffer() {
   return useMutation({
     mutationFn: ({ applicationId, ...body }: OfferInput & { applicationId: string }) =>
       api.post<OrgJobOffer>(`/org/applications/${applicationId}/offer`, body),
-    onSuccess: () => {
+    onSuccess: (_offer, vars) => {
+      track("feature_used", {
+        feature: "offer_sent",
+        application_id: vars.applicationId,
+        wage_type: vars.wage_type,
+      });
       qc.invalidateQueries({ queryKey: qk.org.applicationsAll });
       qc.invalidateQueries({ queryKey: experienceKeys.orgOffersAll });
     },

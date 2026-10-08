@@ -66,15 +66,20 @@ export function WorkersPage() {
   };
 
   const wageCell = (e: Employment) =>
-    e.wage_type === "daily" ? (
+    e.wage_type === "hourly" ? (
+      <span className="inline-flex flex-col items-end leading-tight">
+        <Money value={e.hourly_wage ?? null} />
+        <span className="text-fg-muted text-xs">{t("wage_hourly.per_hour")}</span>
+      </span>
+    ) : e.wage_type === "daily" ? (
       <span className="inline-flex flex-col items-end leading-tight">
         <Money value={e.daily_wage} />
-        <span className="text-xs text-fg-muted">{t("common.per_day")}</span>
+        <span className="text-fg-muted text-xs">{t("common.per_day")}</span>
       </span>
     ) : (
       <span className="inline-flex flex-col items-end leading-tight">
         <Money value={e.monthly_gross ?? e.basic_salary} />
-        <span className="text-xs text-fg-muted">{t("common.per_month")}</span>
+        <span className="text-fg-muted text-xs">{t("common.per_month")}</span>
       </span>
     );
 
@@ -84,7 +89,11 @@ export function WorkersPage() {
         title={t("nav.workers")}
         description={tw("description")}
         meta={
-          data ? <span className="text-sm text-fg-muted">{t("term.workers_count", { count: data.count })}</span> : null
+          data ? (
+            <span className="text-fg-muted text-sm">
+              {t("term.workers_count", { count: data.count })}
+            </span>
+          ) : null
         }
         actions={
           canManage ? (
@@ -103,7 +112,12 @@ export function WorkersPage() {
       />
 
       <Toolbar>
-        <SearchInput value={q} onChange={setQ} placeholder={tw("search_placeholder")} label={t("common.search")} />
+        <SearchInput
+          value={q}
+          onChange={setQ}
+          placeholder={tw("search_placeholder")}
+          label={t("common.search")}
+        />
         <Segmented<StatusFilter>
           label={t("common.status")}
           value={status}
@@ -115,9 +129,20 @@ export function WorkersPage() {
           ]}
         />
         <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
-          <WorkforceSiteSelect value={site} onChange={setSite} className="sm:w-48" aria-label={t("term.site")} />
+          <WorkforceSiteSelect
+            value={site}
+            onChange={setSite}
+            className="sm:w-48"
+            aria-label={t("term.site")}
+          />
           <div className="sm:w-44">
-            <TradeSelect value={trade} onChange={setTrade} allowEmpty placeholder={tw("all_trades")} aria-label={t("term.trade")} />
+            <TradeSelect
+              value={trade}
+              onChange={setTrade}
+              allowEmpty
+              placeholder={tw("all_trades")}
+              aria-label={t("term.trade")}
+            />
           </div>
           <div className="sm:w-40">
             <NativeSelect
@@ -190,19 +215,21 @@ export function WorkersPage() {
                       <Link
                         href={`/app/workers/${e.id}`}
                         onClick={(ev) => ev.stopPropagation()}
-                        className="block rounded focus-visible:outline-2 focus-visible:outline-ring"
+                        className="focus-visible:outline-ring block rounded focus-visible:outline-2"
                       >
                         <WorkerIdentity worker={e.worker} size="sm" showPhone={false} />
                       </Link>
                       {e.employee_code ? (
-                        <span className="mt-0.5 block pl-11 text-xs font-normal text-fg-muted tabular">
+                        <span className="text-fg-muted tabular mt-0.5 block pl-11 text-xs font-normal">
                           {e.employee_code}
                         </span>
                       ) : null}
                     </RowHeader>
                     <Td>
-                      <span className="block text-fg">{e.designation || "—"}</span>
-                      {e.trade ? <span className="text-xs text-fg-muted">{f.name(e.trade)}</span> : null}
+                      <span className="text-fg block">{e.designation || "—"}</span>
+                      {e.trade ? (
+                        <span className="text-fg-muted text-xs">{f.name(e.trade)}</span>
+                      ) : null}
                     </Td>
                     <Td>{e.site?.name ?? <span className="text-fg-muted">—</span>}</Td>
                     {canManage ? <Td numeric>{wageCell(e)}</Td> : null}
@@ -217,7 +244,12 @@ export function WorkersPage() {
               </TBody>
             </Table>
           </TableContainer>
-          <Pagination page={page} pageSize={PAGE_SIZE} count={data?.count ?? 0} onPageChange={setPage} />
+          <Pagination
+            page={page}
+            pageSize={PAGE_SIZE}
+            count={data?.count ?? 0}
+            onPageChange={setPage}
+          />
         </>
       )}
 

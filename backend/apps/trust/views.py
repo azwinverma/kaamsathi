@@ -19,15 +19,20 @@ from apps.core.pagination import StandardPagination
 from apps.core.permissions import IsOpsStaff, OrgScopedMixin
 from apps.workers.me_views import current_worker
 
+from . import disputes as dispute_services
 from . import labels
 from .models import Dispute, ProfileView
 from .serializers import (
+    AppealDecisionSerializer,
+    AppealSerializer,
     DisputeCreateSerializer,
     DisputeSerializer,
+    EvidenceUploadSerializer,
     ProfileViewSerializer,
     ResolveSerializer,
     RespondSerializer,
     WorkerRateSerializer,
+    evidence_payload,
 )
 from .services import get_trust, trust_payload
 
@@ -35,9 +40,68 @@ RATE_AFTER_DAYS = 30
 
 
 def dispute_queryset():
-    return Dispute.objects.select_related(
-        "worker", "organization", "employment", "payslip__run", "resolved_by"
+    from django.db.models import Count
+
+    return (
+        Dispute.objects.select_related(
+            "worker", "organization", "employment", "payslip__run", "resolved_by", "appeal_resolved_by"
+        )
+        .annotate(evidence_count=Count("evidence"))
+        .order_by("-raised_at")
     )
+
+
+class EvidenceMixin:
+    """``GET|POST …/disputes/{id}/evidence`` (multipart ``file`` + ``note``) — N006."""
+
+    evidence_party: str = "worker"
+
+    @action(detail=True, methods=["get", "post"])
+    def evidence(self, request, pk=None):
+        dispute = self.get_object()
+        if request.method == "GET":
+            rows = dispute.evidence.select_related("uploaded_by")
+            return Response([evidence_payload(e, request) for e in rows])
+        s = EvidenceUploadSerializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        ev = dispute_services.add_evidence(
+            dispute,
+            s.validated_data["file"],
+            user=request.user,
+            party=self.evidence_party,
+            note=s.validated_data.get("note"),
+        )
+        log(
+            request,
+            "dispute.evidence.add",
+            dispute,
+            organization=dispute.organization,
+            changes={"evidence_id": str(ev.id), "party": ev.party, "file_type": ev.file_type},
+        )
+        return Response(evidence_payload(ev, request), status=201)
+
+
+class AppealMixin:
+    """``POST …/disputes/{id}/appeal {reason}`` — once, within 14 days of the decision (N008)."""
+
+    appeal_party: str = "worker"
+
+    @action(detail=True, methods=["post"])
+    def appeal(self, request, pk=None):
+        dispute = self.get_object()
+        s = AppealSerializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        dispute = dispute_services.appeal(
+            dispute, user=request.user, party=self.appeal_party, reason=s.validated_data["reason"]
+        )
+        log(
+            request,
+            "dispute.appeal",
+            dispute,
+            organization=dispute.organization,
+            changes={"party": self.appeal_party, "reason": dispute.appeal_reason},
+        )
+        return Response(DisputeSerializer(dispute_queryset().get(pk=dispute.pk)).data)
 
 
 def _filter_status(qs, request):
@@ -107,7 +171,12 @@ class MeRateEmployerView(APIView):
 
 
 class MeDisputeViewSet(
-    mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
+    EvidenceMixin,
+    AppealMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet,
 ):
     serializer_class = DisputeSerializer
 
@@ -178,9 +247,16 @@ def _notify_org(dispute: Dispute):
 
 # --------------------------------------------------------------------------- employer (/org)
 class OrgDisputeViewSet(
-    OrgScopedMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+    EvidenceMixin,
+    AppealMixin,
+    OrgScopedMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
 ):
     serializer_class = DisputeSerializer
+    evidence_party = "employer"
+    appeal_party = "employer"
 
     def get_queryset(self):
         qs = dispute_queryset().filter(organization=self.org)
@@ -211,9 +287,37 @@ class OrgDisputeViewSet(
 
 
 # --------------------------------------------------------------------------- ops
-class OpsDisputeViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class OpsDisputeViewSet(
+    EvidenceMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
     permission_classes = [IsAuthenticated, IsOpsStaff]
     serializer_class = DisputeSerializer
+    evidence_party = "ops"
+
+    @action(detail=True, methods=["post"], url_path="appeal-decision")
+    def appeal_decision(self, request, pk=None):
+        dispute = self.get_object()
+        s = AppealDecisionSerializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        dispute = dispute_services.decide_appeal(
+            dispute, user=request.user, outcome=s.validated_data["outcome"], note=s.validated_data["note"]
+        )
+        log(
+            request,
+            "ops.dispute.appeal_decision",
+            dispute,
+            organization=dispute.organization,
+            changes={"outcome": dispute.appeal_outcome, "note": dispute.appeal_resolution_note},
+        )
+        outcome = str(labels.label(labels.APPEAL_OUTCOME, dispute.appeal_outcome))
+        dispute_services.notify_parties(
+            dispute,
+            "Dispute appeal decided",
+            f"KaamSathi decided the appeal: decision {dispute.appeal_outcome}. Open the app to see the note.",
+            title_ne="विवादको पुनरावेदनमा निर्णय भयो",
+            body_ne=f"KaamSathi ले पुनरावेदनमा निर्णय गर्यो: {outcome}। टिप्पणी हेर्न एप खोल्नुहोस्।",
+        )
+        return Response(DisputeSerializer(dispute_queryset().get(pk=dispute.pk)).data)
 
     def get_queryset(self):
         qs = dispute_queryset()

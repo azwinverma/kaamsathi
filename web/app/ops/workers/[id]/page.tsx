@@ -16,6 +16,7 @@ import { WorkerForm } from "@/components/ops/worker-form";
 import { WorkerDocs } from "@/components/ops/worker-docs";
 import { VerifyActions } from "@/components/ops/verify-actions";
 import { AvailabilityBadge, InfoRow } from "@/components/ops/ops-ui";
+import { LanguageChips, ProfileCompletenessCard } from "@/components/ops/worker-profile-bits";
 import { WorkerCredentialsPanel } from "@/components/credentials/worker-panel";
 import { useOpsWorker, useUpdateOpsWorker } from "@/lib/api/hooks/ops";
 import { useFormat } from "@/lib/use-format";
@@ -25,6 +26,7 @@ export default function OpsWorkerDetailPage() {
   const t = useTranslations();
   const tw = useTranslations("ops.worker_detail");
   const tn = useTranslations("nav");
+  const tl = useTranslations("moderation.languages");
   const f = useFormat();
   const query = useOpsWorker(id);
   const update = useUpdateOpsWorker();
@@ -104,6 +106,8 @@ export default function OpsWorkerDetailPage() {
         </div>
 
         <aside className="order-1 space-y-6 lg:sticky lg:top-24 lg:order-2">
+          <ProfileCompletenessCard completeness={w.profile_completeness} />
+
           <Card>
             <CardHeader title={tw("verification")} />
             <CardBody className="space-y-4">
@@ -142,6 +146,7 @@ export default function OpsWorkerDetailPage() {
                   label={t("term.experience")}
                   value={t("term.years", { count: w.total_experience_years ?? 0 })}
                 />
+                <InfoRow label={tl("title")} value={<LanguageChips languages={w.languages} />} />
                 <InfoRow label={t("common.created")} value={f.dateTime(w.created_at)} />
                 <InfoRow label={t("common.updated")} value={f.dateTime(w.updated_at)} />
                 <InfoRow label={tw("app_account")} value={w.user_id ? t("common.yes") : t("common.no")} />

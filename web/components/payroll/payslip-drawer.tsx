@@ -47,10 +47,14 @@ export function PayslipDrawer({
       <SheetContent closeLabel={tAll("common.close")} className="max-w-lg">
         {payslip ? (
           <>
-            <div className="space-y-2 border-b border-border px-6 pt-5 pb-4 pr-14">
-              <p className="text-xs font-medium tracking-wide text-fg-muted uppercase">{t("title")}</p>
-              <DialogTitle className="text-lg font-semibold text-fg">{payslip.worker.full_name}</DialogTitle>
-              <DialogDescription className="text-sm text-fg-muted">
+            <div className="border-border space-y-2 border-b px-6 pt-5 pr-14 pb-4">
+              <p className="text-fg-muted text-xs font-medium tracking-wide uppercase">
+                {t("title")}
+              </p>
+              <DialogTitle className="text-fg text-lg font-semibold">
+                {payslip.worker.full_name}
+              </DialogTitle>
+              <DialogDescription className="text-fg-muted text-sm">
                 {t("subtitle", { month, designation: payslip.designation || "—" })}
               </DialogDescription>
               <div className="flex flex-wrap items-center gap-2">
@@ -71,11 +75,17 @@ export function PayslipDrawer({
                     value={f.number(payslip.absent_days)}
                     tone={num(payslip.absent_days) > 0 ? "danger" : undefined}
                   />
+                  {payslip.wage_type === "hourly" ? (
+                    <DayStat
+                      label={tAll("wage_hourly.regular_hours")}
+                      value={f.number(payslip.regular_hours ?? 0)}
+                    />
+                  ) : null}
                   <DayStat label={t("ot_hours")} value={f.number(payslip.overtime_hours)} />
                 </dl>
-                <p className="mt-3 flex items-center justify-between rounded-md bg-brand-subtle px-3 py-2 text-sm">
+                <p className="bg-brand-subtle mt-3 flex items-center justify-between rounded-md px-3 py-2 text-sm">
                   <span className="text-brand-subtle-fg">{t("days_payable")}</span>
-                  <span className="font-semibold text-fg tabular">
+                  <span className="text-fg tabular font-semibold">
                     {t("payable_of", {
                       payable: f.number(payslip.payable_days),
                       total: f.number(payslip.days_in_month),
@@ -118,37 +128,48 @@ export function PayslipDrawer({
                 />
               </Section>
 
-              <div className="flex items-center justify-between rounded-lg border border-success/30 bg-success-subtle px-4 py-3">
-                <span className="text-sm font-semibold text-success">{t("net")}</span>
-                <Money value={payslip.net_pay} className="text-xl font-semibold text-fg" />
+              <div className="border-success/30 bg-success-subtle flex items-center justify-between rounded-lg border px-4 py-3">
+                <span className="text-success text-sm font-semibold">{t("net")}</span>
+                <Money value={payslip.net_pay} className="text-fg text-xl font-semibold" />
               </div>
 
               <Section title={t("employer")}>
                 <Lines rows={[[t("ssf_employer"), payslip.ssf_employer]]} />
-                <p className="mt-1 text-xs text-fg-muted">{t("ssf_employer_hint")}</p>
+                <p className="text-fg-muted mt-1 text-xs">{t("ssf_employer_hint")}</p>
               </Section>
 
               <Section title={t("payment")}>
                 <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
                   <Item label={t("payment_method")} value={tAll(`pay.${payslip.payment_method}`)} />
-                  <Item label={t("payment_status")} value={<StatusBadge status={payslip.payment_status} />} />
-                  {payslip.paid_at ? <Item label={t("paid_at")} value={f.dateTime(payslip.paid_at)} /> : null}
-                  {payslip.payment_ref ? <Item label={t("payment_ref")} value={payslip.payment_ref} /> : null}
+                  <Item
+                    label={t("payment_status")}
+                    value={<StatusBadge status={payslip.payment_status} />}
+                  />
+                  {payslip.paid_at ? (
+                    <Item label={t("paid_at")} value={f.dateTime(payslip.paid_at)} />
+                  ) : null}
+                  {payslip.payment_ref ? (
+                    <Item label={t("payment_ref")} value={payslip.payment_ref} />
+                  ) : null}
                   {payslip.note ? <Item label={t("note")} value={payslip.note} full /> : null}
                 </dl>
               </Section>
 
               {run.status === "draft" ? (
-                <EditPayslipForm key={payslip.id + payslip.net_pay} runId={run.id} payslip={payslip} />
+                <EditPayslipForm
+                  key={payslip.id + payslip.net_pay}
+                  runId={run.id}
+                  payslip={payslip}
+                />
               ) : (
-                <p className="flex items-start gap-2 rounded-md bg-surface-muted px-3 py-2.5 text-xs text-fg-muted">
+                <p className="bg-surface-muted text-fg-muted flex items-start gap-2 rounded-md px-3 py-2.5 text-xs">
                   <Lock className="mt-px size-3.5 shrink-0" aria-hidden />
                   {t("locked", { status: tAll(`payroll.${run.status}`) })}
                 </p>
               )}
             </div>
 
-            <div className="flex justify-end gap-2 border-t border-border bg-surface-muted/60 px-6 py-4">
+            <div className="border-border bg-surface-muted/60 flex justify-end gap-2 border-t px-6 py-4">
               <Button
                 variant="secondary"
                 loading={pending === pdfPath(payslip.id)}
@@ -176,12 +197,16 @@ export function PayslipDrawer({
 }
 
 const pdfPath = (id: string) => `/org/payslips/${id}/payslip.pdf`;
-const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "worker";
+const slug = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "") || "worker";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h3 className="mb-2 text-xs font-semibold tracking-wide text-fg-muted uppercase">{title}</h3>
+      <h3 className="text-fg-muted mb-2 text-xs font-semibold tracking-wide uppercase">{title}</h3>
       {children}
     </section>
   );
@@ -189,9 +214,16 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function DayStat({ label, value, tone }: { label: string; value: string; tone?: "danger" }) {
   return (
-    <div className="rounded-md border border-border px-3 py-2">
-      <dt className="truncate text-xs text-fg-muted">{label}</dt>
-      <dd className={cn("text-base font-semibold text-fg tabular", tone === "danger" && "text-danger")}>{value}</dd>
+    <div className="border-border rounded-md border px-3 py-2">
+      <dt className="text-fg-muted truncate text-xs">{label}</dt>
+      <dd
+        className={cn(
+          "text-fg tabular text-base font-semibold",
+          tone === "danger" && "text-danger",
+        )}
+      >
+        {value}
+      </dd>
     </div>
   );
 }
@@ -207,7 +239,7 @@ function Lines({
 }) {
   const f = useFormat();
   return (
-    <dl className="divide-y divide-border rounded-md border border-border text-sm">
+    <dl className="divide-border border-border divide-y rounded-md border text-sm">
       {rows.map(([label, v]) => (
         <div key={label} className="flex items-center justify-between gap-4 px-3 py-2">
           <dt className="text-fg-body">{label}</dt>
@@ -218,7 +250,7 @@ function Lines({
         </div>
       ))}
       {total ? (
-        <div className="flex items-center justify-between gap-4 bg-surface-muted px-3 py-2 font-semibold text-fg">
+        <div className="bg-surface-muted text-fg flex items-center justify-between gap-4 px-3 py-2 font-semibold">
           <dt>{total[0]}</dt>
           <dd className="tabular">
             {negative && num(total[1]) !== 0 ? "− " : ""}
@@ -233,8 +265,8 @@ function Lines({
 function Item({ label, value, full }: { label: string; value: React.ReactNode; full?: boolean }) {
   return (
     <div className={cn("min-w-0", full && "col-span-2")}>
-      <dt className="text-xs text-fg-muted">{label}</dt>
-      <dd className="mt-0.5 break-words text-fg">{value}</dd>
+      <dt className="text-fg-muted text-xs">{label}</dt>
+      <dd className="text-fg mt-0.5 break-words">{value}</dd>
     </div>
   );
 }
@@ -257,7 +289,9 @@ function EditPayslipForm({ runId, payslip }: { runId: string; payslip: Payslip }
       z.object({
         other_deductions: z
           .string()
-          .refine((v) => clean(v) === "" || AMOUNT_RE.test(clean(v)), { message: t("invalid_amount") })
+          .refine((v) => clean(v) === "" || AMOUNT_RE.test(clean(v)), {
+            message: t("invalid_amount"),
+          })
           .refine((v) => num(clean(v)) <= netBeforeOther, { message: t("too_large") }),
         note: z.string().max(500),
         payment_method: z.enum(["bank", "esewa", "khalti", "cash"]),
@@ -284,7 +318,8 @@ function EditPayslipForm({ runId, payslip }: { runId: string; payslip: Payslip }
   } = form;
 
   const other = clean(watch("other_deductions") ?? "");
-  const preview = AMOUNT_RE.test(other) || other === "" ? round2(netBeforeOther - num(other)) : null;
+  const preview =
+    AMOUNT_RE.test(other) || other === "" ? round2(netBeforeOther - num(other)) : null;
 
   const onSubmit = handleSubmit((v) => {
     update.mutate(
@@ -297,16 +332,18 @@ function EditPayslipForm({ runId, payslip }: { runId: string; payslip: Payslip }
       {
         onSuccess: () => toast.success(t("saved")),
         onError: (err) =>
-          handleFormError(err, setError, tAll, { fields: ["other_deductions", "note", "payment_method"] }),
+          handleFormError(err, setError, tAll, {
+            fields: ["other_deductions", "note", "payment_method"],
+          }),
       },
     );
   });
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4 rounded-lg border border-border p-4" noValidate>
+    <form onSubmit={onSubmit} className="border-border space-y-4 rounded-lg border p-4" noValidate>
       <div className="space-y-0.5">
-        <h3 className="text-sm font-semibold text-fg">{t("edit_title")}</h3>
-        <p className="text-xs text-fg-muted">{t("edit_hint")}</p>
+        <h3 className="text-fg text-sm font-semibold">{t("edit_title")}</h3>
+        <p className="text-fg-muted text-xs">{t("edit_hint")}</p>
       </div>
       <Field
         id="ps-other"
@@ -323,7 +360,7 @@ function EditPayslipForm({ runId, payslip }: { runId: string; payslip: Payslip }
         />
       </Field>
       {preview !== null && num(other) !== num(payslip.other_deductions) ? (
-        <p className="text-sm text-fg-body tabular" aria-live="polite">
+        <p className="text-fg-body tabular text-sm" aria-live="polite">
           {t("new_net", { amount: f.money(preview) })}
         </p>
       ) : null}
@@ -342,7 +379,13 @@ function EditPayslipForm({ runId, payslip }: { runId: string; payslip: Payslip }
           )}
         />
       </Field>
-      <Field id="ps-note" label={t("note_label")} optional optionalLabel={tAll("common.optional")} error={errors.note?.message}>
+      <Field
+        id="ps-note"
+        label={t("note_label")}
+        optional
+        optionalLabel={tAll("common.optional")}
+        error={errors.note?.message}
+      >
         <Textarea rows={2} placeholder={t("note_placeholder")} {...register("note")} />
       </Field>
       <div className="flex justify-end">

@@ -288,7 +288,9 @@ def escalate_overdue(now=None) -> dict:
                 data={"case_id": str(case.id)},
             )
     disputes = list(
-        Dispute.objects.filter(status__in=["open", "employer_responded"], escalated=False, sla_due_at__lt=now)
+        Dispute.objects.filter(
+            status__in=["open", "employer_responded", "appealed"], escalated=False, sla_due_at__lt=now
+        )
     )
     from apps.trust import labels as trust_labels
 

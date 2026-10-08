@@ -1,5 +1,9 @@
 import {
   Activity,
+  ListChecks,
+  SlidersHorizontal,
+  Star,
+  ToggleRight,
   BellRing,
   Funnel,
   ReceiptText,
@@ -82,12 +86,14 @@ export const APP_NAV: NavGroup[] = [
     items: [
       { href: "/app/workers", label: "nav.workers", icon: Users },
       { href: "/app/attendance", label: "nav.attendance", icon: CalendarCheck },
+      { href: "/app/attendance/corrections", label: "nav.corrections", icon: ListChecks },
       { href: "/app/leave", label: "nav.leave", icon: CalendarOff },
       { href: "/app/advances", label: "nav.advance", icon: HandCoins, roles: FULL },
       { href: "/app/roster", label: "nav.roster", icon: CalendarClock },
       { href: "/app/timesheets", label: "nav.timesheets", icon: FileClock },
       { href: "/app/contractors", label: "nav.contractors", icon: HardHat, roles: FULL },
       { href: "/app/disputes", label: "nav.disputes", icon: FileWarning, roles: FULL },
+      { href: "/app/ratings", label: "nav.ratings", icon: Star, roles: FULL },
     ],
   },
   {
@@ -133,6 +139,7 @@ export const OPS_NAV: NavGroup[] = [
     items: [
       { href: "/ops/credentials", label: "nav.ops_credentials", icon: BadgeCheck, staffRoles: VERIFIER },
       { href: "/ops/disputes", label: "nav.ops_disputes", icon: FileWarning, staffRoles: SUPPORT },
+      { href: "/ops/ratings", label: "nav.ops_ratings", icon: Star, staffRoles: SUPPORT },
       { href: "/ops/crews", label: "nav.ops_crews", icon: UsersRound, staffRoles: VERIFIER_OR_SUPPORT },
       { href: "/ops/privacy", label: "nav.ops_privacy", icon: Lock, staffRoles: SUPPORT },
       { href: "/ops/employers", label: "nav.ops_employers", icon: Building, staffRoles: VERIFIER },
@@ -162,6 +169,8 @@ export const OPS_NAV: NavGroup[] = [
       { href: "/ops/taxonomy", label: "nav.ops_taxonomy", icon: Tags, staffRoles: SUPERADMIN },
       { href: "/ops/system", label: "nav.ops_system", icon: Activity, staffRoles: SUPERADMIN },
       { href: "/ops/notifications", label: "nav.ops_notifications", icon: BellRing, staffRoles: SUPPORT },
+      { href: "/ops/flags", label: "nav.ops_flags", icon: ToggleRight, staffRoles: SUPERADMIN },
+      { href: "/ops/matching", label: "nav.ops_matching", icon: SlidersHorizontal, staffRoles: SUPERADMIN },
       { href: "/ops/account", label: "nav.account_security", icon: KeyRound },
     ],
   },

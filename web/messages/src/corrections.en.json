@@ -1,0 +1,43 @@
+{
+  "corrections": {
+    "title": "Correction requests",
+    "entry": "Correction requests",
+    "entry_pending": "{count, plural, one {Correction requests (# pending)} other {Correction requests (# pending)}}",
+    "description": "Workers ask to fix a day's hajiri. Approving updates the attendance record.",
+    "description_supervisor": "Correction requests from workers at your sites.",
+    "tab": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "empty": {
+      "pending": "No pending requests",
+      "approved": "No approved requests",
+      "rejected": "No rejected requests"
+    },
+    "empty_body": "When a worker asks to fix their hajiri from the app, it shows up here.",
+    "col_worker": "Worker",
+    "col_date": "Date",
+    "col_change": "Change",
+    "col_times": "Requested times",
+    "col_reason": "Reason",
+    "col_requested_at": "Requested",
+    "col_decision": "Decision",
+    "changes_to": "changes to",
+    "check_in": "In",
+    "check_out": "Out",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approve_for": "Approve correction for {name}",
+    "reject_for": "Reject correction for {name}",
+    "approve_title": "Approve correction?",
+    "reject_title": "Reject correction?",
+    "dialog_summary": "{name} · {date}: {from} → {to}",
+    "approve_hint": "The day's hajiri will be updated. Months with approved payroll can't be changed.",
+    "approve_note": "Note to the worker",
+    "reject_note": "Reason for the worker",
+    "note_required": "Tell the worker why it was rejected",
+    "approved_toast": "Correction approved for {name}",
+    "rejected_toast": "Correction rejected for {name}"
+  }
+}

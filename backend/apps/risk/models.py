@@ -66,7 +66,9 @@ class VerificationReview(models.Model):
     STAGES = [("first", "First review"), ("final", "Final review")]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    worker = models.ForeignKey("workers.Worker", on_delete=models.CASCADE, related_name="verification_reviews")
+    worker = models.ForeignKey(
+        "workers.Worker", on_delete=models.CASCADE, related_name="verification_reviews"
+    )
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
     )

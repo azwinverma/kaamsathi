@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Building2, Info, ListChecks, Send, UserSearch } from "lucide-react";
+import { Building2, Info, ListChecks, RefreshCw, Send, UserSearch } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardBody, CardHeader, DescriptionList } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,17 +14,25 @@ import { NativeSelect } from "@/components/ui/select";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState, ErrorState, Skeleton } from "@/components/ui/feedback";
 import { DateText, Money } from "@/components/ui/date";
-import { StatusBadge } from "@/components/shared/status-badge";
 import { RatingStars, SkillChips, WorkerIdentity } from "@/components/shared/worker-summary";
 import { HoursOpenBadge, ScoreMeter } from "@/components/ops/ops-ui";
 import { InterestedBadge, MatchExplain, useMatchReasonLabel } from "@/components/experience/match-explain";
 import { SHORTLIST_SLA_HOURS, useReasonLabel } from "@/components/ops/helpers";
 import { useJobMatches, useOpsJob, useShortlist } from "@/lib/api/hooks/ops";
-import type { Match, Stage } from "@/lib/api/types";
+import type { Stage } from "@/lib/api/types";
 import { toastError } from "@/lib/forms";
 import { useFormat } from "@/lib/use-format";
 import { cn } from "@/lib/utils";
 import { VerifiedEmployerBadge } from "@/components/kyb/kyb-badges";
+import { JobStatusBadge } from "@/components/hiring/job-bits";
+import { RequirementChips } from "@/components/hiring/requirements";
+import {
+  MatchRunsPanel,
+  OpsOwnerCard,
+  RequirementChecks,
+} from "@/components/hiring/ops-job-panels";
+import { useRefreshMatches } from "@/lib/api/hooks/pipeline";
+import type { MatchWithPipeline, OpsJobWithPipeline } from "@/lib/api/types-pipeline";
 
 const STAGES: Stage[] = ["sourced", "shortlisted", "interview", "selected", "joined", "rejected", "dropped"];
 const TARGET_MIN = 5;
@@ -35,10 +43,11 @@ export default function OpsJobDetailPage() {
   const t = useTranslations();
   const tj = useTranslations("ops.job");
   const tn = useTranslations("nav");
+  const tp = useTranslations("pipeline");
   const f = useFormat();
   const job = useOpsJob(id);
   const back = { href: "/ops/jobs", label: tn("ops_jobs") };
-  const j = job.data;
+  const j = job.data as OpsJobWithPipeline | undefined;
 
   if (job.isLoading) {
     return (
@@ -82,7 +91,13 @@ export default function OpsJobDetailPage() {
         }
         meta={
           <>
-            <StatusBadge status={j.status} label={j.status_label} />
+            <JobStatusBadge job={j} />
+            {j.ops_owner ? (
+              <Badge tone="outline">{tp("ops.owner_badge", { name: j.ops_owner.full_name })}</Badge>
+            ) : null}
+            {j.invited_count ? (
+              <Badge tone="accent">{tp("ops.invited_count", { count: j.invited_count })}</Badge>
+            ) : null}
             <HoursOpenBadge hours={j.hours_open} />
             {j.first_shortlist_at ? (
               <Badge tone="success">{tj("first_shortlist", { date: f.dateTime(j.first_shortlist_at) })}</Badge>
@@ -124,6 +139,12 @@ export default function OpsJobDetailPage() {
                   },
                 ]}
               />
+              {j.requirements?.length ? (
+                <div className="border-border mt-4 space-y-2 border-t pt-4">
+                  <p className="text-fg-muted text-sm">{tp("requirements.detail_title")}</p>
+                  <RequirementChips requirements={j.requirements} />
+                </div>
+              ) : null}
               {j.description ? (
                 <p className="mt-4 border-t border-border pt-4 text-sm whitespace-pre-line text-fg-body">
                   {j.description}
@@ -131,6 +152,7 @@ export default function OpsJobDetailPage() {
               ) : null}
             </CardBody>
           </Card>
+          <OpsOwnerCard jobId={j.id} owner={j.ops_owner} />
           <Card>
             <CardHeader title={tj("pipeline")} />
             <CardBody>
@@ -149,7 +171,10 @@ export default function OpsJobDetailPage() {
           </Card>
         </aside>
 
-        <MatchesPanel jobId={j.id} jobOpen={j.status === "open"} />
+        <div className="min-w-0 space-y-6">
+          <MatchesPanel jobId={j.id} jobOpen={j.status === "open"} />
+          <MatchRunsPanel jobId={j.id} />
+        </div>
       </div>
     </>
   );
@@ -163,9 +188,12 @@ function MatchesPanel({ jobId, jobOpen }: { jobId: string; jobOpen: boolean }) {
   const [limit, setLimit] = React.useState(20);
   const [selected, setSelected] = React.useState<Set<string>>(() => new Set());
   const [confirm, setConfirm] = React.useState(false);
+  const tp = useTranslations("pipeline.ops");
   const matches = useJobMatches(jobId, limit);
+  const refresh = useRefreshMatches();
   const shortlist = useShortlist();
-  const rows = React.useMemo(() => matches.data ?? [], [matches.data]);
+  const rows = React.useMemo(() => (matches.data ?? []) as MatchWithPipeline[], [matches.data]);
+  const version = rows[0]?.algorithm_version;
 
   // Drop selections for workers no longer in the match list (e.g. after shortlisting).
   React.useEffect(() => {
@@ -210,6 +238,25 @@ function MatchesPanel({ jobId, jobOpen }: { jobId: string; jobOpen: boolean }) {
         title={tj("matches")}
         description={tj("matches_hint", { min: f.digits(TARGET_MIN), max: f.digits(TARGET_MAX) })}
         action={
+          <div className="flex items-center gap-2">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() =>
+              refresh.mutate(
+                { jobId, limit },
+                {
+                  onSuccess: () => toast.success(tp("refreshed_toast")),
+                  onError: (e) => toastError(e, t),
+                },
+              )
+            }
+            loading={refresh.isPending}
+            disabled={matches.isLoading}
+          >
+            {refresh.isPending ? null : <RefreshCw aria-hidden />}
+            {tp("refresh")}
+          </Button>
           <div className="w-28">
             <NativeSelect
               value={String(limit)}
@@ -217,6 +264,7 @@ function MatchesPanel({ jobId, jobOpen }: { jobId: string; jobOpen: boolean }) {
               aria-label={tj("show_top")}
               options={[20, 50, 100].map((n) => ({ value: String(n), label: tj("top_n", { n: f.digits(n) }) }))}
             />
+          </div>
           </div>
         }
       />
@@ -271,6 +319,7 @@ function MatchesPanel({ jobId, jobOpen }: { jobId: string; jobOpen: boolean }) {
             </Button>
             <span className="ml-auto text-xs text-fg-muted">
               {tj("showing_matches", { count: rows.length })}
+              {version ? ` · ${tp("algorithm", { version })}` : null}
             </span>
           </div>
           <ul className={cn("divide-y divide-border", matches.isFetching && "opacity-70")}>
@@ -278,7 +327,7 @@ function MatchesPanel({ jobId, jobOpen }: { jobId: string; jobOpen: boolean }) {
               <MatchRow
                 key={m.worker.id}
                 match={m}
-                rank={i + 1}
+                rank={m.rank ?? i + 1}
                 checked={selected.has(m.worker.id)}
                 onCheckedChange={(on) => toggle(m.worker.id, on)}
                 reason={reason}
@@ -343,7 +392,7 @@ function MatchRow({
   onCheckedChange,
   reason,
 }: {
-  match: Match;
+  match: MatchWithPipeline;
   rank: number;
   checked: boolean;
   onCheckedChange: (v: boolean) => void;
@@ -377,6 +426,7 @@ function MatchRow({
           </span>
         </div>
         <SkillChips skills={m.worker.skills} max={3} />
+        <RequirementChecks checks={m.requirements} />
         <div className="flex flex-wrap items-center gap-1.5">
           {m.reasons.map((r, i) => (
             <Badge key={i} tone={negative(r) ? "warning" : "neutral"}>

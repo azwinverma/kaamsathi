@@ -14,8 +14,16 @@
       "level3": "Level 3",
       "refresher": "Refresher"
     },
-    "mode": { "classroom": "Classroom", "on_site": "On site", "online": "Online" },
-    "course_status": { "open": "Open", "closed": "Closed", "completed": "Completed" },
+    "mode": {
+      "classroom": "Classroom",
+      "on_site": "On site",
+      "online": "Online"
+    },
+    "course_status": {
+      "open": "Open",
+      "closed": "Closed",
+      "completed": "Completed"
+    },
     "enrollment_status": {
       "applied": "Applied",
       "enrolled": "Enrolled",
@@ -29,7 +37,8 @@
       "tab_providers": "Providers",
       "tab_courses": "Courses",
       "tab_enrollments": "Enrolments",
-      "tab_shortages": "Shortages"
+      "tab_shortages": "Shortages",
+      "tab_outcomes": "Outcomes"
     },
     "providers": {
       "add": "Add provider",
@@ -89,7 +98,10 @@
       "delete_confirm": "Delete {title}? Courses with enrolments can only be closed.",
       "search": "Search courses…",
       "required": "Required",
-      "invalid_number": "Enter a whole number above 0"
+      "invalid_number": "Enter a whole number above 0",
+      "min_attendance_pct": "Minimum attendance (%)",
+      "min_attendance_hint": "Share of sessions a trainee must attend to complete. 0 = no requirement.",
+      "invalid_pct": "Enter a whole number from 0 to 100"
     },
     "enrollments": {
       "worker": "Worker",
@@ -114,7 +126,9 @@
       "all_courses": "All courses",
       "all_statuses": "All statuses",
       "complete_confirm_title": "Mark course completed?",
-      "complete_confirm_body": "{name} gets a verified \"{course}\" credential on their Skill Passport."
+      "complete_confirm_body": "{name} gets a verified \"{course}\" credential on their Skill Passport.",
+      "attendance": "Attendance",
+      "attendance_hint": "Sessions attended / sessions held (percentage)"
     },
     "shortages": {
       "title": "Where workers are short",
@@ -161,6 +175,84 @@
       "sponsored_empty_title": "You have not sponsored anyone yet",
       "sponsored_empty_body": "Sponsor workers from the Courses tab. Trained workers stay longer and earn verified certificates.",
       "trained_badge": "Certificate added"
+    },
+    "verify": {
+      "column": "Verification",
+      "filter_label": "Verification status",
+      "all": "All verification",
+      "action": "Verify…",
+      "title": "Verify provider",
+      "current": "Current status:",
+      "decision": "Decision",
+      "decision_verified": "Verified",
+      "decision_rejected": "Rejected",
+      "decision_pending": "Back to pending",
+      "note": "Note",
+      "note_hint_rejected": "The reason is kept on the provider record.",
+      "note_required": "Give a reason for the rejection",
+      "submit_verified": "Mark verified",
+      "submit_rejected": "Reject",
+      "submit_pending": "Move back to pending",
+      "affiliation_check": "Check the CTEVT affiliation documents for no. {no} before verifying.",
+      "affiliation_missing": "Record the CTEVT affiliation number before verifying.",
+      "by_at": "{name} · {at}",
+      "verified_short": "Verified",
+      "verified_provider": "Verified training provider",
+      "toast": {
+        "verified": "{name} verified",
+        "rejected": "{name} rejected",
+        "pending": "{name} moved back to pending"
+      }
+    },
+    "sessions": {
+      "title": "Sessions",
+      "add": "Add session",
+      "edit": "Edit session",
+      "min_attendance": "minimum attendance {pct}%",
+      "date": "Date",
+      "time": "Time",
+      "topic": "Topic",
+      "present": "Present",
+      "start_time": "Start time",
+      "end_time": "End time",
+      "date_required": "Choose a date",
+      "end_after_start": "End time must be after the start time",
+      "empty_title": "No sessions yet",
+      "empty_body": "Add each class day to track who attended.",
+      "attendance": "Attendance",
+      "attendance_title": "Session attendance",
+      "mark_for": "Mark attendance for the session on {date}",
+      "edit_for": "Edit the session on {date}",
+      "delete_for": "Delete the session on {date}",
+      "delete_confirm": "Delete the session on {date}? Its attendance marks are removed too.",
+      "saved": "Session saved",
+      "deleted": "Session deleted",
+      "mark_all": "Mark everyone present",
+      "present_of": "{present} of {total} present",
+      "present_for": "{name} present",
+      "not_marked": "Not marked",
+      "no_enrolled_title": "No enrolled trainees",
+      "no_enrolled_body": "Only enrolled or completed trainees appear on the sheet.",
+      "save_attendance": "Save attendance",
+      "attendance_saved": "{count, plural, =0 {Attendance saved — nobody present} one {Attendance saved — # present} other {Attendance saved — # present}}"
+    },
+    "outcomes": {
+      "title": "Course outcomes",
+      "subtitle": "Enrolled → completed → placed within {days} days → still employed after {retention} days. Groups smaller than {k} workers are hidden to protect privacy.",
+      "all_trades": "All trades",
+      "course": "Course",
+      "enrolled": "Enrolled",
+      "completed": "Completed",
+      "placed": "Placed ≤90d",
+      "retained": "Retained 90d",
+      "completion_rate": "Completion",
+      "placement_rate": "Placement",
+      "retention_rate": "Retention",
+      "wage_before": "Median wage before",
+      "wage_after": "Median wage after",
+      "hidden": "Hidden: fewer than {k} workers",
+      "empty_title": "No courses to report",
+      "empty_body": "Outcomes appear once courses have enrolments."
     }
   }
 }

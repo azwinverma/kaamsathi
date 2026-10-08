@@ -183,7 +183,9 @@ class Rating(models.Model):
     # Moderation (N004): the rated party may flag the comment; ops hide/restore it. The score keeps
     # counting unless ops voids the whole rating with a reason (voided ratings never feed scores).
     COMMENT_STATUSES = labels.choices(worker_labels.COMMENT_STATUS)
-    comment_status = models.CharField(max_length=8, choices=COMMENT_STATUSES, default="visible", db_index=True)
+    comment_status = models.CharField(
+        max_length=8, choices=COMMENT_STATUSES, default="visible", db_index=True
+    )
     flagged_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
     )
@@ -205,13 +207,13 @@ class Rating(models.Model):
         ordering = ["-created_at"]
         constraints = [models.UniqueConstraint(fields=["employment", "rater"], name="uniq_rating_per_rater")]
 
+    def __str__(self):
+        return f"{self.rater} rating {self.score_a}/{self.score_b}"
+
     @property
     def public_comment(self):
         """Comment as shown to anyone but ops: hidden comments are withheld."""
         return None if self.comment_status == "hidden" else self.comment
-
-    def __str__(self):
-        return f"{self.rater} rating {self.score_a}/{self.score_b}"
 
 
 # --------------------------------------------------------------------------- checklist completion
@@ -247,11 +249,7 @@ class TradeAlias(models.Model):
 
     class Meta:
         ordering = ["trade_id", "alias"]
-        constraints = [
-            models.UniqueConstraint(
-                Lower("alias"), "trade", name="uniq_trade_alias_ci"
-            )
-        ]
+        constraints = [models.UniqueConstraint(Lower("alias"), "trade", name="uniq_trade_alias_ci")]
         indexes = [models.Index(Lower("alias"), name="trade_alias_lower_idx")]
 
     def __str__(self):

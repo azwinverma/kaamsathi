@@ -25,6 +25,12 @@
     "cell_label": "{name} को {date} को सिफ्ट",
     "unassigned": "—",
     "off": "बिदा",
-    "off_hint": "= साप्ताहिक बिदा / छुट्टी"
+    "off_hint": "= साप्ताहिक बिदा / छुट्टी",
+    "notified": "{count, plural, one {# कामदारलाई सूचना पठाइयो} other {# कामदारलाई सूचना पठाइयो}}",
+    "warning_label": "{date} मा {name} का लागि चेतावनी: {warnings}",
+    "save_warnings_toast": "{count, plural, one {# चेतावनीसहित सेभ भयो} other {# चेतावनीसहित सेभ भयो}}",
+    "save_warnings_title": "{count, plural, one {# सिफ्ट जाँच गर्नुहोस्} other {# सिफ्ट जाँच गर्नुहोस्}}",
+    "save_warnings_hint": "रोस्टर सेभ भयो। यी केवल सम्झनाहरू हुन् — आवश्यक भए सिफ्ट बदल्नुहोस्।",
+    "save_warnings_dismiss": "चेतावनी हटाउनुहोस्"
   }
 }

@@ -49,6 +49,10 @@ class Credential(models.Model):
     verified_at = models.DateTimeField(null=True, blank=True)
     note = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    # G012: a rejected credential re-uploaded by the worker links back to the rejected record.
+    resubmission_of = models.ForeignKey(
+        "self", on_delete=models.SET_NULL, null=True, blank=True, related_name="resubmissions"
+    )
 
     class Meta:
         ordering = ["-created_at"]

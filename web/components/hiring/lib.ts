@@ -59,7 +59,9 @@ export function toMoneyString(n: number): string {
 
 export function minimumFor(mw: MinimumWage | undefined, wageType: WageType): number | null {
   if (!mw) return null;
-  return parseAmount(wageType === "monthly" ? mw.monthly_total : mw.daily);
+  return parseAmount(
+    wageType === "monthly" ? mw.monthly_total : wageType === "hourly" ? mw.hourly : mw.daily,
+  );
 }
 
 /**

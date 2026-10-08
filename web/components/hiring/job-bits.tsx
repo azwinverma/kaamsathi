@@ -3,6 +3,7 @@ import * as React from "react";
 import { useTranslations } from "next-intl";
 import { BedDouble, UtensilsCrossed } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/shared/status-badge";
 import type { Job, StageCounts } from "@/lib/api/types";
 import { useFormat } from "@/lib/use-format";
 import { cn } from "@/lib/utils";
@@ -17,12 +18,17 @@ export function JobWage({
   className?: string;
 }) {
   const t = useTranslations("common");
+  const tAll = useTranslations();
   const f = useFormat();
   return (
     <span className={cn("tabular whitespace-nowrap", className)}>
       <span className="text-fg font-medium">{f.money(job.wage_amount)}</span>{" "}
       <span className="text-fg-muted">
-        {job.wage_type === "monthly" ? t("per_month") : t("per_day")}
+        {job.wage_type === "monthly"
+          ? t("per_month")
+          : job.wage_type === "hourly"
+            ? tAll("wage_hourly.per_hour")
+            : t("per_day")}
       </span>
     </span>
   );
@@ -124,4 +130,23 @@ export function FillProgress({ job }: { job: Pick<Job, "counts" | "openings_coun
       </div>
     </div>
   );
+}
+
+/** Job status pill; "paused" (J006) gets a warning tone and its own label. */
+export function JobStatusBadge({
+  job,
+  className,
+}: {
+  job: Pick<Job, "status" | "status_label">;
+  className?: string;
+}) {
+  const t = useTranslations("pipeline.status");
+  if (job.status === "paused") {
+    return (
+      <Badge tone="warning" dot className={className}>
+        {t("paused")}
+      </Badge>
+    );
+  }
+  return <StatusBadge status={job.status} label={job.status_label} className={className} />;
 }

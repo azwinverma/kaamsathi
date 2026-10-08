@@ -55,3 +55,20 @@ class ConsentAdmin(admin.ModelAdmin):
 class RatingAdmin(admin.ModelAdmin):
     list_display = ["employment", "rater", "score_a", "score_b", "created_at"]
     list_filter = ["rater"]
+
+
+from .models import TradeAlias, WorkerLanguage  # noqa: E402
+
+
+@admin.register(TradeAlias)
+class TradeAliasAdmin(admin.ModelAdmin):
+    list_display = ["alias", "trade", "language", "created_at"]
+    list_filter = ["language"]
+    search_fields = ["alias", "trade__name_en"]
+
+
+@admin.register(WorkerLanguage)
+class WorkerLanguageAdmin(admin.ModelAdmin):
+    list_display = ["worker", "language", "proficiency"]
+    list_filter = ["language", "proficiency"]
+    raw_id_fields = ["worker"]

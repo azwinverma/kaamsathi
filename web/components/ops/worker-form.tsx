@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Plus, Trash2, X } from "lucide-react";
+import { Languages, Plus, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Field, FormError } from "@/components/ui/field";
@@ -19,7 +19,18 @@ import { tradeOf } from "@/components/shared/worker-summary";
 import { handleFormError, zMoney, zPhone } from "@/lib/forms";
 import { toLatinDigits } from "@/lib/format";
 import type { Gender, NstbLevel, OpsWorker, OpsWorkerInput, PaymentMethod } from "@/lib/api/types";
+import {
+  LANGUAGE_PROFICIENCIES,
+  MAX_WORKER_LANGUAGES,
+  WORKER_LANGUAGE_CODES,
+  type LanguageProficiency,
+  type WorkerLanguageInput,
+} from "@/lib/api/types-moderation";
 import { districtCode } from "./helpers";
+import { duplicateLanguageIndexes, isKnownLanguage, toLanguagesPayload } from "./languages";
+
+/** Body sent by the ops worker form (OpsWorkerInput + E004 languages). */
+export type OpsWorkerFormBody = OpsWorkerInput & { languages?: WorkerLanguageInput[] };
 
 const NSTB_LEVELS: NstbLevel[] = ["none", "elementary", "level1", "level2", "level3"];
 const PAYMENT_METHODS: PaymentMethod[] = ["cash", "bank", "esewa", "khalti"];
@@ -45,6 +56,7 @@ const TOP_FIELDS = [
   "ssf_id",
   "notes",
   "skills",
+  "languages",
 ] as const;
 
 function nul(v: string | null | undefined): string | null {
@@ -60,13 +72,14 @@ export function WorkerForm({
   onCancel,
 }: {
   worker?: OpsWorker | null;
-  onSubmit: (body: OpsWorkerInput) => Promise<unknown>;
+  onSubmit: (body: OpsWorkerFormBody) => Promise<unknown>;
   submitting?: boolean;
   submitLabel: string;
   onCancel?: () => void;
 }) {
   const t = useTranslations();
   const tf = useTranslations("ops.worker_form");
+  const tl = useTranslations("moderation.languages");
   const [formError, setFormError] = React.useState<string | null>(null);
 
   const schema = React.useMemo(
@@ -113,8 +126,21 @@ export function WorkerForm({
               seen.add(s.trade);
             });
           }),
+        languages: z
+          .array(
+            z.object({
+              language: z.string().min(1, t("errors.required")),
+              proficiency: z.enum(LANGUAGE_PROFICIENCIES),
+            }),
+          )
+          .max(MAX_WORKER_LANGUAGES, tl("max_reached", { max: MAX_WORKER_LANGUAGES }))
+          .superRefine((rows, ctx) => {
+            for (const i of duplicateLanguageIndexes(rows)) {
+              ctx.addIssue({ code: "custom", message: tl("duplicate"), path: [i, "language"] });
+            }
+          }),
       }),
-    [t, tf],
+    [t, tf, tl],
   );
   type FormIn = z.input<typeof schema>;
   type FormOut = z.output<typeof schema>;
@@ -147,6 +173,12 @@ export function WorkerForm({
         nstb_level: s.nstb_level ?? "none",
         certificate_no: s.certificate_no ?? "",
       })),
+      languages: (worker?.languages ?? []).map((l) => ({
+        language: l.language,
+        proficiency: ((LANGUAGE_PROFICIENCIES as readonly string[]).includes(l.proficiency)
+          ? l.proficiency
+          : "conversational") as LanguageProficiency,
+      })),
     }),
     [worker],
   );
@@ -155,6 +187,7 @@ export function WorkerForm({
   const { register, control, handleSubmit, formState, watch, reset } = form;
   const errors = formState.errors;
   const skills = useFieldArray({ control, name: "skills" });
+  const languages = useFieldArray({ control, name: "languages" });
   const payment = watch("payment_method");
 
   // Re-sync with the server record, but never clobber unsaved edits (e.g. after a document upload).
@@ -170,7 +203,7 @@ export function WorkerForm({
 
   const submit = handleSubmit(async (v) => {
     setFormError(null);
-    const body: OpsWorkerInput = {
+    const body: OpsWorkerFormBody = {
       full_name: v.full_name.trim(),
       full_name_ne: nul(v.full_name_ne),
       phone: v.phone,
@@ -197,6 +230,7 @@ export function WorkerForm({
         nstb_level: s.nstb_level,
         certificate_no: nul(s.certificate_no),
       })),
+      languages: toLanguagesPayload(v.languages),
     };
     try {
       await onSubmit(body);
@@ -205,8 +239,14 @@ export function WorkerForm({
       const skillFields = v.skills.flatMap((_, i) =>
         ["trade", "years_experience", "nstb_level", "certificate_no"].map((k) => `skills.${i}.${k}`),
       );
+      const languageFields = v.languages.flatMap((_, i) =>
+        ["language", "proficiency"].map((k) => `languages.${i}.${k}`),
+      );
       setFormError(
-        handleFormError(err, form.setError, t, { fields: [...TOP_FIELDS, ...skillFields], toast: false }),
+        handleFormError(err, form.setError, t, {
+          fields: [...TOP_FIELDS, ...skillFields, ...languageFields],
+          toast: false,
+        }),
       );
     }
   });
@@ -355,6 +395,75 @@ export function WorkerForm({
                         onClick={() => skills.remove(i)}
                         aria-label={tf("remove_skill")}
                         title={tf("remove_skill")}
+                      >
+                        <Trash2 aria-hidden />
+                      </Button>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </Card>
+
+      <Card className="space-y-4 p-5 sm:p-6">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h2 className="text-base font-semibold text-fg">{tl("title")}</h2>
+            <p className="text-sm text-fg-muted">{tl("hint")}</p>
+          </div>
+          <Button
+            variant="secondary"
+            size="sm"
+            disabled={languages.fields.length >= MAX_WORKER_LANGUAGES}
+            onClick={() => languages.append({ language: "", proficiency: "conversational" })}
+          >
+            <Plus aria-hidden />
+            {tl("add")}
+          </Button>
+        </div>
+        {errors.languages?.message || errors.languages?.root?.message ? (
+          <p role="alert" className="text-xs font-medium text-danger">
+            {errors.languages?.message ?? errors.languages?.root?.message}
+          </p>
+        ) : null}
+        {languages.fields.length === 0 ? (
+          <p className="flex items-center justify-center gap-2 rounded-lg border border-dashed border-border px-4 py-6 text-center text-sm text-fg-muted">
+            <Languages className="size-4" aria-hidden />
+            {tl("empty")}
+          </p>
+        ) : (
+          <ul className="space-y-3">
+            {languages.fields.map((row, i) => {
+              const e = errors.languages?.[i];
+              return (
+                <li key={row.id} className="rounded-lg border border-border bg-surface-muted/40 p-3.5">
+                  <div className="grid gap-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,1.5fr)_auto] sm:items-start">
+                    <Field id={`languages.${i}.language`} label={tl("language")} error={e?.language?.message}>
+                      <NativeSelect
+                        {...register(`languages.${i}.language`)}
+                        placeholder={tl("choose_language")}
+                        options={WORKER_LANGUAGE_CODES.map((c) => ({ value: c, label: tl(`names.${c}`) }))}
+                      >
+                        {row.language && !isKnownLanguage(row.language) ? (
+                          <option value={row.language}>{row.language}</option>
+                        ) : null}
+                      </NativeSelect>
+                    </Field>
+                    <Field id={`languages.${i}.proficiency`} label={tl("proficiency")} error={e?.proficiency?.message}>
+                      <NativeSelect
+                        {...register(`languages.${i}.proficiency`)}
+                        options={LANGUAGE_PROFICIENCIES.map((p) => ({ value: p, label: tl(`proficiency_options.${p}`) }))}
+                      />
+                    </Field>
+                    <div className="flex justify-end sm:pt-7">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => languages.remove(i)}
+                        aria-label={tl("remove", { n: i + 1 })}
+                        title={tl("remove", { n: i + 1 })}
                       >
                         <Trash2 aria-hidden />
                       </Button>

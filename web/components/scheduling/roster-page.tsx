@@ -1,7 +1,16 @@
 "use client";
 import * as React from "react";
 import Link from "next/link";
-import { CalendarClock, ChevronLeft, ChevronRight, Copy, Save, Undo2 } from "lucide-react";
+import {
+  AlertTriangle,
+  CalendarClock,
+  ChevronLeft,
+  ChevronRight,
+  Copy,
+  Save,
+  Undo2,
+  X,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useSession } from "@/components/providers/session";
@@ -9,21 +18,30 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState, ErrorState, TableSkeleton } from "@/components/ui/feedback";
 import { PageHeader, Toolbar } from "@/components/ui/page-header";
+import { Tooltip } from "@/components/ui/tooltip";
 import { RowHeader, Table, TableContainer, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
 import { WorkforceSiteSelect } from "@/components/workforce/shared";
 import { useCopyRosterWeek, useRoster, useSaveRoster } from "@/lib/api/hooks/scheduling";
-import type { RosterDay, RosterRow, RosterShift } from "@/lib/api/types-scheduling";
+import type {
+  RosterDay,
+  RosterRow,
+  RosterShift,
+  RosterWarningCode,
+} from "@/lib/api/types-scheduling";
 import { addDays, todayIso } from "@/lib/format";
 import { toastError } from "@/lib/forms";
 import { useFormat } from "@/lib/use-format";
 import { cn } from "@/lib/utils";
 import {
   cellValue,
+  cellWarningText,
   editKey,
   editsToEntries,
   isActiveOn,
   OFF,
   type RosterEdits,
+  summariseWarnings,
+  type WarningSummary,
   weekStartOf,
 } from "./utils";
 
@@ -37,12 +55,16 @@ export function RosterPage() {
   const [site, setSite] = React.useState("");
   const [edits, setEdits] = React.useState<RosterEdits>({});
   const [copyOpen, setCopyOpen] = React.useState(false);
+  const [saveWarnings, setSaveWarnings] = React.useState<WarningSummary[]>([]);
 
   const { data, isLoading, error, refetch, isFetching } = useRoster(weekStart, site || undefined);
   const save = useSaveRoster();
   const copy = useCopyRosterWeek();
 
-  React.useEffect(() => setEdits({}), [weekStart, site]);
+  React.useEffect(() => {
+    setEdits({});
+    setSaveWarnings([]);
+  }, [weekStart, site]);
 
   const rows = data?.rows ?? [];
   const pending = data ? editsToEntries(rows, edits) : [];
@@ -57,7 +79,13 @@ export function RosterPage() {
   const doSave = () =>
     save.mutate(pending, {
       onSuccess: (r) => {
-        toast.success(t("saved_toast", { count: r.saved + r.cleared }));
+        const notified = r.notified_workers ?? 0;
+        toast.success(t("saved_toast", { count: r.saved + r.cleared }), {
+          description: notified > 0 ? t("notified", { count: notified }) : undefined,
+        });
+        const summary = summariseWarnings(r.warnings, rows, tAll("common.none"));
+        setSaveWarnings(summary);
+        if (summary.length) toast.warning(t("save_warnings_toast", { count: summary.length }));
         setEdits({});
       },
       onError: (e) => toastError(e, tAll),
@@ -68,7 +96,11 @@ export function RosterPage() {
       { from_week_start: addDays(weekStart, -7), to_week_start: weekStart, site: site || null },
       {
         onSuccess: (r) => {
-          toast.success(t("copied_toast", { count: r.copied }));
+          const notified = r.notified_workers ?? 0;
+          toast.success(t("copied_toast", { count: r.copied }), {
+            description: notified > 0 ? t("notified", { count: notified }) : undefined,
+          });
+          setSaveWarnings([]);
           setEdits({});
           setCopyOpen(false);
         },
@@ -140,6 +172,10 @@ export function RosterPage() {
         </div>
       </Toolbar>
 
+      {saveWarnings.length ? (
+        <SaveWarnings items={saveWarnings} onDismiss={() => setSaveWarnings([])} />
+      ) : null}
+
       {isLoading ? (
         <TableSkeleton rows={6} cols={8} />
       ) : error || !data ? (
@@ -164,6 +200,7 @@ export function RosterPage() {
           days={data.days}
           rows={rows}
           shifts={data.shifts}
+          warningLabels={data.warning_labels}
           edits={edits}
           onEdit={(k, v) => setEdits((e) => ({ ...e, [k]: v }))}
           busy={isFetching && !isLoading}
@@ -189,6 +226,7 @@ function RosterGrid({
   days,
   rows,
   shifts,
+  warningLabels,
   edits,
   onEdit,
   busy,
@@ -197,6 +235,7 @@ function RosterGrid({
   days: RosterDay[];
   rows: RosterRow[];
   shifts: RosterShift[];
+  warningLabels?: Partial<Record<RosterWarningCode, string>>;
   edits: RosterEdits;
   onEdit: (key: string, value: string) => void;
   busy: boolean;
@@ -245,27 +284,49 @@ function RosterGrid({
                 const value = key in edits ? edits[key] : cellValue(r.cells[d.date]);
                 const changed = key in edits && edits[key] !== cellValue(r.cells[d.date]);
                 const active = isActiveOn(r, d.date);
+                // Server warnings describe the saved cell — hide them while the cell is being edited.
+                const warns = changed ? [] : cellWarningText(r, d.date, warningLabels);
                 return (
                   <Td key={d.date} className={cn("px-1.5", changed && "bg-brand-subtle")}>
                     {active ? (
-                      <select
-                        value={value}
-                        onChange={(e) => onEdit(key, e.target.value)}
-                        aria-label={t("cell_label", { name: r.worker_name, date: f.bs(d.date_bs) })}
-                        className={cn(
-                          "border-border bg-surface text-fg focus-visible:ring-primary-500 h-9 w-full min-w-24 rounded-md border px-1.5 text-xs focus-visible:ring-2",
-                          value === OFF && "bg-surface-muted text-fg-muted",
-                          value === "" && "text-fg-subtle",
-                        )}
-                      >
-                        <option value="">{t("unassigned")}</option>
-                        {shifts.map((s) => (
-                          <option key={s.id} value={s.id}>
-                            {s.name}
-                          </option>
-                        ))}
-                        <option value={OFF}>{t("off")}</option>
-                      </select>
+                      <div className="flex items-center gap-1">
+                        <select
+                          value={value}
+                          onChange={(e) => onEdit(key, e.target.value)}
+                          aria-label={t("cell_label", {
+                            name: r.worker_name,
+                            date: f.bs(d.date_bs),
+                          })}
+                          className={cn(
+                            "border-border bg-surface text-fg focus-visible:ring-primary-500 h-9 w-full min-w-24 rounded-md border px-1.5 text-xs focus-visible:ring-2",
+                            value === OFF && "bg-surface-muted text-fg-muted",
+                            value === "" && "text-fg-subtle",
+                          )}
+                        >
+                          <option value="">{t("unassigned")}</option>
+                          {shifts.map((s) => (
+                            <option key={s.id} value={s.id}>
+                              {s.name}
+                            </option>
+                          ))}
+                          <option value={OFF}>{t("off")}</option>
+                        </select>
+                        {warns.length ? (
+                          <Tooltip content={warns.join(" · ")}>
+                            <button
+                              type="button"
+                              className="text-warning focus-visible:ring-primary-500 shrink-0 rounded-sm focus-visible:ring-2 focus-visible:outline-none"
+                              aria-label={t("warning_label", {
+                                name: r.worker_name,
+                                date: f.bs(d.date_bs),
+                                warnings: warns.join(", "),
+                              })}
+                            >
+                              <AlertTriangle className="size-4" aria-hidden />
+                            </button>
+                          </Tooltip>
+                        ) : null}
+                      </div>
                     ) : (
                       <span className="text-fg-subtle block text-center text-xs">
                         {tAll("common.none")}
@@ -279,6 +340,39 @@ function RosterGrid({
         </TBody>
       </Table>
     </TableContainer>
+  );
+}
+
+function SaveWarnings({ items, onDismiss }: { items: WarningSummary[]; onDismiss: () => void }) {
+  const t = useTranslations("scheduling");
+  const f = useFormat();
+  return (
+    <div
+      role="status"
+      className="border-warning/30 bg-warning-subtle text-warning mb-4 flex items-start gap-2 rounded-md border px-3 py-2.5 text-sm"
+    >
+      <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
+      <div className="min-w-0 flex-1">
+        <p className="font-medium">{t("save_warnings_title", { count: items.length })}</p>
+        <p className="text-fg-muted mt-0.5 text-xs">{t("save_warnings_hint")}</p>
+        <ul className="text-fg-body mt-1.5 space-y-0.5">
+          {items.map((w) => (
+            <li key={`${w.employment_id}|${w.date}`}>
+              <span className="font-medium">{w.name}</span> ·{" "}
+              <span className="tabular">{f.dateText(w.date)}</span> — {w.messages.join(", ")}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <button
+        type="button"
+        onClick={onDismiss}
+        aria-label={t("save_warnings_dismiss")}
+        className="text-fg-muted hover:text-fg focus-visible:ring-primary-500 shrink-0 rounded-sm focus-visible:ring-2 focus-visible:outline-none"
+      >
+        <X className="size-4" aria-hidden />
+      </button>
+    </div>
   );
 }
 

@@ -69,7 +69,12 @@
     "ops_system": "System health",
     "ops_billing": "Billing & invoices",
     "ops_analytics": "Product analytics",
-    "ops_notifications": "Message templates"
+    "ops_notifications": "Message templates",
+    "ops_flags": "Feature flags",
+    "corrections": "Hajiri corrections",
+    "ratings": "Ratings",
+    "ops_ratings": "Rating moderation",
+    "ops_matching": "Matching settings"
   },
   "term": {
     "basic_salary": "Basic salary",

@@ -118,3 +118,65 @@ Notification inbox with unread badge (poll `unread-count` on resume; FCM registr
 
 ## 7. Docs & operations
 `docs/ops/` SOPs: KYC/identity verification, credential verification, employer verification (KYB), work-history reference checks, fraud escalation, dispute handling SLA, support scripts (worker + employer, en/ne key phrases), employer onboarding playbook, field-agent worker registration camp guide, foreign-employment document guidance. `docs/ROADMAP.md` (phases 0–6 mapped to what is built, behind which gate), `docs/PRODUCTION_CHECKLIST.md` (every item with status: done / partial / needs-you, linked to code or doc), `docs/GO_TO_MARKET.md` (merged strategy + reference), `docs/API_CONVENTIONS.md` (auth schemes, errors, request ids, idempotency, pagination, versioning, webhooks signature verification), `docs/ARCHITECTURE.md` (actual system with diagram).
+
+## 8. Platform & payroll completion (checklist R001 · R003 · R005 · C015/X012 · D005)
+
+All defaults reproduce the earlier behaviour exactly; existing clients need no change.
+
+**Hourly wage type (R005)** — `wage_type` everywhere (`Employment`, `JobOpening`, `JobOffer`, `Payslip`)
+accepts `monthly|daily|hourly`.
+- `Employment` gains `hourly_wage` (money string|null) and `part_time` (bool, default false); `JobOffer`
+  gains `hourly_wage`; the join/offer payloads accept `hourly_wage` (and `part_time` on join).
+  Validation: hourly `hourly_wage ≥ MinimumWage.hourly` (101), or `≥ hourly_part_time` (107) when
+  `part_time` → 400 `below_minimum_wage` with `fields.hourly_wage`; missing → `validation_error`.
+  Jobs: `wage_type=hourly` → `wage_amount ≥ MinimumWage.hourly`. `monthly_gross` for hourly = hourly × 8 × 30.
+- `Attendance` gains `hours_worked` (decimal string `"9.50"`|null); `POST /org/attendance/bulk` records accept
+  optional `hours_worked` (0–24).
+- Payroll (hourly): hours per worked day = `hours_worked`, else check-out − check-in − shift `break_minutes`,
+  else 8 × day fraction (present 1, half day = policy fraction). Regular hours ≤ 8/day; the excess is
+  overtime (plus `overtime_minutes` on days with unknown hours). `wage = hourly_wage × regular_hours`, split
+  basic/DA by the minimum-wage ratio; OT = hours × hourly_wage × OT multiplier; festival base =
+  hourly_wage × 8 × 30 × ratio. `Payslip` gains `regular_hours` (string `"14.00"`, 0 for other wage types).
+
+**Pay policy (R003)** — `PayPolicy(organization OneToOne, ot_multiplier ≥ 1.5 (Labour Act floor; engine
+clamps), festival_allowance_rule one_month_basic|custom_amount|none, festival_custom_amount,
+festival_month 1–12|null, rounding two_decimals|nearest_rupee, weekly_off_paid=true, half_day_fraction=0.5)`.
+- `GET /org/pay-policy` (owner/admin/hr) → `{ot_multiplier "1.50", festival_allowance_rule, festival_custom_amount
+  "0.00", festival_month, rounding, weekly_off_paid, half_day_fraction "0.50", updated_at|null, is_default}`
+  (defaults when the org has none) · `PATCH /org/pay-policy` (owner/admin; audited `payroll.pay_policy.update`).
+- `POST /org/payroll-runs` → `include_festival_allowance` is now optional: omitted/null = true only when the
+  run's BS month equals `festival_month` (and the rule isn't `none`).
+
+**Pay groups (R001)** — `PayGroup(id, organization, name unique per org, site_ids [], wage_types [], contractor_ids [],
+pay_day 1–32|null, is_active, created_at)`. An employment belongs to the oldest active group whose non-empty
+criteria all match; otherwise to the null group.
+- CRUD `/org/pay-groups` (owner/admin/hr; audited); responses add `employment_count` (active employments now in
+  the group). `DELETE` of a group with runs → 400 `invalid_state` (deactivate instead).
+- `PayrollRun` gains `pay_group` → responses `pay_group: {id, name}|null`; create accepts `pay_group_id`.
+  Unique per `(org, bs_year, bs_month, pay_group)` with the null group once per month (400 `duplicate`).
+  A run never includes an employment that already has a payslip in another run of the same org and month.
+  Attendance locking stays month-wide: any approved run locks the month for everyone.
+
+**Feature flags (C015/X012)** — `core.FeatureFlag(key slug PK, description, enabled, rollout all|orgs|percent,
+org_ids [], percent 0–100, client_visible, updated_by, updated_at)`; `apps.core.flags.is_enabled(key,
+organization=None, user=None)`: row decides, else settings fallback (`kyb_required_for_shortlist`,
+`ird_cbms_enabled`, `telemetry`, `kyc_four_eyes`, `payout_esewa|khalti|connectips`), else off. Percent rollout
+hashes key + org id (user id without org). Cached `FEATURE_FLAG_CACHE_SECONDS` (30).
+- `GET /flags` (any signed-in user; optional `X-Org-Id`) → `{flags: {key: bool}}` — client-visible flags only.
+- Ops (superadmin, audited `ops.flag.*`): `GET /ops/flags` → `{results: [Flag], settings_defaults: [{key, default}]}`
+  · `POST /ops/flags` · `GET|PATCH|DELETE /ops/flags/{key}`. Flag = model fields + `updated_by {id, full_name}|null`,
+  `has_settings_fallback`.
+
+**OTP resend cooldown (D005)** — `POST /auth/otp/request` within `OTP_RESEND_COOLDOWN_SECONDS` (30) of the last
+code for the phone, or over `OTP_MAX_PER_HOUR` → 429 `{"error": {"code": "otp_rate_limited", …, "retry_after": 27}}`
+plus `Retry-After` header. Dev/compose default the cooldown to 0.
+
+**Payout webhooks** — optional `X-Timestamp` (unix seconds): when present the HMAC covers `ts + "." + body` and
+|now − ts| ≤ `PAYOUT_WEBHOOK_MAX_SKEW_SECONDS` (300) else 403 `invalid_signature`; without it the raw body is
+signed (unchanged). A verified signature replayed within 24 h → 409 `webhook_replayed` (forgotten again if
+processing fails, so provider retries work).
+
+**KYC four-eyes** — flag/setting `kyc_four_eyes` (default off). On: the first `POST /ops/workers/{id}/verify
+{status: verified}` keeps the worker `pending` and stores `risk.VerificationReview(stage=first)`; a different
+verifier's `verified` finalises (`stage=final`); the same verifier → 400 `invalid_state`; `rejected` is always
+final. The verify response gains `kyc_review: {required: true, first_review_by: {id, full_name}, first_review_at}|null`.

@@ -1890,3 +1890,425 @@ msgstr "नगद"
 msgctxt "billing2"
 msgid "Other"
 msgstr "अन्य"
+
+# --- complete2: payroll hourly/policy/groups, KYC four-eyes (platform agent)
+msgctxt "complete2"
+msgid "Hourly wage"
+msgstr "घण्टाको ज्याला"
+
+msgctxt "complete2"
+msgid "This field is required for hourly wage."
+msgstr "घण्टाको ज्यालाका लागि यो विवरण आवश्यक छ।"
+
+msgctxt "complete2"
+msgid "Hourly wage must be at least %(amount)s (minimum wage)."
+msgstr "घण्टाको ज्याला कम्तीमा %(amount)s हुनुपर्छ (न्यूनतम पारिश्रमिक)।"
+
+msgctxt "complete2"
+msgid "Must be monthly, daily or hourly."
+msgstr "मासिक, दैनिक वा घण्टाको मध्ये एक हुनुपर्छ।"
+
+msgctxt "complete2"
+msgid "Overtime must be paid at least 1.5× (Labour Act 2074)."
+msgstr "ओभरटाइम कम्तीमा १.५ गुणा दिनुपर्छ (श्रम ऐन २०७४)।"
+
+msgctxt "complete2"
+msgid "Must be 5× or less."
+msgstr "५ गुणा वा कम हुनुपर्छ।"
+
+msgctxt "complete2"
+msgid "Must be between 0 and 1."
+msgstr "० र १ बीच हुनुपर्छ।"
+
+msgctxt "complete2"
+msgid "Must be a BS month from 1 to 12."
+msgstr "१ देखि १२ सम्मको वि.सं. महिना हुनुपर्छ।"
+
+msgctxt "complete2"
+msgid "Enter the festival allowance amount."
+msgstr "चाडपर्व भत्ताको रकम लेख्नुहोस्।"
+
+msgctxt "complete2"
+msgid "A pay group with this name already exists."
+msgstr "यो नामको तलब समूह पहिले नै छ।"
+
+msgctxt "complete2"
+msgid "Must be a day from 1 to 32."
+msgstr "१ देखि ३२ सम्मको गते हुनुपर्छ।"
+
+msgctxt "complete2"
+msgid "Unknown id: %(id)s"
+msgstr "अज्ञात आईडी: %(id)s"
+
+msgctxt "complete2"
+msgid "A different verifier must confirm this worker (four-eyes check)."
+msgstr "यो कामदारलाई अर्कै प्रमाणीकरणकर्ताले पुष्टि गर्नुपर्छ (दोहोरो जाँच)।"
+
+msgctxt "complete1"
+msgid "Only a rejected credential can be resubmitted."
+msgstr "अस्वीकृत प्रमाणपत्र मात्र फेरि पेश गर्न सकिन्छ।"
+
+msgctxt "complete1"
+msgid "This credential has already been resubmitted."
+msgstr "यो प्रमाणपत्र पहिल्यै फेरि पेश गरिसकिएको छ।"
+
+msgctxt "complete1"
+msgid "Paused"
+msgstr "रोकिएको"
+
+msgctxt "complete1"
+msgid "In person"
+msgstr "प्रत्यक्ष"
+
+msgctxt "complete1"
+msgid "Phone"
+msgstr "फोन"
+
+msgctxt "complete1"
+msgid "Video call"
+msgstr "भिडियो कल"
+
+msgctxt "complete1"
+msgid "Trade test"
+msgstr "सीप परीक्षण"
+
+msgctxt "complete1"
+msgid "Scheduled"
+msgstr "तय भएको"
+
+msgctxt "complete1"
+msgid "Passed"
+msgstr "उत्तीर्ण"
+
+msgctxt "complete1"
+msgid "Did not pass"
+msgstr "उत्तीर्ण भएन"
+
+msgctxt "complete1"
+msgid "Did not attend"
+msgstr "उपस्थित भएन"
+
+msgctxt "complete1"
+msgid "This job is paused. Resume it first."
+msgstr "यो काम रोकिएको छ। पहिले फेरि सुरु गर्नुहोस्।"
+
+msgctxt "complete1"
+msgid "This job is not open."
+msgstr "यो काम खुला छैन।"
+
+msgctxt "complete1"
+msgid "You can invite workers who worked for you before, or who shared their Skill Passport with you."
+msgstr "तपाईंकहाँ पहिले काम गरेका वा तपाईंलाई सीप राहदानी पठाएका कामदारलाई मात्र बोलाउन सकिन्छ।"
+
+msgctxt "complete1"
+msgid "This Skill Passport link is expired or revoked."
+msgstr "यो सीप राहदानी लिङ्कको म्याद सकियो वा रद्द भयो।"
+
+msgctxt "complete1"
+msgid "This worker is already in this job's pipeline."
+msgstr "यो कामदार पहिल्यै यस कामको सूचीमा हुनुहुन्छ।"
+
+msgctxt "complete1"
+msgid "Interviews can be scheduled for shortlisted or interview-stage candidates."
+msgstr "छनोट भएका वा अन्तर्वार्ता चरणका उम्मेदवारका लागि मात्र अन्तर्वार्ता तय गर्न सकिन्छ।"
+
+msgctxt "complete1"
+msgid "The assignee must be an active member of your organization."
+msgstr "जिम्मेवार व्यक्ति तपाईंको संस्थाको सक्रिय सदस्य हुनुपर्छ।"
+
+msgctxt "complete1"
+msgid "The owner must be a KaamSathi staff member."
+msgstr "जिम्मेवार व्यक्ति KaamSathi कर्मचारी हुनुपर्छ।"
+
+msgctxt "complete1"
+msgid "Pick a trade, credential, NSTB level or minimum years."
+msgstr "पेशा, प्रमाणपत्र, NSTB तह वा न्यूनतम वर्ष छान्नुहोस्।"
+
+msgctxt "complete1"
+msgid "A job can have at most 10 requirements."
+msgstr "एउटा काममा बढीमा १० वटा आवश्यकता राख्न सकिन्छ।"
+
+msgctxt "complete1"
+msgid "An application can have at most 10 tags."
+msgstr "एउटा आवेदनमा बढीमा १० वटा ट्याग राख्न सकिन्छ।"
+
+msgctxt "complete1"
+msgid "Worker is on approved leave this day."
+msgstr "यो दिन कामदार स्वीकृत बिदामा हुनुहुन्छ।"
+
+msgctxt "complete1"
+msgid "This day is a public holiday."
+msgstr "यो दिन सार्वजनिक बिदा हो।"
+
+msgctxt "complete1"
+msgid "This day is the weekly day off."
+msgstr "यो दिन साप्ताहिक बिदा हो।"
+
+msgctxt "complete1"
+msgid "Worker has another shift or attendance elsewhere this day."
+msgstr "यो दिन कामदारको अर्को ठाउँमा सिफ्ट वा हाजिरी छ।"
+
+msgctxt "complete1"
+msgid "You were not employed here on this date."
+msgstr "यो मितिमा तपाईं यहाँ कार्यरत हुनुहुन्नथ्यो।"
+
+msgctxt "complete1"
+msgid "Payroll for this month is approved; ask your employer."
+msgstr "यो महिनाको तलब स्वीकृत भइसक्यो; आफ्नो रोजगारदातालाई सोध्नुहोस्।"
+
+msgctxt "complete1"
+msgid "Date cannot be in the future."
+msgstr "मिति भविष्यको हुन सक्दैन।"
+
+msgctxt "complete1"
+msgid "Check-out must be after check-in."
+msgstr "चेक-आउट चेक-इनपछि हुनुपर्छ।"
+
+msgctxt "complete1"
+msgid "You already have a pending correction for this day."
+msgstr "यो दिनको लागि तपाईंको अनुरोध पहिल्यै बाँकी छ।"
+
+msgctxt "complete1"
+msgid "Not verified"
+msgstr "प्रमाणित नभएको"
+
+msgctxt "complete1"
+msgid "Verification pending"
+msgstr "प्रमाणीकरण बाँकी"
+
+msgctxt "complete1"
+msgid "Verified provider"
+msgstr "प्रमाणित प्रदायक"
+
+msgctxt "complete1"
+msgid "Verification rejected"
+msgstr "प्रमाणीकरण अस्वीकृत"
+
+msgctxt "complete1"
+msgid "End time must be after the start time."
+msgstr "अन्त्य समय सुरु समयपछि हुनुपर्छ।"
+
+#, python-format
+msgctxt "complete1"
+msgid "Attendance %(pct)s%% is below the %(req)s%% this course requires."
+msgstr "हाजिरी %(pct)s%% छ, यो तालिमलाई %(req)s%% चाहिन्छ।"
+
+msgctxt "complete1"
+msgid "Record the CTEVT affiliation number before verifying."
+msgstr "प्रमाणित गर्नुअघि CTEVT सम्बन्धन नम्बर राख्नुहोस्।"
+
+msgctxt "complete1"
+msgid "Give a reason for the rejection."
+msgstr "अस्वीकृत गर्नुको कारण लेख्नुहोस्।"
+
+msgctxt "complete1"
+msgid "Appealed"
+msgstr "पुनरावेदन गरिएको"
+
+msgctxt "complete1"
+msgid "Appeal decided"
+msgstr "पुनरावेदनमा निर्णय भयो"
+
+msgctxt "complete1"
+msgid "Decision upheld"
+msgstr "निर्णय कायम"
+
+msgctxt "complete1"
+msgid "Decision overturned"
+msgstr "निर्णय उल्टियो"
+
+msgctxt "complete1"
+msgid "Worker"
+msgstr "कामदार"
+
+msgctxt "complete1"
+msgid "Employer"
+msgstr "रोजगारदाता"
+
+msgctxt "complete1"
+msgid "KaamSathi staff"
+msgstr "KaamSathi कर्मचारी"
+
+msgctxt "complete1"
+msgid "This decision can no longer be appealed (once, within 14 days of the decision)."
+msgstr "यो निर्णयमा अब पुनरावेदन गर्न मिल्दैन (निर्णय भएको १४ दिनभित्र एक पटक मात्र)।"
+
+msgctxt "complete1"
+msgid "A different staff member must decide the appeal."
+msgstr "पुनरावेदनको निर्णय अर्को कर्मचारीले गर्नुपर्छ।"
+
+msgctxt "complete1"
+msgid "This dispute has no open appeal."
+msgstr "यो विवादमा खुला पुनरावेदन छैन।"
+
+msgctxt "complete1"
+msgid "Evidence can't be added to a closed dispute."
+msgstr "बन्द विवादमा प्रमाण थप्न मिल्दैन।"
+
+msgctxt "complete1"
+msgid "A dispute can have at most 10 files."
+msgstr "एउटा विवादमा बढीमा १० वटा फाइल राख्न सकिन्छ।"
+
+msgctxt "complete1"
+msgid "This comment can't be flagged."
+msgstr "यो टिप्पणी रिपोर्ट गर्न मिल्दैन।"
+
+msgctxt "complete1"
+msgid "This rating is already voided."
+msgstr "यो मूल्याङ्कन पहिल्यै रद्द भइसकेको छ।"
+
+msgctxt "complete1"
+msgid "Nepali"
+msgstr "नेपाली"
+
+msgctxt "complete1"
+msgid "English"
+msgstr "अंग्रेजी"
+
+msgctxt "complete1"
+msgid "Hindi"
+msgstr "हिन्दी"
+
+msgctxt "complete1"
+msgid "Maithili"
+msgstr "मैथिली"
+
+msgctxt "complete1"
+msgid "Bhojpuri"
+msgstr "भोजपुरी"
+
+msgctxt "complete1"
+msgid "Nepal Bhasa (Newari)"
+msgstr "नेपाल भाषा (नेवारी)"
+
+msgctxt "complete1"
+msgid "Tharu"
+msgstr "थारू"
+
+msgctxt "complete1"
+msgid "Tamang"
+msgstr "तामाङ"
+
+msgctxt "complete1"
+msgid "Magar"
+msgstr "मगर"
+
+msgctxt "complete1"
+msgid "Gurung"
+msgstr "गुरुङ"
+
+msgctxt "complete1"
+msgid "Limbu"
+msgstr "लिम्बू"
+
+msgctxt "complete1"
+msgid "Rai (Bantawa)"
+msgstr "राई (बान्तवा)"
+
+msgctxt "complete1"
+msgid "Sherpa"
+msgstr "शेर्पा"
+
+msgctxt "complete1"
+msgid "Doteli"
+msgstr "डोटेली"
+
+msgctxt "complete1"
+msgid "Awadhi"
+msgstr "अवधी"
+
+msgctxt "complete1"
+msgid "Urdu"
+msgstr "उर्दू"
+
+msgctxt "complete1"
+msgid "Arabic"
+msgstr "अरबी"
+
+msgctxt "complete1"
+msgid "Malay"
+msgstr "मलय"
+
+msgctxt "complete1"
+msgid "Japanese"
+msgstr "जापानी"
+
+msgctxt "complete1"
+msgid "Korean"
+msgstr "कोरियाली"
+
+msgctxt "complete1"
+msgid "Chinese"
+msgstr "चिनियाँ"
+
+msgctxt "complete1"
+msgid "Basic"
+msgstr "आधारभूत"
+
+msgctxt "complete1"
+msgid "Conversational"
+msgstr "कुराकानी गर्न सक्ने"
+
+msgctxt "complete1"
+msgid "Fluent"
+msgstr "धाराप्रवाह"
+
+msgctxt "complete1"
+msgid "Native"
+msgstr "मातृभाषा"
+
+msgctxt "complete1"
+msgid "Nepali (Devanagari)"
+msgstr "नेपाली (देवनागरी)"
+
+msgctxt "complete1"
+msgid "Nepali (Roman)"
+msgstr "नेपाली (रोमन)"
+
+msgctxt "complete1"
+msgid "Other"
+msgstr "अन्य"
+
+msgctxt "complete1"
+msgid "Add a profile photo"
+msgstr "प्रोफाइल फोटो थप्नुहोस्"
+
+msgctxt "complete1"
+msgid "Add your citizenship or national ID"
+msgstr "नागरिकता वा राष्ट्रिय परिचयपत्र थप्नुहोस्"
+
+msgctxt "complete1"
+msgid "Add at least one skill"
+msgstr "कम्तीमा एउटा सीप थप्नुहोस्"
+
+msgctxt "complete1"
+msgid "Add the languages you speak"
+msgstr "तपाईंले बोल्ने भाषाहरू थप्नुहोस्"
+
+msgctxt "complete1"
+msgid "Set your availability and expected wage"
+msgstr "उपलब्धता र अपेक्षित तलब राख्नुहोस्"
+
+msgctxt "complete1"
+msgid "Get a certificate verified"
+msgstr "प्रमाणपत्र प्रमाणित गराउनुहोस्"
+
+msgctxt "complete1"
+msgid "Add your work history"
+msgstr "कामको अनुभव थप्नुहोस्"
+
+msgctxt "complete1"
+msgid "Add bank or wallet details for salary"
+msgstr "तलबका लागि बैंक वा वालेट विवरण थप्नुहोस्"
+
+msgctxt "complete1"
+msgid "Visible"
+msgstr "देखिने"
+
+msgctxt "complete1"
+msgid "Flagged for review"
+msgstr "समीक्षाका लागि रिपोर्ट गरिएको"
+
+msgctxt "complete1"
+msgid "Hidden by KaamSathi"
+msgstr "KaamSathi ले लुकाएको"

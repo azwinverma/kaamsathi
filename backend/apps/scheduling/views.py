@@ -45,7 +45,7 @@ class RosterScopeMixin(OrgScopedMixin):
         qs = (
             Employment.objects.filter(organization=self.org, start_date__lte=end)
             .filter(Q(end_date__isnull=True) | Q(end_date__gte=start))
-            .select_related("worker", "shift", "site")
+            .select_related("worker", "shift", "site", "organization")
         )
         if self.is_supervisor:
             qs = qs.filter(site_id__in=self.supervisor_site_ids())
@@ -64,9 +64,15 @@ class RosterView(RosterScopeMixin, APIView):
         for e in RosterEntry.objects.filter(employment__in=emps, date__range=(start, end)):
             entries.setdefault(e.employment_id, {})[e.date] = e
         days = services.week_days(start, self.org)
+        conflicts = services.conflicts_for(
+            (emp, day) for emp in emps for day, entry in entries.get(emp.id, {}).items() if not entry.is_off
+        )
         rows = []
         for emp in emps:
             mine = entries.get(emp.id, {})
+            warnings = {
+                day.isoformat(): codes for (emp_id, day), codes in conflicts.items() if emp_id == emp.id
+            }
             rows.append(
                 {
                     "employment_id": str(emp.id),
@@ -79,6 +85,8 @@ class RosterView(RosterScopeMixin, APIView):
                     "cells": {
                         d["date"]: services.cell(mine.get(dt.date.fromisoformat(d["date"]))) for d in days
                     },
+                    # O005: {"<date>": [on_leave|holiday|weekly_off|conflict_elsewhere]} — warnings only
+                    "warnings": warnings,
                 }
             )
         return Response(
@@ -90,6 +98,7 @@ class RosterView(RosterScopeMixin, APIView):
                 "days": days,
                 "shifts": [services.shift_ref(s) for s in Shift.objects.filter(organization=self.org)],
                 "rows": rows,
+                "warning_labels": {k: str(v) for k, v in services.conflict_labels().items()},
             }
         )
 
@@ -105,7 +114,12 @@ class RosterView(RosterScopeMixin, APIView):
         s.is_valid(raise_exception=True)
         data = s.validated_data
         emp_ids = {d["employment_id"] for d in data}
-        emps = {e.id: e for e in Employment.objects.filter(organization=self.org, pk__in=emp_ids)}
+        emps = {
+            e.id: e
+            for e in Employment.objects.filter(organization=self.org, pk__in=emp_ids).select_related(
+                "organization"
+            )
+        }
         shifts = {x.id: x for x in Shift.objects.filter(organization=self.org)}
         sites = {x.id: x for x in Site.objects.filter(organization=self.org)}
         allowed_sites = self.supervisor_site_ids() if self.is_supervisor else None
@@ -146,7 +160,14 @@ class RosterView(RosterScopeMixin, APIView):
         if errors:
             raise APIError("validation_error", fields=errors)
         result = services.upsert(entries, request.user)
+        changed = result.pop("changed")
         log(request, "roster.update", None, organization=self.org, object_type="rosterentry", changes=result)
+        result["warnings"] = services.warnings_list(
+            services.conflicts_for(
+                (e["employment"], e["date"]) for e in entries if e.get("shift") and not e.get("is_off")
+            )
+        )
+        result["notified_workers"] = services.notify_roster_changes(changed)
         return Response(result)
 
 
@@ -162,7 +183,8 @@ class RosterCopyWeekView(RosterScopeMixin, APIView):
             raise PermissionDenied()
         start, end = d["from_week_start"], d["from_week_start"] + dt.timedelta(days=6)
         emps = self.employments(start, end, site)
-        copied = services.copy_week(emps, d["from_week_start"], d["to_week_start"], request.user)
+        changed: list = []
+        copied = services.copy_week(emps, d["from_week_start"], d["to_week_start"], request.user, changed)
         log(
             request,
             "roster.copy_week",
@@ -171,7 +193,8 @@ class RosterCopyWeekView(RosterScopeMixin, APIView):
             object_type="rosterentry",
             changes={**s.data, "copied": copied},
         )
-        return Response({"copied": copied})
+        notified = services.notify_roster_changes(changed)
+        return Response({"copied": copied, "notified_workers": notified})
 
 
 class MeRosterView(APIView):

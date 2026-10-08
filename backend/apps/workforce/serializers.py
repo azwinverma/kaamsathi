@@ -42,6 +42,7 @@ class EmploymentSerializer(BSModelSerializer):
     dearness_allowance = MoneyField(required=False, allow_null=True)
     other_allowance = MoneyField(required=False)
     daily_wage = MoneyField(required=False, allow_null=True)
+    hourly_wage = MoneyField(required=False, allow_null=True)
 
     class Meta:
         model = Employment
@@ -62,6 +63,8 @@ class EmploymentSerializer(BSModelSerializer):
             "dearness_allowance",
             "other_allowance",
             "daily_wage",
+            "hourly_wage",
+            "part_time",
             "ssf_enrolled",
             "replacement_eligible_until",
             "created_at",
@@ -84,7 +87,14 @@ class EmploymentSerializer(BSModelSerializer):
 
     def validate(self, attrs):
         inst = self.instance
-        wage_keys = {"wage_type", "basic_salary", "dearness_allowance", "daily_wage"}
+        wage_keys = {
+            "wage_type",
+            "basic_salary",
+            "dearness_allowance",
+            "daily_wage",
+            "hourly_wage",
+            "part_time",
+        }
         if inst is not None and wage_keys & set(attrs):
             wage_type = attrs.get("wage_type", inst.wage_type)
             validate_wage(
@@ -92,6 +102,8 @@ class EmploymentSerializer(BSModelSerializer):
                 attrs.get("basic_salary", inst.basic_salary),
                 attrs.get("dearness_allowance", inst.dearness_allowance),
                 attrs.get("daily_wage", inst.daily_wage),
+                hourly=attrs.get("hourly_wage", inst.hourly_wage),
+                part_time=attrs.get("part_time", inst.part_time),
             )
         return attrs
 
@@ -185,6 +197,7 @@ class AttendanceSerializer(BSModelSerializer):
             "check_out_at",
             "method",
             "overtime_minutes",
+            "hours_worked",
             "note",
         ]
 
@@ -205,6 +218,10 @@ class BulkRecordSerializer(serializers.Serializer):
     lng = serializers.DecimalField(max_digits=9, decimal_places=6, required=False, allow_null=True)
     method = serializers.ChoiceField(choices=[c[0] for c in Attendance.METHODS], default="supervisor")
     overtime_minutes = serializers.IntegerField(min_value=0, max_value=24 * 60, required=False, default=0)
+    # Hourly wage type (R005): hours worked that day; omit to derive from check-in/out.
+    hours_worked = serializers.DecimalField(
+        max_digits=4, decimal_places=2, min_value=0, max_value=24, required=False, allow_null=True
+    )
     note = serializers.CharField(required=False, allow_blank=True, allow_null=True, max_length=255)
 
     def to_internal_value(self, data):

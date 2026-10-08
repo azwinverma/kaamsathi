@@ -20,7 +20,7 @@ def validate_job_wage(wage_type: str, amount):
     mw = MinimumWage.current()
     if mw is None or amount in (None, ""):
         return
-    minimum = mw.monthly_total if wage_type == "monthly" else mw.daily
+    minimum = {"monthly": mw.monthly_total, "hourly": mw.hourly}.get(wage_type, mw.daily)
     if D(amount) < minimum:
         msg = _("Wage must be at least %(amount)s (minimum wage).") % {"amount": format_npr(minimum)}
         raise BelowMinimumWage(message=msg, fields={"wage_amount": [msg]})
@@ -95,16 +95,28 @@ def create_placement_charge(application: Application, employment):
     )
 
 
-def schedule_interview_reminder(application: Application):
+def schedule_interview_reminder(application: Application, interview=None):
+    """SMS reminder 2 h before the interview. With ``interview`` the task re-checks that round is
+    still pending at that time (a reschedule queues a new reminder; the stale one no-ops)."""
     from apps.notifications.services import enqueue
     from apps.notifications.tasks import interview_reminder
 
-    if not application.interview_at:
+    when = interview.scheduled_at if interview is not None else application.interview_at
+    if not when:
         return
-    eta = application.interview_at - dt.timedelta(hours=2)
+    eta = when - dt.timedelta(hours=2)
     if eta <= timezone.now():
         return
-    enqueue(interview_reminder, str(application.id), eta=eta)
+    if interview is not None:
+        enqueue(
+            interview_reminder,
+            str(application.id),
+            interview_id=str(interview.id),
+            scheduled_for=when.isoformat(),
+            eta=eta,
+        )
+    else:
+        enqueue(interview_reminder, str(application.id), eta=eta)
 
 
 @transaction.atomic
@@ -165,8 +177,14 @@ def move_application(
     )
     if to_stage == "joined":
         refresh_job_fill_status(application.job)
-    if to_stage == "interview":
-        schedule_interview_reminder(application)
+    if to_stage == "interview" and interview_at:
+        # Compatibility: the single ``interview_at`` of a stage move becomes an Interview round (L010).
+        from .models import Interview
+
+        interview = Interview.objects.create(
+            application=application, scheduled_at=interview_at, created_by=user
+        )
+        schedule_interview_reminder(application, interview)
     return application, employment
 
 
@@ -207,9 +225,15 @@ def shortlist_workers(job: JobOpening, workers, user) -> list[Application]:
 
     Returns the applications that became newly visible to the employer.
     """
+    from . import labels as hiring_labels
+    from .matching import score_for_shortlist
+
+    if job.status == "paused":
+        raise InvalidState(message=str(hiring_labels.MESSAGES["job_paused"]))
     created = []
     now = timezone.now()
     for worker in workers:
+        score, version = score_for_shortlist(job, worker)
         app, was_created = Application.objects.get_or_create(
             job=job,
             worker=worker,
@@ -217,6 +241,8 @@ def shortlist_workers(job: JobOpening, workers, user) -> list[Application]:
                 "stage": "shortlisted",
                 "sourced_by": user,
                 "worker_response": "pending",
+                "match_score": score,
+                "match_algorithm_version": version,
             },
         )
         if not was_created:
@@ -226,7 +252,18 @@ def shortlist_workers(job: JobOpening, workers, user) -> list[Application]:
             app.stage_changed_at = now
             app.worker_response = "pending"
             app.responded_at = None
-            app.save(update_fields=["stage", "stage_changed_at", "worker_response", "responded_at"])
+            app.match_score = score
+            app.match_algorithm_version = version
+            app.save(
+                update_fields=[
+                    "stage",
+                    "stage_changed_at",
+                    "worker_response",
+                    "responded_at",
+                    "match_score",
+                    "match_algorithm_version",
+                ]
+            )
         StageEvent.objects.create(
             application=app,
             from_stage=None if was_created else "sourced",
@@ -248,8 +285,9 @@ def shortlist_workers(job: JobOpening, workers, user) -> list[Application]:
     return created
 
 
-# --------------------------------------------------------------------------- matching (v2)
-NSTB_POINTS = {"none": 0, "elementary": 0, "level1": 5, "level2": 10, "level3": 15}
+# --------------------------------------------------------------------------- matching (v2.1)
+NSTB_RANK = {"none": 0, "elementary": 0, "level1": 1, "level2": 2, "level3": 3}
+NSTB_POINTS = {"none": 0, "elementary": 0, "level1": 5, "level2": 10, "level3": 15}  # default weights
 NSTB_LABEL = {"level1": "NSTB Level 1", "level2": "NSTB Level 2", "level3": "NSTB Level 3"}
 STAYED_DAYS = 90
 
@@ -267,8 +305,8 @@ def job_district_id(job: JobOpening):
     return job.site.district_id if job.site and job.site.district_id else job.organization.district_id
 
 
-def outcome_bonus(worker, today=None) -> int:
-    """0–5: 5 × share of past placements that stayed ≥ 90 days (needs ≥ 1 placement to judge)."""
+def outcome_bonus(worker, today=None, max_points: int = 5) -> int:
+    """0–max: max × share of past placements that stayed ≥ 90 days (needs ≥ 1 placement to judge)."""
     from apps.core.bs import today_ad
 
     today = today or today_ad()
@@ -280,7 +318,7 @@ def outcome_bonus(worker, today=None) -> int:
             stayed += days >= STAYED_DAYS
     if not judged:
         return 0
-    return int((D(5) * stayed / judged).quantize(D("1"), rounding=ROUND_HALF_UP))
+    return int((D(max_points) * stayed / judged).quantize(D("1"), rounding=ROUND_HALF_UP))
 
 
 def declined_worker_ids(organization) -> set:
@@ -292,13 +330,90 @@ def declined_worker_ids(organization) -> set:
     )
 
 
-def match_explain(job: JobOpening, worker, *, declined_ids: set | None = None) -> tuple[int, list[str], dict]:
-    """(score 0–100, reasons, {component: points}).
+def verified_credential_kinds(worker_ids) -> dict:
+    """{worker_id: {kind, …}} of verified, unexpired credentials (J002 requirement checks)."""
+    from django.db.models import Q
 
-    trade 50 + district 20 + verified 10 + NSTB 5/level (max 15) + experience 1/yr (max 10)
-    + floor(reliability / 20) + preferred district 5 + outcomes 0–5 − 10 expected wage > offer
-    − 10 declined this employer before; clamped to 0–100.
+    from apps.core.bs import today_ad
+
+    try:
+        from apps.credentials.models import Credential
+    except ImportError:  # pragma: no cover
+        return {}
+    out: dict = {}
+    rows = (
+        Credential.objects.filter(worker_id__in=list(worker_ids), status="verified")
+        .filter(Q(expires_on__isnull=True) | Q(expires_on__gte=today_ad()))
+        .values_list("worker_id", "kind")
+    )
+    for wid, kind in rows:
+        out.setdefault(wid, set()).add(kind)
+    return out
+
+
+def requirement_label(req, job=None) -> str:
+    """Plain-English summary, e.g. "Cook · NSTB Level 2+ · 3+ yrs · verified Safety certificate"."""
+    parts = []
+    trade = req.trade or (job.trade if job is not None and (req.nstb_level_min or req.min_years) else None)
+    if trade is not None:
+        parts.append(trade.name_en)
+    if req.nstb_level_min:
+        parts.append(f"{NSTB_LABEL.get(req.nstb_level_min, req.nstb_level_min)}+")
+    if req.min_years:
+        parts.append(f"{req.min_years}+ yrs")
+    if req.credential_kind:
+        from apps.credentials import labels as cred_labels
+
+        kind = cred_labels.KIND.get(req.credential_kind, req.credential_kind)
+        parts.append(f"verified {kind}")
+    return " · ".join(str(p) for p in parts)
+
+
+def requirement_checks(job: JobOpening, worker, *, verified_kinds: set | None = None) -> list[dict]:
+    """[{id, label, required, met}] for each JobRequirement (J002)."""
+    reqs = list(job.requirements.all())
+    if not reqs:
+        return []
+    if verified_kinds is None:
+        verified_kinds = verified_credential_kinds([worker.pk]).get(worker.pk, set())
+    skills = {s.trade_id: s for s in worker.skills.all()}
+    out = []
+    for req in reqs:
+        met = True
+        if req.trade_id or req.nstb_level_min or req.min_years:
+            skill = skills.get(req.trade_id or job.trade_id)
+            met = skill is not None
+            if met and req.min_years:
+                met = skill.years_experience >= req.min_years
+            if met and req.nstb_level_min:
+                met = NSTB_RANK.get(skill.nstb_level, 0) >= NSTB_RANK.get(req.nstb_level_min, 0)
+        if req.credential_kind:
+            met = met and req.credential_kind in verified_kinds
+        out.append(
+            {"id": str(req.id), "label": requirement_label(req, job), "required": req.required, "met": met}
+        )
+    return out
+
+
+def match_explain(
+    job: JobOpening,
+    worker,
+    *,
+    declined_ids: set | None = None,
+    weights: dict | None = None,
+    verified_kinds: set | None = None,
+    checks: list | None = None,
+) -> tuple[int, list[str], dict]:
+    """(score 0–100, reasons, {component: points}) — algorithm ``matching.ALGORITHM_VERSION``.
+
+    Default weights (``MatchConfig``, ops-editable): trade 50 + district 20 + verified 10 + NSTB 5/level
+    (max 15) + experience 1/yr (max 10) + floor(reliability × 5 / 100) + preferred district 5 +
+    outcomes 0–5 + 5 per met job requirement − 10 expected wage > offer − 10 declined this employer
+    before; clamped to 0–100.
     """
+    from .matching import current_weights
+
+    w = weights or current_weights()
     reasons: list[str] = []
     explain: dict[str, int] = {}
 
@@ -312,28 +427,35 @@ def match_explain(job: JobOpening, worker, *, declined_ids: set | None = None) -
     skills = list(worker.skills.all())
     skill = next((s for s in skills if s.trade_id == job.trade_id), None)
     if skill:
-        add("trade", 50, "Trade match")
+        add("trade", w["trade"], "Trade match")
     district_id = job_district_id(job)
     if district_id and district_id in (worker.current_district_id, worker.permanent_district_id):
-        add("district", 20, "Same district")
+        add("district", w["district"], "Same district")
     if worker.verification_status == "verified":
-        add("verified", 10, "Verified")
+        add("verified", w["verified"], "Verified")
     if skill:
-        add("nstb", NSTB_POINTS.get(skill.nstb_level, 0), NSTB_LABEL.get(skill.nstb_level))
-        exp = min(skill.years_experience, 10)
+        add(
+            "nstb", NSTB_RANK.get(skill.nstb_level, 0) * w["nstb_per_level"], NSTB_LABEL.get(skill.nstb_level)
+        )
+        exp = min(skill.years_experience * w["experience_per_year"], w["experience_max"])
         add("experience", exp, f"{skill.years_experience} yrs experience")
     reliability = _reliability_score(worker)
     if reliability is not None:
-        bonus = reliability // 20  # 0–5 (docs/CONTRACT-ECOSYSTEM.md §1 matching change)
-        add("reliability", bonus, "Reliable" if bonus >= 4 else None)
+        bonus = reliability * w["reliability_max"] // 100  # 0–5 by default (= reliability // 20)
+        add("reliability", bonus, "Reliable" if bonus >= 4 * w["reliability_max"] / 5 else None)
     if district_id and any(d.pk == district_id for d in worker.preferred_districts.all()):
-        add("preferred_district", 5, "Prefers this area")
-    outcomes = outcome_bonus(worker)
-    add("outcomes", outcomes, "Stays in jobs" if outcomes >= 3 else None)
+        add("preferred_district", w["preferred_district"], "Prefers this area")
+    outcomes = outcome_bonus(worker, max_points=w["outcomes_max"])
+    add("outcomes", outcomes, "Stays in jobs" if outcomes and outcomes >= 3 * w["outcomes_max"] / 5 else None)
+    if checks is None:
+        checks = requirement_checks(job, worker, verified_kinds=verified_kinds)
+    for c in checks:
+        if c["met"]:
+            add("requirements", w["requirement_met"], f"Meets: {c['label']}")
     if worker.expected_monthly_wage:
         offer = D(job.wage_amount) * (30 if job.wage_type == "daily" else 1)
         if D(worker.expected_monthly_wage) > offer:
-            add("wage", -10, "Expects higher wage")
+            add("wage", -w["wage_penalty"], "Expects higher wage")
     if declined_ids is None:
         declined = Application.objects.filter(
             job__organization_id=job.organization_id, worker=worker, worker_response="declined"
@@ -341,7 +463,7 @@ def match_explain(job: JobOpening, worker, *, declined_ids: set | None = None) -
     else:
         declined = worker.pk in declined_ids
     if declined:
-        add("declined_before", -10, "Declined this employer before")
+        add("declined_before", -w["declined_penalty"], "Declined this employer before")
     return max(min(sum(explain.values()), 100), 0), reasons, explain
 
 
@@ -351,35 +473,70 @@ def match_score(job: JobOpening, worker) -> tuple[int, list[str]]:
     return score, reasons
 
 
-def job_matches(job: JobOpening, limit: int = 20, request=None) -> list[dict]:
-    """``GET /ops/jobs/{id}/matches`` rows: available workers not yet in the employer-visible
-    pipeline (workers who only expressed interest are included and flagged ``interested``)."""
+def score_candidates(job: JobOpening) -> list[dict]:
+    """All eligible candidates scored and ranked (unpersisted). Workers failing a *required* job
+    requirement are excluded. Each item: {worker, score, reasons, explain, requirements}."""
     from apps.workers.models import Worker
-    from apps.workers.serializers import card_queryset, worker_card
+    from apps.workers.serializers import card_queryset
+
+    from .matching import current_weights
 
     in_pipeline = Application.employer_visible(job.applications.all()).values_list("worker_id", flat=True)
+    busy = Worker.objects.filter(employments__organization=job.organization, employments__status="active")
+    candidates = list(
+        card_queryset(
+            Worker.objects.filter(is_available=True).exclude(id__in=in_pipeline).exclude(id__in=busy)
+        )
+        .prefetch_related("preferred_districts")
+        .distinct()
+    )
+    declined = declined_worker_ids(job.organization)
+    weights = current_weights()
+    has_reqs = job.requirements.exists()
+    kinds = verified_credential_kinds([w.pk for w in candidates]) if has_reqs else {}
+    scored = []
+    for w in candidates:
+        checks = requirement_checks(job, w, verified_kinds=kinds.get(w.pk, set())) if has_reqs else []
+        if any(c["required"] and not c["met"] for c in checks):
+            continue
+        score, reasons, explain = match_explain(job, w, declined_ids=declined, weights=weights, checks=checks)
+        scored.append(
+            {"worker": w, "score": score, "reasons": reasons, "explain": explain, "requirements": checks}
+        )
+    scored.sort(key=lambda x: (-x["score"], x["worker"].full_name))
+    return scored
+
+
+def job_matches(
+    job: JobOpening, limit: int = 20, request=None, *, persist: bool = False, refresh: bool = False
+):
+    """``GET /ops/jobs/{id}/matches`` rows: available workers not yet in the employer-visible
+    pipeline (workers who only expressed interest are included and flagged ``interested``).
+
+    With ``persist`` the scoring is stored as a ``MatchRun`` (reused for 10 minutes unless
+    ``refresh``) and rows carry ``run_id`` and ``rank``.
+    """
+    from .matching import rows_from_run, run_for
+
+    if persist:
+        run = run_for(job, user=getattr(request, "user", None), refresh=refresh)
+        return rows_from_run(run, limit, request)
+    from apps.workers.serializers import worker_card
+
     interested = set(
         job.applications.filter(stage="sourced", source="worker_interest").values_list("worker_id", flat=True)
     )
-    busy = Worker.objects.filter(employments__organization=job.organization, employments__status="active")
-    candidates = card_queryset(
-        Worker.objects.filter(is_available=True).exclude(id__in=in_pipeline).exclude(id__in=busy)
-    ).prefetch_related("preferred_districts")
-    declined = declined_worker_ids(job.organization)
-    scored = []
-    for w in candidates:
-        score, reasons, explain = match_explain(job, w, declined_ids=declined)
-        scored.append((score, w, reasons, explain))
-    scored.sort(key=lambda x: (-x[0], x[1].full_name))
     return [
         {
-            "worker": worker_card(w, request),
-            "score": s,
-            "reasons": r,
-            "explain": e,
-            "interested": w.pk in interested,
+            "worker": worker_card(c["worker"], request),
+            "score": c["score"],
+            "reasons": c["reasons"],
+            "explain": c["explain"],
+            "requirements": c["requirements"],
+            "interested": c["worker"].pk in interested,
+            "rank": i + 1,
         }
-        for s, w, r, e in scored[:limit]
+        for i, c in enumerate(score_candidates(job)[:limit])
     ]
 
 
@@ -506,6 +663,8 @@ def expire_offers(qs=None) -> int:
 def offer_monthly_amount(offer) -> D:
     if offer.wage_type == "daily":
         return D(offer.daily_wage or 0) * 30
+    if offer.wage_type == "hourly":
+        return D(offer.hourly_wage or 0) * 8 * 30
     return D(offer.basic_salary or 0) + D(offer.dearness_allowance or 0)
 
 
@@ -531,7 +690,13 @@ def send_offer(application: Application, data: dict, user):
             message=pgettext("growth", "This candidate already has an open offer. Withdraw it first.")
         )
     wage_type = data.get("wage_type") or "monthly"
-    validate_wage(wage_type, data.get("basic_salary"), data.get("dearness_allowance"), data.get("daily_wage"))
+    validate_wage(
+        wage_type,
+        data.get("basic_salary"),
+        data.get("dearness_allowance"),
+        data.get("daily_wage"),
+        hourly=data.get("hourly_wage"),
+    )
     days = data.get("expires_in_days") or OFFER_DEFAULT_DAYS
     offer = JobOffer.objects.create(
         application=application,
@@ -539,6 +704,7 @@ def send_offer(application: Application, data: dict, user):
         basic_salary=data.get("basic_salary") if wage_type == "monthly" else None,
         dearness_allowance=data.get("dearness_allowance") if wage_type == "monthly" else None,
         daily_wage=data.get("daily_wage") if wage_type == "daily" else None,
+        hourly_wage=data.get("hourly_wage") if wage_type == "hourly" else None,
         start_date=data["start_date"],
         site=data.get("site") or application.job.site,
         designation=data.get("designation") or application.job.title,
@@ -549,7 +715,11 @@ def send_offer(application: Application, data: dict, user):
     )
     org = application.job.organization
     _track(
-        "offer_sent", user=user, organization=org, job_id=str(application.job_id), application_id=str(application.id)
+        "offer_sent",
+        user=user,
+        organization=org,
+        job_id=str(application.job_id),
+        application_id=str(application.id),
     )
     amount = format_npr(offer_monthly_amount(offer))
     _safe_notify(
@@ -656,6 +826,7 @@ def employment_from_offer(offer) -> dict:
         "basic_salary": offer.basic_salary,
         "dearness_allowance": offer.dearness_allowance,
         "daily_wage": offer.daily_wage,
+        "hourly_wage": offer.hourly_wage,
     }
 
 
@@ -675,7 +846,7 @@ def alert_matches(alert, job, district_ids=None) -> bool:
     if districts and _job_district_id(job) not in districts:
         return False
     if alert.min_wage:
-        monthly = D(job.wage_amount) * (30 if job.wage_type == "daily" else 1)
+        monthly = D(job.wage_amount) * {"daily": 30, "hourly": 240}.get(job.wage_type, 1)
         if monthly < D(alert.min_wage):
             return False
     return True

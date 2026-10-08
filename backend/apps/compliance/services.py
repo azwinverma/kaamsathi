@@ -348,6 +348,10 @@ def _below_minimum(emps, on) -> int:
             n += 1
         elif e.wage_type == "daily" and D(e.daily_wage) < mw.daily:
             n += 1
+        elif e.wage_type == "hourly" and D(e.hourly_wage) < (
+            mw.hourly_part_time if e.part_time else mw.hourly
+        ):
+            n += 1
     return n
 
 
