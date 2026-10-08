@@ -131,7 +131,7 @@ def _tenure_months(employment, today) -> float:
 
 
 def _employer_rating_avg(employment):
-    ratings = [r for r in employment.ratings.all() if r.rater == "employer"]
+    ratings = [r for r in employment.ratings.all() if r.rater == "employer" and not r.voided]
     if not ratings:
         return None
     return (ratings[0].score_a + ratings[0].score_b) / 2
@@ -380,7 +380,9 @@ def employer_reputation(organization) -> dict | None:
 
     from apps.workers.models import Rating
 
-    agg = Rating.objects.filter(employment__organization=organization, rater="worker").aggregate(
+    agg = Rating.objects.filter(
+        employment__organization=organization, rater="worker", voided=False
+    ).aggregate(
         a=Avg("score_a"), b=Avg("score_b"), n=Count("id")
     )
     if not agg["n"] or agg["n"] < REPUTATION_MIN_RATINGS:

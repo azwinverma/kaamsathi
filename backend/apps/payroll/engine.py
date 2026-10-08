@@ -2,6 +2,13 @@
 
 Implements CONTRACT.md §2 "Payroll calculation" exactly. All money is Decimal,
 rounded to 2 dp with ROUND_HALF_UP; TDS is rounded to the rupee.
+
+Extensions (checklist R003/R005), all defaulting to the contract behaviour:
+* per-org pay policy fields on ``PayInput`` (OT multiplier ≥ 1.5, festival rule, rounding,
+  weekly off paid, half-day fraction);
+* ``wage_type="hourly"``: pay = hourly_wage × regular hours (≤ 8 per day, from ``DayRecord.hours``
+  — hours worked — or 8 × the day fraction when unknown), split into basic/DA by the minimum-wage
+  ratio; hours beyond 8 in a day are overtime at hourly_wage × OT multiplier.
 """
 
 from __future__ import annotations
@@ -20,6 +27,7 @@ OT_MULTIPLIER = Decimal("1.5")
 SSF_EMPLOYEE_RATE = Decimal("0.11")
 SSF_EMPLOYER_RATE = Decimal("0.20")
 HOURS_PER_DAY = Decimal("8")
+MIN_OT_MULTIPLIER = OT_MULTIPLIER  # Labour Act 2074 s.33: at least 1.5× the regular rate
 DEFAULT_BASIC_RATIO = Decimal("12170") / Decimal("19550")
 
 
@@ -28,6 +36,7 @@ class DayRecord:
     status: str  # present|absent|half_day|leave|holiday|weekly_off
     overtime_minutes: int = 0
     unpaid_leave: bool = False
+    hours: Decimal | None = None  # hours worked that day (hourly wage type only); None = unknown
 
 
 @dataclass(frozen=True)
@@ -45,7 +54,7 @@ class AdvanceBalance:
 
 @dataclass
 class PayInput:
-    wage_type: str  # monthly|daily
+    wage_type: str  # monthly|daily|hourly
     start_date: dt.date
     end_date: dt.date | None
     period_start: dt.date
@@ -55,6 +64,7 @@ class PayInput:
     dearness_allowance: Decimal = ZERO
     other_allowance: Decimal = ZERO
     daily_wage: Decimal = ZERO
+    hourly_wage: Decimal = ZERO
     ssf_enrolled: bool = False
     attendance: dict = field(default_factory=dict)  # date -> DayRecord
     holidays: frozenset = frozenset()
@@ -67,6 +77,13 @@ class PayInput:
     # Timesheet hook (CONTRACT-EXTENSIONS §4): when set, pay this many OT minutes (approved on
     # timesheets) instead of summing attendance ``overtime_minutes``. None = default behaviour.
     overtime_minutes_override: int | None = None
+    # Pay policy (R003). Defaults reproduce the contract exactly.
+    ot_multiplier: Decimal = OT_MULTIPLIER
+    festival_rule: str = "one_month_basic"  # one_month_basic | custom_amount | none
+    festival_amount: Decimal = ZERO  # custom_amount rule: full-year amount before proration
+    rounding: str = "two_decimals"  # two_decimals | nearest_rupee
+    weekly_off_paid: bool = True
+    half_day_fraction: Decimal = HALF
 
 
 @dataclass
@@ -80,6 +97,7 @@ class PayResult:
     absent_days: Decimal = ZERO
     payable_days: Decimal = ZERO
     overtime_hours: Decimal = ZERO
+    regular_hours: Decimal = ZERO
     basic_earned: Decimal = ZERO
     da_earned: Decimal = ZERO
     allowance_earned: Decimal = ZERO
@@ -114,19 +132,30 @@ def count_days(inp: PayInput) -> dict:
     """Step 1: classify each day of the employment window inside the period."""
     counts = {"present": ZERO, "paid_leave": ZERO, "holiday": ZERO, "weekly_off": ZERO, "absent": ZERO}
     ot_minutes = 0
+    regular_hours = ZERO
+    hourly = inp.wage_type == "hourly"
+    half = D(inp.half_day_fraction)
     window = employment_window(inp)
     if window is None:
-        return {**counts, "ot_minutes": 0}
+        return {**counts, "ot_minutes": 0, "regular_hours": ZERO}
     day = window[0]
     while day <= window[1]:
         rec: DayRecord | None = inp.attendance.get(day)
         if rec is not None:
-            ot_minutes += int(rec.overtime_minutes or 0)
+            worked = rec.status in ("present", "half_day")
+            if hourly and worked and rec.hours is not None:
+                hours = max(D(rec.hours), ZERO)
+                regular_hours += min(hours, HOURS_PER_DAY)
+                ot_minutes += int(q0(max(hours - HOURS_PER_DAY, ZERO) * 60))
+            else:
+                if hourly and worked:
+                    regular_hours += HOURS_PER_DAY * (ONE if rec.status == "present" else half)
+                ot_minutes += int(rec.overtime_minutes or 0)
             if rec.status == "present":
                 counts["present"] += ONE
             elif rec.status == "half_day":
-                counts["present"] += HALF
-                counts["absent"] += HALF
+                counts["present"] += half
+                counts["absent"] += ONE - half
             elif rec.status == "leave":
                 if rec.unpaid_leave:
                     counts["absent"] += ONE
@@ -145,7 +174,7 @@ def count_days(inp: PayInput) -> dict:
         else:
             counts["absent"] += ONE
         day += dt.timedelta(days=1)
-    return {**counts, "ot_minutes": ot_minutes}
+    return {**counts, "ot_minutes": ot_minutes, "regular_hours": regular_hours}
 
 
 def months_employed(start: dt.date, until: dt.date) -> int:
@@ -195,7 +224,15 @@ def advance_due(advances) -> Decimal:
 # ---------------------------------------------------------------------------
 
 
+def rounder(rounding: str):
+    """Money rounding for the policy: 2 dp (default) or the nearest rupee (still stored at 2 dp)."""
+    if rounding == "nearest_rupee":
+        return lambda v: q2(q0(v))
+    return q2
+
+
 def calculate(inp: PayInput) -> PayResult:
+    m = rounder(inp.rounding)
     dim = Decimal(inp.days_in_month)
     res = PayResult(wage_type=inp.wage_type, days_in_month=inp.days_in_month)
     c = count_days(inp)
@@ -212,43 +249,63 @@ def calculate(inp: PayInput) -> PayResult:
     da = D(inp.dearness_allowance)
     other = D(inp.other_allowance)
     daily = D(inp.daily_wage)
+    hourly_wage = D(inp.hourly_wage)
     ratio = D(inp.basic_ratio)
+    multiplier = max(D(inp.ot_multiplier), MIN_OT_MULTIPLIER)
 
     if inp.wage_type == "daily":
         # Step 2 (daily): payable = present days only.
         res.payable_days = res.present_days
-        wage = q2(daily * res.payable_days)
-        res.basic_earned = q2(wage * ratio)
+        wage = m(daily * res.payable_days)
+        res.basic_earned = m(wage * ratio)
         res.da_earned = wage - res.basic_earned
         res.allowance_earned = q2(ZERO)
         hourly = daily / HOURS_PER_DAY
+    elif inp.wage_type == "hourly":
+        # R005: regular hours (≤ 8/day) × hourly wage, split basic/DA by the minimum-wage ratio.
+        res.payable_days = res.present_days
+        res.regular_hours = q2(c["regular_hours"])
+        wage = m(hourly_wage * c["regular_hours"])
+        res.basic_earned = m(wage * ratio)
+        res.da_earned = wage - res.basic_earned
+        res.allowance_earned = q2(ZERO)
+        hourly = hourly_wage
     else:
-        res.payable_days = res.present_days + res.paid_leave_days + res.holiday_days + res.weekly_off_days
+        res.payable_days = res.present_days + res.paid_leave_days + res.holiday_days
+        if inp.weekly_off_paid:
+            res.payable_days += res.weekly_off_days
         factor = res.payable_days / dim
-        res.basic_earned = q2(basic * factor)
-        res.da_earned = q2(da * factor)
-        res.allowance_earned = q2(other * factor)
+        res.basic_earned = m(basic * factor)
+        res.da_earned = m(da * factor)
+        res.allowance_earned = m(other * factor)
         hourly = (basic + da) / (dim * HOURS_PER_DAY)
 
-    # Step 3: overtime at 1.5x.
-    res.overtime_pay = q2(ot_hours * hourly * OT_MULTIPLIER)
+    # Step 3: overtime at 1.5x (or the org's higher multiplier).
+    res.overtime_pay = m(ot_hours * hourly * multiplier)
 
     # Step 4: festival (Dashain) allowance, prorated by months employed.
-    if inp.include_festival_allowance:
+    if inp.include_festival_allowance and inp.festival_rule != "none":
         months = Decimal(months_employed(inp.start_date, inp.period_end))
         share = min(months / Decimal(12), ONE)
-        base = basic if inp.wage_type == "monthly" else daily * 30 * ratio
-        res.festival_allowance = q2(base * share)
+        if inp.festival_rule == "custom_amount":
+            base = D(inp.festival_amount)
+        elif inp.wage_type == "monthly":
+            base = basic
+        elif inp.wage_type == "hourly":
+            base = hourly_wage * HOURS_PER_DAY * 30 * ratio
+        else:
+            base = daily * 30 * ratio
+        res.festival_allowance = m(base * share)
 
     # Step 5
-    res.gross_pay = q2(
+    res.gross_pay = m(
         res.basic_earned + res.da_earned + res.allowance_earned + res.overtime_pay + res.festival_allowance
     )
 
     # Step 6: SSF on basic earned.
     if inp.ssf_enrolled:
-        res.ssf_employee = q2(res.basic_earned * SSF_EMPLOYEE_RATE)
-        res.ssf_employer = q2(res.basic_earned * SSF_EMPLOYER_RATE)
+        res.ssf_employee = m(res.basic_earned * SSF_EMPLOYEE_RATE)
+        res.ssf_employer = m(res.basic_earned * SSF_EMPLOYER_RATE)
 
     # Step 7: TDS
     res.tds = monthly_tds(res.gross_pay, res.ssf_employee, inp.tax_bands, inp.ssf_enrolled)

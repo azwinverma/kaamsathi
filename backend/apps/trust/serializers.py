@@ -80,6 +80,30 @@ class DisputeSerializer(serializers.ModelSerializer):
             "sla_due_at": _dt(d.sla_due_at),
             "overdue": bool(d.sla_due_at and d.sla_due_at < timezone.now()),
             "escalated": d.escalated,
+            # N006 / N008
+            "evidence_count": getattr(d, "evidence_count", None)
+            if getattr(d, "evidence_count", None) is not None
+            else d.evidence.count(),
+            "can_appeal": d.can_appeal(),
+            "appeal_deadline": _dt(d.appeal_deadline()),
+            "appeal": (
+                {
+                    "reason": d.appeal_reason,
+                    "party": d.appealed_by_party,
+                    "appealed_at": _dt(d.appealed_at),
+                    "outcome": d.appeal_outcome,
+                    "outcome_label": labels.label(labels.APPEAL_OUTCOME, d.appeal_outcome),
+                    "resolution_note": d.appeal_resolution_note,
+                    "resolved_by": (
+                        {"id": str(d.appeal_resolved_by_id), "full_name": d.appeal_resolved_by.full_name}
+                        if d.appeal_resolved_by_id
+                        else None
+                    ),
+                    "resolved_at": _dt(d.appeal_resolved_at),
+                }
+                if d.appealed_at
+                else None
+            ),
         }
 
 
@@ -139,3 +163,41 @@ class WorkerRateSerializer(serializers.Serializer):
     score_a = serializers.IntegerField(min_value=1, max_value=5)
     score_b = serializers.IntegerField(min_value=1, max_value=5)
     comment = serializers.CharField(required=False, allow_blank=True, allow_null=True, max_length=1000)
+
+
+class AppealSerializer(serializers.Serializer):
+    reason = serializers.CharField(max_length=2000)
+
+
+class AppealDecisionSerializer(serializers.Serializer):
+    outcome = serializers.ChoiceField(choices=list(labels.APPEAL_OUTCOME))
+    note = serializers.CharField(max_length=2000)
+
+
+class EvidenceUploadSerializer(serializers.Serializer):
+    file = serializers.FileField()
+    note = serializers.CharField(max_length=500, required=False, allow_blank=True, allow_null=True)
+
+    def validate_file(self, value):
+        from apps.core.uploads import validate_upload
+
+        return validate_upload(value, kinds={"image", "pdf"}, max_mb=10)
+
+
+def evidence_payload(e, request=None) -> dict:
+    """Evidence row; the URL is issued to the requesting user (callers already checked access)."""
+    from apps.core.files import request_user, signed_url
+
+    return {
+        "id": str(e.id),
+        "dispute_id": str(e.dispute_id),
+        "file_url": signed_url(e.file, request_user(request), request, check=f"dispute_evidence:{e.pk}"),
+        "file_type": e.file_type,
+        "party": e.party,
+        "party_label": labels.label(labels.EVIDENCE_PARTY, e.party),
+        "uploaded_by": (
+            {"id": str(e.uploaded_by_id), "full_name": e.uploaded_by.full_name} if e.uploaded_by_id else None
+        ),
+        "note": e.note,
+        "created_at": _dt(e.created_at),
+    }

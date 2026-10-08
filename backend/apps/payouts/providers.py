@@ -38,8 +38,16 @@ class InvalidSignature(APIError):
     status_code = 403
     default_code = "invalid_signature"
 
+    def __init__(self, message=None):
+        super().__init__(message=message or "Invalid webhook signature.")
+
+
+class WebhookReplayed(APIError):
+    status_code = 409
+    default_code = "webhook_replayed"
+
     def __init__(self):
-        super().__init__(message="Invalid webhook signature.")
+        super().__init__(message="This webhook delivery was already processed.")
 
 
 @dataclass
@@ -66,7 +74,10 @@ class Provider:
     credential_settings: tuple = ()
 
     def is_enabled(self) -> bool:
-        return self.code in settings.PAYOUT_PROVIDERS and self.has_credentials()
+        # ``PAYOUT_PROVIDERS`` is the default; a ``payout_<code>`` feature flag overrides it.
+        from apps.core.flags import is_enabled
+
+        return is_enabled(f"payout_{self.code}") and self.has_credentials()
 
     def has_credentials(self) -> bool:
         return all(getattr(settings, name, None) for name in self.credential_settings)
@@ -92,15 +103,46 @@ class Provider:
         return (settings.PAYOUT_WEBHOOK_SECRETS or {}).get(self.code)
 
     def verify_signature(self, request) -> None:
+        """HMAC-SHA256 in ``X-Signature`` (hex, optional ``sha256=`` prefix).
+
+        With ``X-Timestamp`` (unix seconds) the signed message is ``ts + "." + body`` and the
+        timestamp must be within ``PAYOUT_WEBHOOK_MAX_SKEW_SECONDS``; without it the raw body is
+        signed (legacy providers). A verified signature is remembered for
+        ``PAYOUT_WEBHOOK_REPLAY_TTL_SECONDS``: the exact same delivery again → 409 ``webhook_replayed``.
+        """
         secret = self.webhook_secret()
         if not secret:
             raise NotConfigured()
-        expected = hmac.new(secret.encode(), request.body, hashlib.sha256).hexdigest()
+        ts = (request.headers.get("X-Timestamp") or "").strip()
+        message = request.body
+        if ts:
+            try:
+                ts_value = int(ts)
+            except ValueError as exc:
+                raise InvalidSignature("Invalid X-Timestamp.") from exc
+            skew = abs(timezone.now().timestamp() - ts_value)
+            if skew > int(getattr(settings, "PAYOUT_WEBHOOK_MAX_SKEW_SECONDS", 300)):
+                raise InvalidSignature("Webhook timestamp is outside the allowed window.")
+            message = ts.encode() + b"." + request.body
+        expected = hmac.new(secret.encode(), message, hashlib.sha256).hexdigest()
         given = (request.headers.get("X-Signature") or "").strip()
         if given.lower().startswith("sha256="):
             given = given[7:]
         if not given or not hmac.compare_digest(expected, given.lower()):
             raise InvalidSignature()
+        request._ks_webhook_replay_key = self.remember_delivery(given.lower())
+
+    def remember_delivery(self, signature: str) -> str:
+        """Reject an exact replay of a verified delivery (cache ``add`` is atomic). Returns the key
+        so the view can forget it when processing fails (the provider's retry must still work)."""
+        from django.core.cache import cache
+
+        digest = hashlib.sha256(f"{self.code}:{signature}".encode()).hexdigest()
+        key = f"ks:payout-webhook:{digest}"
+        ttl = int(getattr(settings, "PAYOUT_WEBHOOK_REPLAY_TTL_SECONDS", 86400))
+        if not cache.add(key, 1, ttl):
+            raise WebhookReplayed()
+        return key
 
     def parse_webhook(self, request) -> list[ItemUpdate]:
         """Verify the HMAC and parse ``{"items": [{reference, status, provider_ref?, reason?}]}``."""

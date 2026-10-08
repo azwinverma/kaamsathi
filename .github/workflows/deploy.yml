@@ -1,0 +1,200 @@
+name: Deploy
+
+# main  → build & push images to GHCR → deploy staging (SSH, `make deploy-up`) → smoke /readiness
+# v*    → build & push images → production (GitHub Environment "production" = manual approval)
+#          → pull the tagged images, restart, smoke /readiness, automatic rollback to the
+#          previously deployed tag on failure.
+# Every step that needs a secret no-ops (with a notice) when that secret is absent, so forks and
+# fresh clones stay green. Secrets: see docs/RUNBOOK.md → "CI/CD".
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  images:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+      backend: ${{ steps.meta.outputs.backend }}
+      web: ${{ steps.meta.outputs.web }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: meta
+        name: Image names and tag
+        env:
+          OWNER: ${{ github.repository_owner }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          SHA: ${{ github.sha }}
+        run: |
+          owner="$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')"
+          if [ "$REF_TYPE" = "tag" ]; then tag="$REF_NAME"; else tag="sha-${SHA::12}"; fi
+          {
+            echo "tag=$tag"
+            echo "backend=ghcr.io/$owner/kaamsathi-backend"
+            echo "web=ghcr.io/$owner/kaamsathi-web"
+          } >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build & push backend
+        uses: docker/build-push-action@v6
+        with:
+          context: backend
+          push: true
+          build-args: RELEASE=${{ steps.meta.outputs.tag }}
+          tags: |
+            ${{ steps.meta.outputs.backend }}:${{ steps.meta.outputs.tag }}
+            ${{ steps.meta.outputs.backend }}:${{ github.ref_type == 'tag' && 'latest' || 'main' }}
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+      - name: Build & push web
+        uses: docker/build-push-action@v6
+        with:
+          context: web
+          push: true
+          build-args: NEXT_PUBLIC_SITE_URL=${{ vars.PUBLIC_SITE_URL || 'https://kaamsathi.com' }}
+          tags: |
+            ${{ steps.meta.outputs.web }}:${{ steps.meta.outputs.tag }}
+            ${{ steps.meta.outputs.web }}:${{ github.ref_type == 'tag' && 'latest' || 'main' }}
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=web
+
+  staging:
+    if: github.ref == 'refs/heads/main'
+    needs: images
+    runs-on: ubuntu-latest
+    environment: staging
+    env:
+      HAS_SSH: ${{ secrets.STAGING_SSH_HOST != '' && secrets.STAGING_SSH_KEY != '' }}
+      HAS_URL: ${{ secrets.STAGING_URL != '' }}
+    steps:
+      - name: Staging secrets missing — skipping
+        if: env.HAS_SSH != 'true'
+        run: echo "::notice::STAGING_SSH_HOST / STAGING_SSH_KEY not set — staging deploy skipped."
+      - name: Deploy (make deploy-up on the staging host)
+        if: env.HAS_SSH == 'true'
+        uses: appleboy/ssh-action@v1.2.2
+        env:
+          SHA: ${{ github.sha }}
+          DEPLOY_DIR: ${{ secrets.STAGING_DEPLOY_DIR || '/opt/kaamsathi' }}
+        with:
+          host: ${{ secrets.STAGING_SSH_HOST }}
+          username: ${{ secrets.STAGING_SSH_USER || 'deploy' }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          port: ${{ secrets.STAGING_SSH_PORT || 22 }}
+          envs: SHA,DEPLOY_DIR
+          command_timeout: 30m
+          script: |
+            set -euo pipefail
+            cd "$DEPLOY_DIR"
+            git fetch --prune origin
+            git checkout --detach "$SHA"
+            make deploy-up ENV_FILE=deploy/.env.staging PROJECT=kaamsathi-staging RELEASE="${SHA:0:12}"
+      - name: Smoke test /readiness
+        if: env.HAS_SSH == 'true' && env.HAS_URL == 'true'
+        env:
+          URL: ${{ secrets.STAGING_URL }}
+        run: |
+          for _ in $(seq 1 30); do
+            if curl -fsS "$URL/api/v1/readiness"; then echo; exit 0; fi
+            sleep 10
+          done
+          echo "::error::staging /readiness did not turn healthy"
+          exit 1
+
+  production:
+    if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
+    needs: images
+    runs-on: ubuntu-latest
+    # Configure required reviewers on the "production" environment (Settings → Environments):
+    # this job waits for a manual approval before it runs.
+    environment:
+      name: production
+      url: ${{ vars.PRODUCTION_URL }}
+    env:
+      HAS_SSH: ${{ secrets.PROD_SSH_HOST != '' && secrets.PROD_SSH_KEY != '' }}
+    steps:
+      - name: Production secrets missing — skipping
+        if: env.HAS_SSH != 'true'
+        run: echo "::notice::PROD_SSH_HOST / PROD_SSH_KEY not set — production deploy skipped."
+      - name: Deploy tag with automatic rollback
+        if: env.HAS_SSH == 'true'
+        uses: appleboy/ssh-action@v1.2.2
+        env:
+          TAG: ${{ needs.images.outputs.tag }}
+          BACKEND_REPO: ${{ needs.images.outputs.backend }}
+          WEB_REPO: ${{ needs.images.outputs.web }}
+          DEPLOY_DIR: ${{ secrets.PROD_DEPLOY_DIR || '/opt/kaamsathi' }}
+          GHCR_USER: ${{ secrets.GHCR_PULL_USER }}
+          GHCR_TOKEN: ${{ secrets.GHCR_PULL_TOKEN }}
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER || 'deploy' }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: ${{ secrets.PROD_SSH_PORT || 22 }}
+          envs: TAG,BACKEND_REPO,WEB_REPO,DEPLOY_DIR,GHCR_USER,GHCR_TOKEN
+          command_timeout: 30m
+          script: |
+            set -euo pipefail
+            cd "$DEPLOY_DIR"
+            if [ -n "${GHCR_TOKEN:-}" ]; then
+              echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+            fi
+            PREV="$(cat .deployed-release 2>/dev/null || true)"
+            COMPOSE="docker compose --env-file deploy/.env.prod -f deploy/docker-compose.prod.yml -p kaamsathi"
+
+            release() {  # $1 = tag: check out its compose/Caddy files, pull its images, restart
+              git fetch --tags --prune origin
+              git checkout --detach "$1"
+              export RELEASE="$1" BACKEND_IMAGE="$BACKEND_REPO:$1" WEB_IMAGE="$WEB_REPO:$1"
+              $COMPOSE pull backend celery-worker celery-beat web
+              $COMPOSE up -d --no-build --remove-orphans
+            }
+            healthy() {
+              for _ in $(seq 1 30); do
+                if $COMPOSE exec -T backend python -c "import urllib.request as u,sys; r=u.urlopen(u.Request('http://127.0.0.1:8000/api/v1/readiness', headers={'Host':'localhost'}), timeout=5); sys.exit(r.status!=200)"; then
+                  return 0
+                fi
+                sleep 10
+              done
+              return 1
+            }
+
+            release "$TAG"
+            if healthy; then
+              echo "$TAG" > .deployed-release
+              echo "Deployed $TAG"
+              exit 0
+            fi
+            echo "::error::$TAG failed readiness"
+            $COMPOSE logs --tail=200 backend || true
+            if [ -n "$PREV" ] && [ "$PREV" != "$TAG" ]; then
+              echo "Rolling back to $PREV"
+              release "$PREV"
+              healthy && echo "Rolled back to $PREV" || echo "::error::rollback to $PREV is not healthy either"
+            else
+              echo "::warning::no previous release recorded — nothing to roll back to"
+            fi
+            exit 1
+      - name: Public smoke test
+        if: env.HAS_SSH == 'true' && vars.PRODUCTION_URL != ''
+        env:
+          URL: ${{ vars.PRODUCTION_URL }}
+        run: curl -fsS --retry 10 --retry-delay 6 --retry-all-errors "$URL/api/v1/readiness"

@@ -217,7 +217,7 @@ export default async function Home() {
         <section className="px-4 pb-20 sm:px-6">
           <div className="mx-auto flex max-w-6xl flex-col items-start gap-5 rounded-xl bg-brand px-6 py-10 text-brand-fg sm:flex-row sm:items-center sm:justify-between sm:px-10">
             <div className="space-y-1">
-              <h2 className="text-2xl font-semibold">{t("landing.cta_title")}</h2>
+              <h2 className="text-2xl font-semibold text-brand-fg">{t("landing.cta_title")}</h2>
               <p className="opacity-85">{t("landing.cta_body")}</p>
             </div>
             <Link href="/login" className={cn(buttonVariants({ size: "lg" }), "bg-white text-primary-800 hover:bg-primary-50")}>

@@ -158,3 +158,65 @@ def describe_subject(subject_type: str, subject_id: str, cache: dict | None = No
     if cache is not None:
         cache[key] = out
     return out
+
+
+# --------------------------------------------------------------------------- KYC four-eyes
+def kyc_four_eyes_enabled() -> bool:
+    from apps.core.flags import is_enabled
+
+    return is_enabled("kyc_four_eyes")
+
+
+def pending_first_review(worker):
+    """The open first "verified" review awaiting a second verifier, or None."""
+    from .models import VerificationReview
+
+    if worker.verification_status != "pending":
+        return None
+    latest = VerificationReview.objects.filter(worker=worker).select_related("reviewer").first()
+    if latest and latest.stage == "first" and latest.decision == "verified":
+        return latest
+    return None
+
+
+def record_kyc_decision(worker, user, decision: str, note=None) -> str:
+    """Record an ops KYC decision; return the status the worker should now have.
+
+    Four-eyes off → the decision is final. On → a first "verified" leaves the worker ``pending``
+    until a *different* verifier confirms; the same verifier confirming again → 400 invalid_state.
+    A rejection is always final (it ends any open first review).
+    """
+    from django.utils.translation import pgettext
+
+    from apps.core.exceptions import InvalidState
+
+    from .models import VerificationReview
+
+    stage = "final"
+    status = decision
+    if decision == "verified" and kyc_four_eyes_enabled():
+        first = pending_first_review(worker)
+        if first is None:
+            stage, status = "first", "pending"
+        elif first.reviewer_id == getattr(user, "pk", None):
+            raise InvalidState(
+                message=pgettext(
+                    "complete2", "A different verifier must confirm this worker (four-eyes check)."
+                )
+            )
+    VerificationReview.objects.create(worker=worker, reviewer=user, decision=decision, stage=stage, note=note)
+    return status
+
+
+def kyc_review_state(worker) -> dict | None:
+    """``{required, first_review_by: {id, full_name}, first_review_at}`` while awaiting a 2nd verifier."""
+    first = pending_first_review(worker)
+    if first is None:
+        return None
+    return {
+        "required": True,
+        "first_review_by": (
+            {"id": str(first.reviewer_id), "full_name": first.reviewer.full_name} if first.reviewer_id else None
+        ),
+        "first_review_at": first.created_at.isoformat(),
+    }

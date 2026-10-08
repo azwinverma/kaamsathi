@@ -24,15 +24,15 @@ abstract final class KsColors {
   static const neutral200 = Color(0xFFDDE1E8);
   static const neutral300 = Color(0xFFC4CAD4);
   static const neutral400 = Color(0xFF959DAB);
-  static const neutral500 = Color(0xFF6B7383);
+  static const neutral500 = Color(0xFF5F6776);
   static const neutral600 = Color(0xFF4D5465);
   static const neutral700 = Color(0xFF373D4C);
   static const neutral900 = Color(0xFF161A26);
 
   static const success50 = Color(0xFFE8F7F0);
-  static const success600 = Color(0xFF12805C);
+  static const success600 = Color(0xFF0F7352);
   static const warning50 = Color(0xFFFFF4E5);
-  static const warning600 = Color(0xFFB25E09);
+  static const warning600 = Color(0xFF9A5107);
   static const danger50 = Color(0xFFFDECEC);
   static const danger600 = Color(0xFFC8302B);
 

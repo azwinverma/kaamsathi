@@ -39,7 +39,7 @@ export function AttendanceChart({ days, today }: { days: Day[]; today?: string }
         <>
           <div
             className="flex h-44 items-end gap-1 border-b border-border sm:gap-1.5"
-            role="img"
+            role="group"
             aria-label={t("chart_aria")}
           >
             {days.map((d) => {
@@ -57,6 +57,7 @@ export function AttendanceChart({ days, today }: { days: Day[]; today?: string }
                       d.date === today && "bg-brand-subtle/60",
                     )}
                     tabIndex={0}
+                    role="img"
                     aria-label={label}
                   >
                     <div

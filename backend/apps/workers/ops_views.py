@@ -93,6 +93,12 @@ class OpsWorkerViewSet(
             )
         if p.get("trade"):
             qs = qs.filter(skills__trade_id=p["trade"])
+        if p.get("trade_q"):  # free-text trade search incl. aliases (F004)
+            from .services import matching_trade_codes
+
+            qs = qs.filter(skills__trade_id__in=matching_trade_codes(p["trade_q"]))
+        if p.get("language"):
+            qs = qs.filter(languages__language__in=p["language"].split(","))
         if p.get("district"):
             qs = qs.filter(Q(current_district_id=p["district"]) | Q(permanent_district_id=p["district"]))
         if p.get("verification_status"):
@@ -135,7 +141,8 @@ class OpsWorkerViewSet(
         if s.validated_data["status"] == "verified":
             _check_verifiable(worker)
         old = worker.verification_status
-        worker.verification_status = s.validated_data["status"]
+        # Four-eyes (flag ``kyc_four_eyes``): a first "verified" leaves the worker pending.
+        worker.verification_status = _kyc_decision(worker, request.user, s.validated_data)
         worker.verification_note = s.validated_data.get("note") or None
         worker.verified_by = request.user
         worker.verified_at = timezone.now()
@@ -158,7 +165,9 @@ class OpsWorkerViewSet(
                 "note": worker.verification_note,
             },
         )
-        return Response(self.get_serializer(worker).data)
+        data = self.get_serializer(worker).data
+        data["kyc_review"] = _kyc_review_state(worker)
+        return Response(data)
 
 
 class OpsJobViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -177,7 +186,20 @@ class OpsJobViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.G
         if p.get("organization"):
             qs = qs.filter(organization_id=p["organization"])
         if p.get("q"):
-            qs = qs.filter(Q(title__icontains=p["q"]) | Q(organization__name__icontains=p["q"]))
+            from .services import matching_trade_codes
+
+            qs = qs.filter(
+                Q(title__icontains=p["q"])
+                | Q(organization__name__icontains=p["q"])
+                | Q(trade_id__in=matching_trade_codes(p["q"]))
+            )
+        owner = p.get("owner")
+        if owner == "me":
+            qs = qs.filter(ops_owner=self.request.user)
+        elif owner == "none":
+            qs = qs.filter(ops_owner__isnull=True)
+        elif owner:
+            qs = qs.filter(ops_owner_id=owner)
         return qs.order_by("published_at", "created_at")
 
     @action(detail=True, methods=["get"])
@@ -274,6 +296,23 @@ class OpsOrganizationViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, v
             for m in org.memberships.filter(is_active=True).select_related("user")
         ]
         return Response(data)
+
+
+def _kyc_decision(worker, user, validated) -> str:
+    """Status after an ops KYC decision (apps.risk four-eyes); the decision itself when risk is absent."""
+    try:
+        from apps.risk.services import record_kyc_decision
+    except ImportError:  # pragma: no cover - risk app always installed
+        return validated["status"]
+    return record_kyc_decision(worker, user, validated["status"], validated.get("note") or None)
+
+
+def _kyc_review_state(worker):
+    try:
+        from apps.risk.services import kyc_review_state
+    except ImportError:  # pragma: no cover
+        return None
+    return kyc_review_state(worker)
 
 
 def _check_verifiable(worker) -> None:

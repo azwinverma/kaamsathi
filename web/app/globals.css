@@ -67,7 +67,7 @@
   --color-neutral-200: #dde1e8;
   --color-neutral-300: #c4cad4;
   --color-neutral-400: #959dab;
-  --color-neutral-500: #6b7383;
+  --color-neutral-500: #5f6776;
   --color-neutral-600: #4d5465;
   --color-neutral-700: #373d4c;
   --color-neutral-800: #252a37;
@@ -114,18 +114,19 @@
   --ks-border-strong: #c4cad4;
   --ks-fg: #161a26;
   --ks-fg-body: #373d4c;
-  --ks-fg-muted: #6b7383;
-  --ks-fg-subtle: #959dab;
+  /* Text tokens meet WCAG AA (≥4.5:1) on surface and surface-muted; checked by e2e/a11y. */
+  --ks-fg-muted: #5f6776;
+  --ks-fg-subtle: #687080;
   --ks-brand: #2647c4;
   --ks-brand-hover: #1f399d;
   --ks-brand-fg: #ffffff;
   --ks-brand-subtle: #eef3ff;
   --ks-brand-subtle-fg: #1f399d;
-  --ks-accent: #dc2b4b;
+  --ks-accent: #c21d3d;
   --ks-accent-subtle: #fff0f3;
-  --ks-success: #12805c;
+  --ks-success: #0f7352;
   --ks-success-subtle: #e8f7f0;
-  --ks-warning: #b25e09;
+  --ks-warning: #9a5107;
   --ks-warning-subtle: #fff4e5;
   --ks-danger: #c8302b;
   --ks-danger-subtle: #fdecec;

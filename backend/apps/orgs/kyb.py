@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from django.conf import settings
 from django.utils.translation import pgettext_lazy
 
 from apps.core.files import register_check, signed_url
@@ -37,8 +36,11 @@ MESSAGES = {
 DOC_FIELDS = ("registration_doc", "pan_doc")
 
 
-def kyb_required_for_shortlist() -> bool:
-    return bool(getattr(settings, "KYB_REQUIRED_FOR_SHORTLIST", True))
+def kyb_required_for_shortlist(organization=None) -> bool:
+    """Settings ``KYB_REQUIRED_FOR_SHORTLIST``, overridable by the ``kyb_required_for_shortlist`` flag."""
+    from apps.core.flags import is_enabled
+
+    return is_enabled("kyb_required_for_shortlist", organization=organization)
 
 
 def is_verified(org) -> bool:

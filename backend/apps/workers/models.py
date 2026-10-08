@@ -3,10 +3,13 @@ import uuid
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models.functions import Lower
 
 from apps.accounts.models import phone_validator
 from apps.core import labels
 from apps.core.crypto import EncryptedCharField, blind_index
+
+from . import labels as worker_labels
 
 
 class Trade(models.Model):
@@ -177,10 +180,79 @@ class Rating(models.Model):
     score_b = models.PositiveSmallIntegerField(validators=score_validators)
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    # Moderation (N004): the rated party may flag the comment; ops hide/restore it. The score keeps
+    # counting unless ops voids the whole rating with a reason (voided ratings never feed scores).
+    COMMENT_STATUSES = labels.choices(worker_labels.COMMENT_STATUS)
+    comment_status = models.CharField(max_length=8, choices=COMMENT_STATUSES, default="visible", db_index=True)
+    flagged_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    flagged_at = models.DateTimeField(null=True, blank=True)
+    flag_reason = models.CharField(max_length=500, blank=True, null=True)
+    moderated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    moderated_at = models.DateTimeField(null=True, blank=True)
+    moderation_note = models.CharField(max_length=500, blank=True, null=True)
+    voided = models.BooleanField(default=False, db_index=True)
+    void_reason = models.CharField(max_length=500, blank=True, null=True)
+    voided_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    voided_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ["-created_at"]
         constraints = [models.UniqueConstraint(fields=["employment", "rater"], name="uniq_rating_per_rater")]
 
+    @property
+    def public_comment(self):
+        """Comment as shown to anyone but ops: hidden comments are withheld."""
+        return None if self.comment_status == "hidden" else self.comment
+
     def __str__(self):
         return f"{self.rater} rating {self.score_a}/{self.score_b}"
+
+
+# --------------------------------------------------------------------------- checklist completion
+class WorkerLanguage(models.Model):
+    """Spoken languages (E004) — shown on the profile and the Skill Passport."""
+
+    LANGUAGES = labels.choices(worker_labels.LANGUAGE)
+    PROFICIENCIES = labels.choices(worker_labels.PROFICIENCY)
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    worker = models.ForeignKey(Worker, on_delete=models.CASCADE, related_name="languages")
+    language = models.CharField(max_length=8, choices=LANGUAGES)
+    proficiency = models.CharField(max_length=14, choices=PROFICIENCIES, default="conversational")
+
+    class Meta:
+        ordering = ["language"]
+        constraints = [models.UniqueConstraint(fields=["worker", "language"], name="uniq_worker_language")]
+
+    def __str__(self):
+        return f"{self.worker_id} {self.language}:{self.proficiency}"
+
+
+class TradeAlias(models.Model):
+    """Search synonyms for a trade (F004), e.g. "bhanse" / "भान्से" → cook."""
+
+    LANGUAGES = labels.choices(worker_labels.ALIAS_LANGUAGE)
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    trade = models.ForeignKey(Trade, on_delete=models.CASCADE, related_name="aliases")
+    alias = models.CharField(max_length=80)
+    language = models.CharField(max_length=8, choices=LANGUAGES, default="en")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["trade_id", "alias"]
+        constraints = [
+            models.UniqueConstraint(
+                Lower("alias"), "trade", name="uniq_trade_alias_ci"
+            )
+        ]
+        indexes = [models.Index(Lower("alias"), name="trade_alias_lower_idx")]
+
+    def __str__(self):
+        return f"{self.alias} → {self.trade_id}"

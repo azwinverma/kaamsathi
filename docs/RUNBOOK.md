@@ -321,6 +321,74 @@ keep the request ids of affected calls.
    (`/org/payouts/{id}/reconcile`).
 3. **Wrong amounts:** payroll runs that are approved are locked; fix inputs (attendance, salary), create a
    correction in the next run or a manual payslip adjustment, and re-issue payslips (workers get SMS).
-4. **Billing:** void/re-issue the charge in Admin → Billing; employers are informed by phone.
+4. **Billing:** in **Ops → Billing** void an unpaid wrong invoice (its charges return to the pool and
+   can be re-invoiced), or raise a **credit note** against an issued/paid one — never edit an issued
+   invoice. Employers are informed by phone.
 5. Note every manual money movement with the provider reference in the incident log and the audit trail
    (actions through the API are audited automatically).
+
+
+## 13. CI/CD
+
+### Pipelines (`.github/workflows/`)
+| Workflow | Trigger | What it does |
+| --- | --- | --- |
+| `ci.yml` | every PR, push to `main` | backend (ruff, migrations check, compilemessages, `check --deploy`, pytest + coverage, **validated OpenAPI schema → artifact `openapi-schema`**), web (messages, lint, typecheck, vitest, build), mobile (analyze, test), **security** (bandit — fails on HIGH; gitleaks over full history with `.gitleaks.toml`; trivy filesystem — fails on CRITICAL), docker (build images, **trivy image scan** — fails on CRITICAL, prod compose validation), **e2e** (docker-compose stack + `seed_demo`, Playwright + axe, report artifact `playwright-report`) |
+| `codeql.yml` | PR, push to `main`, weekly | CodeQL `security-extended` for Python and JavaScript/TypeScript → Security tab |
+| `deploy.yml` | push to `main`, tag `v*`, manual | build & push `ghcr.io/<owner>/kaamsathi-backend|web` (`sha-<12>` + `main`, or `<tag>` + `latest`); staging deploy on `main`; production deploy on `v*` |
+
+Branch protection on `main` should require: `backend`, `web`, `mobile`, `security`, `docker`, `e2e`,
+`Analyze (python)`, `Analyze (javascript-typescript)`.
+
+### Secrets and settings (Settings → Secrets and variables → Actions)
+Every deploy step checks its secrets and **skips with a notice** when they are absent.
+
+| Name | Kind | Used for |
+| --- | --- | --- |
+| `GITHUB_TOKEN` | automatic | push images to GHCR (`packages: write`) |
+| `STAGING_SSH_HOST`, `STAGING_SSH_KEY` (+ optional `STAGING_SSH_USER` = deploy, `STAGING_SSH_PORT` = 22, `STAGING_DEPLOY_DIR` = /opt/kaamsathi) | secret, env `staging` | SSH to the staging host |
+| `STAGING_URL` | secret | smoke test `https://…/api/v1/readiness` after the staging deploy |
+| `PROD_SSH_HOST`, `PROD_SSH_KEY` (+ `PROD_SSH_USER`, `PROD_SSH_PORT`, `PROD_DEPLOY_DIR`) | secret, env `production` | SSH to production |
+| `GHCR_PULL_USER`, `GHCR_PULL_TOKEN` | secret | `docker login ghcr.io` on the server if the packages are private (a PAT with `read:packages`) |
+| `PUBLIC_SITE_URL`, `PRODUCTION_URL` | variables | web build arg; public smoke test + environment link |
+
+Create GitHub Environments `staging` and `production`; on `production` add **required reviewers**
+(that is the manual approval gate) and restrict it to tags `v*`.
+
+### Server prerequisites
+The deploy user owns a clone of the repo at the deploy dir (with `origin` able to fetch), Docker +
+compose plugin, `make`, and the env files `deploy/.env.staging` / `deploy/.env.prod` (never in git).
+
+### Staging (automatic on `main`)
+SSH → `git checkout --detach <sha>` → `make deploy-up ENV_FILE=deploy/.env.staging
+PROJECT=kaamsathi-staging RELEASE=<sha12>` (builds on the host from the same commit; migrations run
+on backend start) → runner polls `STAGING_URL/api/v1/readiness` for up to 5 minutes.
+
+### Production (tag `v*`, manual approval)
+1. Release: update `CHANGELOG.md` (move *Unreleased* under the version), `git tag -a v1.2.0 -m …`,
+   `git push origin v1.2.0`.
+2. Approve the `production` job in the Actions run.
+3. The job SSHes in, checks out the tag (compose/Caddy files), sets
+   `BACKEND_IMAGE`/`WEB_IMAGE` to the GHCR tag, `docker compose pull` + `up -d --no-build`, then
+   polls readiness inside the backend container for up to 5 minutes.
+4. Healthy → the tag is written to `<deploy dir>/.deployed-release`. Unhealthy → **automatic rollback**:
+   checkout + images of the previous `.deployed-release` tag, restart, re-check; the job fails either
+   way so someone looks.
+
+Rollback limits: images roll back, the database does not. Migrations must stay backward compatible
+for one release (§4: add columns nullable, backfill, drop in a later release). For a manual rollback
+run the same steps with an older tag (re-run the workflow for that tag, or §3).
+
+### Running the security scans locally
+```bash
+pip install bandit && bandit -r backend/apps backend/config -x '*/tests/*,*/migrations/*' --severity-level high
+docker run --rm -v "$PWD":/repo ghcr.io/gitleaks/gitleaks:v8.28.0 git /repo --config /repo/.gitleaks.toml --redact
+docker run --rm -v "$PWD":/repo aquasec/trivy fs /repo --scanners vuln,misconfig --severity CRITICAL --ignore-unfixed --skip-dirs /repo/nepal-workforce-os
+cd backend && .venv/bin/python manage.py spectacular --file schema.yml --validate
+```
+A gitleaks hit that is not a secret goes into `.gitleaks.toml` with a comment; a real one means
+**rotate first** (§6), then purge it from history.
+
+### E2E locally
+See `web/e2e/README.md` (backend :8000 with `OTP_DEV_CODE=123456`, web :3000, `make seed`, then
+`pnpm e2e:install && pnpm e2e`).

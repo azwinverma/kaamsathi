@@ -4,14 +4,42 @@ from __future__ import annotations
 
 from django.db.models import Count, IntegerField, OuterRef, Q, Subquery
 from django.db.models.functions import Coalesce
+from django.db import IntegrityError, transaction
 from rest_framework import mixins, serializers, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from apps.audit.services import diff, log, snapshot
 from apps.core.permissions import IsOpsStaff
 
-from .models import Trade
+from apps.core import labels
+from apps.core.exceptions import Duplicate
+
+from . import labels as worker_labels
+from .models import Trade, TradeAlias
+
+
+class AliasSerializer(serializers.ModelSerializer):
+    alias = serializers.CharField(max_length=80)
+    language = serializers.ChoiceField(choices=list(TradeAlias.LANGUAGES), default="en")
+
+    class Meta:
+        model = TradeAlias
+        fields = ["id", "alias", "language", "created_at"]
+        read_only_fields = ["id", "created_at"]
+
+    def validate_alias(self, value):
+        value = " ".join(value.split())
+        if len(value) < 2:
+            raise serializers.ValidationError("Enter at least 2 characters.")
+        return value
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["trade"] = instance.trade_id
+        data["language_label"] = labels.label(worker_labels.ALIAS_LANGUAGE, instance.language)
+        return data
 
 
 def _count_of(model, field):
@@ -37,6 +65,7 @@ class TradeSerializer(serializers.ModelSerializer):
         data["category_label"] = dict(Trade.CATEGORIES).get(instance.category, instance.category)
         data["workers_count"] = getattr(instance, "workers_count", None)
         data["jobs_count"] = getattr(instance, "jobs_count", None)
+        data["aliases"] = [AliasSerializer(a).data for a in instance.aliases.all()]
         return data
 
 
@@ -58,7 +87,7 @@ class OpsTradeViewSet(
 
         from .models import WorkerSkill
 
-        qs = Trade.objects.annotate(
+        qs = Trade.objects.prefetch_related("aliases").annotate(
             workers_count=_count_of(WorkerSkill, "trade_id"), jobs_count=_count_of(JobOpening, "trade_id")
         )
         p = self.request.query_params
@@ -105,3 +134,45 @@ class OpsTradeViewSet(
         s.is_valid(raise_exception=True)
         self.perform_create(s)
         return Response(TradeSerializer(self.get_queryset().get(pk=s.instance.pk)).data, status=201)
+
+    # --- aliases (F004): search synonyms used by trade_q / job search / /ref/trades?q= -----------
+    @action(detail=True, methods=["get", "post"])
+    def aliases(self, request, code=None):
+        trade = self.get_object()
+        if request.method == "GET":
+            return Response(AliasSerializer(trade.aliases.all(), many=True).data)
+        s = AliasSerializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        if trade.aliases.filter(alias__iexact=s.validated_data["alias"]).exists():
+            raise Duplicate(message="This trade already has this alias.")
+        try:
+            with transaction.atomic():
+                alias = s.save(trade=trade)
+        except IntegrityError as exc:
+            raise Duplicate(message="This alias is already used.") from exc
+        log(
+            request,
+            "ops.taxonomy.alias.create",
+            alias,
+            organization=None,
+            changes={"trade": trade.code, "alias": alias.alias, "language": alias.language},
+        )
+        return Response(AliasSerializer(alias).data, status=201)
+
+    @action(detail=True, methods=["delete"], url_path=r"aliases/(?P<alias_id>[0-9a-f-]{36})")
+    def delete_alias(self, request, code=None, alias_id=None):
+        trade = self.get_object()
+        alias = trade.aliases.filter(pk=alias_id).first()
+        if alias is None:
+            from rest_framework.exceptions import NotFound
+
+            raise NotFound()
+        log(
+            request,
+            "ops.taxonomy.alias.delete",
+            alias,
+            organization=None,
+            changes={"trade": trade.code, "alias": alias.alias},
+        )
+        alias.delete()
+        return Response(status=204)

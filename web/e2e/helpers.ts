@@ -115,6 +115,11 @@ export function uniqueName(prefix: string): string {
  * with the offending element selectors in the assertion message.
  */
 export async function expectNoSeriousA11yViolations(page: Page, context: string) {
+  // Scan the settled page: fade/slide-in animations make axe measure half-transparent text.
+  await page.waitForLoadState("networkidle").catch(() => undefined);
+  await page.evaluate(() =>
+    Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined))),
+  );
   const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
   const serious = results.violations.filter(
     (v) => v.impact === "serious" || v.impact === "critical",
@@ -123,7 +128,7 @@ export async function expectNoSeriousA11yViolations(page: Page, context: string)
     .map((v) => {
       const targets = v.nodes
         .slice(0, 10)
-        .map((n) => `      - ${n.target.join(" ")}`)
+        .map((n) => `      - ${n.target.join(" ")}${n.any[0]?.message ? ` — ${n.any[0].message}` : ""}`)
         .join("\n");
       const more = v.nodes.length > 10 ? `\n      … and ${v.nodes.length - 10} more` : "";
       return `  [${v.impact}] ${v.id}: ${v.help} (${v.nodes.length} node(s))\n${targets}${more}`;

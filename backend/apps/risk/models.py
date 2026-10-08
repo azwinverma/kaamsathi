@@ -52,3 +52,31 @@ class FraudFlag(models.Model):
 
     def __str__(self):
         return f"{self.kind} on {self.subject_type}:{self.subject_id} [{self.status}]"
+
+
+class VerificationReview(models.Model):
+    """One ops decision on a worker's KYC (four-eyes, ``kyc_four_eyes`` flag).
+
+    With four-eyes on, the first "verified" decision is stored with ``stage="first"`` and the worker
+    stays ``pending``; a second, different verifier's "verified" (``stage="final"``) finalises it.
+    Every decision is kept so the audit trail shows both reviewers.
+    """
+
+    DECISIONS = [("verified", "Verified"), ("rejected", "Rejected")]
+    STAGES = [("first", "First review"), ("final", "Final review")]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    worker = models.ForeignKey("workers.Worker", on_delete=models.CASCADE, related_name="verification_reviews")
+    reviewer = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    decision = models.CharField(max_length=10, choices=DECISIONS)
+    stage = models.CharField(max_length=6, choices=STAGES, default="final")
+    note = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.worker_id} {self.stage}:{self.decision}"

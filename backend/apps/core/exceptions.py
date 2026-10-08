@@ -113,7 +113,12 @@ def exception_handler(exc, context):
         exc = InvalidToken(str(exc))
 
     if isinstance(exc, APIError):
-        return Response(envelope(exc.code, exc.message, exc.fields), status=exc.status_code)
+        body = envelope(exc.code, exc.message, exc.fields)
+        retry_after = getattr(exc, "retry_after", None)
+        if retry_after is None:
+            return Response(body, status=exc.status_code)
+        body["error"]["retry_after"] = int(retry_after)
+        return Response(body, status=exc.status_code, headers={"Retry-After": str(int(retry_after))})
 
     response = drf_exception_handler(exc, context)
     if response is None:

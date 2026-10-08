@@ -242,6 +242,9 @@ class Command(BaseCommand):
         Payslip.objects.filter(run__organization__in=orgs).delete()
         Payslip.objects.filter(worker__phone__in=phones).delete()
         PayrollRun.objects.filter(organization__in=orgs).delete()
+        # Tax invoices PROTECT their organization (real data keeps them); demo ones go first.
+        if registry.is_installed("apps.billing"):
+            registry.get_model("billing.Invoice").objects.filter(organization__in=orgs).delete()
         Charge.objects.filter(organization__in=orgs).delete()
         Employment.objects.filter(organization__in=orgs).delete()
         Employment.objects.filter(worker__phone__in=phones).delete()

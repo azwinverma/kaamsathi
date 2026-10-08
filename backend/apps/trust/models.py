@@ -9,6 +9,8 @@ import uuid
 from django.conf import settings
 from django.db import models
 
+from apps.core.files import private_storage
+
 from . import labels
 
 
@@ -62,7 +64,9 @@ class WorkerTrust(models.Model):
 class Dispute(models.Model):
     KINDS = labels.choices(labels.DISPUTE_KIND)
     STATUSES = labels.choices(labels.DISPUTE_STATUS)
-    CLOSED = {"resolved", "rejected"}
+    CLOSED = {"resolved", "rejected", "appealed", "appeal_resolved"}  # no first-instance resolve
+    APPEALABLE = {"resolved", "rejected"}
+    APPEAL_DAYS = 14
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     worker = models.ForeignKey("workers.Worker", on_delete=models.CASCADE, related_name="disputes")
@@ -91,6 +95,21 @@ class Dispute(models.Model):
     # employer_responded → ops has 7 days to decide. Escalated once by apps.support.tasks.
     sla_due_at = models.DateTimeField(null=True, blank=True, db_index=True)
     escalated = models.BooleanField(default=False)
+    # Appeal (N008): once, within 14 days of the decision, by the worker or the employer; decided by a
+    # different staff member than the first decision.
+    APPEAL_OUTCOMES = labels.choices(labels.APPEAL_OUTCOME)
+    appeal_reason = models.TextField(blank=True, null=True)
+    appealed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    appealed_by_party = models.CharField(max_length=10, blank=True, null=True)  # worker | employer
+    appealed_at = models.DateTimeField(null=True, blank=True)
+    appeal_outcome = models.CharField(max_length=12, choices=APPEAL_OUTCOMES, blank=True, null=True)
+    appeal_resolution_note = models.TextField(blank=True, null=True)
+    appeal_resolved_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    appeal_resolved_at = models.DateTimeField(null=True, blank=True)
 
     SLA_DAYS = 7
 
@@ -121,10 +140,25 @@ class Dispute(models.Model):
             return (self.raised_at or timezone.now()) + dt.timedelta(days=self.SLA_DAYS)
         if self.status == "employer_responded":
             return (self.responded_at or timezone.now()) + dt.timedelta(days=self.SLA_DAYS)
+        if self.status == "appealed":
+            return (self.appealed_at or timezone.now()) + dt.timedelta(days=self.SLA_DAYS)
         return None
 
     def _phase(self):
-        return self.status if self.status in ("open", "employer_responded") else None
+        return self.status if self.status in ("open", "employer_responded", "appealed") else None
+
+    def appeal_deadline(self):
+        import datetime as dt
+
+        if self.status not in self.APPEALABLE or not self.resolved_at:
+            return None
+        return self.resolved_at + dt.timedelta(days=self.APPEAL_DAYS)
+
+    def can_appeal(self) -> bool:
+        from django.utils import timezone
+
+        deadline = self.appeal_deadline()
+        return bool(deadline and self.appealed_at is None and timezone.now() <= deadline)
 
     @classmethod
     def from_db(cls, db, field_names, values):
@@ -132,3 +166,28 @@ class Dispute(models.Model):
         if "status" in field_names:  # never trigger a deferred-field load from here
             instance._sla_phase = instance._phase()
         return instance
+
+
+class DisputeEvidence(models.Model):
+    """A photo or PDF attached to a dispute (N006). Private storage, served by signed URL only."""
+
+    PARTIES = labels.choices(labels.EVIDENCE_PARTY)
+    MAX_PER_DISPUTE = 10
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    dispute = models.ForeignKey(Dispute, on_delete=models.CASCADE, related_name="evidence")
+    file = models.FileField(upload_to="dispute-evidence/", storage=private_storage)
+    file_type = models.CharField(max_length=8, default="image")  # image | pdf
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    party = models.CharField(max_length=10, choices=PARTIES)
+    note = models.CharField(max_length=500, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at"]
+        verbose_name_plural = "dispute evidence"
+
+    def __str__(self):
+        return f"evidence {self.pk} for dispute {self.dispute_id}"

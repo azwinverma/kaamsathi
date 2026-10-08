@@ -49,6 +49,7 @@ ROUTE_ROLES: dict[str, frozenset[str]] = {
     "ops/staff": frozenset({SUPERADMIN}),
     "ops/taxonomy": frozenset({SUPERADMIN}),
     "ops/system": frozenset({SUPERADMIN}),
+    "ops/flags": frozenset({SUPERADMIN}),
     # shared queues
     "ops/jobs": frozenset({VERIFIER, SUPPORT}),
     "ops/organizations": frozenset({VERIFIER, SUPPORT}),

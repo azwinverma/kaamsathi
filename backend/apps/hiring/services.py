@@ -33,11 +33,33 @@ def refresh_job_fill_status(job: JobOpening):
         job.save(update_fields=["status"])
 
 
+def placement_fee(org):
+    """Plan-based placement fee (apps.billing), falling back to ``settings.PLACEMENT_FEE``."""
+    try:
+        from apps.billing.services import placement_fee_for
+    except ImportError:  # pragma: no cover
+        return D(settings.PLACEMENT_FEE)
+    try:
+        fee = placement_fee_for(org)
+    except Exception:  # noqa: BLE001 - billing plan not configured → contract default
+        fee = None
+    return D(fee) if fee is not None else D(settings.PLACEMENT_FEE)
+
+
+def _track(name, *, user=None, organization=None, **props):
+    try:
+        from apps.telemetry import track
+    except ImportError:  # pragma: no cover
+        return
+    track(name, user=user, organization=organization, **props)
+
+
 def create_placement_charge(application: Application, employment):
     from apps.billing.models import Charge
     from apps.workforce.models import Employment
 
     org = application.job.organization
+    fee = placement_fee(org)
     replaced = (
         Employment.objects.filter(
             organization=org,
@@ -56,7 +78,7 @@ def create_placement_charge(application: Application, employment):
         return Charge.objects.create(
             organization=org,
             kind="placement",
-            amount=D(settings.PLACEMENT_FEE),
+            amount=fee,
             description=f"Placement: {worker_name} — {application.job.title} "
             f"(free replacement for {replaced.worker.full_name})",
             application=application,
@@ -66,7 +88,7 @@ def create_placement_charge(application: Application, employment):
     return Charge.objects.create(
         organization=org,
         kind="placement",
-        amount=D(settings.PLACEMENT_FEE),
+        amount=fee,
         description=f"Placement: {worker_name} — {application.job.title}",
         application=application,
         status="unpaid",
@@ -526,6 +548,9 @@ def send_offer(application: Application, data: dict, user):
         sent_by=user,
     )
     org = application.job.organization
+    _track(
+        "offer_sent", user=user, organization=org, job_id=str(application.job_id), application_id=str(application.id)
+    )
     amount = format_npr(offer_monthly_amount(offer))
     _safe_notify(
         application.worker.user,
@@ -606,6 +631,14 @@ def respond_to_offer(offer, accept: bool, reason: str = ""):
         app.responded_at = offer.responded_at
         app.save(update_fields=["worker_response", "responded_at"])
     _notify_employer(offer, accept)
+    if accept:
+        _track(
+            "offer_accepted",
+            user=app.worker.user if app.worker.user_id else None,
+            organization=offer.application.job.organization,
+            job_id=str(app.job_id),
+            application_id=str(app.id),
+        )
     return offer
 
 

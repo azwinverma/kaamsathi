@@ -163,7 +163,8 @@ class PayoutBatchViewSet(
 
 
 class PayoutWebhookView(APIView):
-    """POST /webhooks/payouts/{provider} — no auth; HMAC-SHA256 of raw body in X-Signature."""
+    """POST /webhooks/payouts/{provider} — no auth; HMAC-SHA256 in X-Signature (of ``ts.body`` when
+    X-Timestamp is sent, else the raw body); exact replays → 409 ``webhook_replayed``."""
 
     authentication_classes: list = []
     permission_classes = [AllowAny]
@@ -174,8 +175,16 @@ class PayoutWebhookView(APIView):
         if prov is None or provider == "bank_file":
             raise Http404
         _ = request.body  # read the raw body before DRF parses it
-        updates = prov.parse_webhook(request)
-        applied = services.apply_updates(PayoutBatch.objects.filter(provider=provider), updates)
+        try:
+            updates = prov.parse_webhook(request)
+            applied = services.apply_updates(PayoutBatch.objects.filter(provider=provider), updates)
+        except Exception:
+            replay_key = getattr(request, "_ks_webhook_replay_key", None)
+            if replay_key:  # processing failed: let the provider's retry through
+                from django.core.cache import cache
+
+                cache.delete(replay_key)
+            raise
         log(
             None,
             "payout.webhook",

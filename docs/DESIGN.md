@@ -44,13 +44,13 @@ Same tokens on web (CSS variables / Tailwind theme) and mobile (Flutter ThemeDat
 | neutral-100 | #EDEFF3 | hover rows |
 | neutral-200 | #DDE1E8 | borders |
 | neutral-300 | #C4CAD4 | input borders |
-| neutral-400 | #959DAB | placeholders |
-| neutral-500 | #6B7383 | secondary text |
+| neutral-400 | #959DAB | placeholders and decorative only — never body text (use #687080 `fg-subtle` for small text) |
+| neutral-500 | #5F6776 | secondary text (darkened from #6B7383 for WCAG AA 4.5:1) |
 | neutral-600 | #4D5465 | |
 | neutral-700 | #373D4C | body text |
 | neutral-900 | #161A26 | headings |
-| success-50/600 | #E8F7F0 / #12805C | present, paid, verified |
-| warning-50/600 | #FFF4E5 / #B25E09 | half day, pending |
+| success-50/600 | #E8F7F0 / #0F7352 | present, paid, verified (AA on the 50 tint) |
+| warning-50/600 | #FFF4E5 / #9A5107 | half day, pending (AA on the 50 tint) |
 | danger-50/600 | #FDECEC / #C8302B | absent, errors |
 
 Dark mode: background #0D1018, surface #161A26, border #2A3040, text #E6E9EF,

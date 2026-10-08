@@ -185,6 +185,8 @@ jobs:
         run: |
           sed -e 's/^DJANGO_SECRET_KEY=.*/DJANGO_SECRET_KEY=x/' -e 's/^JWT_SIGNING_KEY=.*/JWT_SIGNING_KEY=x/' \
               -e 's/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=x/' -e 's/^REDIS_PASSWORD=.*/REDIS_PASSWORD=x/' \
+              -e 's/^FIELD_ENCRYPTION_KEYS=.*/FIELD_ENCRYPTION_KEYS=Y2ktb25seS1kdW1teS1mZXJuZXQta2V5LTAwMDAwMDA=/' \
+              -e 's/^FIELD_HASH_KEY=.*/FIELD_HASH_KEY=ci-only-dummy-hash-key-0000000000000000000000000000000000000000000/' \
               deploy/.env.prod.example > /tmp/ci.env
           docker compose --env-file /tmp/ci.env -f deploy/docker-compose.prod.yml config --quiet
 
@@ -202,7 +204,7 @@ jobs:
           docker compose up -d --build
       - name: Wait for the API
         run: |
-          for i in $(seq 1 90); do
+          for _ in $(seq 1 90); do
             curl -fsS http://localhost:8000/api/v1/readiness >/dev/null && exit 0
             sleep 2
           done
@@ -212,7 +214,7 @@ jobs:
         run: docker compose exec -T backend python manage.py seed_demo
       - name: Wait for the web app
         run: |
-          for i in $(seq 1 60); do
+          for _ in $(seq 1 60); do
             curl -fsS -o /dev/null http://localhost:3000/login && exit 0
             sleep 2
           done

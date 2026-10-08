@@ -1,4 +1,4 @@
-"""OTP issue/verify: hashed codes, 5-min expiry, 5 attempts, 5 requests/phone/hour."""
+"""OTP issue/verify: hashed codes, 5-min expiry, 5 attempts, 5 requests/phone/hour, 30 s resend cooldown."""
 
 from __future__ import annotations
 
@@ -25,10 +25,45 @@ def dev_code() -> str | None:
     return settings.OTP_DEV_CODE if settings.DEBUG and settings.OTP_DEV_CODE else None
 
 
+class OTPRateLimited(APIError):
+    """429 ``otp_rate_limited`` with ``error.retry_after`` (seconds) and a ``Retry-After`` header."""
+
+    status_code = 429
+    default_code = "otp_rate_limited"
+
+    def __init__(self, retry_after: int | None = None):
+        super().__init__()
+        self.retry_after = retry_after
+
+
+def cooldown_remaining(phone: str, now=None) -> int:
+    """Seconds until ``phone`` may request another OTP (0 = now)."""
+    cooldown = int(getattr(settings, "OTP_RESEND_COOLDOWN_SECONDS", 30) or 0)
+    if cooldown <= 0:
+        return 0
+    now = now or timezone.now()
+    last = (
+        PhoneOTP.objects.filter(phone=phone, created_at__gt=now - dt.timedelta(seconds=cooldown))
+        .order_by("-created_at")
+        .values_list("created_at", flat=True)
+        .first()
+    )
+    if last is None:
+        return 0
+    return max(1, int((last + dt.timedelta(seconds=cooldown) - now).total_seconds() + 0.999))
+
+
 def issue(phone: str, ip=None) -> tuple[PhoneOTP, str]:
-    since = timezone.now() - dt.timedelta(hours=1)
-    if PhoneOTP.objects.filter(phone=phone, created_at__gte=since).count() >= settings.OTP_MAX_PER_HOUR:
-        raise APIError("otp_rate_limited", status_code=429)
+    now = timezone.now()
+    wait = cooldown_remaining(phone, now)
+    if wait:
+        raise OTPRateLimited(retry_after=wait)
+    since = now - dt.timedelta(hours=1)
+    recent = PhoneOTP.objects.filter(phone=phone, created_at__gte=since)
+    if recent.count() >= settings.OTP_MAX_PER_HOUR:
+        oldest = recent.order_by("created_at").values_list("created_at", flat=True).first()
+        retry = int((oldest + dt.timedelta(hours=1) - now).total_seconds() + 0.999) if oldest else 3600
+        raise OTPRateLimited(retry_after=max(retry, 1))
     code = dev_code() or f"{secrets.randbelow(10**6):06d}"
     otp = PhoneOTP.objects.create(
         phone=phone,

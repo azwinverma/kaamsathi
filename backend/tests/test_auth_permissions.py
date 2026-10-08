@@ -34,7 +34,8 @@ def assert_error(res, status, code):
     assert res.status_code == status, res.content
     body = res.json()
     assert set(body) == {"error"}
-    assert set(body["error"]) - {"request_id"} == {"code", "message", "fields"}  # + request_id (§1)
+    # + request_id (§1); + retry_after on otp_rate_limited
+    assert set(body["error"]) - {"request_id", "retry_after"} == {"code", "message", "fields"}
     assert body["error"]["code"] == code
     assert isinstance(body["error"]["message"], str) and body["error"]["message"]
     return body["error"]

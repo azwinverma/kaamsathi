@@ -41,6 +41,19 @@ DISPUTE_STATUS = {
     "employer_responded": _("Employer responded"),
     "resolved": _("Resolved"),
     "rejected": _("Rejected"),
+    "appealed": pgettext_lazy("complete1", "Appealed"),
+    "appeal_resolved": pgettext_lazy("complete1", "Appeal decided"),
+}
+
+APPEAL_OUTCOME = {
+    "upheld": pgettext_lazy("complete1", "Decision upheld"),
+    "overturned": pgettext_lazy("complete1", "Decision overturned"),
+}
+
+EVIDENCE_PARTY = {
+    "worker": pgettext_lazy("complete1", "Worker"),
+    "employer": pgettext_lazy("complete1", "Employer"),
+    "ops": pgettext_lazy("complete1", "KaamSathi staff"),
 }
 
 NEXT_STEPS = {
@@ -60,6 +73,17 @@ MESSAGES = {
     "dispute_closed": _("This dispute is already closed."),
     "dispute_not_open": _("Only open disputes can be answered."),
     "dispute_needs_org": _("Choose the employment or payslip this dispute is about."),
+    "appeal_not_allowed": pgettext_lazy(
+        "complete1", "This decision can no longer be appealed (once, within 14 days of the decision)."
+    ),
+    "appeal_same_staff": pgettext_lazy(
+        "complete1", "A different staff member must decide the appeal."
+    ),
+    "not_appealed": pgettext_lazy("complete1", "This dispute has no open appeal."),
+    "evidence_closed": pgettext_lazy("complete1", "Evidence can't be added to a closed dispute."),
+    "evidence_limit": pgettext_lazy("complete1", "A dispute can have at most 10 files."),
+    "flag_not_allowed": pgettext_lazy("complete1", "This comment can't be flagged."),
+    "rating_voided": pgettext_lazy("complete1", "This rating is already voided."),
 }
 
 

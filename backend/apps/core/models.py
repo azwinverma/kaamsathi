@@ -52,3 +52,41 @@ class FailedTask(models.Model):
 
     def __str__(self):
         return f"{self.task_name} @ {self.created_at:%Y-%m-%d %H:%M}"
+
+
+class FeatureFlag(models.Model):
+    """Runtime feature flag (``apps/core/flags.py``). Overrides the matching settings boolean."""
+
+    ROLLOUTS = [("all", "Everyone"), ("orgs", "Selected organizations"), ("percent", "Percentage of orgs")]
+
+    key = models.SlugField(max_length=64, primary_key=True)
+    description = models.CharField(max_length=255, blank=True, default="")
+    enabled = models.BooleanField(default=False)
+    rollout = models.CharField(max_length=10, choices=ROLLOUTS, default="all")
+    org_ids = models.JSONField(default=list, blank=True)
+    percent = models.PositiveSmallIntegerField(default=0)
+    # Safe to expose to signed-in clients through GET /flags.
+    client_visible = models.BooleanField(default=False)
+    updated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["key"]
+
+    def __str__(self):
+        return f"{self.key} [{'on' if self.enabled else 'off'}:{self.rollout}]"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        from .flags import invalidate
+
+        invalidate()
+
+    def delete(self, *args, **kwargs):
+        out = super().delete(*args, **kwargs)
+        from .flags import invalidate
+
+        invalidate()
+        return out

@@ -39,7 +39,13 @@ class JobViewSet(OrgScopedMixin, AuditedViewSetMixin, viewsets.ModelViewSet):
         if p.get("trade"):
             qs = qs.filter(trade_id=p["trade"])
         if p.get("q"):
-            qs = qs.filter(Q(title__icontains=p["q"]) | Q(description__icontains=p["q"]))
+            from apps.workers.services import matching_trade_codes
+
+            qs = qs.filter(
+                Q(title__icontains=p["q"])
+                | Q(description__icontains=p["q"])
+                | Q(trade_id__in=matching_trade_codes(p["q"]))
+            )
         return qs.order_by("-created_at")
 
     def get_create_kwargs(self):

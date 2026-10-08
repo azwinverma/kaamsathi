@@ -204,6 +204,13 @@ def can_download_passport_photo(rest: str, user, name: str) -> bool:
     ).exists()
 
 
+def _languages(worker) -> list[dict]:
+    """Spoken languages (E004) — self-declared, shown with their proficiency."""
+    from apps.workers.services import language_payload
+
+    return language_payload(worker.languages.all())
+
+
 def passport_payload(worker, *, include_contact: bool, verify_url: str, request=None) -> dict:
     """Skill Passport (verified data only). Shared by public, share, PDF and partner endpoints."""
     worker = type(worker).objects.select_related("current_district", "permanent_district").get(pk=worker.pk)
@@ -267,6 +274,7 @@ def passport_payload(worker, *, include_contact: bool, verify_url: str, request=
             }
             for c in creds
         ],
+        "languages": _languages(worker),
         "work": {**work_summary(worker), "external": external_work(worker)},
         "availability": {
             "is_available": worker.is_available,

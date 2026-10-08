@@ -59,6 +59,16 @@ class DistrictListView(PublicView):
 
 class TradeListView(PublicView):
     def get(self, request):
+        qs = (
+            Trade.objects.all()
+            if request.query_params.get("all") in ("1", "true")
+            else Trade.objects.filter(is_active=True)
+        )
+        q = request.query_params.get("q")
+        if q:  # free-text incl. aliases ("bhanse" → cook), F004
+            from apps.workers.services import matching_trade_codes
+
+            qs = qs.filter(code__in=matching_trade_codes(q))
         return Response(
             [
                 {
@@ -68,11 +78,7 @@ class TradeListView(PublicView):
                     "category": t.category,
                 }
                 # inactive trades (ops taxonomy) are hidden unless ?all=1
-                for t in (
-                    Trade.objects.all()
-                    if request.query_params.get("all") in ("1", "true")
-                    else Trade.objects.filter(is_active=True)
-                )
+                for t in qs
             ]
         )
 

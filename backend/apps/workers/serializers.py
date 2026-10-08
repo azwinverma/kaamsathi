@@ -12,7 +12,7 @@ from apps.core.phone import is_valid_phone, mask_phone, normalize_phone
 from apps.core.serializers import BSModelSerializer, district_ref, trade_ref
 from apps.geo.models import District
 
-from .models import Consent, Trade, Worker, WorkerSkill
+from .models import Consent, Trade, Worker, WorkerLanguage, WorkerSkill
 
 WORKER_CARD_SELECT = ("current_district", "permanent_district")
 WORKER_CARD_PREFETCH = (
@@ -29,7 +29,7 @@ def card_queryset(qs):
 
 
 def _employer_rating(employment):
-    ratings = [r for r in employment.ratings.all() if r.rater == "employer"]
+    ratings = [r for r in employment.ratings.all() if r.rater == "employer" and not r.voided]
     if not ratings:
         return None
     r = ratings[0]
@@ -153,6 +153,11 @@ class SkillSerializer(serializers.ModelSerializer):
         return data
 
 
+class LanguageSerializer(serializers.Serializer):
+    language = serializers.ChoiceField(choices=list(WorkerLanguage.LANGUAGES))
+    proficiency = serializers.ChoiceField(choices=list(WorkerLanguage.PROFICIENCIES), default="conversational")
+
+
 class WorkerDetailSerializer(BSModelSerializer):
     """Full worker record (ops console and /me/worker)."""
 
@@ -166,6 +171,7 @@ class WorkerDetailSerializer(BSModelSerializer):
         source="naike", queryset=Worker.objects.all(), required=False, allow_null=True
     )
     skills = SkillSerializer(many=True, required=False)
+    languages = LanguageSerializer(many=True, required=False)
     user_id = serializers.UUIDField(read_only=True)
     verified_by = serializers.SerializerMethodField()
 
@@ -203,6 +209,7 @@ class WorkerDetailSerializer(BSModelSerializer):
             "naike_id",
             "notes",
             "skills",
+            "languages",
             "created_at",
             "updated_at",
         ]
@@ -242,18 +249,26 @@ class WorkerDetailSerializer(BSModelSerializer):
         return phone
 
     def to_internal_value(self, data):
-        # multipart requests may send skills as a JSON string
-        if hasattr(data, "get") and isinstance(data.get("skills"), str):
-            import json
+        # multipart requests may send skills / languages as a JSON string
+        import json
 
-            data = data.copy()
-            try:
-                skills = json.loads(data.get("skills") or "[]")
-            except ValueError as exc:
-                raise serializers.ValidationError({"skills": ["Invalid JSON."]}) from exc
-            data = {k: data.get(k) for k in data.keys()}
-            data["skills"] = skills
+        for key in ("skills", "languages"):
+            if hasattr(data, "get") and isinstance(data.get(key), str):
+                try:
+                    parsed = json.loads(data.get(key) or "[]")
+                except ValueError as exc:
+                    raise serializers.ValidationError({key: ["Invalid JSON."]}) from exc
+                data = {k: data.get(k) for k in data.keys()}
+                data[key] = parsed
         return super().to_internal_value(data)
+
+    def validate_languages(self, value):
+        if len(value) > 15:
+            raise serializers.ValidationError("Add at most 15 languages.")
+        codes = [v["language"] for v in value]
+        if len(codes) != len(set(codes)):
+            raise serializers.ValidationError("Each language can be listed once.")
+        return value
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -275,6 +290,10 @@ class WorkerDetailSerializer(BSModelSerializer):
         ):
             data[k] = card[k]
         data["payment_method_label"] = labels.label(labels.PAYMENT_METHOD, instance.payment_method)
+        from .services import language_payload, profile_completeness
+
+        data["languages"] = language_payload(instance.languages.all())
+        data["profile_completeness"] = profile_completeness(instance)
         return data
 
     def _save_skills(self, worker, skills):
@@ -294,18 +313,29 @@ class WorkerDetailSerializer(BSModelSerializer):
             keep.append(obj.pk)
         worker.skills.exclude(pk__in=keep).delete()
 
+    def _save_languages(self, worker, languages):
+        if languages is None:
+            return
+        from .services import set_languages
+
+        set_languages(worker, languages)
+
     @transaction.atomic
     def create(self, validated_data):
         skills = validated_data.pop("skills", None)
+        languages = validated_data.pop("languages", None)
         worker = super().create(validated_data)
         self._save_skills(worker, skills)
+        self._save_languages(worker, languages)
         return worker
 
     @transaction.atomic
     def update(self, instance, validated_data):
         skills = validated_data.pop("skills", None)
+        languages = validated_data.pop("languages", None)
         worker = super().update(instance, validated_data)
         self._save_skills(worker, skills)
+        self._save_languages(worker, languages)
         return worker
 
 
@@ -322,6 +352,8 @@ SELF_EDITABLE = {
     "service_radius_km",
     "expected_monthly_wage",
     "available_from",
+    # spoken languages (E004)
+    "languages",
 }
 
 

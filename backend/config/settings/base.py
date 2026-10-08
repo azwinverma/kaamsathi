@@ -375,7 +375,9 @@ CELERY_BEAT_SCHEDULE = {
 OTP_DEV_CODE = env("OTP_DEV_CODE", default="")
 OTP_TTL_SECONDS = 300
 OTP_MAX_ATTEMPTS = 5
-OTP_MAX_PER_HOUR = 5
+OTP_MAX_PER_HOUR = env.int("OTP_MAX_PER_HOUR", default=5)
+# Server-side resend cooldown per phone (seconds); 0 disables. CI e2e may lower it.
+OTP_RESEND_COOLDOWN_SECONDS = env.int("OTP_RESEND_COOLDOWN_SECONDS", default=30)
 
 SMS_BACKEND = env("SMS_BACKEND", default="console")  # console | sparrow | aakash
 SMS_SENDER_ID = env("SMS_SENDER_ID", default="KaamSathi")
@@ -440,6 +442,28 @@ CLAMAV_REQUIRED = env.bool("CLAMAV_REQUIRED", default=False)
 MAINTENANCE_MODE = env("MAINTENANCE_MODE", default="off")
 # Idempotency-Key replay window.
 IDEMPOTENCY_TTL_HOURS = env.int("IDEMPOTENCY_TTL_HOURS", default=24)
+# Feature flags (apps/core/flags.py): DB rows override these settings; cached this many seconds.
+FEATURE_FLAG_CACHE_SECONDS = env.int("FEATURE_FLAG_CACHE_SECONDS", default=30)
+# KYC four-eyes: a second, different verifier must confirm "verified" (flag key ``kyc_four_eyes``).
+KYC_FOUR_EYES = env.bool("KYC_FOUR_EYES", default=False)
+# Payout webhooks: max clock skew for X-Timestamp and how long signatures are remembered (replays).
+PAYOUT_WEBHOOK_MAX_SKEW_SECONDS = env.int("PAYOUT_WEBHOOK_MAX_SKEW_SECONDS", default=300)
+PAYOUT_WEBHOOK_REPLAY_TTL_SECONDS = env.int("PAYOUT_WEBHOOK_REPLAY_TTL_SECONDS", default=86400)
+
+# --- Billing & telemetry (apps/billing, apps/telemetry) -----------------------
+VAT_RATE = env("VAT_RATE", default="13")  # percent
+INVOICE_DUE_DAYS = env.int("INVOICE_DUE_DAYS", default=15)
+BILLING_SELLER_NAME = env("BILLING_SELLER_NAME", default="KaamSathi Pvt. Ltd.")
+BILLING_SELLER_ADDRESS = env("BILLING_SELLER_ADDRESS", default="Kathmandu, Nepal")
+BILLING_SELLER_PAN = env("BILLING_SELLER_PAN", default="")
+# IRD CBMS (e-billing) sync stays off until registered; needs all three credentials too.
+IRD_CBMS_ENABLED = env.bool("IRD_CBMS_ENABLED", default=False)
+IRD_CBMS_URL = env("IRD_CBMS_URL", default="")
+IRD_CBMS_USERNAME = env("IRD_CBMS_USERNAME", default="")
+IRD_CBMS_PASSWORD = env("IRD_CBMS_PASSWORD", default="")
+TELEMETRY_ENABLED = env.bool("TELEMETRY_ENABLED", default=True)
+TELEMETRY_RETENTION_DAYS = env.int("TELEMETRY_RETENTION_DAYS", default=400)
+TELEMETRY_THROTTLE_RATE = env("TELEMETRY_THROTTLE_RATE", default="60/minute")
 
 # --- Logging ----------------------------------------------------------------
 LOG_LEVEL = env("LOG_LEVEL", default="INFO")

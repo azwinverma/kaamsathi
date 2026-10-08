@@ -169,7 +169,9 @@ def _ratio(num, den, nd=3):
 def _avg_rating(rater: str, since) -> float | None:
     from apps.workers.models import Rating
 
-    rows = list(Rating.objects.filter(rater=rater, created_at__gte=since).values_list("score_a", "score_b"))
+    rows = list(
+        Rating.objects.filter(rater=rater, created_at__gte=since, voided=False).values_list("score_a", "score_b")
+    )
     if not rows:
         return None
     return round(statistics.fmean((a + b) / 2 for a, b in rows), 2)

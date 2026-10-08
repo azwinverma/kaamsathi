@@ -22,4 +22,6 @@ regexes = [
   '''citizenship/NID/bank/PAN''',                # prose, not a key
   '''Phase1ExitKey''',                           # TypeScript type name
   '''ci-only-[0-9a-f]{64}''',                    # throwaway DJANGO_SECRET_KEY for `check --deploy` in CI
+  '''ci-only-dummy-[a-z0-9-]+''',                # dummy FIELD_HASH_KEY for compose validation in CI
+  '''Y2ktb25seS1kdW1teS1mZXJuZXQta2V5LTAwMDAwMDA=''',  # base64("ci-only-dummy-fernet-key-0000000")
 ]

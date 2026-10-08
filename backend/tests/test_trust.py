@@ -377,7 +377,11 @@ def test_dispute_raised_emits_enterprise_webhook(disputing, org):
     from apps.integrations.models import WebhookDelivery, WebhookEndpoint
 
     WebhookEndpoint.objects.create(
-        organization=org, url="https://example.com/hook", secret="s", events=["dispute.raised"], is_active=True
+        organization=org,
+        url="https://example.com/hook",
+        secret="s",
+        events=["dispute.raised"],
+        is_active=True,
     )
     _w, emp, client = disputing
     res = client.post(
