@@ -104,6 +104,7 @@ urlpatterns = [
     path("", include("apps.mobility.urls")),
     path("", include("apps.notifications.urls")),
     path("", include("apps.telemetry.urls")),
+    path("", include("apps.bolau.urls")),
     path("", include("apps.billing.urls")),
     path("", include("apps.hiring.urls")),
 ]

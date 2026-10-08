@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "apps.integrations",
     "apps.mobility",
     "apps.telemetry",
+    "apps.bolau",
 ]
 
 MIDDLEWARE = [
@@ -404,6 +405,11 @@ PARTNER_GRANT_MAX_DAYS = env.int("PARTNER_GRANT_MAX_DAYS", default=90)
 PDF_DEVANAGARI_FONT = env(
     "PDF_DEVANAGARI_FONT", default=str(BASE_DIR / "assets" / "fonts" / "Mukta-Regular.ttf")
 )
+# Bolau (docs/CONTRACT-BOLAU.md). Fee paid by the Ghardhani only; Sipalu never pay.
+BOLAU_BOOKING_FEE = env("BOLAU_BOOKING_FEE", default="49.00")
+BOLAU_ACCEPT_TIMEOUT_MINUTES = env.int("BOLAU_ACCEPT_TIMEOUT_MINUTES", default=30)
+BOLAU_FREE_CANCEL_HOURS = env.int("BOLAU_FREE_CANCEL_HOURS", default=2)
+
 # Field encryption (apps/core/crypto.py): Fernet keys newest-first, and the blind-index HMAC key.
 FIELD_ENCRYPTION_KEYS = env.list("FIELD_ENCRYPTION_KEYS", default=[])
 FIELD_HASH_KEY = env("FIELD_HASH_KEY", default="")

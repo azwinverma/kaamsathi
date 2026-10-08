@@ -14,3 +14,4 @@ accepted ADR — supersede it with a new one.
 - [ADR 0008: Caddy instead of Nginx](0008-caddy-instead-of-nginx.md)
 - [ADR 0009: First-party product telemetry](0009-first-party-product-telemetry.md)
 - [ADR 0010: Bikram Sambat for display, AD for storage](0010-bikram-sambat-for-display-ad-for-storage.md)
+- [ADR 0011: Bolau — Sipalu self-profiles and Ghardhani bookings](0011-bolau-sipalu-ghardhani-bookings.md)

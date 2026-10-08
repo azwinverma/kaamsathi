@@ -87,3 +87,15 @@ machine_operator मेसिन अपरेटर · driver चालक (ड�
 security_guard सुरक्षा गार्ड · cook भान्से (कुक) · kitchen_helper भान्सा सहयोगी ·
 waiter वेटर · housekeeping हाउसकिपिङ · cleaner सरसफाइ कर्मचारी · ward_attendant वार्ड सहयोगी ·
 tailor दर्जी (टेलर) · technician प्राविधिक · store_keeper स्टोर किपर · loader लोडर
+
+## Bolau (Sipalu bookings) — docs/CONTRACT-BOLAU.md
+
+| key | English UI | नेपाली UI | Notes |
+| --- | --- | --- | --- |
+| term.sipalu | Sipalu | सिपालु | skilled person offering work; replaces "worker" in worker-facing and public copy |
+| term.ghardhani | Ghardhani | घरधनी | person/household who books a Sipalu; never "boss/malik" |
+| term.bolau | Bolau | बोलाउ | the booking service — "Bolau a Sipalu" / "सिपालु बोलाउनुहोस्" |
+| term.kaam_request | Kaam request | कामको अनुरोध | posted job asking for offers |
+| term.offer | Offer | प्रस्ताव | a Sipalu's reply to a Kaam request (max 3) |
+| term.arrival_code | Arrival code | आगमन कोड | 4-digit code read out on arrival |
+| term.booking_fee | Booking fee | बुकिङ शुल्क | paid by the Ghardhani only |
