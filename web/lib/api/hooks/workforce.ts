@@ -1,5 +1,11 @@
 "use client";
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { api, type QueryParams } from "../client";
 import { qk } from "../keys";
 import type {
@@ -19,6 +25,7 @@ import type {
   Paginated,
   PayrollRunListItem,
 } from "../types";
+import type { EmploymentHistoryEvent } from "../types-history";
 
 type List<T> = Paginated<T> | T[];
 
@@ -36,6 +43,21 @@ export function useEmployment(id: string | undefined) {
   return useQuery({
     queryKey: qk.org.employment(id ?? ""),
     queryFn: () => api.get<Employment>(`/org/employments/${id}`),
+    enabled: !!id,
+  });
+}
+
+/** GET /org/employments/{id}/history — newest first, 50 per page; `fetchNextPage` loads older events. */
+export function useEmploymentHistory(id: string | undefined) {
+  return useInfiniteQuery({
+    queryKey: qk.org.employmentHistory(id ?? ""),
+    queryFn: ({ pageParam }) =>
+      api.get<Paginated<EmploymentHistoryEvent>>(`/org/employments/${id}/history`, {
+        page: pageParam,
+        page_size: 50,
+      }),
+    initialPageParam: 1,
+    getNextPageParam: (last, _all, page) => (last.next ? page + 1 : undefined),
     enabled: !!id,
   });
 }
@@ -80,7 +102,10 @@ export function useRateEmployment() {
   return useMutation({
     mutationFn: ({ id, ...body }: { id: string; score_a: number; score_b: number; comment?: string }) =>
       api.post(`/org/employments/${id}/rate`, body),
-    onSuccess: (_r, vars) => qc.invalidateQueries({ queryKey: qk.org.employment(vars.id) }),
+    onSuccess: (_r, vars) => {
+      qc.invalidateQueries({ queryKey: qk.org.employment(vars.id) });
+      qc.invalidateQueries({ queryKey: qk.org.employmentHistory(vars.id) });
+    },
   });
 }
 
@@ -173,7 +198,10 @@ export function useCreateAdvance() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (body: AdvanceInput) => api.post<Advance>("/org/advances", body),
-    onSuccess: () => qc.invalidateQueries({ queryKey: qk.org.advancesAll }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: qk.org.advancesAll });
+      qc.invalidateQueries({ queryKey: qk.org.employmentHistoryAll });
+    },
   });
 }
 export function useUpdateAdvance() {
@@ -181,7 +209,10 @@ export function useUpdateAdvance() {
   return useMutation({
     mutationFn: ({ id, ...body }: Partial<AdvanceInput> & { id: string }) =>
       api.patch<Advance>(`/org/advances/${id}`, body),
-    onSuccess: () => qc.invalidateQueries({ queryKey: qk.org.advancesAll }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: qk.org.advancesAll });
+      qc.invalidateQueries({ queryKey: qk.org.employmentHistoryAll });
+    },
   });
 }
 

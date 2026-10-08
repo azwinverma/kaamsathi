@@ -1816,6 +1816,8 @@
   "learnMenuSubtitle": "Training, certificates, next steps",
   "slotLearnWorkshopAlt": "Training at a workshop bench",
   "slotCareerStepAlt": "A worker moving up a trade level",
+  "slotLearnWorkshopIllustrationAlt": "Illustration: a trainee at a wiring practice board",
+  "slotCareerStepIllustrationAlt": "Illustration: a welder lifting her helmet after a test weld",
   "homeHello": "Namaste,",
   "homeLadderChip": "Skill ladder: level {level}",
   "@homeLadderChip": {

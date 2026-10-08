@@ -6662,6 +6662,18 @@ abstract class AppLocalizations {
   /// **'A worker moving up a trade level'**
   String get slotCareerStepAlt;
 
+  /// No description provided for @slotLearnWorkshopIllustrationAlt.
+  ///
+  /// In en, this message translates to:
+  /// **'Illustration: a trainee at a wiring practice board'**
+  String get slotLearnWorkshopIllustrationAlt;
+
+  /// No description provided for @slotCareerStepIllustrationAlt.
+  ///
+  /// In en, this message translates to:
+  /// **'Illustration: a welder lifting her helmet after a test weld'**
+  String get slotCareerStepIllustrationAlt;
+
   /// No description provided for @homeHello.
   ///
   /// In en, this message translates to:

@@ -3525,6 +3525,12 @@ class AppLocalizationsNe extends AppLocalizations {
   String get slotCareerStepAlt => 'पेसामा माथिल्लो तहमा पुगेका कामदार';
 
   @override
+  String get slotLearnWorkshopIllustrationAlt => 'चित्र: वायरिङ अभ्यास बोर्डमा तालिम लिँदै प्रशिक्षार्थी';
+
+  @override
+  String get slotCareerStepIllustrationAlt => 'चित्र: परीक्षण वेल्डपछि हेल्मेट उठाउँदै वेल्डर';
+
+  @override
   String get homeHello => 'नमस्ते,';
 
   @override

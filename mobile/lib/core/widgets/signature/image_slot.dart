@@ -60,14 +60,28 @@ class PhotoSlot {
 }
 
 /// Shows a [PhotoSlot]'s bundled photo when it exists, otherwise its
-/// illustrated fallback. [semanticLabel] (alt text) is required either way.
+/// illustrated fallback.
+///
+/// Alt text always describes what is actually on screen: [photoAlt] for the
+/// commissioned photo (the shot in the brief), [illustrationAlt] for the
+/// fallback scene — the two usually show different people doing different
+/// things, so one label cannot serve both.
 class ImageSlot extends StatelessWidget {
-  const ImageSlot({super.key, required this.slot, required this.semanticLabel});
+  const ImageSlot({super.key, required this.slot, required this.photoAlt, required this.illustrationAlt});
 
   final PhotoSlot slot;
-  final String semanticLabel;
+
+  /// Alt text for the commissioned photo (`assets/photos/<id>.webp`).
+  final String photoAlt;
+
+  /// Alt text for the illustrated fallback ([PhotoSlot.fallback]).
+  final String illustrationAlt;
 
   static Future<Set<String>>? _bundled;
+
+  /// Forgets the cached asset list (tests swap the asset bundle).
+  @visibleForTesting
+  static void debugResetBundledAssets() => _bundled = null;
 
   /// Asset paths in the bundle (loaded once).
   static Future<Set<String>> bundledAssets(AssetBundle bundle) =>
@@ -80,7 +94,7 @@ class ImageSlot extends StatelessWidget {
     final fallback = KsIllustration(
       art: slot.fallback,
       alignment: slot.fallbackAlignment,
-      semanticLabel: semanticLabel,
+      semanticLabel: illustrationAlt,
     );
     return AspectRatio(
       aspectRatio: slot.aspectRatio,
@@ -93,7 +107,7 @@ class ImageSlot extends StatelessWidget {
             slot.assetPath,
             key: Key('slot_photo_${slot.id}'),
             fit: BoxFit.cover,
-            semanticLabel: semanticLabel,
+            semanticLabel: photoAlt,
             errorBuilder: (_, _, _) => fallback,
           );
         },

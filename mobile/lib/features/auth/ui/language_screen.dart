@@ -44,8 +44,10 @@ class LanguageScreen extends ConsumerWidget {
                               angle: 0.08,
                               child: ImageSlot(
                                 slot: PhotoSlot.welcomeHajiri,
-                                semanticLabel:
-                                    'हाजिरीको QR स्क्यान गर्दै कामदार · A worker scanning the hajiri QR code',
+                                photoAlt: 'हाजिरीको QR स्क्यान गर्दै कामदार · A worker scanning the hajiri QR code',
+                                illustrationAlt:
+                                    'चित्र: फोनमा हाजिरी लगाउँदै साइट सुपरभाइजर · '
+                                    'Illustration: a site supervisor marking hajiri on a phone',
                               ),
                             ),
                           ],

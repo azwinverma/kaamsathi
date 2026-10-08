@@ -117,7 +117,7 @@ def _bs_month_params(request):
 
 class EmploymentViewSet(OrgScopedMixin, SupervisorScopeMixin, AuditedViewSetMixin, viewsets.ModelViewSet):
     serializer_class = EmploymentSerializer
-    role_rules = {"list": ALL_ROLES, "retrieve": ALL_ROLES}
+    role_rules = {"list": ALL_ROLES, "retrieve": ALL_ROLES, "history": ALL_ROLES}
     http_method_names = ["get", "post", "patch"]
     ordering_fields = ["start_date", "worker__full_name", "created_at", "designation"]
     audit_prefix = "employment"
@@ -179,6 +179,15 @@ class EmploymentViewSet(OrgScopedMixin, SupervisorScopeMixin, AuditedViewSetMixi
         return Response(
             EmploymentSerializer(employment, context=self.get_serializer_context()).data, status=201
         )
+
+    @action(detail=True, methods=["get"])
+    def history(self, request, pk=None):
+        """Newest-first work record (CONTRACT-EXTENSIONS §8). Supervisors: own sites only (404)."""
+        from .history import employment_history
+
+        emp = self.get_object()
+        page = self.paginate_queryset(employment_history(emp))
+        return self.get_paginated_response(page)
 
     @action(detail=True, methods=["post"])
     def end(self, request, pk=None):

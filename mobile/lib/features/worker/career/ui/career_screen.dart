@@ -151,7 +151,11 @@ class CareerCard extends ConsumerWidget {
                 aspectRatio: 1,
                 angle: 0.08,
                 tapeColor: context.ks.coral,
-                child: ImageSlot(slot: PhotoSlot.careerStep, semanticLabel: l.slotCareerStepAlt),
+                child: ImageSlot(
+                  slot: PhotoSlot.careerStep,
+                  photoAlt: l.slotCareerStepAlt,
+                  illustrationAlt: l.slotCareerStepIllustrationAlt,
+                ),
               ),
             ],
           ],

@@ -180,3 +180,21 @@ processing fails, so provider retries work).
 {status: verified}` keeps the worker `pending` and stores `risk.VerificationReview(stage=first)`; a different
 verifier's `verified` finalises (`stage=final`); the same verifier → 400 `invalid_state`; `rejected` is always
 final. The verify response gains `kyc_review: {required: true, first_review_by: {id, full_name}, first_review_at}|null`.
+
+**Employment history** — `GET /org/employments/{id}/history` (owner/admin/hr; supervisors only for employments at
+their own sites; another org's or another site's employment → 404). Paginated (`page`, `page_size` ≤ 100),
+newest first: `{count, next, previous, results: [{type, at, at_bs, title, detail, actor: {id, full_name}|null}]}`.
+`at` is an ISO date for dated facts (start, end, advance — the end sorts as the end of its day) or an ISO
+datetime; `at_bs` is the BS date; `title` is localised (Accept-Language). Types and `detail`:
+- `employment_started` `{site: {id, name}|null, designation}` — as on the first day (before logged changes).
+- `employment_ended` `{end_reason, end_reason_label}`.
+- `wage_changed` `{changes: {field: {from, to}}, monthly_gross: {from, to}, wage_type: {from, to, from_label,
+  to_label}}` — fields `wage_type|basic_salary|dearness_allowance|other_allowance|daily_wage|hourly_wage|part_time|
+  ssf_enrolled`; one event per audited `employment.update` (the audit row's `changes` hold `{field: {from, to}}`).
+- `site_changed` `{from: {id, name}|null, to}` · `designation_changed` `{from, to}`.
+- `rating_given` `{id, score_a (reliability), score_b (skill), comment, comment_status, comment_status_label,
+  voided}` — only the employer's own rating of this employment; the worker's rating of the employer never appears.
+- `contract_issued` `{id, version, monthly_gross}` (actor = generated_by) · `contract_accepted` `{id, version, channel}`.
+- `dispute_opened` `{id, kind, kind_label, status, status_label, description}` · `dispute_resolved` (same + `appeal`
+  bool, `note`, `outcome` on appeals); actor is always null (KaamSathi staff are not named).
+- `advance_given` `{id, amount, recover_per_month, recovered_amount, note}`.

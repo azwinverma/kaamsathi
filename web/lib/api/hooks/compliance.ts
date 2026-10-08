@@ -2,6 +2,7 @@
 /** Hooks for the compliance area (docs/CONTRACT-ECOSYSTEM.md §5). Query keys live in this file. */
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, type QueryParams } from "../client";
+import { qk } from "../keys";
 import type { Paginated } from "../types";
 import type {
   ComplianceStatus,
@@ -82,6 +83,7 @@ export function useGenerateContract(employmentId: string) {
     onSuccess: (data) => {
       qc.setQueryData(complianceKeys.contract(employmentId), data);
       qc.invalidateQueries({ queryKey: complianceKeys.status });
+      qc.invalidateQueries({ queryKey: qk.org.employmentHistory(employmentId) });
     },
   });
 }
@@ -96,6 +98,7 @@ export function useRecordContractAcceptance(employmentId: string) {
     onSuccess: (data) => {
       qc.setQueryData(complianceKeys.contract(employmentId), data);
       qc.invalidateQueries({ queryKey: complianceKeys.status });
+      qc.invalidateQueries({ queryKey: qk.org.employmentHistory(employmentId) });
     },
   });
 }

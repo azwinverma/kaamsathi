@@ -156,7 +156,32 @@
       "dispute": "Dispute raised: {kind}",
       "dispute_hint": "{status} · {description}",
       "open_dispute": "Open in disputes",
-      "pdf": "PDF v{version}"
+      "pdf": "PDF v{version}",
+      "show_older": "Show older events",
+      "terms_updated": "Pay terms changed",
+      "field_change": "{field}: {from} → {to}",
+      "site_change": "Moved from {from} to {to}",
+      "no_site": "no site",
+      "designation_change": "Designation: {from} → {to}",
+      "rated": "You rated {name}",
+      "rating_voided": "Removed by KaamSathi — this rating no longer counts.",
+      "letter_gross": "{gross} a month gross",
+      "dispute_decided": "Dispute decided: {kind}",
+      "appeal_decided": "Appeal decided: {kind}",
+      "advance": "Advance of {amount} given",
+      "advance_hint": "Recovering {per} a month · {recovered} recovered so far",
+      "field": {
+        "wage_type": "Wage type",
+        "basic_salary": "Basic salary",
+        "dearness_allowance": "Dearness allowance",
+        "other_allowance": "Other allowance",
+        "daily_wage": "Daily wage",
+        "hourly_wage": "Hourly wage",
+        "part_time": "Part-time",
+        "ssf_enrolled": "SSF enrolled",
+        "yes": "yes",
+        "no": "no"
+      }
     },
     "credential": {
       "title": "Certificates",

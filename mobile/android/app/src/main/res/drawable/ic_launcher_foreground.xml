@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- KaamSathi mark: white "K" with a crimson accent dot. 108dp adaptive viewport. -->
+<!-- KaamSathi mark (web/lib/brand-mark.ts, web/public/brand/logo-mark.svg): white "K" drawn as a
+     worker's path with round caps, coral sun top-right. The 32×32 mark grid is scaled into the
+     66dp safe zone of the 108dp adaptive viewport (21dp inset, ×2.0625); the blue tile is
+     @color/ic_launcher_background. Regenerate with the mark if its geometry changes. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path android:fillColor="#FFFFFF" android:pathData="M38,34 L48,34 L48,74 L38,74 Z" />
-    <path android:fillColor="#FFFFFF" android:pathData="M48,50 L64,34 L78,34 L48,64 Z" />
-    <path android:fillColor="#FFFFFF" android:pathData="M55,57 L78,74 L64,74 L48,64 Z" />
-    <path android:fillColor="#DC2B4B"
-        android:pathData="M76,80 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z" />
+    <group
+        android:translateX="21"
+        android:translateY="21"
+        android:scaleX="2.0625"
+        android:scaleY="2.0625">
+        <path
+            android:pathData="M10,7.5v17M10,17.5l8,-8M14,14l7,10.5"
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="3.6"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:fillColor="#FF6B6B"
+            android:pathData="M21.5,7.75a2.75,2.75 0,1 0,5.5 0a2.75,2.75 0,1 0,-5.5 0z" />
+    </group>
 </vector>

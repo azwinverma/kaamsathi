@@ -8,7 +8,9 @@ from the same list.
 ## How slots work in the app
 
 - Each slot is a `PhotoSlot` in `mobile/lib/core/widgets/signature/image_slot.dart`, with a fixed
-  aspect ratio, an illustrated fallback and required alt text (English and Nepali in the ARB files).
+  aspect ratio, an illustrated fallback and two required alt texts (English and Nepali in the ARB
+  files): `photoAlt` describes the commissioned photo, `illustrationAlt` describes the fallback scene.
+  Screen readers only ever hear the one that matches what is on screen.
   The fallback is a scene from the shared illustration kit (`design/illustrations/`, the same SVGs the
   website uses), cropped to the slot around its subject.
 - Delivered photo: `mobile/assets/photos/<slot-id>.webp`. The folder is already bundled
@@ -39,7 +41,7 @@ from the same list.
 
 ## Slots
 
-| Slot id | Where in the app | Aspect | Alt text (en / ne) | Illustrated fallback |
+| Slot id | Where in the app | Aspect | Photo alt text (en / ne) | Illustrated fallback (its own alt text) |
 | --- | --- | --- | --- | --- |
 | `mobile-learn-workshop` | Learn tab, header, cut-paper frame with teal tape, top right | 4:5 portrait | "Training at a workshop bench" / "कार्यशालामा तालिम" | `training-lab.svg`, cropped to the trainee at the wiring board |
 | `mobile-career-step` | Home, "Grow your earnings" card, small frame with coral tape | 1:1 square | "A worker moving up a trade level" / "पेसामा माथिल्लो तहमा पुगेका कामदार" | `welder-visor.svg`, cropped to the welder |
@@ -97,5 +99,6 @@ from the same list.
    name. The worker is told which screen the photo appears on.
 3. Checked at 360 px phone width in English and Nepali, with the frame border and tape not
    covering the subject.
-4. Alt text still matches the photo. If not, update `slotLearnWorkshopAlt` /
-   `slotCareerStepAlt` in both ARB files, or the language-screen label.
+4. Photo alt text still matches the photo. If not, update `slotLearnWorkshopAlt` /
+   `slotCareerStepAlt` in both ARB files, or the language-screen `photoAlt`. The illustration alt
+   texts (`slot…IllustrationAlt`, language-screen `illustrationAlt`) stay as they are.

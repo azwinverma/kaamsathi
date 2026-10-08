@@ -53,7 +53,11 @@ class LearnScreen extends ConsumerWidget {
                   aspectRatio: 4 / 5,
                   angle: 0.07,
                   tapeColor: c.teal,
-                  child: ImageSlot(slot: PhotoSlot.learnWorkshop, semanticLabel: l.slotLearnWorkshopAlt),
+                  child: ImageSlot(
+                    slot: PhotoSlot.learnWorkshop,
+                    photoAlt: l.slotLearnWorkshopAlt,
+                    illustrationAlt: l.slotLearnWorkshopIllustrationAlt,
+                  ),
                 ),
               ],
             ),

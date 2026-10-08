@@ -33,6 +33,8 @@ export const qk = {
     employments: (q?: QueryParams) => ["org", "employments", "list", q ?? {}] as const,
     employmentsAll: ["org", "employments"] as const,
     employment: (id: string) => ["org", "employments", "detail", id] as const,
+    employmentHistoryAll: ["org", "employments", "history"] as const,
+    employmentHistory: (id: string) => ["org", "employments", "history", id] as const,
     attendanceAll: ["org", "attendance"] as const,
     attendanceDay: (date: string, site?: string) => ["org", "attendance", "day", date, site ?? ""] as const,
     attendanceRegister: (y: number, m: number, site?: string) =>

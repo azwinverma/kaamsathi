@@ -3517,6 +3517,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get slotCareerStepAlt => 'A worker moving up a trade level';
 
   @override
+  String get slotLearnWorkshopIllustrationAlt => 'Illustration: a trainee at a wiring practice board';
+
+  @override
+  String get slotCareerStepIllustrationAlt => 'Illustration: a welder lifting her helmet after a test weld';
+
+  @override
   String get homeHello => 'Namaste,';
 
   @override

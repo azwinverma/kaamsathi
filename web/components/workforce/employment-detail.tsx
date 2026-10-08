@@ -26,6 +26,7 @@ import { ContractPanel } from "@/components/compliance/contract-panel";
 import { useSession } from "@/components/providers/session";
 import { StatusBadge, VerificationBadge } from "@/components/shared/status-badge";
 import { RatingStars, SkillChips } from "@/components/shared/worker-summary";
+import { CommentStatusBadge, ScorePair } from "@/components/trust/rating-bits";
 import { ReliabilityBadge } from "@/components/trust/trust-badges";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -38,9 +39,14 @@ import { isApiError } from "@/lib/api/errors";
 import { useEmploymentContract } from "@/lib/api/hooks/compliance";
 import { useExpiringCredentials } from "@/lib/api/hooks/credentials";
 import { usePayrollRuns, usePayslips } from "@/lib/api/hooks/payroll";
-import { useOrgDisputes } from "@/lib/api/hooks/trust";
-import { useAdvances, useAttendanceRegister, useEmployment } from "@/lib/api/hooks/workforce";
+import {
+  useAdvances,
+  useAttendanceRegister,
+  useEmployment,
+  useEmploymentHistory,
+} from "@/lib/api/hooks/workforce";
 import type { Advance, AttendanceRegister, Employment, RegisterCell } from "@/lib/api/types";
+import type { EmploymentHistoryEvent, WageField } from "@/lib/api/types-history";
 import type { WorkerTrustFields } from "@/lib/api/types-trust";
 import { todayBs, todayIso } from "@/lib/format";
 import { useFormat } from "@/lib/use-format";
@@ -280,7 +286,6 @@ function verificationText(status: string, td: ReturnType<typeof useTranslations>
 type Dated = TimelineEntry & { sort: string };
 
 function WorkRecord({ emp, canManage }: { emp: Employment; canManage: boolean }) {
-  const t = useTranslations();
   const td = useTranslations("workforce.detail");
   const tt = useTranslations("ledger.timeline");
   const tc = useTranslations("compliance.contract");
@@ -290,8 +295,8 @@ function WorkRecord({ emp, canManage }: { emp: Employment; canManage: boolean })
   const register = useAttendanceRegister(now.year, now.month, emp.site?.id);
   const row = register.data?.rows.find((r) => r.employment_id === emp.id);
   const contract = useEmploymentContract(emp.id, canManage);
-  const disputes = useOrgDisputes({ q: emp.worker.full_name, page_size: 50 }, canManage);
-  const mine = listResults(disputes.data).filter((d) => d.employment?.id === emp.id);
+  const history = useEmploymentHistory(emp.id);
+  const events = (history.data?.pages ?? []).flatMap((p) => p.results);
 
   const when = (ad: string | null | undefined, bs?: string | null) => {
     const d = f.date(ad, bs);
@@ -302,32 +307,14 @@ function WorkRecord({ emp, canManage }: { emp: Employment; canManage: boolean })
       </>
     );
   };
-  const dayOf = (iso: string) => iso.slice(0, 10);
   const gross = (v: string | number | null | undefined) => f.money(v);
 
-  const entries: Dated[] = [];
-
-  // Joined / left
-  entries.push({
-    id: "joined",
-    sort: emp.start_date,
-    when: when(emp.start_date, emp.start_date_bs),
-    title: emp.site ? tt("joined", { site: emp.site.name }) : tt("joined_no_site"),
-    detail: emp.designation ? tt("as", { designation: emp.designation }) : undefined,
-    state: "done",
-  });
-  if (emp.status !== "active" && emp.end_date) {
-    entries.push({
-      id: "ended",
-      sort: `${emp.end_date}~`,
-      when: when(emp.end_date, emp.end_date_bs),
-      title: tt("ended"),
-      detail: emp.end_reason
-        ? tt("ended_hint", { reason: t(`end_reason.${emp.end_reason}`) })
-        : undefined,
-      state: "ended",
-    });
-  }
+  // Server events arrive newest first; keep that order within a day (index suffix) so the
+  // client-side entries (today, replacement guarantee, terms-changed) slot in by date.
+  const entries: Dated[] = events.map((ev, i) => ({
+    ...historyEntry(ev, { tt, tc, f, when, emp }),
+    sort: `${ev.at.slice(0, 10)}|${String(99999 - i).padStart(5, "0")}`,
+  }));
 
   // Replacement guarantee
   const rep = emp.replacement_eligible_until;
@@ -370,61 +357,7 @@ function WorkRecord({ emp, canManage }: { emp: Employment; canManage: boolean })
     });
   }
 
-  // Appointment letters (versions, acceptance, wage changes between versions)
-  const versions = [...(contract.data?.versions ?? [])].sort((a, b) => a.version - b.version);
-  versions.forEach((v, i) => {
-    const prev = versions[i - 1];
-    const changed =
-      prev && prev.terms.monthly_gross !== v.terms.monthly_gross && v.terms.monthly_gross;
-    entries.push({
-      id: `letter-${v.id}`,
-      sort: v.generated_at,
-      when: when(dayOf(v.generated_at)),
-      icon: FileText,
-      title: changed
-        ? tt("wage_change", {
-            from: gross(prev.terms.monthly_gross),
-            to: gross(v.terms.monthly_gross),
-          })
-        : tt("letter_issued", { version: f.digits(v.version) }),
-      detail: (
-        <span className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
-          {changed ? <span>{tt("letter_issued", { version: f.digits(v.version) })}</span> : null}
-          {v.terms.monthly_gross ? (
-            <span>
-              {tt("letter_terms", {
-                gross: gross(v.terms.monthly_gross),
-                ssf: v.terms.ssf_enrolled ? td("ssf_enrolled") : td("ssf_not_enrolled"),
-              })}
-            </span>
-          ) : null}
-          {v.generated_by ? (
-            <span>{tt("letter_by", { name: v.generated_by.full_name })}</span>
-          ) : null}
-          <a
-            className="text-brand-text font-medium hover:underline"
-            href={proxyHref(`/org/employments/${emp.id}/contract.pdf`, { version: v.version })}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {tt("pdf", { version: f.digits(v.version) })}
-          </a>
-        </span>
-      ),
-      state: "done",
-    });
-    if (v.is_accepted && v.accepted_at) {
-      entries.push({
-        id: `accepted-${v.id}`,
-        sort: v.accepted_at,
-        when: when(dayOf(v.accepted_at)),
-        icon: FileCheck2,
-        title: tt("letter_accepted", { version: f.digits(v.version) }),
-        detail: tc("accepted_via", { channel: tc(`channel_${v.accepted_channel ?? "app"}`) }),
-        state: "done",
-      });
-    }
-  });
+  // The letter the worker holds no longer matches the terms on file.
   const latest = contract.data?.latest;
   if (latest && contract.data?.needs_new_version && emp.status === "active") {
     const wageMoved = latest.terms.monthly_gross !== emp.monthly_gross && emp.monthly_gross;
@@ -438,29 +371,6 @@ function WorkRecord({ emp, canManage }: { emp: Employment; canManage: boolean })
         ? `${tt("terms_changed_wage", { now: gross(emp.monthly_gross), then: gross(latest.terms.monthly_gross) })} ${tt("terms_changed_hint")}`
         : tt("terms_changed_hint"),
       state: "attention",
-    });
-  }
-
-  // Disputes about this job
-  for (const d of mine) {
-    const open = d.status === "open" || d.status === "employer_responded";
-    entries.push({
-      id: `dispute-${d.id}`,
-      sort: d.raised_at,
-      when: when(dayOf(d.raised_at)),
-      icon: AlertTriangle,
-      title: tt("dispute", { kind: d.kind_label }),
-      detail: (
-        <>
-          <span className="line-clamp-2">
-            {tt("dispute_hint", { status: d.status_label, description: d.description })}
-          </span>
-          <Link href="/app/disputes" className="text-brand-text font-medium hover:underline">
-            {tt("open_dispute")}
-          </Link>
-        </>
-      ),
-      state: open ? "attention" : "done",
     });
   }
 
@@ -482,9 +392,257 @@ function WorkRecord({ emp, canManage }: { emp: Employment; canManage: boolean })
           </Link>
         </Button>
       </div>
-      <EmploymentTimeline entries={entries} label={tt("label")} />
+      {history.isError ? (
+        <ErrorState error={history.error} onRetry={() => history.refetch()} className="mb-4" />
+      ) : null}
+      {history.isLoading ? (
+        <div className="space-y-3" aria-busy="true">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+        </div>
+      ) : (
+        <EmploymentTimeline entries={entries} label={tt("label")} />
+      )}
+      {history.hasNextPage ? (
+        <div className="mt-4">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => history.fetchNextPage()}
+            loading={history.isFetchingNextPage}
+          >
+            {tt("show_older")}
+          </Button>
+        </div>
+      ) : null}
     </section>
   );
+}
+
+const WAGE_FIELDS: WageField[] = [
+  "wage_type",
+  "basic_salary",
+  "dearness_allowance",
+  "other_allowance",
+  "daily_wage",
+  "hourly_wage",
+  "part_time",
+  "ssf_enrolled",
+];
+const MONEY_FIELDS = new Set<WageField>([
+  "basic_salary",
+  "dearness_allowance",
+  "other_allowance",
+  "daily_wage",
+  "hourly_wage",
+]);
+
+/** One server history event → a timeline entry (title, detail, state, icon). */
+function historyEntry(
+  ev: EmploymentHistoryEvent,
+  {
+    tt,
+    tc,
+    f,
+    when,
+    emp,
+  }: {
+    tt: ReturnType<typeof useTranslations>;
+    tc: ReturnType<typeof useTranslations>;
+    f: ReturnType<typeof useFormat>;
+    when: (ad: string | null | undefined, bs?: string | null) => React.ReactNode;
+    emp: Employment;
+  },
+): TimelineEntry {
+  const id = `${ev.type}-${ev.at}-${"id" in ev.detail ? ev.detail.id : ""}`;
+  const base = { id, when: when(ev.at.slice(0, 10), ev.at_bs) };
+  const by = ev.actor?.full_name ? (
+    <span>{tt("letter_by", { name: ev.actor.full_name })}</span>
+  ) : null;
+  const line = (...parts: React.ReactNode[]) => (
+    <span className="flex flex-wrap items-center gap-x-3 gap-y-0.5">{parts}</span>
+  );
+  switch (ev.type) {
+    case "employment_started": {
+      const { site, designation } = ev.detail;
+      return {
+        ...base,
+        title: site ? tt("joined", { site: site.name }) : tt("joined_no_site"),
+        detail:
+          designation || by ? line(designation ? tt("as", { designation }) : null, by) : undefined,
+        state: "done",
+      };
+    }
+    case "employment_ended":
+      return {
+        ...base,
+        title: tt("ended"),
+        detail: line(
+          ev.detail.end_reason_label
+            ? tt("ended_hint", { reason: ev.detail.end_reason_label })
+            : null,
+          by,
+        ),
+        state: "ended",
+      };
+    case "wage_changed": {
+      const { changes, monthly_gross } = ev.detail;
+      const fmt = (field: WageField, v: string | boolean | null | undefined) => {
+        if (v === null || v === undefined || v === "") return "—";
+        if (field === "wage_type")
+          return v === ev.detail.wage_type.from
+            ? ev.detail.wage_type.from_label
+            : ev.detail.wage_type.to_label;
+        if (typeof v === "boolean") return v ? tt("field.yes") : tt("field.no");
+        return MONEY_FIELDS.has(field) ? f.money(v) : String(v);
+      };
+      const moved = monthly_gross.from !== monthly_gross.to;
+      return {
+        ...base,
+        icon: HandCoins,
+        title: moved
+          ? tt("wage_change", { from: f.money(monthly_gross.from), to: f.money(monthly_gross.to) })
+          : tt("terms_updated"),
+        detail: (
+          <>
+            <ul className="space-y-0.5">
+              {WAGE_FIELDS.filter((k) => changes[k]).map((k) => (
+                <li key={k}>
+                  {tt("field_change", {
+                    field: tt(`field.${k}`),
+                    from: fmt(k, changes[k]!.from),
+                    to: fmt(k, changes[k]!.to),
+                  })}
+                </li>
+              ))}
+            </ul>
+            {by}
+          </>
+        ),
+        state: "done",
+      };
+    }
+    case "site_changed":
+      return {
+        ...base,
+        icon: MapPin,
+        title: tt("site_change", {
+          from: ev.detail.from?.name || tt("no_site"),
+          to: ev.detail.to?.name || tt("no_site"),
+        }),
+        detail: by ?? undefined,
+        state: "done",
+      };
+    case "designation_changed":
+      return {
+        ...base,
+        title: tt("designation_change", { from: ev.detail.from || "—", to: ev.detail.to || "—" }),
+        detail: by ?? undefined,
+        state: "done",
+      };
+    case "rating_given": {
+      const r = ev.detail;
+      return {
+        ...base,
+        icon: Star,
+        title: tt("rated", { name: emp.worker.full_name }),
+        detail: (
+          <span className="block space-y-1">
+            <ScorePair rating={{ rater: "employer", score_a: r.score_a, score_b: r.score_b }} />
+            {r.comment ? (
+              <span className="flex flex-wrap items-center gap-2">
+                <span className="text-fg-body">“{r.comment}”</span>
+                <CommentStatusBadge rating={r} />
+              </span>
+            ) : null}
+            {r.voided ? <span className="block">{tt("rating_voided")}</span> : null}
+            {by}
+          </span>
+        ),
+        state: "done",
+      };
+    }
+    case "contract_issued":
+      return {
+        ...base,
+        icon: FileText,
+        title: tt("letter_issued", { version: f.digits(ev.detail.version) }),
+        detail: line(
+          ev.detail.monthly_gross
+            ? tt("letter_gross", { gross: f.money(ev.detail.monthly_gross) })
+            : null,
+          by,
+          <a
+            key="pdf"
+            className="text-brand-text font-medium hover:underline"
+            href={proxyHref(`/org/employments/${emp.id}/contract.pdf`, {
+              version: ev.detail.version,
+            })}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {tt("pdf", { version: f.digits(ev.detail.version) })}
+          </a>,
+        ),
+        state: "done",
+      };
+    case "contract_accepted":
+      return {
+        ...base,
+        icon: FileCheck2,
+        title: tt("letter_accepted", { version: f.digits(ev.detail.version) }),
+        detail: tc("accepted_via", { channel: tc(`channel_${ev.detail.channel ?? "app"}`) }),
+        state: "done",
+      };
+    case "dispute_opened": {
+      const open = ev.detail.status === "open" || ev.detail.status === "employer_responded";
+      return {
+        ...base,
+        icon: AlertTriangle,
+        title: tt("dispute", { kind: ev.detail.kind_label }),
+        detail: (
+          <>
+            <span className="line-clamp-2">
+              {tt("dispute_hint", {
+                status: ev.detail.status_label,
+                description: ev.detail.description,
+              })}
+            </span>
+            <Link href="/app/disputes" className="text-brand-text font-medium hover:underline">
+              {tt("open_dispute")}
+            </Link>
+          </>
+        ),
+        state: open ? "attention" : "done",
+      };
+    }
+    case "dispute_resolved":
+      return {
+        ...base,
+        icon: AlertTriangle,
+        title: ev.detail.appeal
+          ? tt("appeal_decided", { kind: ev.detail.kind_label })
+          : tt("dispute_decided", { kind: ev.detail.kind_label }),
+        detail: ev.detail.note ? <span className="line-clamp-2">{ev.detail.note}</span> : undefined,
+        state: "done",
+      };
+    case "advance_given":
+      return {
+        ...base,
+        icon: HandCoins,
+        title: tt("advance", { amount: f.money(ev.detail.amount) }),
+        detail: line(
+          tt("advance_hint", {
+            per: f.money(ev.detail.recover_per_month),
+            recovered: f.money(ev.detail.recovered_amount),
+          }),
+          ev.detail.note ? <span key="note">{ev.detail.note}</span> : null,
+          by,
+        ),
+        state: "done",
+      };
+  }
 }
 
 const CELL: Record<Exclude<RegisterCell, null>, { tone: string; code: string; term: string }> = {

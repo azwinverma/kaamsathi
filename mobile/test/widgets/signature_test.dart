@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -178,12 +179,18 @@ void main() {
           width: 120,
           child: CutPaperFrame(
             width: 100,
-            child: ImageSlot(slot: PhotoSlot.learnWorkshop, semanticLabel: 'Training at a workshop bench'),
+            child: ImageSlot(
+              slot: PhotoSlot.learnWorkshop,
+              photoAlt: 'Training at a workshop bench',
+              illustrationAlt: 'Illustration: a trainee at a wiring practice board',
+            ),
           ),
         ),
       );
       expect(find.byKey(const Key('slot_fallback_mobile-learn-workshop')), findsOneWidget);
-      expect(find.bySemanticsLabel('Training at a workshop bench'), findsOneWidget);
+      // The alt text describes what is shown (the illustration), not the photo that is not there.
+      expect(find.bySemanticsLabel('Illustration: a trainee at a wiring practice board'), findsOneWidget);
+      expect(find.bySemanticsLabel('Training at a workshop bench'), findsNothing);
       // The fallback is the shared kit's SVG, not code-drawn art.
       final pic = tester.widget<SvgPicture>(find.byType(SvgPicture));
       expect((pic.bytesLoader as SvgAssetLoader).assetName, 'assets/illustrations/training-lab.svg');
@@ -198,10 +205,56 @@ void main() {
         'mobile-welcome-hajiri': 'supervisor-hajiri',
       };
       for (final s in PhotoSlot.all) {
-        await _pump(tester, SizedBox(width: 100, child: ImageSlot(slot: s, semanticLabel: 'alt')));
+        await _pump(
+          tester,
+          SizedBox(width: 100, child: ImageSlot(slot: s, photoAlt: 'photo', illustrationAlt: 'illustration')),
+        );
         final pic = tester.widget<SvgPicture>(find.byType(SvgPicture));
         expect((pic.bytesLoader as SvgAssetLoader).assetName, 'assets/illustrations/${expected[s.id]}.svg');
       }
+    });
+
+    testWidgets('a bundled photo is shown with the photo alt, not the illustration alt', (tester) async {
+      final handle = tester.ensureSemantics();
+      ImageSlot.debugResetBundledAssets();
+      addTearDown(ImageSlot.debugResetBundledAssets);
+      await _pump(
+        tester,
+        DefaultAssetBundle(
+          bundle: _PhotoBundle(PhotoSlot.welcomeHajiri.assetPath),
+          child: const SizedBox(
+            width: 100,
+            child: ImageSlot(
+              slot: PhotoSlot.welcomeHajiri,
+              photoAlt: 'A worker scanning the hajiri QR code',
+              illustrationAlt: 'Illustration: a site supervisor marking hajiri on a phone',
+            ),
+          ),
+        ),
+        settle: false,
+      );
+      await tester.pump();
+      expect(find.byKey(const Key('slot_photo_mobile-welcome-hajiri')), findsOneWidget);
+      expect(find.bySemanticsLabel('A worker scanning the hajiri QR code'), findsOneWidget);
+      expect(find.bySemanticsLabel('Illustration: a site supervisor marking hajiri on a phone'), findsNothing);
+      handle.dispose();
+    });
+
+    testWidgets('welcome slot describes the supervisor illustration while no photo is bundled', (tester) async {
+      final handle = tester.ensureSemantics();
+      ImageSlot.debugResetBundledAssets();
+      addTearDown(ImageSlot.debugResetBundledAssets);
+      await _pump(
+        tester,
+        const SizedBox(
+          width: 100,
+          child: ImageSlot(slot: PhotoSlot.welcomeHajiri, photoAlt: 'photo', illustrationAlt: 'supervisor art'),
+        ),
+      );
+      expect(find.byKey(const Key('slot_fallback_mobile-welcome-hajiri')), findsOneWidget);
+      expect(find.bySemanticsLabel('supervisor art'), findsOneWidget);
+      expect(find.bySemanticsLabel('photo'), findsNothing);
+      handle.dispose();
     });
 
     test('kit scenes are bundled with the same filenames as design/illustrations', () {
@@ -280,3 +333,31 @@ void main() {
     });
   });
 }
+
+/// An asset bundle whose manifest lists [photo], served as a 1×1 PNG.
+class _PhotoBundle extends CachingAssetBundle {
+  _PhotoBundle(this.photo);
+
+  final String photo;
+
+  @override
+  Future<ByteData> load(String key) async {
+    if (key == 'AssetManifest.bin') {
+      return const StandardMessageCodec().encodeMessage(<String, Object>{
+        photo: <Object>[
+          <String, Object>{'asset': photo},
+        ],
+      })!;
+    }
+    if (key == photo) return ByteData.sublistView(Uint8List.fromList(_png1x1));
+    return rootBundle.load(key);
+  }
+}
+
+const _png1x1 = <int>[
+  0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52, //
+  0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4, //
+  0x89, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00, //
+  0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, //
+  0x42, 0x60, 0x82,
+];

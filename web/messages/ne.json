@@ -1812,7 +1812,32 @@
       "dispute": "उजुरी परेको: {kind}",
       "dispute_hint": "{status} · {description}",
       "open_dispute": "उजुरीमा खोल्नुहोस्",
-      "pdf": "PDF v{version}"
+      "pdf": "PDF v{version}",
+      "show_older": "पुराना घटना देखाउनुहोस्",
+      "terms_updated": "पारिश्रमिकका सर्त परिवर्तन",
+      "field_change": "{field}: {from} → {to}",
+      "site_change": "{from} बाट {to} मा सरुवा",
+      "no_site": "साइट नतोकिएको",
+      "designation_change": "पद: {from} → {to}",
+      "rated": "तपाईंले {name} लाई मूल्याङ्कन गर्नुभयो",
+      "rating_voided": "KaamSathi ले हटाएको — यो मूल्याङ्कन अब गनिँदैन।",
+      "letter_gross": "मासिक कुल {gross}",
+      "dispute_decided": "उजुरीको निर्णय: {kind}",
+      "appeal_decided": "पुनरावेदनको निर्णय: {kind}",
+      "advance": "{amount} पेस्की दिइयो",
+      "advance_hint": "मासिक {per} कट्टी · अहिलेसम्म {recovered} असुल",
+      "field": {
+        "wage_type": "पारिश्रमिकको प्रकार",
+        "basic_salary": "आधारभूत तलब",
+        "dearness_allowance": "महँगी भत्ता",
+        "other_allowance": "अन्य भत्ता",
+        "daily_wage": "दैनिक ज्याला",
+        "hourly_wage": "प्रति घण्टा ज्याला",
+        "part_time": "आंशिक समय",
+        "ssf_enrolled": "SSF मा दर्ता",
+        "yes": "हो",
+        "no": "होइन"
+      }
     },
     "credential": {
       "title": "प्रमाणपत्र",

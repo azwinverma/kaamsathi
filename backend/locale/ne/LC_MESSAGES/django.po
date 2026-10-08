@@ -2318,3 +2318,47 @@ msgstr "समीक्षाका लागि रिपोर्ट गरि
 msgctxt "complete1"
 msgid "Hidden by KaamSathi"
 msgstr "KaamSathi ले लुकाएको"
+
+msgctxt "history1"
+msgid "Started work"
+msgstr "काम सुरु गर्नुभयो"
+
+msgctxt "history1"
+msgid "Employment ended"
+msgstr "रोजगारी समाप्त भयो"
+
+msgctxt "history1"
+msgid "Wage or terms changed"
+msgstr "ज्याला वा सर्त परिवर्तन भयो"
+
+msgctxt "history1"
+msgid "Moved to another site"
+msgstr "अर्को साइटमा सरुवा"
+
+msgctxt "history1"
+msgid "Designation changed"
+msgstr "पद परिवर्तन भयो"
+
+msgctxt "history1"
+msgid "Rated by the employer"
+msgstr "रोजगारदाताले मूल्याङ्कन गर्नुभयो"
+
+msgctxt "history1"
+msgid "Appointment letter issued"
+msgstr "नियुक्ति पत्र जारी भयो"
+
+msgctxt "history1"
+msgid "Appointment letter accepted"
+msgstr "नियुक्ति पत्र स्वीकार गरियो"
+
+msgctxt "history1"
+msgid "Dispute raised"
+msgstr "विवाद दर्ता भयो"
+
+msgctxt "history1"
+msgid "Dispute decided"
+msgstr "विवादको निर्णय भयो"
+
+msgctxt "history1"
+msgid "Advance given"
+msgstr "पेस्की दिइयो"
