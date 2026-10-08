@@ -124,7 +124,13 @@
       "attendance_card": "Hajiri this month",
       "open_register": "Open register",
       "attendance_none": "No hajiri recorded this month yet.",
-      "advance_outstanding_total": "Outstanding:"
+      "advance_outstanding_total": "Outstanding:",
+      "record_title": "Work record",
+      "record_hint": "Newest first: this month's hajiri, letters, wage changes and disputes for this job.",
+      "facts_label": "Facts on file",
+      "payment_method": "Payment method",
+      "payment_from": "From the {month} payslip",
+      "payment_none": "Set when the first payslip is made"
     },
     "advances": {
       "description": "Salary advances (peski) given to workers and recovered from monthly pay.",

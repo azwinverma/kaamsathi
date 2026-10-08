@@ -202,7 +202,7 @@ class CareerScreen extends ConsumerWidget {
                   const SizedBox(height: KsSpace.s4),
                 ],
                 if (s.recommendations.isEmpty)
-                  EmptyState(icon: LucideIcons.sprout, message: l.careerEmpty)
+                  EmptyState(icon: LucideIcons.sprout, message: l.careerEmpty, art: KsArt.welderVisor)
                 else
                   Card(
                     child: Padding(

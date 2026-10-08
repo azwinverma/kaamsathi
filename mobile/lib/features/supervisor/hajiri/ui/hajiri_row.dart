@@ -113,17 +113,19 @@ class HajiriRow extends StatelessWidget {
                   IconButton(
                     key: const Key('ot_minus'),
                     tooltip: l.hajiriOtDecrease,
-                    onPressed: enabled && overtimeMinutes > 0
-                        ? () => onOvertime((overtimeMinutes - otStep).clamp(0, otMax))
-                        : null,
+                    onPressed:
+                        enabled && overtimeMinutes > 0
+                            ? () => onOvertime((overtimeMinutes - otStep).clamp(0, otMax))
+                            : null,
                     icon: const Icon(LucideIcons.minus),
                   ),
                   IconButton(
                     key: const Key('ot_plus'),
                     tooltip: l.hajiriOtIncrease,
-                    onPressed: enabled && overtimeMinutes < otMax
-                        ? () => onOvertime((overtimeMinutes + otStep).clamp(0, otMax))
-                        : null,
+                    onPressed:
+                        enabled && overtimeMinutes < otMax
+                            ? () => onOvertime((overtimeMinutes + otStep).clamp(0, otMax))
+                            : null,
                     icon: const Icon(LucideIcons.plus),
                   ),
                 ],
@@ -133,10 +135,7 @@ class HajiriRow extends StatelessWidget {
               const SizedBox(height: KsSpace.s2),
               Container(
                 padding: const EdgeInsets.all(KsSpace.s2),
-                decoration: BoxDecoration(
-                  color: c.errorSoft,
-                  borderRadius: BorderRadius.circular(KsRadius.control),
-                ),
+                decoration: BoxDecoration(color: c.errorSoft, borderRadius: BorderRadius.circular(KsRadius.control)),
                 child: Row(
                   children: [
                     Icon(LucideIcons.circleAlert, size: 18, color: c.errorText),
@@ -147,10 +146,8 @@ class HajiriRow extends StatelessWidget {
                         style: t.bodyMedium?.copyWith(color: c.errorText),
                       ),
                     ),
-                    if (onRetry != null)
-                      TextButton(onPressed: onRetry, child: Text(l.hajiriRetrySync)),
-                    if (onDiscard != null)
-                      TextButton(onPressed: onDiscard, child: Text(l.hajiriDiscard)),
+                    if (onRetry != null) TextButton(onPressed: onRetry, child: Text(l.hajiriRetrySync)),
+                    if (onDiscard != null) TextButton(onPressed: onDiscard, child: Text(l.hajiriDiscard)),
                   ],
                 ),
               ),

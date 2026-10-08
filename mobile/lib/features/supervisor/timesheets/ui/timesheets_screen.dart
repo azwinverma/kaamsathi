@@ -44,22 +44,30 @@ class _TimesheetsScreenState extends ConsumerState<TimesheetsScreen> {
   Future<void> _submitOne(Timesheet s, TimesheetKey key) async {
     final l = context.l10n;
     if (!await confirmDialog(context, title: l.tsSubmitConfirm, confirmLabel: l.ecoSubmit)) return;
-    await _run(() async {
-      await ref.read(orgTimesheetsRepositoryProvider).submit(s.id);
-      _submitted.add(s.id);
-    }, l.tsSubmitted, key);
+    await _run(
+      () async {
+        await ref.read(orgTimesheetsRepositoryProvider).submit(s.id);
+        _submitted.add(s.id);
+      },
+      l.tsSubmitted,
+      key,
+    );
   }
 
   Future<void> _submitAll(List<Timesheet> drafts, TimesheetKey key) async {
     final l = context.l10n;
     if (!await confirmDialog(context, title: l.tsSubmitAllConfirm, confirmLabel: l.ecoSubmit)) return;
-    await _run(() async {
-      final repo = ref.read(orgTimesheetsRepositoryProvider);
-      for (final s in drafts) {
-        await repo.submit(s.id);
-        _submitted.add(s.id);
-      }
-    }, l.tsSubmitted, key);
+    await _run(
+      () async {
+        final repo = ref.read(orgTimesheetsRepositoryProvider);
+        for (final s in drafts) {
+          await repo.submit(s.id);
+          _submitted.add(s.id);
+        }
+      },
+      l.tsSubmitted,
+      key,
+    );
   }
 
   @override
@@ -143,9 +151,8 @@ class _TimesheetsScreenState extends ConsumerState<TimesheetsScreen> {
                                     if (s.overtimeClaimed > 0) l.tsOtShort(formatHours(s.overtimeClaimed, lang)),
                                   ].join(' · '),
                                 ),
-                                leading: s.overCap
-                                    ? Icon(LucideIcons.triangleAlert, color: context.ks.warningText)
-                                    : null,
+                                leading:
+                                    s.overCap ? Icon(LucideIcons.triangleAlert, color: context.ks.warningText) : null,
                                 trailing: StatusBadge(label: label, tone: tone),
                                 childrenPadding: const EdgeInsets.fromLTRB(KsSpace.s4, 0, KsSpace.s4, KsSpace.s4),
                                 children: [

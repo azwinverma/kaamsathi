@@ -1,158 +1,127 @@
-import 'dart:math' as math;
+import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../theme/tokens.dart';
 import 'brush_stroke.dart';
+import 'cut_paper_frame.dart';
 
-/// Motifs for the in-app illustration kit. One geometric style (thick
-/// rounded shapes, real tools, no faces) and the mural palette, so empty
-/// states and photo-slot fallbacks look like one hand. There are no shared
-/// SVGs in `design/illustrations/` yet, so these are drawn in code.
-enum KsMotif {
-  /// Workbench with a wrench and a hard hat — training / workshop.
-  workshop,
+/// A scene from the shared illustration kit (`design/illustrations/`, the
+/// same SVGs the website uses). Copies live in `assets/illustrations/` with
+/// identical filenames; refresh them with `tool/sync_illustrations.sh`.
+///
+/// Only the scenes the app shows are bundled. Adding one: add the value
+/// here, then run the sync script with the new filename.
+enum KsArt {
+  /// Older site supervisor marking hajiri on a phone, scaffold behind (4:3).
+  supervisorHajiri('supervisor-hajiri', 480 / 360, Color(0xFFF0FDFA)),
 
-  /// Rising steps with a flag — career path.
-  career,
+  /// Instructor and trainee at a wiring practice board (4:3).
+  trainingLab('training-lab', 480 / 360, Color(0xFFEFF6FF)),
 
-  /// Phone with a QR code beside a hard hat — first-run welcome.
-  welcome,
+  /// Woman welder lifting her helmet after a test weld (4:3).
+  welderVisor('welder-visor', 480 / 360, Color(0xFFF0FDFA)),
+
+  /// Woman electrician testing a breaker in a distribution board (4:5).
+  electricianBoard('electrician-board', 400 / 500, Color(0xFFFFF1F1)),
+
+  /// Plumber with a pipe wrench under a rooftop water tank (4:5).
+  plumberWrench('plumber-wrench', 400 / 500, Color(0xFFEFF6FF)),
+
+  /// Solar installer on a tin roof, harness clipped to an anchor (4:5).
+  solarRoof('solar-roof', 400 / 500, Color(0xFFEFF6FF)),
+
+  /// Cook at a karahi with a pressure cooker (4:5).
+  cookKitchen('cook-kitchen', 400 / 500, Color(0xFFFEF9E7)),
+
+  /// Hands holding a phone showing the Skill Passport (4:5).
+  passportPhone('passport-phone', 400 / 500, Color(0xFFFEF9E7));
+
+  const KsArt(this.file, this.aspectRatio, this.ground);
+
+  /// Filename without extension, identical to `design/illustrations/`.
+  final String file;
+
+  /// Canvas width / height (portrait 400×500, wide 480×360).
+  final double aspectRatio;
+
+  /// The scene's flat ground tint, shown while the SVG loads.
+  final Color ground;
+
+  String get assetPath => 'assets/illustrations/$file.svg';
+
+  /// Scenes on the first screens a worker sees (language screen, home
+  /// career card, Learn tab); [precacheFirstScreens] warms them.
+  static const firstScreens = [supervisorHajiri, welderVisor, trainingLab];
+
+  /// Parses [firstScreens] into flutter_svg's picture cache ahead of time so
+  /// the first frame on a low-end phone does not wait on XML parsing.
+  static Future<void> precacheFirstScreens() => Future.wait([
+    for (final a in firstScreens)
+      () {
+        final loader = SvgAssetLoader(a.assetPath);
+        return svg.cache.putIfAbsent(loader.cacheKey(null), () => loader.loadBytes(null));
+      }(),
+  ]).then((_) {}, onError: (Object _) {});
 }
 
-/// Paints a [KsMotif] scene on a tinted paper ground.
-class KsIllustrationPainter extends CustomPainter {
-  KsIllustrationPainter({required this.motif, required this.ink, required this.paper});
-
-  final KsMotif motif;
-
-  /// Line/outline colour (text.primary of the theme).
-  final Color ink;
-
-  /// Background tint.
-  final Color paper;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-    canvas.drawRect(Offset.zero & size, Paint()..color = paper);
-    // Ground brush stroke shared by every scene.
-    BrushStrokePainter(
-      color: KsMural.strokeTeal,
-      shape: BrushShape.arc,
-      strokeWidth: h * 0.07,
-    ).paint(canvas, Size(w, h * 1.05));
-
-    final line =
-        Paint()
-          ..color = ink
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = math.max(2, w * 0.018)
-          ..strokeCap = StrokeCap.round
-          ..strokeJoin = StrokeJoin.round;
-    Paint fill(Color c) => Paint()..color = c;
-
-    switch (motif) {
-      case KsMotif.workshop:
-        // Bench.
-        final bench = Rect.fromLTWH(w * 0.12, h * 0.58, w * 0.76, h * 0.08);
-        canvas.drawRRect(RRect.fromRectAndRadius(bench, Radius.circular(h * 0.02)), fill(KsMural.ground));
-        canvas.drawLine(Offset(w * 0.2, h * 0.66), Offset(w * 0.2, h * 0.86), line);
-        canvas.drawLine(Offset(w * 0.8, h * 0.66), Offset(w * 0.8, h * 0.86), line);
-        // Hard hat on the bench.
-        _hardHat(canvas, Offset(w * 0.34, h * 0.58), w * 0.26, KsMural.strokeYellow, line);
-        // Wrench, angled.
-        canvas.save();
-        canvas.translate(w * 0.66, h * 0.44);
-        canvas.rotate(-0.6);
-        final handle = RRect.fromRectAndRadius(
-          Rect.fromCenter(center: Offset.zero, width: w * 0.06, height: h * 0.30),
-          Radius.circular(w * 0.03),
-        );
-        canvas.drawRRect(handle, fill(KsMural.strokeCoral));
-        canvas.drawCircle(Offset(0, -h * 0.16), w * 0.07, fill(KsMural.strokeCoral));
-        canvas.drawCircle(Offset(0, -h * 0.18), w * 0.03, fill(paper));
-        canvas.restore();
-      case KsMotif.career:
-        // Five rising steps (echoes the skill ladder) and a flag on top.
-        final step = w * 0.13;
-        for (var i = 0; i < 5; i++) {
-          final rh = h * (0.12 + i * 0.1);
-          final r = Rect.fromLTWH(w * 0.14 + i * (step + w * 0.02), h * 0.78 - rh, step, rh);
-          canvas.drawRRect(RRect.fromRectAndRadius(r, Radius.circular(w * 0.02)), fill(KsMural.rungs[i]));
-          if (i == 0) canvas.drawRRect(RRect.fromRectAndRadius(r, Radius.circular(w * 0.02)), line);
-        }
-        final top = Offset(w * 0.14 + 4 * (step + w * 0.02) + step / 2, h * 0.78 - h * 0.52);
-        canvas.drawLine(top, top.translate(0, -h * 0.2), line);
-        final flag =
-            Path()
-              ..moveTo(top.dx, top.dy - h * 0.2)
-              ..lineTo(top.dx + w * 0.12, top.dy - h * 0.16)
-              ..lineTo(top.dx, top.dy - h * 0.11)
-              ..close();
-        canvas.drawPath(flag, fill(KsMural.strokeCoral));
-      case KsMotif.welcome:
-        // Phone with a QR code.
-        final phone = RRect.fromRectAndRadius(
-          Rect.fromLTWH(w * 0.18, h * 0.18, w * 0.34, h * 0.62),
-          Radius.circular(w * 0.05),
-        );
-        canvas.drawRRect(phone, fill(KsMural.paper));
-        canvas.drawRRect(phone, line);
-        final q = w * 0.055;
-        final ox = w * 0.235;
-        final oy = h * 0.3;
-        const on = [
-          [1, 1, 0, 1],
-          [1, 0, 1, 0],
-          [0, 1, 1, 1],
-          [1, 0, 1, 1],
-        ];
-        for (var r = 0; r < 4; r++) {
-          for (var col = 0; col < 4; col++) {
-            if (on[r][col] == 1) {
-              canvas.drawRect(Rect.fromLTWH(ox + col * q, oy + r * q, q * 0.86, q * 0.86), fill(ink));
-            }
-          }
-        }
-        _hardHat(canvas, Offset(w * 0.56, h * 0.72), w * 0.3, KsMural.strokeYellow, line);
-    }
-  }
-
-  void _hardHat(Canvas canvas, Offset baseLeft, double width, Color color, Paint line) {
-    final r = width / 2;
-    final centre = baseLeft.translate(r, 0);
-    final dome = Rect.fromCircle(center: centre, radius: r * 0.8);
-    canvas.drawArc(dome, math.pi, math.pi, true, Paint()..color = color);
-    final brim = RRect.fromRectAndRadius(
-      Rect.fromLTWH(baseLeft.dx - r * 0.1, baseLeft.dy - r * 0.08, width * 1.1, r * 0.2),
-      Radius.circular(r * 0.1),
-    );
-    canvas.drawRRect(brim, Paint()..color = color);
-    canvas.drawLine(centre.translate(0, -r * 0.8), centre.translate(0, -r * 0.1), line);
-  }
-
-  @override
-  bool shouldRepaint(KsIllustrationPainter old) => old.motif != motif || old.ink != ink || old.paper != paper;
-}
-
-/// A [KsMotif] scene. Decorative unless [semanticLabel] is given.
+/// A [KsArt] scene filling its box ([BoxFit.cover], cropped around
+/// [alignment]). Decorative unless [semanticLabel] is given.
 class KsIllustration extends StatelessWidget {
-  const KsIllustration({super.key, required this.motif, this.semanticLabel});
+  const KsIllustration({
+    super.key,
+    required this.art,
+    this.semanticLabel,
+    this.fit = BoxFit.cover,
+    this.alignment = Alignment.center,
+  });
 
-  final KsMotif motif;
+  final KsArt art;
   final String? semanticLabel;
+  final BoxFit fit;
+  final Alignment alignment;
 
   @override
   Widget build(BuildContext context) {
-    // Fixed light paper + ink in both themes: it is a printed illustration.
-    final paint = CustomPaint(
-      painter: KsIllustrationPainter(motif: motif, ink: KsPalette.textPrimary, paper: KsPalette.accentYellowSubtle),
-      child: const SizedBox.expand(),
+    // Fixed colours in both themes: it is a printed illustration.
+    final picture = SvgPicture.asset(
+      art.assetPath,
+      key: ValueKey('art_${art.file}'),
+      fit: fit,
+      alignment: alignment,
+      excludeFromSemantics: true,
+      placeholderBuilder: (_) => ColoredBox(color: art.ground, child: const SizedBox.expand()),
     );
-    if (semanticLabel == null) return ExcludeSemantics(child: paint);
-    return Semantics(image: true, label: semanticLabel, child: ExcludeSemantics(child: paint));
+    final box = ClipRect(child: SizedBox.expand(child: picture));
+    if (semanticLabel == null) return ExcludeSemantics(child: box);
+    return Semantics(image: true, label: semanticLabel, child: ExcludeSemantics(child: box));
+  }
+}
+
+/// A [KsArt] scene for an empty state, in a small cut-paper sheet at its
+/// native aspect ratio. Always decorative: the state's message carries the
+/// meaning.
+class EmptyStateArt extends StatelessWidget {
+  const EmptyStateArt({super.key, required this.art, this.height = 132});
+
+  final KsArt art;
+
+  /// Picture height; width follows the scene's aspect ratio.
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    final frameW = height * art.aspectRatio + 10;
+    return ExcludeSemantics(
+      child: CutPaperFrame(
+        width: frameW,
+        aspectRatio: frameW / (height + 10),
+        angle: -0.05,
+        tapeColor: context.ks.teal,
+        child: KsIllustration(art: art),
+      ),
+    );
   }
 }
 

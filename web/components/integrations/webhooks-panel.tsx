@@ -37,6 +37,7 @@ import {
 } from "@/lib/api/hooks/integrations";
 import {
   WEBHOOK_EVENTS,
+  messageKey,
   type WebhookDelivery,
   type WebhookDeliveryStatus,
   type WebhookEndpoint,
@@ -72,7 +73,9 @@ export function WebhooksPanel() {
       onSuccess: (d) =>
         d.status === "delivered"
           ? toast.success(t("test_ok", { code: d.last_status_code ?? 200 }))
-          : toast.error(t("test_failed", { error: d.last_error ?? String(d.last_status_code ?? "") })),
+          : toast.error(
+              t("test_failed", { error: d.last_error ?? String(d.last_status_code ?? "") }),
+            ),
       onError: (er) => toastError(er, tAll),
     });
 
@@ -93,34 +96,42 @@ export function WebhooksPanel() {
       ) : (
         <ul className="space-y-3">
           {endpoints.map((e) => (
-            <li key={e.id} className="rounded-dense border border-border bg-surface p-4 shadow-sm">
+            <li key={e.id} className="rounded-dense border-border bg-surface border p-4 shadow-sm">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                 <div className="min-w-0 space-y-1.5">
                   <p className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono text-sm break-all text-fg">{e.url}</span>
+                    <span className="text-fg font-mono text-sm break-all">{e.url}</span>
                     <Badge tone={e.is_active ? "success" : "neutral"} dot>
                       {e.is_active ? t("active") : t("inactive")}
                     </Badge>
                   </p>
-                  {e.description ? <p className="text-sm text-fg-muted">{e.description}</p> : null}
+                  {e.description ? <p className="text-fg-muted text-sm">{e.description}</p> : null}
                   <div className="flex flex-wrap gap-1">
                     {e.events.length === 0 ? (
                       <Badge tone="outline">{t("all_events")}</Badge>
                     ) : (
                       e.events.map((ev) => (
                         <Badge key={ev} tone="outline" title={ev}>
-                          {tI(`event.${ev}`)}
+                          {tI(`event.${messageKey(ev)}`)}
                         </Badge>
                       ))
                     )}
                   </div>
-                  <p className="text-xs text-fg-muted">
-                    {t("stats", { total: f.digits(e.deliveries_7d ?? 0), failed: f.digits(e.failed_7d ?? 0) })} ·{" "}
-                    <span className="font-mono">{e.secret_hint}</span>
+                  <p className="text-fg-muted text-xs">
+                    {t("stats", {
+                      total: f.digits(e.deliveries_7d ?? 0),
+                      failed: f.digits(e.failed_7d ?? 0),
+                    })}{" "}
+                    · <span className="font-mono">{e.secret_hint}</span>
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
-                  <Button size="sm" variant="secondary" onClick={() => doTest(e)} disabled={test.isPending}>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => doTest(e)}
+                    disabled={test.isPending}
+                  >
                     <Send aria-hidden />
                     {t("test")}
                   </Button>
@@ -238,14 +249,21 @@ function EndpointDialog({
   }, [endpoint]);
 
   if (!endpoint) return null;
-  const err = isApiError(create.error) ? create.error : isApiError(update.error) ? update.error : null;
+  const err = isApiError(create.error)
+    ? create.error
+    : isApiError(update.error)
+      ? update.error
+      : null;
   const pending = create.isPending || update.isPending;
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
     const body = { url: url.trim(), description: description.trim(), events, is_active: active };
     if (endpoint === "new") {
-      create.mutate(body, { onSuccess: (r) => onCreated(r.secret ?? null), onError: () => undefined });
+      create.mutate(body, {
+        onSuccess: (r) => onCreated(r.secret ?? null),
+        onError: () => undefined,
+      });
     } else if (endpoint) {
       update.mutate(
         { id: endpoint.id, ...body },
@@ -254,7 +272,8 @@ function EndpointDialog({
             toast.success(t("saved_toast"));
             onClose();
           },
-          onError: (er) => (isApiError(er) && Object.keys(er.fields).length ? undefined : toastError(er, tAll)),
+          onError: (er) =>
+            isApiError(er) && Object.keys(er.fields).length ? undefined : toastError(er, tAll),
         },
       );
     }
@@ -271,27 +290,51 @@ function EndpointDialog({
           <DialogBody className="space-y-4">
             <FormError message={err && !Object.keys(err.fields).length ? err.message : null} />
             <Field id="wh-url" label={t("url")} hint={t("url_hint")} error={err?.fields.url?.[0]}>
-              <Input type="url" required maxLength={500} value={url} onChange={(e) => setUrl(e.target.value)} />
+              <Input
+                type="url"
+                required
+                maxLength={500}
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+              />
             </Field>
-            <Field id="wh-desc" label={t("description_label")} optional optionalLabel={tc("optional")}>
-              <Input maxLength={200} value={description} onChange={(e) => setDescription(e.target.value)} />
+            <Field
+              id="wh-desc"
+              label={t("description_label")}
+              optional
+              optionalLabel={tc("optional")}
+            >
+              <Input
+                maxLength={200}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
             </Field>
             <fieldset className="space-y-2">
-              <legend className="mb-1 text-sm font-medium text-fg">{t("events")}</legend>
-              <p className="text-xs text-fg-muted">{t("events_hint")}</p>
+              <legend className="text-fg mb-1 text-sm font-medium">{t("events")}</legend>
+              <p className="text-fg-muted text-xs">{t("events_hint")}</p>
               <div className="grid gap-2 sm:grid-cols-2">
                 {WEBHOOK_EVENTS.map((ev) => (
                   <label key={ev} className="flex items-start gap-2.5 text-sm">
-                    <Checkbox checked={events.includes(ev)} onCheckedChange={(v) => toggle(ev, v === true)} className="mt-0.5" />
+                    <Checkbox
+                      checked={events.includes(ev)}
+                      onCheckedChange={(v) => toggle(ev, v === true)}
+                      className="mt-0.5"
+                    />
                     <span>
-                      <span className="block text-fg">{tI(`event.${ev}`)}</span>
-                      <span className="font-mono text-[11px] text-fg-muted">{ev}</span>
+                      <span className="text-fg block">{tI(`event.${messageKey(ev)}`)}</span>
+                      <span className="text-fg-muted font-mono text-[11px]">{ev}</span>
                     </span>
                   </label>
                 ))}
               </div>
             </fieldset>
-            <SwitchField id="wh-active" label={t("enabled")} checked={active} onCheckedChange={setActive} />
+            <SwitchField
+              id="wh-active"
+              label={t("enabled")}
+              checked={active}
+              onCheckedChange={setActive}
+            />
           </DialogBody>
           <DialogFooter>
             <Button type="button" variant="secondary" onClick={onClose}>
@@ -314,7 +357,11 @@ function SecretDialog({ secret, onClose }: { secret: string | null; onClose: () 
   if (!secret) return null;
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent size="md" closeLabel={tc("close")} onInteractOutside={(e) => e.preventDefault()}>
+      <DialogContent
+        size="md"
+        closeLabel={tc("close")}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader title={t("secret_title")} />
         <DialogBody>
           <SecretReveal label={t("secret_label")} value={secret} warning={t("secret_warning")} />
@@ -353,9 +400,9 @@ function DeliveriesSheet({
   return (
     <Sheet open={!!endpoint} onOpenChange={onOpenChange}>
       <SheetContent closeLabel={tAll("common.close")} className="max-w-3xl">
-        <div className="space-y-1 border-b border-border px-6 pt-5 pb-4 pr-14">
-          <DialogTitle className="text-lg font-semibold text-fg">{t("deliveries")}</DialogTitle>
-          <DialogDescription className="text-sm break-all text-fg-muted">
+        <div className="border-border space-y-1 border-b px-6 pt-5 pr-14 pb-4">
+          <DialogTitle className="text-fg text-lg font-semibold">{t("deliveries")}</DialogTitle>
+          <DialogDescription className="text-fg-muted text-sm break-all">
             {t("deliveries_desc", { url: endpoint?.url ?? "" })}
           </DialogDescription>
         </div>
@@ -365,7 +412,7 @@ function DeliveriesSheet({
           ) : error ? (
             <ErrorState error={error} onRetry={() => void refetch()} />
           ) : !data?.results.length ? (
-            <p className="text-sm text-fg-muted">{t("no_deliveries")}</p>
+            <p className="text-fg-muted text-sm">{t("no_deliveries")}</p>
           ) : (
             <>
               <TableContainer>
@@ -387,19 +434,22 @@ function DeliveriesSheet({
                       <React.Fragment key={d.id}>
                         <Tr interactive onClick={() => setOpen(open === d.id ? null : d.id)}>
                           <Td className="text-xs whitespace-nowrap">{f.dateTime(d.created_at)}</Td>
-                          <Td className="text-sm">{tI(`event.${d.event}`)}</Td>
+                          <Td className="text-sm">{tI(`event.${messageKey(d.event)}`)}</Td>
                           <Td>
                             <Badge tone={DELIVERY_TONE[d.status]} dot>
                               {t(`status.${d.status}`)}
                             </Badge>
                             {d.status === "pending" && d.next_attempt_at ? (
-                              <span className="block text-[11px] text-fg-muted">
+                              <span className="text-fg-muted block text-[11px]">
                                 {t("next_retry", { time: f.time(d.next_attempt_at) })}
                               </span>
                             ) : null}
                           </Td>
                           <Td numeric>{f.digits(d.attempts)}</Td>
-                          <Td className="max-w-48 truncate font-mono text-xs" title={d.last_error ?? undefined}>
+                          <Td
+                            className="max-w-48 truncate font-mono text-xs"
+                            title={d.last_error ?? undefined}
+                          >
                             {d.last_status_code ?? "—"}
                             {d.last_error ? ` · ${d.last_error}` : ""}
                           </Td>
@@ -422,9 +472,14 @@ function DeliveriesSheet({
                         </Tr>
                         {open === d.id ? (
                           <tr>
-                            <td colSpan={6} className="border-b border-border bg-surface-muted px-4 py-3">
-                              <p className="mb-1 text-xs font-semibold text-fg-muted">{t("payload")}</p>
-                              <pre className="scrollbar-thin max-h-64 overflow-auto font-mono text-xs text-fg">
+                            <td
+                              colSpan={6}
+                              className="border-border bg-surface-muted border-b px-4 py-3"
+                            >
+                              <p className="text-fg-muted mb-1 text-xs font-semibold">
+                                {t("payload")}
+                              </p>
+                              <pre className="text-fg max-h-64 scrollbar-thin overflow-auto font-mono text-xs">
                                 {JSON.stringify(d.payload, null, 2)}
                               </pre>
                             </td>
@@ -443,4 +498,3 @@ function DeliveriesSheet({
     </Sheet>
   );
 }
-

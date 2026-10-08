@@ -107,6 +107,7 @@ void main() {
         expect(find.byKey(Key(k)), findsOneWidget);
       }
       expect(find.byKey(const Key('slot_fallback_mobile-learn-workshop')), findsOneWidget);
+      expect(find.byKey(const ValueKey('art_training-lab')), findsOneWidget);
     });
 
     testWidgets('profile (cut-paper photo, trust ladder, menus) at 360px ($lang)', (tester) async {
@@ -162,6 +163,7 @@ void main() {
       expect(find.byType(MuralLettering), findsNothing);
       expect(find.byType(BrushStroke), findsNothing);
       expect(find.byType(IllustratedIcon), findsNothing);
+      expect(find.byType(EmptyStateArt), findsNothing);
     });
   }
 

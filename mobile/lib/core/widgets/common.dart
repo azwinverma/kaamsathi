@@ -101,9 +101,6 @@ class WorkerAvatar extends StatelessWidget {
   }
 }
 
-/// Empty / unavailable state. On worker (street mural) surfaces the icon is
-/// drawn as a small illustration ([IllustratedIcon]); supervisor (ledger)
-/// screens and errors keep a plain muted icon.
 /// Square worker photo for cut-paper frames: the worker's own verified
 /// photo, or their initials on plain paper (never a stock face).
 class WorkerPhoto extends StatelessWidget {
@@ -141,13 +138,28 @@ class WorkerPhoto extends StatelessWidget {
   }
 }
 
+/// Empty / unavailable state. On worker (street mural) surfaces it shows
+/// [art], a scene from the shared illustration kit, or — for states without
+/// a fitting scene — the icon drawn as a small illustration
+/// ([IllustratedIcon]). Supervisor (ledger) screens and errors keep a plain
+/// muted icon.
 class EmptyState extends StatelessWidget {
-  const EmptyState({super.key, required this.icon, required this.message, this.action, this.illustrated = true});
+  const EmptyState({
+    super.key,
+    required this.icon,
+    required this.message,
+    this.action,
+    this.illustrated = true,
+    this.art,
+  });
 
   final IconData icon;
   final String message;
   final Widget? action;
   final bool illustrated;
+
+  /// Kit scene for worker surfaces (decorative; [message] carries meaning).
+  final KsArt? art;
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +170,9 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (illustrated && context.expressive)
+            if (illustrated && context.expressive && art != null)
+              EmptyStateArt(art: art!)
+            else if (illustrated && context.expressive)
               IllustratedIcon(icon: icon)
             else
               Icon(icon, size: 40, color: c.textMuted),

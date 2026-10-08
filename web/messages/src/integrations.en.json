@@ -37,23 +37,23 @@
       "done": "I've stored it"
     },
     "scope": {
-      "jobs.read": "Read job openings",
-      "jobs.write": "Create job openings",
-      "workforce.read": "Read employments",
-      "attendance.read": "Read hajiri",
-      "attendance.write": "Record hajiri",
-      "payroll.read": "Read payroll and payslips",
-      "timesheets.read": "Read timesheets"
+      "jobs_read": "Read job openings",
+      "jobs_write": "Create job openings",
+      "workforce_read": "Read employments",
+      "attendance_read": "Read hajiri",
+      "attendance_write": "Record hajiri",
+      "payroll_read": "Read payroll and payslips",
+      "timesheets_read": "Read timesheets"
     },
     "event": {
-      "application.stage_changed": "Candidate stage changed",
-      "employment.started": "Worker joined",
-      "employment.ended": "Employment ended",
-      "payroll.run_approved": "Payroll approved",
-      "payroll.run_paid": "Payroll paid",
-      "timesheet.approved": "Timesheet approved",
-      "dispute.raised": "Dispute raised",
-      "support_case.updated": "Support case updated",
+      "application_stage_changed": "Candidate stage changed",
+      "employment_started": "Worker joined",
+      "employment_ended": "Employment ended",
+      "payroll_run_approved": "Payroll approved",
+      "payroll_run_paid": "Payroll paid",
+      "timesheet_approved": "Timesheet approved",
+      "dispute_raised": "Dispute raised",
+      "support_case_updated": "Support case updated",
       "ping": "Test ping"
     },
     "webhooks": {

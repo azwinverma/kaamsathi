@@ -91,7 +91,8 @@ class CredentialsScreen extends ConsumerWidget {
                 (items) => ListView(
                   padding: const EdgeInsets.fromLTRB(KsSpace.page, KsSpace.page, KsSpace.page, 96),
                   children: [
-                    if (items.isEmpty) EmptyState(icon: LucideIcons.award, message: l.credEmpty),
+                    if (items.isEmpty)
+                      EmptyState(icon: LucideIcons.award, message: l.credEmpty, art: KsArt.passportPhone),
                     for (final c in items)
                       Card(
                         child: Padding(

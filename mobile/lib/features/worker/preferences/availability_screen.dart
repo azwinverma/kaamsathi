@@ -166,7 +166,8 @@ class _AvailabilityFormState extends ConsumerState<AvailabilityForm> {
                       for (final d in _districts)
                         InputChip(
                           label: Text(named(d).name(lang)),
-                          onDeleted: () => setState(() => _districts = _districts.where((x) => x.code != d.code).toList()),
+                          onDeleted:
+                              () => setState(() => _districts = _districts.where((x) => x.code != d.code).toList()),
                         ),
                     ],
                   ),
@@ -255,7 +256,9 @@ class _DistrictPickerScreenState extends ConsumerState<DistrictPickerScreen> {
               final all = value.value ?? const <District>[];
               final known = all.where((d) => _codes.contains(d.code)).toList();
               // Keep codes we couldn't resolve (e.g. list failed to load).
-              final unknown = widget.selected.where((d) => !all.any((x) => x.code == d.code) && _codes.contains(d.code));
+              final unknown = widget.selected.where(
+                (d) => !all.any((x) => x.code == d.code) && _codes.contains(d.code),
+              );
               Navigator.pop(context, [...known, ...unknown]);
             },
             child: Text(l.availDone),

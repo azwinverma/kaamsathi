@@ -155,8 +155,7 @@ class ExperienceRepository {
     });
   }
 
-  Future<void> create(WorkHistoryInput input) async =>
-      _api.post<dynamic>('/me/work-history', data: await _body(input));
+  Future<void> create(WorkHistoryInput input) async => _api.post<dynamic>('/me/work-history', data: await _body(input));
 
   Future<void> update(String id, WorkHistoryInput input) async =>
       _api.patch<dynamic>('/me/work-history/$id', data: await _body(input));

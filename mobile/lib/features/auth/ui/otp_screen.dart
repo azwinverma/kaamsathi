@@ -143,25 +143,19 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
             const SizedBox(height: KsSpace.s6),
             FilledButton(
               onPressed: _busy ? null : _verify,
-              child: _busy
-                  ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5))
-                  : Text(l.otpVerify),
+              child:
+                  _busy
+                      ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5))
+                      : Text(l.otpVerify),
             ),
             const SizedBox(height: KsSpace.s3),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).maybePop(),
-                  child: Text(l.otpChangeNumber),
-                ),
+                TextButton(onPressed: () => Navigator.of(context).maybePop(), child: Text(l.otpChangeNumber)),
                 TextButton(
                   onPressed: _secondsLeft > 0 ? null : _resend,
-                  child: Text(
-                    _secondsLeft > 0
-                        ? l.otpResendIn(localizeDigits('$_secondsLeft', lang))
-                        : l.otpResend,
-                  ),
+                  child: Text(_secondsLeft > 0 ? l.otpResendIn(localizeDigits('$_secondsLeft', lang)) : l.otpResend),
                 ),
               ],
             ),
@@ -211,11 +205,12 @@ class _OtpBoxes extends StatelessWidget {
                       color: scheme.surface,
                       borderRadius: BorderRadius.circular(KsRadius.control),
                       border: Border.all(
-                        color: hasError
-                            ? scheme.error
-                            : active
-                            ? scheme.primary
-                            : scheme.outline,
+                        color:
+                            hasError
+                                ? scheme.error
+                                : active
+                                ? scheme.primary
+                                : scheme.outline,
                         width: active || hasError ? 2 : 1,
                       ),
                     ),

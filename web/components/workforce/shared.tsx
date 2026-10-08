@@ -60,7 +60,9 @@ export function WorkforceSiteSelect({
 /** Full-page "no access" state for role-gated workforce pages. */
 export function NoAccess() {
   const t = useTranslations("errors");
-  return <EmptyState icon={ShieldOff} title={t("forbidden_title")} description={t("forbidden_body")} />;
+  return (
+    <EmptyState icon={ShieldOff} title={t("forbidden_title")} description={t("forbidden_body")} />
+  );
 }
 
 /** Inline banner (info / warning / locked). */
@@ -82,7 +84,7 @@ export function Notice({
     <div
       role={tone === "danger" ? "alert" : "status"}
       className={cn(
-        "flex flex-col gap-3 rounded-control border px-4 py-3 text-sm sm:flex-row sm:items-center",
+        "rounded-control flex flex-col gap-3 border px-4 py-3 text-sm sm:flex-row sm:items-center",
         tone === "info" && "border-info/25 bg-info-soft text-info",
         tone === "warning" && "border-warning/30 bg-warning-subtle text-warning",
         tone === "danger" && "border-danger/30 bg-danger-subtle text-danger",
@@ -94,7 +96,7 @@ export function Notice({
         <Icon className="mt-0.5 size-4 shrink-0" aria-hidden />
         <div className="min-w-0 space-y-0.5">
           {title ? <p className="font-semibold">{title}</p> : null}
-          {children ? <div className={cn(title && "opacity-90")}>{children}</div> : null}
+          {children ? <div>{children}</div> : null}
         </div>
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}
@@ -127,7 +129,7 @@ export function CountChip({
       )}
     >
       {label}
-      <span className="font-semibold tabular">{value}</span>
+      <span className="tabular font-semibold">{value}</span>
     </span>
   );
 }

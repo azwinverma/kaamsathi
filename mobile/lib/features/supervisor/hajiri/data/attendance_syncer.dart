@@ -16,19 +16,10 @@ class BulkResult {
 }
 
 /// Sends one batch for one organization.
-typedef BulkSender =
-    Future<BulkResult> Function(
-      String orgId,
-      List<Map<String, dynamic>> records,
-    );
+typedef BulkSender = Future<BulkResult> Function(String orgId, List<Map<String, dynamic>> records);
 
 class SyncOutcome {
-  const SyncOutcome({
-    this.saved = 0,
-    this.failed = 0,
-    this.retryLater = false,
-    this.error,
-  });
+  const SyncOutcome({this.saved = 0, this.failed = 0, this.retryLater = false, this.error});
 
   final int saved;
   final int failed;
@@ -64,12 +55,7 @@ class AttendanceSyncer {
           final ex = ApiException.from(e);
           if (ex.isRetryable || ex.isUnauthenticated) {
             await queue.markRetry(ids);
-            return SyncOutcome(
-              saved: saved,
-              failed: failed,
-              retryLater: true,
-              error: ex,
-            );
+            return SyncOutcome(saved: saved, failed: failed, retryLater: true, error: ex);
           }
           // The whole batch was refused (e.g. 403 org_forbidden / 400).
           for (final id in ids) {

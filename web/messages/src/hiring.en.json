@@ -80,7 +80,12 @@
       "in_stage_for": "{count, plural, =0 {Moved today} one {# day in this stage} other {# days in this stage}}",
       "move": "Move",
       "move_to": "Move to",
-      "open_candidate": "Open {name}'s profile"
+      "open_candidate": "Open {name}'s profile",
+      "more_details": "Requirements and description",
+      "stage_tabs": "Pipeline stages",
+      "stage_jump": "Jump to stage",
+      "stage_window": "Showing {from} to {to}",
+      "score_inline": "Match {score}"
     },
     "move": {
       "title": "Move {name}",

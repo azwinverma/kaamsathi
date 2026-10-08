@@ -181,12 +181,7 @@ class _Stars extends StatelessWidget {
         children: [
           Expanded(child: Text(label, style: Theme.of(context).textTheme.bodySmall)),
           for (var i = 1; i <= 5; i++)
-            Icon(
-              LucideIcons.star,
-              size: 16,
-              color: i <= value ? c.ratingStar : c.border,
-              fill: i <= value ? 1 : 0,
-            ),
+            Icon(LucideIcons.star, size: 16, color: i <= value ? c.ratingStar : c.border, fill: i <= value ? 1 : 0),
         ],
       ),
     );

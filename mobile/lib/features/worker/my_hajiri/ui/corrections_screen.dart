@@ -7,6 +7,7 @@ import '../../../../core/l10n/l10n.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/eco.dart';
+import '../../../../core/widgets/signature/signature.dart';
 import '../../employment/employment_data.dart';
 import '../corrections_data.dart';
 
@@ -93,7 +94,8 @@ class MyCorrectionsScreen extends ConsumerWidget {
                 children: [
                   Text(l.corrMenuSubtitle, style: Theme.of(context).textTheme.bodyMedium),
                   const SizedBox(height: KsSpace.s3),
-                  if (items.isEmpty) EmptyState(icon: LucideIcons.calendarCheck, message: l.corrEmpty),
+                  if (items.isEmpty)
+                    EmptyState(icon: LucideIcons.calendarCheck, message: l.corrEmpty, art: KsArt.supervisorHajiri),
                   for (final c in items)
                     Card(
                       key: Key('correction_${c.id}'),

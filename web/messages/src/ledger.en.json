@@ -113,7 +113,9 @@
       "kyb_3": "Verified employer",
       "kyb_3_hint": "Mark shown to workers on every job",
       "worker_title": "How far {name} is verified",
-      "rejected": "Rejected — needs new documents"
+      "rejected": "Rejected — needs new documents",
+      "strip_summary": "{done} of {total} steps done",
+      "strip_next": "Next: {step}"
     },
     "roster": {
       "label": "Site roster, {site}",
@@ -138,7 +140,23 @@
       "today": "Today",
       "still_working": "Still working here",
       "ended": "Left",
-      "ended_hint": "Reason: {reason}"
+      "ended_hint": "Reason: {reason}",
+      "hajiri_month": "Hajiri in {month}",
+      "hajiri_none": "No hajiri marked this month yet.",
+      "hajiri_strip": "Day by day, {month}",
+      "not_marked": "Not marked",
+      "letter_issued": "Appointment letter v{version} issued",
+      "letter_by": "By {name}",
+      "letter_terms": "{gross} a month gross · SSF {ssf}",
+      "letter_accepted": "Worker accepted letter v{version}",
+      "wage_change": "Wage changed: {from} → {to} a month",
+      "terms_changed": "Terms changed since letter v{version}",
+      "terms_changed_hint": "Wage or SSF on file no longer matches the letter the worker has. Issue a new letter below.",
+      "terms_changed_wage": "Wage on file is {now} a month; the letter says {then}.",
+      "dispute": "Dispute raised: {kind}",
+      "dispute_hint": "{status} · {description}",
+      "open_dispute": "Open in disputes",
+      "pdf": "PDF v{version}"
     },
     "credential": {
       "title": "Certificates",

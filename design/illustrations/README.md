@@ -65,3 +65,33 @@ Only token colours from `design/tokens.json`:
 - Yellow: `#FBBF24`, `#FEF9E7` · Coral: `#FF6B6B`, `#C2410C`, `#FFF1F1`
 
 Illustration-only skin tones (not UI colours; never used in product UI): `#8D5A3B`, `#B07A52`, `#6B4430`.
+
+## Mobile notes
+
+The Flutter app (`mobile/`) renders these files with `flutter_svg` 2.2.x. Copies live in
+`mobile/assets/illustrations/` with **identical filenames and contents** (a widget test fails if they
+drift); refresh them with `mobile/tool/sync_illustrations.sh`. Only scenes the app uses are bundled.
+
+**Compatibility (checked by rendering every file through flutter_svg 2.2.2 on Flutter 3.29 and
+inspecting the output):** all eleven render correctly, patterns and gradient included, so there are no
+mobile-only variants. The features the kit uses
+are all supported: `<pattern patternUnits="userSpaceOnUse">` (brick, tiles, spray dots),
+`<linearGradient>`, `stroke-dasharray`, `fill-opacity`/`stroke-opacity`, `transform` on groups,
+`<ellipse>`. Keep it that way for new scenes: **no `<style>`/CSS classes, `<filter>`, `<mask>`,
+`<image>`, `<text>` or `<foreignObject>`** (flutter_svg ignores or mis-renders them), and keep each file
+under 8 KB. If a scene ever needs one of those, add a mobile-safe variant with the same look and note it
+here.
+
+| Scene | Where in the app |
+| --- | --- |
+| `supervisor-hajiri.svg` | `mobile-welcome-hajiri` slot fallback (language screen; cropped left to the supervisor); worker timesheets and hajiri-corrections empty states |
+| `training-lab.svg` | `mobile-learn-workshop` slot fallback (Learn tab; cropped right to the trainee at the board); training empty states |
+| `welder-visor.svg` | `mobile-career-step` slot fallback (home career card; cropped left to the welder); career empty state |
+| `electrician-board.svg` | Jobs: no matching jobs |
+| `solar-roof.svg` | Jobs: no applications yet |
+| `passport-phone.svg` | Credentials empty state |
+| `cook-kitchen.svg` | Work history empty states |
+| `plumber-wrench.svg` | Not found (as on the website's 404) |
+
+In the app, illustrations are decorative (hidden from screen readers) except in photo slots, where the
+slot's alt text is read. The three slot scenes are pre-parsed at start-up (`KsArt.precacheFirstScreens`).

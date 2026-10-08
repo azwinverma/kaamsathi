@@ -44,13 +44,13 @@ export function JobBenefits({
   return (
     <span className="inline-flex flex-wrap gap-1">
       {job.food_provided ? (
-        <Badge tone="outline">
+        <Badge tone="outline" className="shrink whitespace-normal">
           <UtensilsCrossed aria-hidden />
           {t("food_label")}
         </Badge>
       ) : null}
       {job.accommodation_provided ? (
-        <Badge tone="outline">
+        <Badge tone="outline" className="shrink whitespace-normal">
           <BedDouble aria-hidden />
           {t("accommodation_label")}
         </Badge>
@@ -125,7 +125,10 @@ export function FillProgress({ job }: { job: Pick<Job, "counts" | "openings_coun
         aria-valuemin={0}
         aria-valuemax={job.openings_count}
         aria-valuenow={joined}
-        aria-label={t("filled_of", { joined: f.digits(joined), total: f.digits(job.openings_count) })}
+        aria-label={t("filled_of", {
+          joined: f.digits(joined),
+          total: f.digits(job.openings_count),
+        })}
       >
         <div className="bg-success h-full rounded-full" style={{ width: `${pct}%` }} />
       </div>

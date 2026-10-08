@@ -39,8 +39,7 @@ String toLatinDigits(String input) {
 }
 
 /// Localises digits for [lang]: Devanagari for `ne`, untouched otherwise.
-String localizeDigits(String input, String lang) =>
-    _isNe(lang) ? toDevanagariDigits(input) : input;
+String localizeDigits(String input, String lang) => _isNe(lang) ? toDevanagariDigits(input) : input;
 
 /// Groups an unsigned integer string the South Asian way: `123456` →
 /// `1,23,456`; `12345678` → `1,23,45,678`.
@@ -137,35 +136,9 @@ const bsMonthsEn = [
   'Falgun',
   'Chaitra',
 ];
-const bsMonthsNe = [
-  'बैशाख',
-  'जेठ',
-  'असार',
-  'साउन',
-  'भदौ',
-  'असोज',
-  'कात्तिक',
-  'मंसिर',
-  'पुस',
-  'माघ',
-  'फागुन',
-  'चैत',
-];
+const bsMonthsNe = ['बैशाख', 'जेठ', 'असार', 'साउन', 'भदौ', 'असोज', 'कात्तिक', 'मंसिर', 'पुस', 'माघ', 'फागुन', 'चैत'];
 
-const _adMonthsEn = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
+const _adMonthsEn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const _adMonthsNe = [
   'जनवरी',
   'फेब्रुअरी',
@@ -184,24 +157,8 @@ const _adMonthsNe = [
 /// Weekday short names, index 0 = Sunday (matches the API's `weekday`).
 const weekdaysShortEn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const weekdaysShortNe = ['आइत', 'सोम', 'मंगल', 'बुध', 'बिहि', 'शुक्र', 'शनि'];
-const weekdaysLongEn = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-];
-const weekdaysLongNe = [
-  'आइतबार',
-  'सोमबार',
-  'मंगलबार',
-  'बुधबार',
-  'बिहिबार',
-  'शुक्रबार',
-  'शनिबार',
-];
+const weekdaysLongEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const weekdaysLongNe = ['आइतबार', 'सोमबार', 'मंगलबार', 'बुधबार', 'बिहिबार', 'शुक्रबार', 'शनिबार'];
 
 String bsMonthName(int month, String lang) {
   if (month < 1 || month > 12) return '';
@@ -228,11 +185,7 @@ class BsDate implements Comparable<BsDate> {
     if (s == null) return null;
     final m = RegExp(r'^(\d{4})-(\d{1,2})-(\d{1,2})').firstMatch(s.trim());
     if (m == null) return null;
-    return BsDate(
-      int.parse(m.group(1)!),
-      int.parse(m.group(2)!),
-      int.parse(m.group(3)!),
-    );
+    return BsDate(int.parse(m.group(1)!), int.parse(m.group(2)!), int.parse(m.group(3)!));
   }
 
   /// Converts an AD calendar date (time ignored) to BS.
@@ -273,11 +226,7 @@ class BsDate implements Comparable<BsDate> {
   }
 
   @override
-  bool operator ==(Object other) =>
-      other is BsDate &&
-      other.year == year &&
-      other.month == month &&
-      other.day == day;
+  bool operator ==(Object other) => other is BsDate && other.year == year && other.month == month && other.day == day;
 
   @override
   int get hashCode => Object.hash(year, month, day);
@@ -287,8 +236,7 @@ class BsDate implements Comparable<BsDate> {
 }
 
 /// `21 Ashwin 2083` / `२१ असोज २०८३`.
-String formatBsDate(BsDate d, String lang) =>
-    localizeDigits('${d.day} ${bsMonthName(d.month, lang)} ${d.year}', lang);
+String formatBsDate(BsDate d, String lang) => localizeDigits('${d.day} ${bsMonthName(d.month, lang)} ${d.year}', lang);
 
 /// Formats an API `*_bs` string (`"2083-06-21"`). Falls back to the raw
 /// string when unparsable.
@@ -299,8 +247,7 @@ String formatBsString(String? bs, String lang) {
 }
 
 /// `Ashwin 2083` / `असोज २०८३`.
-String formatBsMonthYear(int year, int month, String lang) =>
-    localizeDigits('${bsMonthName(month, lang)} $year', lang);
+String formatBsMonthYear(int year, int month, String lang) => localizeDigits('${bsMonthName(month, lang)} $year', lang);
 
 /// `7 Oct 2026` / `७ अक्टोबर २०२६`.
 String formatAdDate(DateTime d, String lang) {
@@ -318,27 +265,22 @@ DateTime? parseIsoDate(String? s) {
   if (s == null || s.length < 10) return null;
   final m = RegExp(r'^(\d{4})-(\d{2})-(\d{2})').firstMatch(s);
   if (m == null) return null;
-  return DateTime(
-    int.parse(m.group(1)!),
-    int.parse(m.group(2)!),
-    int.parse(m.group(3)!),
-  );
+  return DateTime(int.parse(m.group(1)!), int.parse(m.group(2)!), int.parse(m.group(3)!));
 }
 
 /// Today's calendar date in Nepal (Asia/Kathmandu, UTC+05:45), regardless
 /// of the device time zone.
 DateTime nepalToday([DateTime? now]) {
-  final t = (now ?? DateTime.now()).toUtc().add(
-    const Duration(hours: 5, minutes: 45),
-  );
+  final t = (now ?? DateTime.now()).toUtc().add(const Duration(hours: 5, minutes: 45));
   return DateTime(t.year, t.month, t.day);
 }
 
 /// `9:05 AM` / `९:०५ AM` (DESIGN.md: keep AM/PM in Nepali too).
 String formatTime(DateTime t, String lang) {
-  final local = t.isUtc
-      ? t.add(const Duration(hours: 5, minutes: 45))
-      : t; // API datetimes carry an offset; DateTime.parse yields UTC.
+  final local =
+      t.isUtc
+          ? t.add(const Duration(hours: 5, minutes: 45))
+          : t; // API datetimes carry an offset; DateTime.parse yields UTC.
   final h12 = local.hour % 12 == 0 ? 12 : local.hour % 12;
   final mm = local.minute.toString().padLeft(2, '0');
   final ampm = local.hour < 12 ? 'AM' : 'PM';
@@ -363,31 +305,22 @@ String normalizePhone(String input) {
 }
 
 /// True for 10-digit Nepali mobile numbers starting with 97 or 98.
-bool isValidNepaliMobile(String input) =>
-    _mobileRe.hasMatch(normalizePhone(input));
+bool isValidNepaliMobile(String input) => _mobileRe.hasMatch(normalizePhone(input));
 
 /// `9812345678` → `+977 981-234-5678`. Unknown shapes are returned as-is.
 String formatPhone(String? phone, {String lang = 'en'}) {
   if (phone == null) return '';
   final p = normalizePhone(phone);
   if (p.length != 10) return localizeDigits(phone, lang);
-  return localizeDigits(
-    '+977 ${p.substring(0, 3)}-${p.substring(3, 6)}-${p.substring(6)}',
-    lang,
-  );
+  return localizeDigits('+977 ${p.substring(0, 3)}-${p.substring(3, 6)}-${p.substring(6)}', lang);
 }
 
 /// Overtime minutes → hours text (`1.5`), localized digits.
-String formatHours(num minutes, String lang) =>
-    formatNumber(minutes / 60, lang: lang, maxDecimals: 1);
+String formatHours(num minutes, String lang) => formatNumber(minutes / 60, lang: lang, maxDecimals: 1);
 
 /// Initials for avatar placeholders: `Ram Bahadur Thapa` → `RT`.
 String initials(String? name) {
-  final parts = (name ?? '')
-      .trim()
-      .split(RegExp(r'\s+'))
-      .where((p) => p.isNotEmpty)
-      .toList();
+  final parts = (name ?? '').trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
   if (parts.isEmpty) return '?';
   String first(String s) => String.fromCharCode(s.runes.first);
   if (parts.length == 1) return first(parts.first).toUpperCase();

@@ -55,6 +55,10 @@ dependencies:
   path_provider: ^2.1.5
   open_filex: ^4.7.0
   image_picker: ^1.2.1
+  # Renders the shared, version-controlled illustration kit
+  # (design/illustrations/*.svg) instead of duplicating the art as
+  # CustomPainter code.
+  flutter_svg: ^2.2.2
 
 dev_dependencies:
   flutter_test:
@@ -87,6 +91,10 @@ flutter:
     # assets/photos/<slot-id>.webp (docs/design/PHOTOGRAPHY_BRIEF_MOBILE.md);
     # until then each slot shows its illustrated fallback.
     - assets/photos/
+    # Shared illustration kit: copies of design/illustrations/*.svg with the
+    # same filenames (only the scenes the app uses). Refresh with
+    # tool/sync_illustrations.sh.
+    - assets/illustrations/
 
   fonts:
     # Devanagari fallback (brand: Noto Sans Devanagari). Static instances of

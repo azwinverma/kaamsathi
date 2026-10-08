@@ -1339,7 +1339,12 @@
       "in_stage_for": "{count, plural, =0 {Moved today} one {# day in this stage} other {# days in this stage}}",
       "move": "Move",
       "move_to": "Move to",
-      "open_candidate": "Open {name}'s profile"
+      "open_candidate": "Open {name}'s profile",
+      "more_details": "Requirements and description",
+      "stage_tabs": "Pipeline stages",
+      "stage_jump": "Jump to stage",
+      "stage_window": "Showing {from} to {to}",
+      "score_inline": "Match {score}"
     },
     "move": {
       "title": "Move {name}",
@@ -1558,23 +1563,23 @@
       "done": "I've stored it"
     },
     "scope": {
-      "jobs.read": "Read job openings",
-      "jobs.write": "Create job openings",
-      "workforce.read": "Read employments",
-      "attendance.read": "Read hajiri",
-      "attendance.write": "Record hajiri",
-      "payroll.read": "Read payroll and payslips",
-      "timesheets.read": "Read timesheets"
+      "jobs_read": "Read job openings",
+      "jobs_write": "Create job openings",
+      "workforce_read": "Read employments",
+      "attendance_read": "Read hajiri",
+      "attendance_write": "Record hajiri",
+      "payroll_read": "Read payroll and payslips",
+      "timesheets_read": "Read timesheets"
     },
     "event": {
-      "application.stage_changed": "Candidate stage changed",
-      "employment.started": "Worker joined",
-      "employment.ended": "Employment ended",
-      "payroll.run_approved": "Payroll approved",
-      "payroll.run_paid": "Payroll paid",
-      "timesheet.approved": "Timesheet approved",
-      "dispute.raised": "Dispute raised",
-      "support_case.updated": "Support case updated",
+      "application_stage_changed": "Candidate stage changed",
+      "employment_started": "Worker joined",
+      "employment_ended": "Employment ended",
+      "payroll_run_approved": "Payroll approved",
+      "payroll_run_paid": "Payroll paid",
+      "timesheet_approved": "Timesheet approved",
+      "dispute_raised": "Dispute raised",
+      "support_case_updated": "Support case updated",
       "ping": "Test ping"
     },
     "webhooks": {
@@ -1764,7 +1769,9 @@
       "kyb_3": "Verified employer",
       "kyb_3_hint": "Mark shown to workers on every job",
       "worker_title": "How far {name} is verified",
-      "rejected": "Rejected — needs new documents"
+      "rejected": "Rejected — needs new documents",
+      "strip_summary": "{done} of {total} steps done",
+      "strip_next": "Next: {step}"
     },
     "roster": {
       "label": "Site roster, {site}",
@@ -1789,7 +1796,23 @@
       "today": "Today",
       "still_working": "Still working here",
       "ended": "Left",
-      "ended_hint": "Reason: {reason}"
+      "ended_hint": "Reason: {reason}",
+      "hajiri_month": "Hajiri in {month}",
+      "hajiri_none": "No hajiri marked this month yet.",
+      "hajiri_strip": "Day by day, {month}",
+      "not_marked": "Not marked",
+      "letter_issued": "Appointment letter v{version} issued",
+      "letter_by": "By {name}",
+      "letter_terms": "{gross} a month gross · SSF {ssf}",
+      "letter_accepted": "Worker accepted letter v{version}",
+      "wage_change": "Wage changed: {from} → {to} a month",
+      "terms_changed": "Terms changed since letter v{version}",
+      "terms_changed_hint": "Wage or SSF on file no longer matches the letter the worker has. Issue a new letter below.",
+      "terms_changed_wage": "Wage on file is {now} a month; the letter says {then}.",
+      "dispute": "Dispute raised: {kind}",
+      "dispute_hint": "{status} · {description}",
+      "open_dispute": "Open in disputes",
+      "pdf": "PDF v{version}"
     },
     "credential": {
       "title": "Certificates",
@@ -3548,44 +3571,6 @@
     "price_subscription_title": "{rate} per active worker / month",
     "price_subscription_body": "Covers hajiri, leave, peski and payroll. Minimum {min} per month, billed at the start of each B.S. month.",
     "workers_never_pay": "Workers never pay KaamSathi anything."
-  },
-  "landing": {
-    "eyebrow": "Hiring and workforce platform for Nepal",
-    "headline": "Verified workers. On-time pay.",
-    "subhead": "Hire verified cooks, guards, masons and more — then run hajiri, leave and payroll in one place, in Nepali or English, on the B.S. calendar.",
-    "cta_employer": "Start as an employer",
-    "stat_1": "ID-verified workers",
-    "stat_2": "QR + GPS hajiri",
-    "stat_3": "SSF-ready wage sheets",
-    "hire_title": "Hire verified workers in days, not weeks",
-    "hire_body": "Post an opening and our ops team shortlists verified, available workers matched on trade, district and experience.",
-    "hire_p1": "Citizenship and skill (NSTB) checks before anyone reaches you",
-    "hire_p2": "Clear pipeline: shortlisted → interview → selected → joined",
-    "hire_p3": "Ratings and verified work history from past employers",
-    "manage_title": "Manage hajiri, leave and peski without the register",
-    "manage_body": "Supervisors mark hajiri on their phone — even offline. Workers can self check-in by scanning the site QR code.",
-    "manage_p1": "QR check-in at each work site",
-    "manage_p2": "Geofence makes sure workers are actually on site",
-    "manage_p3": "Leave requests and salary advances tracked automatically",
-    "payroll_title": "Payroll that follows Nepal's labour law",
-    "payroll_body": "Generate the B.S. month wage sheet from hajiri with minimum wage, overtime, SSF and TDS calculated for you.",
-    "payroll_p1": "Bilingual wage sheet (तलब पाना) and bank transfer files",
-    "payroll_p2": "SSF 11% + 20% and TDS by current tax slabs",
-    "payroll_p3": "Payslips sent to workers on their phone",
-    "pricing_title": "Simple pricing",
-    "pricing_body": "Pay for results. No setup fee.",
-    "price_hire_label": "Hiring",
-    "price_hire": "Rs. 5,000 / placement",
-    "price_hire_note": "Only when a worker joins. Free replacement within 30 days.",
-    "price_manage_label": "Hajiri + payroll",
-    "price_manage": "Rs. 150 / worker / month",
-    "price_manage_note": "Minimum Rs. 3,000 per month.",
-    "workers_title": "Looking for work?",
-    "workers_body": "Get verified once and get matched with hotels, hospitals, security companies and builders. See your hajiri and payslips in the KaamSathi app.",
-    "workers_free": "Workers never pay — KaamSathi is always free for workers.",
-    "cta_title": "Ready to hire and pay with confidence?",
-    "cta_body": "Log in with your mobile number — set up your organization in two minutes.",
-    "footer_place": "Kathmandu, Nepal"
   },
   "partners": {
     "title": "Partners",
@@ -5684,7 +5669,13 @@
       "attendance_card": "Hajiri this month",
       "open_register": "Open register",
       "attendance_none": "No hajiri recorded this month yet.",
-      "advance_outstanding_total": "Outstanding:"
+      "advance_outstanding_total": "Outstanding:",
+      "record_title": "Work record",
+      "record_hint": "Newest first: this month's hajiri, letters, wage changes and disputes for this job.",
+      "facts_label": "Facts on file",
+      "payment_method": "Payment method",
+      "payment_from": "From the {month} payslip",
+      "payment_none": "Set when the first payslip is made"
     },
     "advances": {
       "description": "Salary advances (peski) given to workers and recovered from monthly pay.",

@@ -9,6 +9,7 @@ import '../../../../core/router/router.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/eco.dart';
+import '../../../../core/widgets/signature/signature.dart';
 import '../../employment/employment_data.dart';
 
 /// Verified work history: every employment on KaamSathi (GET /me/employments).
@@ -36,7 +37,11 @@ class HistoryScreen extends ConsumerWidget {
           data:
               (items) =>
                   items.isEmpty
-                      ? ListView(children: [EmptyState(icon: LucideIcons.briefcase, message: l.historyEmpty)])
+                      ? ListView(
+                        children: [
+                          EmptyState(icon: LucideIcons.briefcase, message: l.historyEmpty, art: KsArt.cookKitchen),
+                        ],
+                      )
                       : ListView.separated(
                         padding: const EdgeInsets.all(KsSpace.page),
                         itemCount: items.length,

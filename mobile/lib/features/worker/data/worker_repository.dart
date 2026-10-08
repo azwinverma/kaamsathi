@@ -15,21 +15,14 @@ class WorkerRepository {
   WorkerRepository(this._api);
   final ApiClient _api;
 
-  Future<WorkerProfile> profile() async =>
-      WorkerProfile.fromJson(await _api.get<Map<String, dynamic>>('/me/worker'));
+  Future<WorkerProfile> profile() async => WorkerProfile.fromJson(await _api.get<Map<String, dynamic>>('/me/worker'));
 
   Future<WorkerProfile> updateProfile(Map<String, dynamic> patch) async =>
-      WorkerProfile.fromJson(
-        await _api.patch<Map<String, dynamic>>('/me/worker', data: patch),
-      );
+      WorkerProfile.fromJson(await _api.patch<Map<String, dynamic>>('/me/worker', data: patch));
 
-  Future<MyAttendanceMonth> attendance(int bsYear, int bsMonth) async =>
-      MyAttendanceMonth.fromJson(
-        await _api.get<Map<String, dynamic>>(
-          '/me/attendance',
-          query: {'bs_year': bsYear, 'bs_month': bsMonth},
-        ),
-      );
+  Future<MyAttendanceMonth> attendance(int bsYear, int bsMonth) async => MyAttendanceMonth.fromJson(
+    await _api.get<Map<String, dynamic>>('/me/attendance', query: {'bs_year': bsYear, 'bs_month': bsMonth}),
+  );
 
   Future<List<Payslip>> payslips() async {
     final data = await _api.get<dynamic>('/me/payslips', query: {'page_size': 100});
@@ -62,15 +55,10 @@ class WorkerRepository {
     return resultsOf(data).map(ConsentRecord.fromJson).toList();
   }
 
-  Future<void> setConsent(String scope, bool granted, {String? organizationId}) =>
-      _api.postNoContent(
-        '/me/consents',
-        data: {
-          'scope': scope,
-          'granted': granted,
-          if (organizationId != null) 'organization_id': organizationId,
-        },
-      );
+  Future<void> setConsent(String scope, bool granted, {String? organizationId}) => _api.postNoContent(
+    '/me/consents',
+    data: {'scope': scope, 'granted': granted, if (organizationId != null) 'organization_id': organizationId},
+  );
 
   Future<Json> checkIn({
     required bool checkOut,
@@ -92,9 +80,7 @@ class WorkerRepository {
   }
 }
 
-final workerRepositoryProvider = Provider<WorkerRepository>(
-  (ref) => WorkerRepository(ref.watch(apiClientProvider)),
-);
+final workerRepositoryProvider = Provider<WorkerRepository>((ref) => WorkerRepository(ref.watch(apiClientProvider)));
 
 /// Invalidate on user change.
 String? _userId(Ref ref) => ref.watch(sessionProvider.select((s) => s.me?.id));
@@ -106,10 +92,7 @@ final workerProfileProvider = FutureProvider.autoDispose<WorkerProfile>((ref) {
 
 typedef MonthKey = ({int year, int month});
 
-final myAttendanceProvider = FutureProvider.autoDispose.family<MyAttendanceMonth, MonthKey>((
-  ref,
-  key,
-) {
+final myAttendanceProvider = FutureProvider.autoDispose.family<MyAttendanceMonth, MonthKey>((ref, key) {
   _userId(ref);
   return ref.watch(workerRepositoryProvider).attendance(key.year, key.month);
 });

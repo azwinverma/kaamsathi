@@ -91,7 +91,8 @@ class _Courses extends ConsumerWidget {
         return ListView(
           padding: const EdgeInsets.all(KsSpace.page),
           children: [
-            if (courses.isEmpty) EmptyState(icon: LucideIcons.graduationCap, message: l.trainEmpty),
+            if (courses.isEmpty)
+              EmptyState(icon: LucideIcons.graduationCap, message: l.trainEmpty, art: KsArt.trainingLab),
             if (rec.isNotEmpty) GroupLabel(l.trainRecommended),
             for (final c in rec) _CourseCard(course: c, applied: applied.contains(c.id)),
             if (rec.isNotEmpty && other.isNotEmpty) GroupLabel(l.trainCourses),
@@ -216,7 +217,8 @@ class _Mine extends ConsumerWidget {
           (items) => ListView(
             padding: const EdgeInsets.all(KsSpace.page),
             children: [
-              if (items.isEmpty) EmptyState(icon: LucideIcons.graduationCap, message: l.trainMineEmpty),
+              if (items.isEmpty)
+                EmptyState(icon: LucideIcons.graduationCap, message: l.trainMineEmpty, art: KsArt.trainingLab),
               for (final e in items)
                 Card(
                   child: ListTile(

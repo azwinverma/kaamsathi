@@ -39,52 +39,55 @@ Future<void> showSitePicker(BuildContext context, WidgetRef ref) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    builder: (ctx) => Consumer(
-      builder: (ctx, ref, _) {
-        final l = ctx.l10n;
-        final session = ref.watch(sessionProvider);
-        final sites = ref.watch(sitesProvider);
-        Future<void> pick(String? id) async {
-          await ref.read(sessionProvider.notifier).selectSite(id);
-          if (ctx.mounted) Navigator.pop(ctx);
-        }
+    builder:
+        (ctx) => Consumer(
+          builder: (ctx, ref, _) {
+            final l = ctx.l10n;
+            final session = ref.watch(sessionProvider);
+            final sites = ref.watch(sitesProvider);
+            Future<void> pick(String? id) async {
+              await ref.read(sessionProvider.notifier).selectSite(id);
+              if (ctx.mounted) Navigator.pop(ctx);
+            }
 
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                child: Text(l.sitePickTitle, style: Theme.of(ctx).textTheme.titleLarge),
-              ),
-              ListTile(
-                leading: const Icon(LucideIcons.building2),
-                title: Text(l.allSites),
-                trailing: session.siteId == null ? const Icon(LucideIcons.check) : null,
-                onTap: () => pick(null),
-              ),
-              ...switch (sites) {
-                AsyncData(:final value) => [
-                  for (final s in value)
-                    ListTile(
-                      leading: const Icon(LucideIcons.mapPin),
-                      title: Text(s.name),
-                      subtitle: s.address == null ? null : Text(s.address!),
-                      trailing: session.siteId == s.id ? const Icon(LucideIcons.check) : null,
-                      onTap: () => pick(s.id),
-                    ),
+            return SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                    child: Text(l.sitePickTitle, style: Theme.of(ctx).textTheme.titleLarge),
+                  ),
+                  ListTile(
+                    leading: const Icon(LucideIcons.building2),
+                    title: Text(l.allSites),
+                    trailing: session.siteId == null ? const Icon(LucideIcons.check) : null,
+                    onTap: () => pick(null),
+                  ),
+                  ...switch (sites) {
+                    AsyncData(:final value) => [
+                      for (final s in value)
+                        ListTile(
+                          leading: const Icon(LucideIcons.mapPin),
+                          title: Text(s.name),
+                          subtitle: s.address == null ? null : Text(s.address!),
+                          trailing: session.siteId == s.id ? const Icon(LucideIcons.check) : null,
+                          onTap: () => pick(s.id),
+                        ),
+                    ],
+                    AsyncError(:final error) => [
+                      Padding(padding: const EdgeInsets.all(16), child: Text(errorText(ctx, error))),
+                    ],
+                    _ => [
+                      const Padding(padding: EdgeInsets.all(16), child: Center(child: CircularProgressIndicator())),
+                    ],
+                  },
+                  const SizedBox(height: 16),
                 ],
-                AsyncError(:final error) => [
-                  Padding(padding: const EdgeInsets.all(16), child: Text(errorText(ctx, error))),
-                ],
-                _ => [const Padding(padding: EdgeInsets.all(16), child: Center(child: CircularProgressIndicator()))],
-              },
-              const SizedBox(height: 16),
-            ],
-          ),
-        );
-      },
-    ),
+              ),
+            );
+          },
+        ),
   );
 }

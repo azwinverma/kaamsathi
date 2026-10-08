@@ -15,14 +15,7 @@ enum AppMode { supervisor, worker }
 
 /// Who is signed in and which mode / organization / site they're working in.
 class Session {
-  const Session({
-    this.status = AuthStatus.unknown,
-    this.me,
-    this.mode,
-    this.orgId,
-    this.siteId,
-    this.expired = false,
-  });
+  const Session({this.status = AuthStatus.unknown, this.me, this.mode, this.orgId, this.siteId, this.expired = false});
 
   final AuthStatus status;
   final Me? me;
@@ -49,8 +42,7 @@ class Session {
   }
 
   /// Supervisor mode needs an explicit org choice when there are several.
-  bool get needsOrgPick =>
-      mode == AppMode.supervisor && membership == null;
+  bool get needsOrgPick => mode == AppMode.supervisor && membership == null;
 
   Session copyWith({
     AuthStatus? status,
@@ -111,29 +103,15 @@ class SessionController extends Notifier<Session> {
   Future<OtpRequestResult> requestOtp(String phone) async {
     final data = await ref
         .read(apiClientProvider)
-        .post<Map<String, dynamic>>(
-          '/auth/otp/request',
-          data: {'phone': normalizePhone(phone)},
-        );
-    return OtpRequestResult(
-      expiresIn: intOf(data['expires_in']) ?? 300,
-      devCode: str(data['dev_code']),
-    );
+        .post<Map<String, dynamic>>('/auth/otp/request', data: {'phone': normalizePhone(phone)});
+    return OtpRequestResult(expiresIn: intOf(data['expires_in']) ?? 300, devCode: str(data['dev_code']));
   }
 
   Future<void> verifyOtp(String phone, String code) async {
     final data = await ref
         .read(apiClientProvider)
-        .post<Map<String, dynamic>>(
-          '/auth/otp/verify',
-          data: {'phone': normalizePhone(phone), 'code': code},
-        );
-    await _tokens.save(
-      Tokens(
-        access: strOr(data['access']),
-        refresh: strOr(data['refresh']),
-      ),
-    );
+        .post<Map<String, dynamic>>('/auth/otp/verify', data: {'phone': normalizePhone(phone), 'code': code});
+    await _tokens.save(Tokens(access: strOr(data['access']), refresh: strOr(data['refresh'])));
     final meJson = asJson(data['user']);
     await ref.read(prefsProvider).setCachedMe(meJson);
     _applyMe(Me.fromJson(meJson));
@@ -141,9 +119,7 @@ class SessionController extends Notifier<Session> {
 
   /// Re-fetches `GET /auth/me`.
   Future<Me> refreshMe() async {
-    final data = await ref
-        .read(apiClientProvider)
-        .get<Map<String, dynamic>>('/auth/me');
+    final data = await ref.read(apiClientProvider).get<Map<String, dynamic>>('/auth/me');
     await ref.read(prefsProvider).setCachedMe(data);
     final me = Me.fromJson(data);
     _applyMe(me);
@@ -168,9 +144,7 @@ class SessionController extends Notifier<Session> {
     final saved = prefs.mode;
     if (saved == 'supervisor' && me.canSupervise) mode = AppMode.supervisor;
     if (saved == 'worker' && me.isWorker) mode = AppMode.worker;
-    mode ??= me.canSupervise
-        ? AppMode.supervisor
-        : (me.isWorker ? AppMode.worker : null);
+    mode ??= me.canSupervise ? AppMode.supervisor : (me.isWorker ? AppMode.worker : null);
 
     // Org: saved if still a membership; auto-pick when there's only one.
     final orgs = me.supervisorMemberships;
@@ -182,12 +156,10 @@ class SessionController extends Notifier<Session> {
     String? siteId = prefs.siteId;
     final mem = orgs.where((m) => m.organization.id == orgId).firstOrNull;
     if (mem != null) {
-      if (siteId != null && siteId.isNotEmpty && !mem.allSites &&
-          !mem.siteIds.contains(siteId)) {
+      if (siteId != null && siteId.isNotEmpty && !mem.allSites && !mem.siteIds.contains(siteId)) {
         siteId = null;
       }
-      if ((siteId == null || siteId.isEmpty) && mem.siteIds.length == 1 &&
-          !mem.allSites) {
+      if ((siteId == null || siteId.isEmpty) && mem.siteIds.length == 1 && !mem.allSites) {
         siteId = mem.siteIds.first;
       }
     }
@@ -211,9 +183,7 @@ class SessionController extends Notifier<Session> {
     await prefs.setSiteId(null);
     final me = state.me;
     String? site;
-    final mem = me?.supervisorMemberships
-        .where((m) => m.organization.id == orgId)
-        .firstOrNull;
+    final mem = me?.supervisorMemberships.where((m) => m.organization.id == orgId).firstOrNull;
     if (mem != null && !mem.allSites && mem.siteIds.length == 1) {
       site = mem.siteIds.first;
     }
@@ -229,9 +199,7 @@ class SessionController extends Notifier<Session> {
     final t = _tokens.current;
     if (t != null) {
       try {
-        await ref
-            .read(apiClientProvider)
-            .postNoContent('/auth/logout', data: {'refresh': t.refresh});
+        await ref.read(apiClientProvider).postNoContent('/auth/logout', data: {'refresh': t.refresh});
       } catch (_) {
         // Offline logout still clears the device.
       }
@@ -253,6 +221,4 @@ class SessionController extends Notifier<Session> {
   }
 }
 
-final sessionProvider = NotifierProvider<SessionController, Session>(
-  SessionController.new,
-);
+final sessionProvider = NotifierProvider<SessionController, Session>(SessionController.new);

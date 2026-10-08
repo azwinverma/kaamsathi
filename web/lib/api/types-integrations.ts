@@ -87,3 +87,11 @@ export interface WebhookDelivery {
   created_at: string;
   delivered_at: string | null;
 }
+
+/**
+ * Scope and event ids contain dots ("jobs.read"); next-intl treats dots as nesting, so their
+ * message keys use underscores instead ("integrations.scope.jobs_read").
+ */
+export function messageKey(id: string): string {
+  return id.replace(/\./g, "_");
+}

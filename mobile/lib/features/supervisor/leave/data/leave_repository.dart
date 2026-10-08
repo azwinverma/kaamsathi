@@ -43,9 +43,7 @@ class LeaveRequest {
     final worker = asJsonOrNull(j['worker']) ?? asJsonOrNull(emp?['worker']);
     return LeaveRequest(
       id: strOr(j['id']),
-      workerName: strOr(
-        worker?['full_name'] ?? j['worker_name'] ?? emp?['worker_name'],
-      ),
+      workerName: strOr(worker?['full_name'] ?? j['worker_name'] ?? emp?['worker_name']),
       workerPhoto: str(worker?['photo']),
       designation: str(j['designation'] ?? emp?['designation']),
       leaveType: strOr(j['leave_type']),
@@ -66,29 +64,19 @@ class LeaveRepository {
   final ApiClient _api;
 
   Future<List<LeaveRequest>> list(String status) async {
-    final data = await _api.get<dynamic>(
-      '/org/leaves',
-      query: {'status': status, 'page_size': 100},
-    );
+    final data = await _api.get<dynamic>('/org/leaves', query: {'status': status, 'page_size': 100});
     return resultsOf(data).map(LeaveRequest.fromJson).toList();
   }
 
   Future<void> approve(String id) => _api.postNoContent('/org/leaves/$id/approve');
 
-  Future<void> reject(String id, {String? note}) => _api.postNoContent(
-    '/org/leaves/$id/reject',
-    data: {if (note != null && note.isNotEmpty) 'note': note},
-  );
+  Future<void> reject(String id, {String? note}) =>
+      _api.postNoContent('/org/leaves/$id/reject', data: {if (note != null && note.isNotEmpty) 'note': note});
 }
 
-final leaveRepositoryProvider = Provider<LeaveRepository>(
-  (ref) => LeaveRepository(ref.watch(apiClientProvider)),
-);
+final leaveRepositoryProvider = Provider<LeaveRepository>((ref) => LeaveRepository(ref.watch(apiClientProvider)));
 
-final leavesProvider = FutureProvider.autoDispose.family<List<LeaveRequest>, String>((
-  ref,
-  status,
-) {
+final leavesProvider = FutureProvider.autoDispose.family<List<LeaveRequest>, String>((ref, status) {
   // Re-fetch when the organization changes.
   ref.watch(sessionProvider.select((s) => s.orgId));
   return ref.watch(leaveRepositoryProvider).list(status);

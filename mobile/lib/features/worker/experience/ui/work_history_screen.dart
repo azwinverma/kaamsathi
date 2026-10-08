@@ -9,6 +9,7 @@ import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/digit_formatter.dart';
 import '../../../../core/widgets/eco.dart';
 import '../../../../core/widgets/photo_picker.dart';
+import '../../../../core/widgets/signature/signature.dart';
 import '../../../common/ref_data.dart';
 import '../experience_data.dart';
 
@@ -34,9 +35,9 @@ String? verifiedByLabel(AppLocalizations l, String? method) => switch (method) {
 class WorkHistoryScreen extends ConsumerWidget {
   const WorkHistoryScreen({super.key});
 
-  Future<void> _openForm(BuildContext context, [WorkHistoryEntry? entry]) => Navigator.of(context).push(
-    MaterialPageRoute<void>(fullscreenDialog: true, builder: (_) => WorkHistoryFormScreen(entry: entry)),
-  );
+  Future<void> _openForm(BuildContext context, [WorkHistoryEntry? entry]) => Navigator.of(
+    context,
+  ).push(MaterialPageRoute<void>(fullscreenDialog: true, builder: (_) => WorkHistoryFormScreen(entry: entry)));
 
   Future<void> _delete(BuildContext context, WidgetRef ref, WorkHistoryEntry e) async {
     final l = context.l10n;
@@ -83,7 +84,8 @@ class WorkHistoryScreen extends ConsumerWidget {
                 children: [
                   Text(l.workHistIntro, style: t.bodyMedium),
                   const SizedBox(height: KsSpace.s3),
-                  if (items.isEmpty) EmptyState(icon: LucideIcons.briefcase, message: l.workHistEmpty),
+                  if (items.isEmpty)
+                    EmptyState(icon: LucideIcons.briefcase, message: l.workHistEmpty, art: KsArt.cookKitchen),
                   for (final e in items)
                     Card(
                       key: Key('work_history_${e.id}'),
@@ -142,8 +144,7 @@ class WorkHistoryScreen extends ConsumerWidget {
                             if (e.canEdit)
                               PopupMenuButton<String>(
                                 key: Key('work_history_menu_${e.id}'),
-                                onSelected:
-                                    (v) => v == 'edit' ? _openForm(context, e) : _delete(context, ref, e),
+                                onSelected: (v) => v == 'edit' ? _openForm(context, e) : _delete(context, ref, e),
                                 itemBuilder:
                                     (_) => [
                                       PopupMenuItem(value: 'edit', child: Text(l.workHistEdit)),

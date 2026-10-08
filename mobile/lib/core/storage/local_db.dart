@@ -8,11 +8,7 @@ abstract final class LocalDb {
 
   static Future<Database> open() async {
     final dir = await getDatabasesPath();
-    return openDatabase(
-      p.join(dir, name),
-      version: version,
-      onCreate: (db, _) => createSchema(db),
-    );
+    return openDatabase(p.join(dir, name), version: version, onCreate: (db, _) => createSchema(db));
   }
 
   /// Also used by tests with an in-memory FFI database.
@@ -35,9 +31,7 @@ abstract final class LocalDb {
         updated_at INTEGER NOT NULL
       )
     ''');
-    await db.execute(
-      'CREATE INDEX idx_queue_key ON attendance_queue (org_id, employment_id, date)',
-    );
+    await db.execute('CREATE INDEX idx_queue_key ON attendance_queue (org_id, employment_id, date)');
     await db.execute('''
       CREATE TABLE day_cache (
         cache_key TEXT PRIMARY KEY,

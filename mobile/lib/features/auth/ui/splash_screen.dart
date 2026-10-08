@@ -48,7 +48,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               const SizedBox(height: KsSpace.s4),
               Text(
                 'KaamSathi · कामसाथी',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                style: Theme.of(
+                  context,
+                ).textTheme.headlineMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
               ),
               const SizedBox(height: KsSpace.s2),
               Text(

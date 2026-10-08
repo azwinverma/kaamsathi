@@ -80,7 +80,12 @@
       "in_stage_for": "{count, plural, =0 {आज सारिएको} other {यस चरणमा # दिन}}",
       "move": "सार्नुहोस्",
       "move_to": "यहाँ सार्नुहोस्",
-      "open_candidate": "{name} को प्रोफाइल खोल्नुहोस्"
+      "open_candidate": "{name} को प्रोफाइल खोल्नुहोस्",
+      "more_details": "आवश्यकता र विवरण",
+      "stage_tabs": "छनोटका चरण",
+      "stage_jump": "चरणमा जानुहोस्",
+      "stage_window": "{from} देखि {to} सम्म देखाइएको",
+      "score_inline": "मिलान {score}"
     },
     "move": {
       "title": "{name} लाई सार्नुहोस्",

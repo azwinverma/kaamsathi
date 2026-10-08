@@ -39,7 +39,10 @@ export function VerificationLadder({
         const last = i === rungs.length - 1;
         const railDone = r.state === "done" && rungs[i + 1]?.state === "done";
         return (
-          <li key={r.key} className={cn("relative flex gap-3", last ? "" : dense ? "pb-3" : "pb-4")}>
+          <li
+            key={r.key}
+            className={cn("relative flex gap-3", last ? "" : dense ? "pb-3" : "pb-4")}
+          >
             {!last ? (
               <span
                 aria-hidden
@@ -55,7 +58,11 @@ export function VerificationLadder({
                 <p
                   className={cn(
                     "text-sm font-semibold",
-                    r.state === "done" ? "text-fg" : r.state === "blocked" ? "text-danger" : "text-fg-body",
+                    r.state === "done"
+                      ? "text-fg"
+                      : r.state === "blocked"
+                        ? "text-danger"
+                        : "text-fg-body",
                   )}
                 >
                   {r.title}
@@ -70,15 +77,15 @@ export function VerificationLadder({
                           : t("not_yet")}
                   </span>
                 </p>
-                {r.meta ? <span className="text-xs text-fg-muted tabular">{r.meta}</span> : null}
+                {r.meta ? <span className="text-fg-muted tabular text-xs">{r.meta}</span> : null}
               </div>
-              {r.hint ? <p className="text-[13px] leading-5 text-fg-muted">{r.hint}</p> : null}
+              {r.hint ? <p className="text-fg-muted text-[13px] leading-5">{r.hint}</p> : null}
               {r.state === "next" ? (
-                <p className="mt-0.5 text-xs font-semibold text-brand-text" aria-hidden>
+                <p className="text-brand-text mt-0.5 text-xs font-semibold" aria-hidden>
                   {t("next")}
                 </p>
               ) : r.state === "blocked" ? (
-                <p className="mt-0.5 text-xs font-semibold text-danger" aria-hidden>
+                <p className="text-danger mt-0.5 text-xs font-semibold" aria-hidden>
                   {t("rejected")}
                 </p>
               ) : null}
@@ -90,6 +97,90 @@ export function VerificationLadder({
   );
 }
 
+/**
+ * Verification ladder, horizontal (direction A): the same rungs as a single row of nodes joined by
+ * a rail — for header bands where the vertical ladder would be a second focal point. Rung titles
+ * show from `md`; on phones a one-line summary ("4 of 6 · Next: Highly trusted") carries the state.
+ */
+export function LadderStrip({
+  rungs,
+  label,
+  className,
+}: {
+  rungs: LadderRung[];
+  label?: string;
+  className?: string;
+}) {
+  const t = useTranslations("ledger.ladder");
+  const done = rungs.filter((r) => r.state === "done").length;
+  const next = rungs.find((r) => r.state === "next" || r.state === "blocked");
+  return (
+    <div className={cn("min-w-0", className)}>
+      <p className="text-fg-muted mb-2 text-xs md:hidden" aria-hidden>
+        {t("strip_summary", { done, total: rungs.length })}
+        {next ? (
+          <>
+            {" · "}
+            <span
+              className={cn(
+                "font-semibold",
+                next.state === "blocked" ? "text-danger" : "text-brand-text",
+              )}
+            >
+              {next.state === "blocked"
+                ? t("rejected")
+                : t("strip_next", { step: String(next.title) })}
+            </span>
+          </>
+        ) : null}
+      </p>
+      <ol aria-label={label ?? t("label")} className="flex items-start">
+        {rungs.map((r, i) => {
+          const last = i === rungs.length - 1;
+          const railDone = r.state === "done" && rungs[i + 1]?.state === "done";
+          return (
+            <li key={r.key} className={cn("min-w-0", last ? "shrink-0 md:flex-1" : "flex-1")}>
+              <div className="flex items-center">
+                <Node state={r.state} />
+                {!last ? (
+                  <span
+                    aria-hidden
+                    className={cn("mx-1 h-0.5 flex-1", railDone ? "bg-verified" : "bg-border")}
+                  />
+                ) : null}
+              </div>
+              <p
+                className={cn(
+                  "mt-1.5 pr-3 text-xs leading-4 max-md:sr-only",
+                  r.state === "done"
+                    ? "text-fg-body"
+                    : r.state === "next"
+                      ? "text-brand-text font-semibold"
+                      : r.state === "blocked"
+                        ? "text-danger font-semibold"
+                        : "text-fg-muted",
+                )}
+              >
+                {r.title}
+                <span className="sr-only">
+                  {" — "}
+                  {r.state === "done"
+                    ? t("reached")
+                    : r.state === "next"
+                      ? t("next")
+                      : r.state === "blocked"
+                        ? t("rejected")
+                        : t("not_yet")}
+                </span>
+              </p>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
 function Node({ state }: { state: RungState }) {
   return (
     <span
@@ -97,8 +188,8 @@ function Node({ state }: { state: RungState }) {
       className={cn(
         "relative z-[1] mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full",
         state === "done" && "bg-verified text-fg-inverse",
-        state === "next" && "border-2 border-brand bg-surface",
-        state === "todo" && "border-2 border-dashed border-border-strong bg-surface",
+        state === "next" && "border-brand bg-surface border-2",
+        state === "todo" && "border-border-strong bg-surface border-2 border-dashed",
         state === "blocked" && "bg-danger text-fg-inverse",
       )}
     >

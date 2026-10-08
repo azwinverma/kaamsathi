@@ -12,8 +12,7 @@ enum QueueState {
   /// Rejected by the server; needs the supervisor's attention.
   error;
 
-  static QueueState parse(String? s) =>
-      QueueState.values.firstWhere((e) => e.name == s, orElse: () => pending);
+  static QueueState parse(String? s) => QueueState.values.firstWhere((e) => e.name == s, orElse: () => pending);
 }
 
 /// One attendance change waiting for `POST /org/attendance/bulk`.
@@ -166,9 +165,7 @@ class AttendanceQueue {
     final rows = await _db.query(
       _t,
       where: orgId == null ? 'state = ?' : 'state = ? AND org_id = ?',
-      whereArgs: orgId == null
-          ? [QueueState.pending.name]
-          : [QueueState.pending.name, orgId],
+      whereArgs: orgId == null ? [QueueState.pending.name] : [QueueState.pending.name, orgId],
       orderBy: 'created_at ASC, rowid ASC',
       limit: limit,
     );
@@ -177,25 +174,19 @@ class AttendanceQueue {
 
   /// Org ids that have records waiting to be sent.
   Future<List<String>> orgsWithPending() async {
-    final rows = await _db.rawQuery(
-      'SELECT DISTINCT org_id FROM $_t WHERE state = ?',
-      [QueueState.pending.name],
-    );
+    final rows = await _db.rawQuery('SELECT DISTINCT org_id FROM $_t WHERE state = ?', [QueueState.pending.name]);
     return rows.map((r) => r['org_id']! as String).toList();
   }
 
   Future<int> count({QueueState? state}) async {
     final rows = await _db.rawQuery(
-      state == null
-          ? 'SELECT COUNT(*) AS c FROM $_t'
-          : 'SELECT COUNT(*) AS c FROM $_t WHERE state = ?',
+      state == null ? 'SELECT COUNT(*) AS c FROM $_t' : 'SELECT COUNT(*) AS c FROM $_t WHERE state = ?',
       state == null ? null : [state.name],
     );
     return (rows.first['c'] as int?) ?? 0;
   }
 
-  Future<void> markSyncing(Iterable<String> uuids) =>
-      _setState(uuids, QueueState.syncing);
+  Future<void> markSyncing(Iterable<String> uuids) => _setState(uuids, QueueState.syncing);
 
   /// Network/5xx failure: put back in line and bump the attempt counter.
   Future<void> markRetry(Iterable<String> uuids) async {
@@ -212,26 +203,21 @@ class AttendanceQueue {
   Future<void> markSaved(Iterable<String> uuids) async {
     if (uuids.isEmpty) return;
     final ids = uuids.toList();
-    await _db.delete(
-      _t,
-      where: 'client_uuid IN (${List.filled(ids.length, '?').join(',')})',
-      whereArgs: ids,
-    );
+    await _db.delete(_t, where: 'client_uuid IN (${List.filled(ids.length, '?').join(',')})', whereArgs: ids);
   }
 
   /// Server rejected this record (e.g. `invalid_state` for a locked month).
-  Future<void> markFailed(String uuid, String code, String message) =>
-      _db.update(
-        _t,
-        {
-          'state': QueueState.error.name,
-          'error_code': code,
-          'error_message': message,
-          'updated_at': _clock().millisecondsSinceEpoch,
-        },
-        where: 'client_uuid = ?',
-        whereArgs: [uuid],
-      );
+  Future<void> markFailed(String uuid, String code, String message) => _db.update(
+    _t,
+    {
+      'state': QueueState.error.name,
+      'error_code': code,
+      'error_message': message,
+      'updated_at': _clock().millisecondsSinceEpoch,
+    },
+    where: 'client_uuid = ?',
+    whereArgs: [uuid],
+  );
 
   /// User asked to try a failed record again.
   Future<void> retry(String uuid) => _db.update(
@@ -247,17 +233,11 @@ class AttendanceQueue {
   );
 
   /// Drop a local change (e.g. after a permanent error).
-  Future<void> discard(String uuid) =>
-      _db.delete(_t, where: 'client_uuid = ?', whereArgs: [uuid]);
+  Future<void> discard(String uuid) => _db.delete(_t, where: 'client_uuid = ?', whereArgs: [uuid]);
 
   /// After an app restart nothing is really in flight any more.
   Future<void> recoverInFlight() async {
-    await _db.update(
-      _t,
-      {'state': QueueState.pending.name},
-      where: 'state = ?',
-      whereArgs: [QueueState.syncing.name],
-    );
+    await _db.update(_t, {'state': QueueState.pending.name}, where: 'state = ?', whereArgs: [QueueState.syncing.name]);
   }
 
   Future<void> clear() => _db.delete(_t);

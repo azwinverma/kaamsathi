@@ -64,16 +64,14 @@ class _NoAccessScreenState extends ConsumerState<NoAccessScreen> {
             const SizedBox(height: KsSpace.s8),
             FilledButton.icon(
               onPressed: _busy ? null : _retry,
-              icon: _busy
-                  ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Icon(LucideIcons.refreshCw, size: 20),
+              icon:
+                  _busy
+                      ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                      : const Icon(LucideIcons.refreshCw, size: 20),
               label: Text(l.noAccessRetry),
             ),
             const SizedBox(height: KsSpace.s3),
-            OutlinedButton(
-              onPressed: () => ref.read(sessionProvider.notifier).logout(),
-              child: Text(l.logout),
-            ),
+            OutlinedButton(onPressed: () => ref.read(sessionProvider.notifier).logout(), child: Text(l.logout)),
           ],
         ),
       ),

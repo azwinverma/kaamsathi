@@ -20,8 +20,7 @@ abstract final class AppConfig {
     return 'http://localhost:8000/api/v1';
   }
 
-  static String _stripSlash(String s) =>
-      s.endsWith('/') ? s.substring(0, s.length - 1) : s;
+  static String _stripSlash(String s) => s.endsWith('/') ? s.substring(0, s.length - 1) : s;
 
   static const connectTimeout = Duration(seconds: 15);
   static const receiveTimeout = Duration(seconds: 30);

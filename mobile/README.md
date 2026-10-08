@@ -24,6 +24,22 @@ Cleartext HTTP only works in debug: Android's debug
 `network_security_config.xml` allows it, iOS allows it only for local-network
 hosts (`NSAllowsLocalNetworking`).
 
+## Illustrations
+
+The app renders the shared illustration kit (`design/illustrations/*.svg`, the
+same files the website uses) with `flutter_svg`. Copies live in
+`assets/illustrations/` with identical filenames; only the scenes the app uses
+are bundled (see `KsArt` in `lib/core/widgets/signature/illustration.dart`).
+After the kit changes, refresh the copies:
+
+```sh
+tool/sync_illustrations.sh                 # re-copy every bundled scene
+tool/sync_illustrations.sh hvac-gauge.svg  # also start bundling a new scene
+```
+
+When adding a scene, also add a `KsArt` value for it. flutter_svg compatibility
+notes are in `design/illustrations/README.md` ("Mobile notes").
+
 ## API URL for release builds
 
 Release builds read the API URL at compile time:

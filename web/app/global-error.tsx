@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { MARK } from "@/lib/brand-mark";
 
 /**
  * Last-resort boundary: replaces the root layout, so no providers, fonts or globals.css.
@@ -41,16 +42,16 @@ export default function GlobalError({
             aria-hidden
             style={{ display: "block", margin: "0 auto 20px" }}
           >
-            <rect width="32" height="32" rx="8" fill="#2563EB" />
+            <rect width="32" height="32" rx={MARK.radius} fill="#2563EB" />
             <path
-              d="M10 8v16M10 16.5 19.5 8M13.5 13.5 21 24"
+              d={MARK.k}
               stroke="#fff"
-              strokeWidth="3"
+              strokeWidth={MARK.strokeWidth}
               strokeLinecap="round"
               strokeLinejoin="round"
               fill="none"
             />
-            <circle cx="23.5" cy="9.5" r="2.5" fill="#FF6B6B" />
+            <circle cx={MARK.sun.cx} cy={MARK.sun.cy} r={MARK.sun.r} fill={MARK.hex.sun} />
           </svg>
           <h1 style={{ fontSize: 22, margin: "0 0 6px", fontWeight: 600 }}>Something went wrong</h1>
           <p lang="ne" style={{ fontSize: 20, margin: "0 0 16px", fontWeight: 600 }}>

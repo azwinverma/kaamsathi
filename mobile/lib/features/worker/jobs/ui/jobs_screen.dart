@@ -233,6 +233,7 @@ class _RecommendedJobsTabState extends ConsumerState<RecommendedJobsTab> {
                   EmptyState(
                     icon: LucideIcons.briefcase,
                     message: l.jobsEmpty,
+                    art: KsArt.electricianBoard,
                     action: OutlinedButton.icon(
                       onPressed: () => context.push(Routes.workerAvailability),
                       icon: const Icon(LucideIcons.mapPin, size: 18),
@@ -345,7 +346,7 @@ class _MyApplicationsTabState extends ConsumerState<MyApplicationsTab> {
               padding: const EdgeInsets.all(KsSpace.page),
               children: [
                 if (cached.fromCache) const CachedNotice(),
-                if (apps.isEmpty) EmptyState(icon: LucideIcons.fileText, message: l.appsEmpty),
+                if (apps.isEmpty) EmptyState(icon: LucideIcons.fileText, message: l.appsEmpty, art: KsArt.solarRoof),
                 for (final a in apps)
                   Builder(
                     builder: (_) {

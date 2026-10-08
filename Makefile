@@ -1,5 +1,8 @@
 # KaamSathi developer commands. `make help` lists them.
 BACKEND := backend
+# Local API port. Override when 8000 is taken, e.g. `make dev-backend API_PORT=8001`
+# (then set API_BASE_URL=http://localhost:8001/api/v1 in web/.env.local).
+API_PORT ?= 8000
 PY      := $(BACKEND)/.venv/bin/python
 MANAGE  := cd $(BACKEND) && .venv/bin/python manage.py
 COMPOSE := docker compose
@@ -42,8 +45,10 @@ backend-setup:
 web-setup:
 	cd web && pnpm install
 
-dev-backend: db ## Django dev server on :8000 against Docker Postgres/Redis
-	$(MANAGE) migrate && $(MANAGE) runserver 0.0.0.0:8000
+dev-backend: db ## Django dev server on :$(API_PORT) (default 8000) against Docker Postgres/Redis
+	@if lsof -nP -iTCP:$(API_PORT) -sTCP:LISTEN >/dev/null 2>&1; then \
+		echo "Port $(API_PORT) is already in use (another project?). Pick a free one: make dev-backend API_PORT=$$(( $(API_PORT) + 1 ))"; exit 1; fi
+	cd $(BACKEND) && .venv/bin/python manage.py migrate && .venv/bin/python manage.py runserver 0.0.0.0:$(API_PORT)
 
 dev-worker: ## Celery worker + beat (only needed with CELERY_TASK_ALWAYS_EAGER=false)
 	cd $(BACKEND) && .venv/bin/celery -A config worker -B -l info

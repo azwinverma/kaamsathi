@@ -37,23 +37,23 @@
       "done": "मैले सुरक्षित राखेँ"
     },
     "scope": {
-      "jobs.read": "रोजगारी सूचना हेर्ने",
-      "jobs.write": "रोजगारी सूचना बनाउने",
-      "workforce.read": "रोजगारी विवरण हेर्ने",
-      "attendance.read": "हाजिरी हेर्ने",
-      "attendance.write": "हाजिरी लेख्ने",
-      "payroll.read": "तलब र तलबी पर्चा हेर्ने",
-      "timesheets.read": "टाइमसिट हेर्ने"
+      "jobs_read": "रोजगारी सूचना हेर्ने",
+      "jobs_write": "रोजगारी सूचना बनाउने",
+      "workforce_read": "रोजगारी विवरण हेर्ने",
+      "attendance_read": "हाजिरी हेर्ने",
+      "attendance_write": "हाजिरी लेख्ने",
+      "payroll_read": "तलब र तलबी पर्चा हेर्ने",
+      "timesheets_read": "टाइमसिट हेर्ने"
     },
     "event": {
-      "application.stage_changed": "उम्मेदवारको चरण बदलियो",
-      "employment.started": "कामदार काममा जोडिए",
-      "employment.ended": "रोजगारी सकियो",
-      "payroll.run_approved": "तलब स्वीकृत",
-      "payroll.run_paid": "तलब भुक्तानी",
-      "timesheet.approved": "टाइमसिट स्वीकृत",
-      "dispute.raised": "उजुरी दर्ता",
-      "support_case.updated": "सहायता केस अद्यावधिक",
+      "application_stage_changed": "उम्मेदवारको चरण बदलियो",
+      "employment_started": "कामदार काममा जोडिए",
+      "employment_ended": "रोजगारी सकियो",
+      "payroll_run_approved": "तलब स्वीकृत",
+      "payroll_run_paid": "तलब भुक्तानी",
+      "timesheet_approved": "टाइमसिट स्वीकृत",
+      "dispute_raised": "उजुरी दर्ता",
+      "support_case_updated": "सहायता केस अद्यावधिक",
       "ping": "परीक्षण पिङ"
     },
     "webhooks": {

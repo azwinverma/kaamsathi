@@ -9,6 +9,7 @@ import '../../../../core/l10n/l10n.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/digit_formatter.dart';
+import '../../../../core/widgets/signature/signature.dart';
 import '../money_data.dart';
 import 'money_labels.dart';
 
@@ -32,7 +33,7 @@ class OfferApplyScreen extends ConsumerWidget {
         data:
             (offer) =>
                 offer == null
-                    ? EmptyState(icon: LucideIcons.searchX, message: l.commonNotFound)
+                    ? EmptyState(icon: LucideIcons.searchX, message: l.commonNotFound, art: KsArt.plumberWrench)
                     : ConsentView(
                       offer: offer,
                       onSubmit: (r) async {

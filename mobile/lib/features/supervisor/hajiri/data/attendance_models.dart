@@ -223,9 +223,5 @@ class SiteRef {
   final String name;
   final String? address;
 
-  factory SiteRef.fromJson(Json j) => SiteRef(
-    id: strOr(j['id']),
-    name: strOr(j['name']),
-    address: str(j['address']),
-  );
+  factory SiteRef.fromJson(Json j) => SiteRef(id: strOr(j['id']), name: strOr(j['name']), address: str(j['address']));
 }

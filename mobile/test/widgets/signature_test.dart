@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kaamsathi/core/l10n/l10n.dart';
 import 'package:kaamsathi/core/theme/app_theme.dart';
@@ -181,6 +184,55 @@ void main() {
       );
       expect(find.byKey(const Key('slot_fallback_mobile-learn-workshop')), findsOneWidget);
       expect(find.bySemanticsLabel('Training at a workshop bench'), findsOneWidget);
+      // The fallback is the shared kit's SVG, not code-drawn art.
+      final pic = tester.widget<SvgPicture>(find.byType(SvgPicture));
+      expect((pic.bytesLoader as SvgAssetLoader).assetName, 'assets/illustrations/training-lab.svg');
+      expect(pic.fit, BoxFit.cover);
+      handle.dispose();
+    });
+
+    testWidgets('each slot falls back to its kit scene', (tester) async {
+      const expected = {
+        'mobile-learn-workshop': 'training-lab',
+        'mobile-career-step': 'welder-visor',
+        'mobile-welcome-hajiri': 'supervisor-hajiri',
+      };
+      for (final s in PhotoSlot.all) {
+        await _pump(tester, SizedBox(width: 100, child: ImageSlot(slot: s, semanticLabel: 'alt')));
+        final pic = tester.widget<SvgPicture>(find.byType(SvgPicture));
+        expect((pic.bytesLoader as SvgAssetLoader).assetName, 'assets/illustrations/${expected[s.id]}.svg');
+      }
+    });
+
+    test('kit scenes are bundled with the same filenames as design/illustrations', () {
+      final pubspec = File('pubspec.yaml').readAsStringSync();
+      expect(pubspec, contains('- assets/illustrations/'));
+      for (final a in KsArt.values) {
+        final bundled = File(a.assetPath);
+        expect(bundled.existsSync(), isTrue, reason: a.assetPath);
+        final canonical = File('../design/illustrations/${a.file}.svg');
+        expect(canonical.existsSync(), isTrue, reason: canonical.path);
+        // Copies must not drift from the kit (tool/sync_illustrations.sh).
+        expect(bundled.readAsStringSync(), canonical.readAsStringSync(), reason: a.file);
+        // Keep cheap phones fast: small files, no raster images or CSS.
+        final src = bundled.readAsStringSync();
+        expect(src.length, lessThan(8 * 1024), reason: a.file);
+        expect(src, isNot(contains('<image')));
+        expect(src, isNot(contains('<style')));
+        expect(src, isNot(contains('<filter')));
+      }
+      for (final a in KsArt.firstScreens) {
+        expect(KsArt.values, contains(a));
+      }
+      expect(KsArt.firstScreens.length, lessThanOrEqualTo(3));
+    });
+
+    testWidgets('kit illustration is decorative without a label', (tester) async {
+      final handle = tester.ensureSemantics();
+      await _pump(tester, const SizedBox(width: 120, height: 150, child: KsIllustration(art: KsArt.plumberWrench)));
+      final pic = tester.widget<SvgPicture>(find.byType(SvgPicture));
+      expect(pic.excludeFromSemantics, isTrue);
+      expect(find.byWidgetPredicate((w) => w is Semantics && w.properties.image == true), findsNothing);
       handle.dispose();
     });
 
@@ -202,6 +254,29 @@ void main() {
       // Errors are never decorated.
       await _pump(tester, const ErrorView(error: null));
       expect(find.byType(IllustratedIcon), findsNothing);
+      expect(find.byType(SvgPicture), findsNothing);
+    });
+
+    testWidgets('empty states with a kit scene show it on worker surfaces only', (tester) async {
+      final handle = tester.ensureSemantics();
+      const empty = EmptyState(icon: LucideIcons.briefcase, message: 'No jobs yet', art: KsArt.electricianBoard);
+      for (final lang in ['en', 'ne']) {
+        await _pump(tester, empty, lang: lang);
+        expect(tester.takeException(), isNull);
+        expect(find.byType(EmptyStateArt), findsOneWidget);
+        expect(find.byType(IllustratedIcon), findsNothing);
+        final pic = tester.widget<SvgPicture>(find.byType(SvgPicture));
+        expect((pic.bytesLoader as SvgAssetLoader).assetName, 'assets/illustrations/electrician-board.svg');
+        // Decorative: only the message is read out.
+        expect(find.bySemanticsLabel('No jobs yet'), findsOneWidget);
+        expect(find.byWidgetPredicate((w) => w is Semantics && w.properties.image == true), findsNothing);
+        // Fits a 360px phone.
+        expect(tester.getSize(find.byType(EmptyStateArt)).width, lessThan(360));
+      }
+      await _pump(tester, empty, ledger: true);
+      expect(find.byType(SvgPicture), findsNothing);
+      expect(find.byIcon(LucideIcons.briefcase), findsOneWidget);
+      handle.dispose();
     });
   });
 }

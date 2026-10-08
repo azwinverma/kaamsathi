@@ -35,6 +35,10 @@ make seed          # reference data + demo data
 
 Demo logins (OTP `123456`, dev only):
 
+> Port 8000 already taken by another project? Run `make dev-backend API_PORT=8001` and put
+> `API_BASE_URL=http://localhost:8001/api/v1` in `web/.env.local` (restart `pnpm dev`). For the
+> Flutter app pass `--dart-define=API_BASE_URL=http://10.0.2.2:8001/api/v1` (Android emulator).
+
 | Phone | Role |
 | --- | --- |
 | 9800000001 | Owner — Hotel Annapurna View, Shivam Builders |

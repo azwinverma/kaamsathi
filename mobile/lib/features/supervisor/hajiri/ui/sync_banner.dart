@@ -34,15 +34,14 @@ class SyncBanner extends ConsumerWidget {
         bg: c.warningSoft,
         fg: c.warningText,
         icon: s.online ? LucideIcons.cloudUpload : LucideIcons.wifiOff,
-        text: s.syncing
-            ? l.hajiriSyncing
-            : l.hajiriPendingSync(localizeDigits('${s.pendingCount}', lang)),
-        action: s.syncing
-            ? const Padding(
-                padding: EdgeInsets.all(12),
-                child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
-              )
-            : TextButton(onPressed: ctrl.syncNow, child: Text(l.hajiriSyncNow)),
+        text: s.syncing ? l.hajiriSyncing : l.hajiriPendingSync(localizeDigits('${s.pendingCount}', lang)),
+        action:
+            s.syncing
+                ? const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
+                )
+                : TextButton(onPressed: ctrl.syncNow, child: Text(l.hajiriSyncNow)),
       );
     }
     if (!s.online) {

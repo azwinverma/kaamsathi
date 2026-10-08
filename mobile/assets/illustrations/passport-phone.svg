@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" role="img" aria-labelledby="t">
+  <title id="t">Hands holding a phone that shows a KaamSathi Skill Passport with a skill ladder</title>
+  <defs>
+    <pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.4" fill="#0F172A" fill-opacity=".09"/></pattern>
+    <pattern id="wdots" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r=".9" fill="#FFFFFF" fill-opacity=".25"/></pattern>
+    <linearGradient id="skill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14B8A6"/><stop offset="1" stop-color="#2563EB"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="500" fill="#FEF9E7"/>
+  <rect width="400" height="500" fill="url(#dots)"/>
+  <!-- brush stroke behind the phone -->
+  <path d="M24 170c70-50 150-60 230-30 50 18 90 20 128 0" fill="none" stroke="#14B8A6" stroke-width="30" stroke-linecap="round"/>
+  <circle cx="370" cy="118" r="8" fill="#14B8A6"/>
+  <circle cx="386" cy="134" r="4.5" fill="#14B8A6"/>
+
+  <!-- palm behind the phone -->
+  <rect x="104" y="300" width="200" height="170" rx="70" fill="#B07A52"/>
+  <rect x="112" y="430" width="184" height="80" fill="#FF6B6B"/>
+  <path d="M112 440h184" stroke="#0F172A" stroke-width="3"/>
+
+  <!-- phone (object: outlined) -->
+  <rect x="116" y="56" width="176" height="344" rx="28" fill="#0F172A" stroke="#0F172A" stroke-width="3"/>
+  <rect x="127" y="72" width="154" height="312" rx="18" fill="#F8FAFC"/>
+  <!-- passport card -->
+  <rect x="137" y="86" width="134" height="100" rx="14" fill="#0F172A"/>
+  <rect x="137" y="86" width="134" height="100" rx="14" fill="url(#skill)" fill-opacity=".8"/>
+  <rect x="137" y="86" width="134" height="100" rx="14" fill="url(#wdots)"/>
+  <!-- cut-paper photo frame -->
+  <g transform="rotate(-5 166 122)">
+    <rect x="148" y="98" width="36" height="46" fill="#FFFFFF"/>
+    <rect x="151" y="101" width="30" height="34" fill="#CBD5E1"/>
+    <circle cx="166" cy="114" r="7" fill="#8D5A3B"/>
+    <path d="M154 135c2-10 22-10 24 0z" fill="#2563EB"/>
+    <rect x="158" y="94" width="18" height="7" fill="#FBBF24" fill-opacity=".9"/>
+  </g>
+  <rect x="194" y="104" width="62" height="8" rx="4" fill="#FFFFFF"/>
+  <rect x="194" y="118" width="44" height="6" rx="3" fill="#FFFFFF" fill-opacity=".8"/>
+  <rect x="194" y="130" width="50" height="6" rx="3" fill="#FFFFFF" fill-opacity=".8"/>
+  <rect x="147" y="160" width="34" height="12" rx="6" fill="#FFFFFF"/>
+  <rect x="185" y="160" width="30" height="12" rx="6" fill="#FFFFFF"/>
+  <rect x="219" y="160" width="28" height="12" rx="6" fill="#FBBF24"/>
+
+  <!-- skill ladder -->
+  <rect x="137" y="196" width="134" height="84" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+  <rect x="147" y="206" width="50" height="6" rx="3" fill="#0F172A"/>
+  <g>
+    <rect x="147" y="250" width="20" height="20" rx="3" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.5"/>
+    <rect x="171" y="240" width="20" height="30" rx="3" fill="#CCFBF1"/>
+    <rect x="195" y="230" width="20" height="40" rx="3" fill="#14B8A6"/>
+    <rect x="219" y="222" width="20" height="48" rx="3" fill="#2563EB"/>
+    <rect x="243" y="216" width="20" height="54" rx="3" fill="none" stroke="#5A6679" stroke-width="2" stroke-dasharray="4 3"/>
+  </g>
+  <!-- work timeline -->
+  <rect x="137" y="290" width="134" height="80" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+  <rect x="147" y="304" width="9" height="9" rx="2" transform="rotate(45 151.5 308.5)" fill="#FF6B6B"/>
+  <rect x="164" y="302" width="70" height="6" rx="3" fill="#0F172A"/>
+  <rect x="164" y="312" width="48" height="5" rx="2.5" fill="#CBD5E1"/>
+  <rect x="147" y="334" width="9" height="9" rx="2" transform="rotate(45 151.5 338.5)" fill="#14B8A6"/>
+  <rect x="164" y="332" width="60" height="6" rx="3" fill="#0F172A"/>
+  <rect x="164" y="342" width="52" height="5" rx="2.5" fill="#CBD5E1"/>
+
+  <!-- thumb and fingers over the phone edges -->
+  <path d="M112 384c4-30 16-50 40-62" fill="none" stroke="#B07A52" stroke-width="28" stroke-linecap="round"/>
+  <g stroke="#B07A52" stroke-width="22" stroke-linecap="round">
+    <path d="M300 286h-12M302 314h-14M300 342h-12"/>
+  </g>
+</svg>

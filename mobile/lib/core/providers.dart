@@ -7,14 +7,10 @@ import 'auth/token_store.dart';
 import 'storage/prefs.dart';
 
 /// Overridden in `main()` (and in tests) with a loaded instance.
-final prefsProvider = Provider<Prefs>(
-  (ref) => throw UnimplementedError('prefsProvider must be overridden'),
-);
+final prefsProvider = Provider<Prefs>((ref) => throw UnimplementedError('prefsProvider must be overridden'));
 
 /// Overridden in `main()` with the opened sqflite database.
-final databaseProvider = Provider<Database>(
-  (ref) => throw UnimplementedError('databaseProvider must be overridden'),
-);
+final databaseProvider = Provider<Database>((ref) => throw UnimplementedError('databaseProvider must be overridden'));
 
 final tokenStoreProvider = Provider<TokenStore>((ref) => SecureTokenStore());
 
@@ -30,22 +26,16 @@ class LanguageController extends Notifier<String?> {
     final session = ref.read(sessionProvider);
     if (session.isLoggedIn) {
       try {
-        await ref
-            .read(apiClientProvider)
-            .patch<dynamic>('/auth/me', data: {'preferred_language': lang});
+        await ref.read(apiClientProvider).patch<dynamic>('/auth/me', data: {'preferred_language': lang});
       } catch (_) {}
     }
   }
 }
 
-final languageProvider = NotifierProvider<LanguageController, String?>(
-  LanguageController.new,
-);
+final languageProvider = NotifierProvider<LanguageController, String?>(LanguageController.new);
 
 /// Language code to format with (defaults to English before the choice).
-final langCodeProvider = Provider<String>(
-  (ref) => ref.watch(languageProvider) ?? 'en',
-);
+final langCodeProvider = Provider<String>((ref) => ref.watch(languageProvider) ?? 'en');
 
 final apiClientProvider = Provider<ApiClient>((ref) {
   return ApiClient(

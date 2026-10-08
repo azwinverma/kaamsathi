@@ -113,7 +113,9 @@
       "kyb_3": "प्रमाणित रोजगारदाता",
       "kyb_3_hint": "हरेक रिक्त पदमा कामदारले चिन्ह देख्छन्",
       "worker_title": "{name} कति प्रमाणित छन्",
-      "rejected": "अस्वीकृत — नयाँ कागजात चाहिन्छ"
+      "rejected": "अस्वीकृत — नयाँ कागजात चाहिन्छ",
+      "strip_summary": "{total} मध्ये {done} चरण पूरा",
+      "strip_next": "अर्को: {step}"
     },
     "roster": {
       "label": "कार्यस्थल रोस्टर, {site}",
@@ -138,7 +140,23 @@
       "today": "आज",
       "still_working": "अहिले पनि यहीँ काम गर्दै",
       "ended": "छाडेको",
-      "ended_hint": "कारण: {reason}"
+      "ended_hint": "कारण: {reason}",
+      "hajiri_month": "{month} को हाजिरी",
+      "hajiri_none": "यो महिना अहिलेसम्म हाजिरी लागेको छैन।",
+      "hajiri_strip": "दिनदिनको हाजिरी, {month}",
+      "not_marked": "हाजिरी नलागेको",
+      "letter_issued": "नियुक्ति पत्र v{version} जारी",
+      "letter_by": "{name} द्वारा",
+      "letter_terms": "मासिक कुल {gross} · SSF {ssf}",
+      "letter_accepted": "कामदारले पत्र v{version} स्वीकार गर्नुभयो",
+      "wage_change": "पारिश्रमिक परिवर्तन: मासिक {from} → {to}",
+      "terms_changed": "पत्र v{version} पछि सर्त परिवर्तन भयो",
+      "terms_changed_hint": "अभिलेखमा रहेको पारिश्रमिक वा SSF कामदारसँग भएको पत्रसँग मिल्दैन। तल नयाँ पत्र जारी गर्नुहोस्।",
+      "terms_changed_wage": "अभिलेखमा मासिक {now} छ; पत्रमा {then} लेखिएको छ।",
+      "dispute": "उजुरी परेको: {kind}",
+      "dispute_hint": "{status} · {description}",
+      "open_dispute": "उजुरीमा खोल्नुहोस्",
+      "pdf": "PDF v{version}"
     },
     "credential": {
       "title": "प्रमाणपत्र",

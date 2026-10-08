@@ -8,6 +8,7 @@ import '../../../../core/l10n/l10n.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/eco.dart';
+import '../../../../core/widgets/signature/signature.dart';
 import '../../../common/timesheet_models.dart';
 import '../../../common/timesheet_widgets.dart';
 import '../../roster/ui/my_shifts_screen.dart' show WeekSwitcher;
@@ -50,7 +51,8 @@ class _MyTimesheetsScreenState extends ConsumerState<MyTimesheetsScreen> {
                       padding: const EdgeInsets.fromLTRB(KsSpace.page, 0, KsSpace.page, KsSpace.page),
                       children: [
                         if (cached.fromCache) const CachedNotice(),
-                        if (cached.data.isEmpty) EmptyState(icon: LucideIcons.clock, message: l.tsEmpty),
+                        if (cached.data.isEmpty)
+                          EmptyState(icon: LucideIcons.clock, message: l.tsEmpty, art: KsArt.supervisorHajiri),
                         for (final s in cached.data)
                           SectionCard(
                             key: Key('timesheet_${s.id}'),

@@ -16,10 +16,7 @@ class LanguageToggle extends ConsumerWidget {
       child: SegmentedButton<String>(
         showSelectedIcon: false,
         style: const ButtonStyle(visualDensity: VisualDensity.compact),
-        segments: const [
-          ButtonSegment(value: 'en', label: Text('EN')),
-          ButtonSegment(value: 'ne', label: Text('ने')),
-        ],
+        segments: const [ButtonSegment(value: 'en', label: Text('EN')), ButtonSegment(value: 'ne', label: Text('ने'))],
         selected: {lang},
         onSelectionChanged: (s) => ref.read(languageProvider.notifier).set(s.first),
       ),

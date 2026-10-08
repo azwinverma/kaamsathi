@@ -26,7 +26,8 @@ class MyTimesheetsRepository {
         final data = await _api.get<dynamic>('/me/timesheets', query: {'week_start': iso, 'page_size': 50});
         return {'results': resultsOf(data)};
       },
-      parse: (j) => resultsOf(j).map(Timesheet.fromJson).where((t) => t.weekStart.isEmpty || t.weekStart == iso).toList(),
+      parse:
+          (j) => resultsOf(j).map(Timesheet.fromJson).where((t) => t.weekStart.isEmpty || t.weekStart == iso).toList(),
     );
   }
 }

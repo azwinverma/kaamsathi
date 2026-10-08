@@ -14,39 +14,25 @@ import 'data/attendance_repository.dart';
 import 'data/attendance_syncer.dart';
 
 final attendanceRepositoryProvider = Provider<AttendanceRepository>(
-  (ref) => AttendanceRepository(
-    ref.watch(apiClientProvider),
-    ref.watch(databaseProvider),
-  ),
+  (ref) => AttendanceRepository(ref.watch(apiClientProvider), ref.watch(databaseProvider)),
 );
 
-final attendanceQueueProvider = Provider<AttendanceQueue>(
-  (ref) => AttendanceQueue(ref.watch(databaseProvider)),
-);
+final attendanceQueueProvider = Provider<AttendanceQueue>((ref) => AttendanceQueue(ref.watch(databaseProvider)));
 
 /// Snapshot of the offline queue + sync status, for badges and row overlays.
 class SyncState {
-  const SyncState({
-    this.records = const [],
-    this.syncing = false,
-    this.online = true,
-    this.lastError,
-  });
+  const SyncState({this.records = const [], this.syncing = false, this.online = true, this.lastError});
 
   final List<QueuedAttendance> records;
   final bool syncing;
   final bool online;
   final ApiException? lastError;
 
-  int get pendingCount =>
-      records.where((r) => r.state != QueueState.error).length;
-  int get failedCount =>
-      records.where((r) => r.state == QueueState.error).length;
+  int get pendingCount => records.where((r) => r.state != QueueState.error).length;
+  int get failedCount => records.where((r) => r.state == QueueState.error).length;
 
   /// Latest local change per `employment|date`.
-  Map<String, QueuedAttendance> get byKey => {
-    for (final r in records) r.key: r,
-  };
+  Map<String, QueuedAttendance> get byKey => {for (final r in records) r.key: r};
 
   SyncState copyWith({
     List<QueuedAttendance>? records,
@@ -151,18 +137,12 @@ class SyncController extends Notifier<SyncState> {
     _retry?.cancel();
     state = state.copyWith(syncing: true);
     try {
-      final syncer = AttendanceSyncer(
-        _queue,
-        ref.read(attendanceRepositoryProvider).postBulk,
-      );
+      final syncer = AttendanceSyncer(_queue, ref.read(attendanceRepositoryProvider).postBulk);
       final outcome = await syncer.syncAll();
       await _reload();
       if (outcome.retryLater) {
         _failures++;
-        state = state.copyWith(
-          lastError: outcome.error,
-          online: !(outcome.error?.isNetwork ?? false),
-        );
+        state = state.copyWith(lastError: outcome.error, online: !(outcome.error?.isNetwork ?? false));
         _scheduleRetry();
       } else {
         _failures = 0;
@@ -197,9 +177,7 @@ class SyncController extends Notifier<SyncState> {
   }
 }
 
-final syncControllerProvider = NotifierProvider<SyncController, SyncState>(
-  SyncController.new,
-);
+final syncControllerProvider = NotifierProvider<SyncController, SyncState>(SyncController.new);
 
 /// Date shown on Today's Hajiri (Nepal calendar date).
 class HajiriDateController extends Notifier<DateTime> {
@@ -209,16 +187,12 @@ class HajiriDateController extends Notifier<DateTime> {
   void set(DateTime d) => state = DateTime(d.year, d.month, d.day);
 }
 
-final hajiriDateProvider = NotifierProvider<HajiriDateController, DateTime>(
-  HajiriDateController.new,
-);
+final hajiriDateProvider = NotifierProvider<HajiriDateController, DateTime>(HajiriDateController.new);
 
 typedef DayKey = ({String orgId, String? siteId, String date});
 
 final dayRosterProvider = FutureProvider.autoDispose.family<DayRoster, DayKey>(
-  (ref, key) => ref
-      .watch(attendanceRepositoryProvider)
-      .fetchDay(orgId: key.orgId, siteId: key.siteId, date: key.date),
+  (ref, key) => ref.watch(attendanceRepositoryProvider).fetchDay(orgId: key.orgId, siteId: key.siteId, date: key.date),
 );
 
 /// Sites of the selected org that this user can work with.
@@ -233,13 +207,8 @@ final sitesProvider = FutureProvider.autoDispose<List<SiteRef>>((ref) async {
 
 typedef RegisterKey = ({String orgId, String? siteId, int bsYear, int bsMonth});
 
-final registerProvider = FutureProvider.autoDispose
-    .family<Register, RegisterKey>(
-      (ref, key) => ref
-          .watch(attendanceRepositoryProvider)
-          .fetchRegister(
-            bsYear: key.bsYear,
-            bsMonth: key.bsMonth,
-            siteId: key.siteId,
-          ),
-    );
+final registerProvider = FutureProvider.autoDispose.family<Register, RegisterKey>(
+  (ref, key) => ref
+      .watch(attendanceRepositoryProvider)
+      .fetchRegister(bsYear: key.bsYear, bsMonth: key.bsMonth, siteId: key.siteId),
+);

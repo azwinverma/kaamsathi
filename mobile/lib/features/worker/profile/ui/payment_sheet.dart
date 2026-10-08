@@ -98,7 +98,11 @@ class _PaymentSheetState extends ConsumerState<_PaymentSheet> {
               ),
               const SizedBox(height: KsSpace.s4),
               if (_method == 'bank') ...[
-                TextFormField(controller: _bankName, decoration: InputDecoration(labelText: l.profileBankName), validator: required),
+                TextFormField(
+                  controller: _bankName,
+                  decoration: InputDecoration(labelText: l.profileBankName),
+                  validator: required,
+                ),
                 const SizedBox(height: KsSpace.s3),
                 TextFormField(
                   controller: _accountNo,
@@ -107,7 +111,11 @@ class _PaymentSheetState extends ConsumerState<_PaymentSheet> {
                   validator: required,
                 ),
                 const SizedBox(height: KsSpace.s3),
-                TextFormField(controller: _accountName, decoration: InputDecoration(labelText: l.profileAccountName), validator: required),
+                TextFormField(
+                  controller: _accountName,
+                  decoration: InputDecoration(labelText: l.profileAccountName),
+                  validator: required,
+                ),
               ],
               if (_method == 'esewa' || _method == 'khalti')
                 TextFormField(
@@ -119,9 +127,10 @@ class _PaymentSheetState extends ConsumerState<_PaymentSheet> {
               const SizedBox(height: KsSpace.s6),
               FilledButton(
                 onPressed: _busy ? null : _save,
-                child: _busy
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                    : Text(l.commonSave),
+                child:
+                    _busy
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                        : Text(l.commonSave),
               ),
             ],
           ),

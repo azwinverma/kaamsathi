@@ -3,12 +3,7 @@ import 'package:dio/dio.dart';
 /// A typed API failure, parsed from the contract error envelope:
 /// `{"error": {"code": "snake_code", "message": "Human text", "fields": {"f": ["msg"]}}}`.
 class ApiException implements Exception {
-  const ApiException({
-    required this.code,
-    required this.message,
-    this.statusCode,
-    this.fields = const {},
-  });
+  const ApiException({required this.code, required this.message, this.statusCode, this.fields = const {}});
 
   /// Contract code (e.g. `otp_invalid`, `outside_geofence`) or one of the
   /// client-side codes below.
@@ -24,12 +19,10 @@ class ApiException implements Exception {
   static const cancelled = 'cancelled';
 
   bool get isNetwork => code == network || code == timeout;
-  bool get isUnauthenticated =>
-      code == 'not_authenticated' || statusCode == 401;
+  bool get isUnauthenticated => code == 'not_authenticated' || statusCode == 401;
 
   /// True for failures worth retrying automatically (offline, 5xx, timeouts).
-  bool get isRetryable =>
-      isNetwork || (statusCode != null && statusCode! >= 500);
+  bool get isRetryable => isNetwork || (statusCode != null && statusCode! >= 500);
 
   /// First message for [field], if the server flagged it.
   String? fieldError(String field) {
@@ -92,17 +85,11 @@ class ApiException implements Exception {
       case DioExceptionType.cancel:
         return const ApiException(code: cancelled, message: '');
       case DioExceptionType.badResponse:
-        return ApiException.fromResponse(
-          e.response?.statusCode,
-          e.response?.data,
-        );
+        return ApiException.fromResponse(e.response?.statusCode, e.response?.data);
       case DioExceptionType.badCertificate:
       case DioExceptionType.unknown:
         if (e.response != null) {
-          return ApiException.fromResponse(
-            e.response!.statusCode,
-            e.response!.data,
-          );
+          return ApiException.fromResponse(e.response!.statusCode, e.response!.data);
         }
         // SocketException et al. surface as `unknown` on some platforms.
         return const ApiException(code: network, message: '');

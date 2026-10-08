@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" role="img" aria-labelledby="t">
+  <title id="t">Woman electrician in a hard hat testing a breaker in a distribution board on a brick wall</title>
+  <defs>
+    <pattern id="brick" width="44" height="22" patternUnits="userSpaceOnUse">
+      <path d="M0 21.5h44M22 0v11M0 11h44M44 11v11M0 11v11" stroke="#FF6B6B" stroke-opacity=".28" stroke-width="2" fill="none"/>
+    </pattern>
+    <pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.4" fill="#0F172A" fill-opacity=".09"/></pattern>
+  </defs>
+  <rect width="400" height="500" fill="#FFF1F1"/>
+  <rect width="400" height="500" fill="url(#brick)"/>
+  <circle cx="86" cy="96" r="70" fill="#FBBF24" fill-opacity=".35"/>
+  <rect y="360" width="400" height="140" fill="url(#dots)"/>
+
+  <g transform="translate(-52 -86) scale(1.4)">
+    <!-- distribution board (object: outlined) -->
+    <g stroke="#0F172A" stroke-width="3" stroke-linejoin="round">
+      <rect x="226" y="150" width="150" height="206" rx="6" fill="#CBD5E1"/>
+      <rect x="240" y="170" width="122" height="160" rx="3" fill="#F8FAFC"/>
+      <path d="M244 214h114M244 276h114" stroke="#334155"/>
+      <g fill="#FFFFFF">
+        <rect x="248" y="186" width="16" height="34" rx="2"/>
+        <rect x="266" y="186" width="16" height="34" rx="2"/>
+        <rect x="284" y="186" width="16" height="34" rx="2"/>
+        <rect x="302" y="186" width="16" height="34" rx="2"/>
+        <rect x="320" y="186" width="16" height="34" rx="2"/>
+        <rect x="338" y="186" width="16" height="34" rx="2"/>
+        <rect x="248" y="248" width="16" height="34" rx="2"/>
+        <rect x="266" y="248" width="16" height="34" rx="2"/>
+        <rect x="284" y="248" width="16" height="34" rx="2"/>
+        <rect x="302" y="248" width="34" height="34" rx="2"/>
+      </g>
+      <g fill="#0F172A" stroke="none">
+        <rect x="252" y="194" width="8" height="8" rx="1"/>
+        <rect x="270" y="194" width="8" height="8" rx="1"/>
+        <rect x="306" y="194" width="8" height="8" rx="1"/>
+        <rect x="324" y="194" width="8" height="8" rx="1"/>
+        <rect x="342" y="194" width="8" height="8" rx="1"/>
+        <rect x="252" y="256" width="8" height="8" rx="1"/>
+        <rect x="270" y="256" width="8" height="8" rx="1"/>
+        <rect x="288" y="256" width="8" height="8" rx="1"/>
+        <rect x="312" y="256" width="14" height="8" rx="1"/>
+      </g>
+      <rect x="287" y="204" width="10" height="10" rx="1" fill="#FBBF24"/>
+      <path d="M376 150l20 14v178l-20 14z" fill="#E2E8F0"/>
+      <path d="M262 356c0 30-8 60-8 90M300 356c0 34 6 62 6 90M336 356c2 30 18 56 18 90" fill="none" stroke-width="6" stroke-linecap="round"/>
+    </g>
+    <g fill="none" stroke-linecap="round" stroke-width="3.5">
+      <path d="M262 358c0 30-8 60-8 90" stroke="#FF6B6B"/>
+      <path d="M300 358c0 34 6 62 6 90" stroke="#2563EB"/>
+      <path d="M336 358c2 30 18 56 18 90" stroke="#FBBF24"/>
+    </g>
+
+    <!-- electrician -->
+    <path d="M114 340l-4 112M150 340l6 112" stroke="#334155" stroke-width="34" stroke-linecap="round"/>
+    <!-- braid down her back -->
+    <path d="M100 176c-10 30-14 60-8 96" stroke="#0F172A" stroke-width="15" stroke-linecap="round" fill="none"/>
+    <circle cx="93" cy="276" r="6" fill="#FF6B6B"/>
+    <rect x="80" y="208" width="98" height="144" rx="26" fill="#2563EB"/>
+    <rect x="80" y="296" width="98" height="10" fill="#FBBF24"/>
+    <rect x="80" y="314" width="98" height="10" fill="#FBBF24"/>
+    <rect x="118" y="190" width="22" height="24" fill="#B07A52"/>
+    <circle cx="130" cy="166" r="34" fill="#B07A52"/>
+    <path d="M97 168a33 33 0 0 1 40-32c-14 10-26 20-40 32z" fill="#0F172A"/>
+    <!-- hard hat with brim (PPE: outlined) -->
+    <path d="M94 156a36 34 0 0 1 72 0z" fill="#FBBF24" stroke="#0F172A" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="88" y="152" width="88" height="11" rx="5.5" fill="#FBBF24" stroke="#0F172A" stroke-width="3"/>
+    <path d="M130 122v16" stroke="#0F172A" stroke-width="3" stroke-linecap="round"/>
+    <!-- arm reaching into the board, other arm holding a cable coil -->
+    <path d="M168 228c26 4 50-8 74-16" stroke="#1D4ED8" stroke-width="26" stroke-linecap="round" fill="none"/>
+    <path d="M92 228c-12 30-14 60-10 92" stroke="#1D4ED8" stroke-width="26" stroke-linecap="round" fill="none"/>
+    <g stroke="#0F172A" stroke-width="3">
+      <circle cx="80" cy="356" r="24" fill="none" stroke="#2563EB" stroke-width="7"/>
+      <circle cx="80" cy="356" r="13" fill="none" stroke="#2563EB" stroke-width="6"/>
+      <!-- insulated gloves (PPE) -->
+      <circle cx="82" cy="326" r="14" fill="#FF6B6B"/>
+      <!-- tester screwdriver -->
+      <path d="M252 210l22-6" stroke="#0F172A" stroke-width="12" stroke-linecap="round"/>
+      <path d="M252 210l22-6" stroke="#FBBF24" stroke-width="6" stroke-linecap="round"/>
+      <path d="M276 203l10-3" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="246" cy="212" r="14" fill="#FF6B6B"/>
+    </g>
+  </g>
+  <circle cx="356" cy="58" r="6" fill="#FF6B6B"/>
+  <circle cx="372" cy="72" r="3.5" fill="#FF6B6B"/>
+</svg>

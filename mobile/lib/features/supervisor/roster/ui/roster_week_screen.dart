@@ -246,7 +246,11 @@ class _Grid extends StatelessWidget {
                       decoration: BoxDecoration(color: Theme.of(context).colorScheme.error, shape: BoxShape.circle),
                       child: Text(
                         '!',
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Theme.of(context).colorScheme.onError),
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          color: Theme.of(context).colorScheme.onError,
+                        ),
                       ),
                     ),
                   ),

@@ -69,11 +69,13 @@ class _ScanScreenState extends State<ScanScreen> {
           MobileScanner(
             controller: _controller,
             onDetect: _onDetect,
-            errorBuilder: (context, error) => _ScanError(
-              message: error.errorCode == MobileScannerErrorCode.permissionDenied
-                  ? l.errCameraDenied
-                  : l.commonErrorGeneric,
-            ),
+            errorBuilder:
+                (context, error) => _ScanError(
+                  message:
+                      error.errorCode == MobileScannerErrorCode.permissionDenied
+                          ? l.errCameraDenied
+                          : l.commonErrorGeneric,
+                ),
           ),
           IgnorePointer(
             child: Center(
@@ -119,7 +121,11 @@ class _ScanError extends StatelessWidget {
             children: [
               Icon(LucideIcons.cameraOff, color: context.ks.onMedia, size: 40),
               const SizedBox(height: 16),
-              Text(message, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: context.ks.onMedia)),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: context.ks.onMedia),
+              ),
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: () => CheckInController.openSettings(CheckInProblem.locationDenied),

@@ -48,10 +48,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     try {
       final r = await ref.read(sessionProvider.notifier).requestOtp(phone);
       if (!mounted) return;
-      await context.push(
-        Routes.otp,
-        extra: OtpArgs(phone: phone, devCode: r.devCode, expiresIn: r.expiresIn),
-      );
+      await context.push(Routes.otp, extra: OtpArgs(phone: phone, devCode: r.devCode, expiresIn: r.expiresIn));
     } catch (e) {
       if (mounted) showSnack(context, errorText(context, e), error: true);
     } finally {
@@ -64,10 +61,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final l = context.l10n;
     final t = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l.appName),
-        actions: const [LanguageToggle()],
-      ),
+      appBar: AppBar(title: Text(l.appName), actions: const [LanguageToggle()]),
       body: SafeArea(
         child: Form(
           key: _form,
@@ -86,10 +80,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 textInputAction: TextInputAction.done,
                 autofillHints: const [AutofillHints.telephoneNumberNational],
                 inputFormatters: const [DigitsFormatter(10)],
-                style: t.titleLarge?.copyWith(
-                  letterSpacing: 1.5,
-                  fontFeatures: const [FontFeature.tabularFigures()],
-                ),
+                style: t.titleLarge?.copyWith(letterSpacing: 1.5, fontFeatures: const [FontFeature.tabularFigures()]),
                 decoration: InputDecoration(
                   labelText: l.loginPhoneLabel,
                   hintText: l.loginPhoneHint,
@@ -106,9 +97,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               FilledButton(
                 key: const Key('send_code'),
                 onPressed: _busy ? null : _submit,
-                child: _busy
-                    ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5))
-                    : Text(l.loginSendCode),
+                child:
+                    _busy
+                        ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.5))
+                        : Text(l.loginSendCode),
               ),
             ],
           ),

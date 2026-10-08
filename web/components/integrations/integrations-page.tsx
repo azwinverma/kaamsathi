@@ -9,7 +9,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from "@/components/ui/dialog";
 import { EmptyState, ErrorState, TableSkeleton } from "@/components/ui/feedback";
 import { Field, FormError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -18,8 +24,17 @@ import { Table, TableContainer, TBody, Td, Th, THead, Tr } from "@/components/ui
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SecretReveal } from "@/components/partners/secret-reveal";
 import { isApiError } from "@/lib/api/errors";
-import { useCreateOrgApiKey, useOrgApiKeys, useRevokeOrgApiKey } from "@/lib/api/hooks/integrations";
-import { ORG_API_SCOPES, type OrgApiKey, type OrgApiScope } from "@/lib/api/types-integrations";
+import {
+  useCreateOrgApiKey,
+  useOrgApiKeys,
+  useRevokeOrgApiKey,
+} from "@/lib/api/hooks/integrations";
+import {
+  ORG_API_SCOPES,
+  messageKey,
+  type OrgApiKey,
+  type OrgApiScope,
+} from "@/lib/api/types-integrations";
 import { toastError } from "@/lib/forms";
 import { useFormat } from "@/lib/use-format";
 import { WebhooksPanel } from "./webhooks-panel";
@@ -90,7 +105,11 @@ function KeysPanel() {
       ) : error ? (
         <ErrorState error={error} onRetry={() => void refetch()} />
       ) : keys.length === 0 ? (
-        <EmptyState icon={KeyRound} title={t("keys.empty_title")} description={t("keys.empty_body")} />
+        <EmptyState
+          icon={KeyRound}
+          title={t("keys.empty_title")}
+          description={t("keys.empty_body")}
+        />
       ) : (
         <TableContainer>
           <Table className="min-w-[820px]">
@@ -110,7 +129,7 @@ function KeysPanel() {
               {keys.map((k) => (
                 <Tr key={k.id}>
                   <Td>
-                    <span className="font-medium text-fg">{k.name}</span>
+                    <span className="text-fg font-medium">{k.name}</span>
                     <div>
                       <Badge tone={k.is_active ? "success" : "neutral"} dot>
                         {k.is_active ? t("keys.active") : t("keys.revoked")}
@@ -121,16 +140,20 @@ function KeysPanel() {
                   <Td>
                     <div className="flex max-w-80 flex-wrap gap-1">
                       {k.scopes.map((s) => (
-                        <Badge key={s} tone="outline" title={t(`scope.${s}`)}>
+                        <Badge key={s} tone="outline" title={t(`scope.${messageKey(s)}`)}>
                           {s}
                         </Badge>
                       ))}
                     </div>
                   </Td>
-                  <Td className="text-sm text-fg-muted">{k.last_used_at ? f.dateTime(k.last_used_at) : t("keys.never")}</Td>
-                  <Td className="text-sm text-fg-muted">
+                  <Td className="text-fg-muted text-sm">
+                    {k.last_used_at ? f.dateTime(k.last_used_at) : t("keys.never")}
+                  </Td>
+                  <Td className="text-fg-muted text-sm">
                     {f.dateTime(k.created_at)}
-                    {k.created_by ? <span className="block text-xs">{k.created_by.full_name}</span> : null}
+                    {k.created_by ? (
+                      <span className="block text-xs">{k.created_by.full_name}</span>
+                    ) : null}
                   </Td>
                   <Td className="text-right">
                     {k.is_active ? (
@@ -169,7 +192,13 @@ function KeysPanel() {
   );
 }
 
-function CreateOrgKeyDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
+function CreateOrgKeyDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+}) {
   const t = useTranslations("integrations");
   const tc = useTranslations("common");
   const create = useCreateOrgApiKey();
@@ -222,7 +251,9 @@ function CreateOrgKeyDialog({ open, onOpenChange }: { open: boolean; onOpenChang
           <>
             <DialogBody>
               <SecretReveal label={t("keys.key")} value={created} warning={t("keys.shown_once")} />
-              <p className="mt-3 text-xs text-fg-muted">{t("keys.usage", { header: "Authorization: Org <key>" })}</p>
+              <p className="text-fg-muted mt-3 text-xs">
+                {t("keys.usage", { header: "Authorization: Org <key>" })}
+              </p>
             </DialogBody>
             <DialogFooter>
               <Button onClick={() => onOpenChange(false)}>{t("keys.done")}</Button>
@@ -231,18 +262,34 @@ function CreateOrgKeyDialog({ open, onOpenChange }: { open: boolean; onOpenChang
         ) : (
           <form onSubmit={submit}>
             <DialogBody className="space-y-4">
-              <FormError message={localError ?? (apiErr && !apiErr.fields.name ? apiErr.message : null)} />
-              <Field id="org-key-name" label={t("keys.name")} hint={t("keys.name_hint")} error={apiErr?.fields.name?.[0]}>
-                <Input value={name} maxLength={100} required onChange={(e) => setName(e.target.value)} />
+              <FormError
+                message={localError ?? (apiErr && !apiErr.fields.name ? apiErr.message : null)}
+              />
+              <Field
+                id="org-key-name"
+                label={t("keys.name")}
+                hint={t("keys.name_hint")}
+                error={apiErr?.fields.name?.[0]}
+              >
+                <Input
+                  value={name}
+                  maxLength={100}
+                  required
+                  onChange={(e) => setName(e.target.value)}
+                />
               </Field>
               <fieldset className="space-y-2">
-                <legend className="mb-1 text-sm font-medium text-fg">{t("keys.scopes")}</legend>
+                <legend className="text-fg mb-1 text-sm font-medium">{t("keys.scopes")}</legend>
                 {ORG_API_SCOPES.map((s) => (
                   <label key={s} className="flex items-start gap-2.5 text-sm">
-                    <Checkbox checked={scopes.includes(s)} onCheckedChange={(v) => toggle(s, v === true)} className="mt-0.5" />
+                    <Checkbox
+                      checked={scopes.includes(s)}
+                      onCheckedChange={(v) => toggle(s, v === true)}
+                      className="mt-0.5"
+                    />
                     <span>
-                      <span className="font-mono text-xs text-fg">{s}</span>
-                      <span className="block text-fg-muted">{t(`scope.${s}`)}</span>
+                      <span className="text-fg font-mono text-xs">{s}</span>
+                      <span className="text-fg-muted block">{t(`scope.${messageKey(s)}`)}</span>
                     </span>
                   </label>
                 ))}

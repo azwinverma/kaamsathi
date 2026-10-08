@@ -37,10 +37,7 @@ class CheckInController extends Notifier<CheckInState> {
   CheckInState build() {
     final j = ref.read(prefsProvider).checkInState;
     if (j == null || j['date'] != isoDate(nepalToday())) return const CheckInState();
-    return CheckInState(
-      checkedInAt: dateTimeOf(j['in']),
-      checkedOutAt: dateTimeOf(j['out']),
-    );
+    return CheckInState(checkedInAt: dateTimeOf(j['in']), checkedOutAt: dateTimeOf(j['out']));
   }
 
   /// Gets a fresh GPS fix, handling permissions.
@@ -59,10 +56,7 @@ class CheckInController extends Notifier<CheckInState> {
       throw const CheckInFailure(CheckInProblem.locationDenied);
     }
     return Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        timeLimit: Duration(seconds: 20),
-      ),
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high, timeLimit: Duration(seconds: 20)),
     );
   }
 
@@ -71,17 +65,20 @@ class CheckInController extends Notifier<CheckInState> {
     final token = parseSiteQr(rawQr);
     if (token == null) throw const CheckInFailure(CheckInProblem.invalidQr);
     final pos = await _position();
-    await ref.read(workerRepositoryProvider).checkIn(
-      checkOut: checkOut,
-      qrToken: token,
-      lat: pos.latitude,
-      lng: pos.longitude,
-      clientUuid: const Uuid().v4(),
-    );
+    await ref
+        .read(workerRepositoryProvider)
+        .checkIn(
+          checkOut: checkOut,
+          qrToken: token,
+          lat: pos.latitude,
+          lng: pos.longitude,
+          clientUuid: const Uuid().v4(),
+        );
     final now = DateTime.now();
-    state = checkOut
-        ? CheckInState(checkedInAt: state.checkedInAt ?? now, checkedOutAt: now)
-        : CheckInState(checkedInAt: now);
+    state =
+        checkOut
+            ? CheckInState(checkedInAt: state.checkedInAt ?? now, checkedOutAt: now)
+            : CheckInState(checkedInAt: now);
     await ref.read(prefsProvider).setCheckInState({
       'date': isoDate(nepalToday()),
       'in': state.checkedInAt?.toIso8601String(),
@@ -99,6 +96,4 @@ class CheckInController extends Notifier<CheckInState> {
   }
 }
 
-final checkInProvider = NotifierProvider<CheckInController, CheckInState>(
-  CheckInController.new,
-);
+final checkInProvider = NotifierProvider<CheckInController, CheckInState>(CheckInController.new);

@@ -5,28 +5,56 @@ import 'illustration.dart';
 
 /// An art-directed photo position (DIRECTION.md imagery policy).
 ///
-/// Each slot has a fixed aspect ratio and an illustrated fallback. The
+/// Each slot has a fixed aspect ratio and an illustrated fallback: a scene
+/// from the shared kit ([KsArt]), cropped around [fallbackAlignment]. The
 /// commissioned photo drops in as `assets/photos/<id>.webp`; shot
 /// descriptions live in docs/design/PHOTOGRAPHY_BRIEF_MOBILE.md.
 class PhotoSlot {
-  const PhotoSlot(this.id, {required this.aspectRatio, required this.fallback});
+  const PhotoSlot(
+    this.id, {
+    required this.aspectRatio,
+    required this.fallback,
+    this.fallbackAlignment = Alignment.center,
+  });
 
   final String id;
 
   /// width / height.
   final double aspectRatio;
-  final KsMotif fallback;
+  final KsArt fallback;
+
+  /// Where to crop [fallback] when its aspect ratio differs from the slot's
+  /// (keeps the person, not the background, in frame).
+  final Alignment fallbackAlignment;
 
   String get assetPath => 'assets/photos/$id.webp';
 
   /// Learn tab header: a trainer and trainees at a real workshop bench.
-  static const learnWorkshop = PhotoSlot('mobile-learn-workshop', aspectRatio: 4 / 5, fallback: KsMotif.workshop);
+  /// Fallback: trainee in safety glasses at the wiring practice board.
+  static const learnWorkshop = PhotoSlot(
+    'mobile-learn-workshop',
+    aspectRatio: 4 / 5,
+    fallback: KsArt.trainingLab,
+    fallbackAlignment: Alignment(0.6, 0),
+  );
 
   /// Home career card: a worker who moved up a trade level, at work.
-  static const careerStep = PhotoSlot('mobile-career-step', aspectRatio: 1, fallback: KsMotif.career);
+  /// Fallback: welder lifting her helmet after a test weld.
+  static const careerStep = PhotoSlot(
+    'mobile-career-step',
+    aspectRatio: 1,
+    fallback: KsArt.welderVisor,
+    fallbackAlignment: Alignment(-0.6, 0),
+  );
 
   /// First-run language screen: a worker scanning the site QR for hajiri.
-  static const welcomeHajiri = PhotoSlot('mobile-welcome-hajiri', aspectRatio: 4 / 5, fallback: KsMotif.welcome);
+  /// Fallback: site supervisor marking hajiri on a phone.
+  static const welcomeHajiri = PhotoSlot(
+    'mobile-welcome-hajiri',
+    aspectRatio: 4 / 5,
+    fallback: KsArt.supervisorHajiri,
+    fallbackAlignment: Alignment(-0.9, 0),
+  );
 
   static const all = [learnWorkshop, careerStep, welcomeHajiri];
 }
@@ -49,7 +77,11 @@ class ImageSlot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fallback = KsIllustration(motif: slot.fallback, semanticLabel: semanticLabel);
+    final fallback = KsIllustration(
+      art: slot.fallback,
+      alignment: slot.fallbackAlignment,
+      semanticLabel: semanticLabel,
+    );
     return AspectRatio(
       aspectRatio: slot.aspectRatio,
       child: FutureBuilder<Set<String>>(

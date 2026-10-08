@@ -124,7 +124,13 @@
       "attendance_card": "यो महिनाको हाजिरी",
       "open_register": "हाजिरी रजिस्टर",
       "attendance_none": "यो महिना अहिलेसम्म हाजिरी छैन।",
-      "advance_outstanding_total": "बाँकी:"
+      "advance_outstanding_total": "बाँकी:",
+      "record_title": "कामको अभिलेख",
+      "record_hint": "नयाँ पहिले: यो महिनाको हाजिरी, पत्र, पारिश्रमिक परिवर्तन र यो कामसम्बन्धी उजुरी।",
+      "facts_label": "अभिलेखमा रहेका विवरण",
+      "payment_method": "भुक्तानी माध्यम",
+      "payment_from": "{month} को तलब पर्चीबाट",
+      "payment_none": "पहिलो तलब पर्ची बनाउँदा तय हुन्छ"
     },
     "advances": {
       "description": "कामदारलाई दिइएको पेस्की र मासिक तलबबाट असुली।",

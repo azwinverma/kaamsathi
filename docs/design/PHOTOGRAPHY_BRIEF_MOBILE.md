@@ -9,6 +9,8 @@ from the same list.
 
 - Each slot is a `PhotoSlot` in `mobile/lib/core/widgets/signature/image_slot.dart`, with a fixed
   aspect ratio, an illustrated fallback and required alt text (English and Nepali in the ARB files).
+  The fallback is a scene from the shared illustration kit (`design/illustrations/`, the same SVGs the
+  website uses), cropped to the slot around its subject.
 - Delivered photo: `mobile/assets/photos/<slot-id>.webp`. The folder is already bundled
   (`pubspec.yaml`); once the file is there the app shows it in place of the illustration. No
   code change.
@@ -39,9 +41,9 @@ from the same list.
 
 | Slot id | Where in the app | Aspect | Alt text (en / ne) | Illustrated fallback |
 | --- | --- | --- | --- | --- |
-| `mobile-learn-workshop` | Learn tab, header, cut-paper frame with teal tape, top right | 4:5 portrait | "Training at a workshop bench" / "कार्यशालामा तालिम" | Workbench with a hard hat and a wrench |
-| `mobile-career-step` | Home, "Grow your earnings" card, small frame with coral tape | 1:1 square | "A worker moving up a trade level" / "पेसामा माथिल्लो तहमा पुगेका कामदार" | Five rising steps with a flag (echoes the skill ladder) |
-| `mobile-welcome-hajiri` | First-run language screen, next to the logo, frame with yellow tape | 4:5 portrait | "A worker scanning the hajiri QR code" (shown in both languages before a language is chosen) | Phone with a QR code beside a hard hat |
+| `mobile-learn-workshop` | Learn tab, header, cut-paper frame with teal tape, top right | 4:5 portrait | "Training at a workshop bench" / "कार्यशालामा तालिम" | `training-lab.svg`, cropped to the trainee at the wiring board |
+| `mobile-career-step` | Home, "Grow your earnings" card, small frame with coral tape | 1:1 square | "A worker moving up a trade level" / "पेसामा माथिल्लो तहमा पुगेका कामदार" | `welder-visor.svg`, cropped to the welder |
+| `mobile-welcome-hajiri` | First-run language screen, next to the logo, frame with yellow tape | 4:5 portrait | "A worker scanning the hajiri QR code" (shown in both languages before a language is chosen) | `supervisor-hajiri.svg`, cropped to the supervisor marking hajiri on a phone |
 
 ### `mobile-learn-workshop`: training at a workshop bench
 
@@ -83,8 +85,8 @@ from the same list.
 - **Worker's own photo** (Skill Passport card, Profile header): the worker's verified profile
   photo from their KaamSathi record, shown in a cut-paper frame. If there is none, the worker's
   initials are shown on plain paper. Never replace it with a sample or stock face.
-- **Empty states** use the in-app illustration kit (`IllustratedIcon`, `KsIllustration`), not
-  photos.
+- **Empty states** use the shared illustration kit (`EmptyStateArt` with a `KsArt` scene, or
+  `IllustratedIcon` where no scene fits), not photos.
 - **Supervisor mode** (documentary ledger) uses no photography or mural elements. The small
   brand mark is the only brand element there.
 

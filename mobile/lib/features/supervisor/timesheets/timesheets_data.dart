@@ -18,7 +18,8 @@ class OrgTimesheetsRepository {
       '/org/timesheets',
       query: {'week_start': iso, 'site': siteId, 'page_size': 200},
     );
-    final list = resultsOf(data).map(Timesheet.fromJson).where((t) => t.weekStart.isEmpty || t.weekStart == iso).toList();
+    final list =
+        resultsOf(data).map(Timesheet.fromJson).where((t) => t.weekStart.isEmpty || t.weekStart == iso).toList();
     list.sort((a, b) {
       // Drafts to act on first, then by name.
       if (a.canSubmit != b.canSubmit) return a.canSubmit ? -1 : 1;

@@ -11,9 +11,6 @@ class DigitsFormatter extends TextInputFormatter {
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     var digits = toLatinDigits(newValue.text).replaceAll(RegExp(r'\D'), '');
     if (digits.length > maxLength) digits = digits.substring(0, maxLength);
-    return TextEditingValue(
-      text: digits,
-      selection: TextSelection.collapsed(offset: digits.length),
-    );
+    return TextEditingValue(text: digits, selection: TextSelection.collapsed(offset: digits.length));
   }
 }

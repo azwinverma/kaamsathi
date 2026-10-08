@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { MARK } from "@/lib/brand-mark";
 
 export const alt = "KaamSathi — Verified workers. On-time pay.";
 export const size = { width: 1200, height: 630 };
@@ -21,16 +22,16 @@ export default function OpengraphImage() {
     >
       <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
         <svg viewBox="0 0 32 32" width="96" height="96">
-          <rect width="32" height="32" rx="8" fill="#ffffff" />
+          <rect width="32" height="32" rx={MARK.radius} fill="#ffffff" />
           <path
-            d="M10 8v16M10 16.5 19.5 8M13.5 13.5 21 24"
+            d={MARK.k}
             stroke="#2563EB"
-            strokeWidth="3"
+            strokeWidth={MARK.strokeWidth}
             strokeLinecap="round"
             strokeLinejoin="round"
             fill="none"
           />
-          <circle cx="23.5" cy="9.5" r="2.5" fill="#FF6B6B" />
+          <circle cx={MARK.sun.cx} cy={MARK.sun.cy} r={MARK.sun.r} fill={MARK.hex.sun} />
         </svg>
         <div style={{ fontSize: 64, fontWeight: 700, letterSpacing: -1 }}>KaamSathi</div>
       </div>

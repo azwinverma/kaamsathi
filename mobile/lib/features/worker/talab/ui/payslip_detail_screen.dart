@@ -89,12 +89,12 @@ class _DetailState extends ConsumerState<_Detail> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                p.monthLabel(lang),
-                style: t.titleMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
-              ),
+              Text(p.monthLabel(lang), style: t.titleMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary)),
               if (p.organizationName != null)
-                Text(p.organizationName!, style: t.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary)),
+                Text(
+                  p.organizationName!,
+                  style: t.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                ),
               const SizedBox(height: KsSpace.s4),
               Text(l.talabNetPay, style: t.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary)),
               Text(
@@ -108,8 +108,8 @@ class _DetailState extends ConsumerState<_Detail> {
               Text(
                 p.isPaid
                     ? (p.paidAt != null
-                          ? l.talabPaidOn(formatBsDate(BsDate.fromAd(p.paidAt!.toLocal()), lang))
-                          : l.payrollPaid)
+                        ? l.talabPaidOn(formatBsDate(BsDate.fromAd(p.paidAt!.toLocal()), lang))
+                        : l.payrollPaid)
                     : l.talabPaymentPending,
                 style: t.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
               ),
@@ -183,17 +183,15 @@ class _DetailState extends ConsumerState<_Detail> {
         const SizedBox(height: KsSpace.s6),
         FilledButton.icon(
           onPressed: _downloading ? null : _openPdf,
-          icon: _downloading
-              ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-              : const Icon(LucideIcons.fileDown),
+          icon:
+              _downloading
+                  ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(LucideIcons.fileDown),
           label: Text(l.talabOpenPdf),
         ),
         const SizedBox(height: KsSpace.s2),
         TextButton.icon(
-          onPressed: () => context.push(
-            Routes.workerDisputeNew,
-            extra: DisputeFormArgs(kind: 'wage', payslipId: p.id),
-          ),
+          onPressed: () => context.push(Routes.workerDisputeNew, extra: DisputeFormArgs(kind: 'wage', payslipId: p.id)),
           icon: const Icon(LucideIcons.messageSquareWarning, size: 18),
           label: Text(l.disputeRaise),
         ),

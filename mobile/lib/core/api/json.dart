@@ -11,8 +11,7 @@ Json asJson(Object? v) {
 
 Json? asJsonOrNull(Object? v) => v is Map ? asJson(v) : null;
 
-List<Json> asJsonList(Object? v) =>
-    v is List ? v.whereType<Map<dynamic, dynamic>>().map(asJson).toList() : const [];
+List<Json> asJsonList(Object? v) => v is List ? v.whereType<Map<dynamic, dynamic>>().map(asJson).toList() : const [];
 
 /// Accepts either a plain list or a paginated
 /// `{"count", "next", "previous", "results": [...]}` envelope.
@@ -45,7 +44,6 @@ bool boolOf(Object? v, [bool fallback = false]) {
   return fallback;
 }
 
-List<String> strList(Object? v) =>
-    v is List ? v.map((e) => '$e').toList() : const [];
+List<String> strList(Object? v) => v is List ? v.map((e) => '$e').toList() : const [];
 
 DateTime? dateTimeOf(Object? v) => v is String ? DateTime.tryParse(v) : null;
