@@ -45,7 +45,7 @@ export function StatusStepper({ run, className }: { run: PayrollRun; className?:
               className={cn(
                 "relative z-[1] flex size-8 items-center justify-center rounded-full border-2 text-sm font-semibold tabular",
                 done && "border-brand bg-brand text-brand-fg",
-                current && "border-brand bg-surface text-brand",
+                current && "border-brand bg-surface text-brand-text",
                 !reached && "border-border bg-surface text-fg-muted",
               )}
             >

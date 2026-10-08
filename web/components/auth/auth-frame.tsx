@@ -26,7 +26,7 @@ export async function AuthFrame({ children }: { children: React.ReactNode }) {
         </main>
         <footer className="text-xs text-fg-subtle">© KaamSathi · {t("auth.footer_place")}</footer>
       </div>
-      <aside className="relative hidden overflow-hidden bg-primary-900 lg:block" aria-hidden>
+      <aside className="relative hidden overflow-hidden bg-hero lg:block" aria-hidden>
         <div
           className="absolute inset-0 opacity-[0.12]"
           style={{
@@ -36,26 +36,26 @@ export async function AuthFrame({ children }: { children: React.ReactNode }) {
             maskImage: "radial-gradient(ellipse at 30% 20%, black 20%, transparent 75%)",
           }}
         />
-        <div className="absolute -top-24 -right-24 size-96 rounded-full bg-primary-600/40 blur-3xl" />
-        <div className="absolute bottom-10 left-10 size-40 rounded-full bg-accent-500/25 blur-3xl" />
-        <div className="relative flex h-full flex-col justify-center gap-10 p-14 text-white">
+        <div className="absolute -top-24 -right-24 size-96 rounded-full bg-brand/40 blur-3xl" />
+        <div className="absolute bottom-10 left-10 size-40 rounded-full bg-coral/25 blur-3xl" />
+        <div className="relative flex h-full flex-col justify-center gap-10 p-14 text-hero-fg">
           <div className="space-y-3">
-            <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-primary-100 ring-1 ring-white/15">
-              <span className="size-1.5 rounded-full bg-accent-500" />
+            <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-hero-muted ring-1 ring-white/15">
+              <span className="size-1.5 rounded-full bg-coral" />
               {t("app.tagline")}
             </p>
-            <h2 className="max-w-md text-4xl font-semibold text-white">{t("auth.panel_title")}</h2>
-            <p className="max-w-md text-base text-primary-100/80">{t("auth.panel_body")}</p>
+            <h2 className="max-w-md text-4xl font-semibold text-hero-fg">{t("auth.panel_title")}</h2>
+            <p className="max-w-md text-base text-hero-muted">{t("auth.panel_body")}</p>
           </div>
           <ul className="max-w-md space-y-5">
             {points.map(({ icon: Icon, title, body }) => (
               <li key={title} className="flex gap-4">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/15">
-                  <Icon className="size-5 text-white" />
+                  <Icon className="size-5 text-hero-fg" />
                 </span>
                 <span>
-                  <span className="block font-semibold text-white">{title}</span>
-                  <span className="block text-sm text-primary-100/75">{body}</span>
+                  <span className="block font-semibold text-hero-fg">{title}</span>
+                  <span className="block text-sm text-hero-muted">{body}</span>
                 </span>
               </li>
             ))}

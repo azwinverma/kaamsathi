@@ -22,7 +22,7 @@ export function Spinner({ className, label }: { className?: string; label?: stri
 /** Table-shaped skeleton. */
 export function TableSkeleton({ rows = 6, cols = 5 }: { rows?: number; cols?: number }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm" aria-busy>
+    <div className="overflow-hidden rounded-dense border border-border bg-surface shadow-sm" aria-busy>
       <div className="flex h-10 items-center gap-4 border-b border-border bg-surface-muted px-4">
         {Array.from({ length: cols }).map((_, i) => (
           <Skeleton key={i} className="h-3 flex-1" />

@@ -117,7 +117,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
             const SizedBox(height: KsSpace.s2),
             Text(
               l.otpSubtitle(formatPhone(widget.args.phone, lang: lang)),
-              style: t.bodyLarge?.copyWith(color: context.statusColors.textSecondary),
+              style: t.bodyLarge?.copyWith(color: context.ks.textMuted),
             ),
             const SizedBox(height: KsSpace.s6),
             AutofillGroup(
@@ -209,12 +209,12 @@ class _OtpBoxes extends StatelessWidget {
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: scheme.surface,
-                      borderRadius: BorderRadius.circular(KsRadius.md),
+                      borderRadius: BorderRadius.circular(KsRadius.control),
                       border: Border.all(
                         color: hasError
                             ? scheme.error
                             : active
-                            ? KsColors.primary500
+                            ? scheme.primary
                             : scheme.outline,
                         width: active || hasError ? 2 : 1,
                       ),

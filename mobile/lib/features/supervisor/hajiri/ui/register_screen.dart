@@ -81,8 +81,8 @@ class _Grid extends StatelessWidget {
     final l = context.l10n;
     final lang = context.lang;
     final t = Theme.of(context).textTheme;
-    final c = context.statusColors;
-    final headerStyle = t.labelSmall?.copyWith(color: c.textSecondary);
+    final c = context.ks;
+    final headerStyle = t.labelSmall?.copyWith(color: c.textMuted);
     final totals = [
       ('present', l.statusShortPresent),
       ('half_day', l.statusShortHalfDay),
@@ -99,7 +99,7 @@ class _Grid extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(localizeDigits('${d.bsDay}', lang), style: t.labelSmall?.copyWith(color: off ? c.dangerFg : null)),
+            Text(localizeDigits('${d.bsDay}', lang), style: t.labelSmall?.copyWith(color: off ? c.errorText : null)),
             Text(
               (lang == 'ne' ? weekdaysShortNe : weekdaysShortEn)[d.weekday % 7].characters.first,
               style: headerStyle,
@@ -119,7 +119,7 @@ class _Grid extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: status == null ? null : bg,
-          borderRadius: BorderRadius.circular(KsRadius.sm),
+          borderRadius: BorderRadius.circular(KsRadius.xs),
           border: status == null ? Border.all(color: c.border) : null,
         ),
         child: Text(

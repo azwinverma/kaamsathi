@@ -27,9 +27,9 @@ export default function GlobalError({
           justifyContent: "center",
           padding: 24,
           fontFamily:
-            'system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Noto Sans Devanagari", "Mukta", sans-serif',
-          background: "#f7f8fb",
-          color: "#151a2d",
+            'system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Noto Sans Devanagari", sans-serif',
+          background: "#F8FAFC",
+          color: "#0F172A",
           textAlign: "center",
         }}
       >
@@ -41,7 +41,7 @@ export default function GlobalError({
             aria-hidden
             style={{ display: "block", margin: "0 auto 20px" }}
           >
-            <rect width="32" height="32" rx="8" fill="#2647C4" />
+            <rect width="32" height="32" rx="8" fill="#2563EB" />
             <path
               d="M10 8v16M10 16.5 19.5 8M13.5 13.5 21 24"
               stroke="#fff"
@@ -50,20 +50,20 @@ export default function GlobalError({
               strokeLinejoin="round"
               fill="none"
             />
-            <circle cx="23.5" cy="9.5" r="2.5" fill="#DC2B4B" />
+            <circle cx="23.5" cy="9.5" r="2.5" fill="#FF6B6B" />
           </svg>
           <h1 style={{ fontSize: 22, margin: "0 0 6px", fontWeight: 600 }}>Something went wrong</h1>
           <p lang="ne" style={{ fontSize: 20, margin: "0 0 16px", fontWeight: 600 }}>
             केही गडबड भयो
           </p>
-          <p style={{ margin: "0 0 4px", color: "#4b5468" }}>
+          <p style={{ margin: "0 0 4px", color: "#334155" }}>
             An unexpected error occurred. Please try again.
           </p>
-          <p lang="ne" style={{ margin: 0, color: "#4b5468" }}>
+          <p lang="ne" style={{ margin: 0, color: "#334155" }}>
             अनपेक्षित त्रुटि भयो। कृपया फेरि प्रयास गर्नुहोस्।
           </p>
           {error.digest ? (
-            <p style={{ marginTop: 12, fontSize: 12, color: "#7a8296" }}>
+            <p style={{ marginTop: 12, fontSize: 12, color: "#5A6679" }}>
               Reference / सन्दर्भ: {error.digest}
             </p>
           ) : null}
@@ -84,7 +84,7 @@ export default function GlobalError({
                 padding: "0 16px",
                 borderRadius: 6,
                 border: 0,
-                background: "#2647C4",
+                background: "#2563EB",
                 color: "#fff",
                 fontSize: 14,
                 fontWeight: 500,
@@ -101,9 +101,9 @@ export default function GlobalError({
                 height: 40,
                 padding: "0 16px",
                 borderRadius: 6,
-                border: "1px solid #d5d9e3",
+                border: "1px solid #CBD5E1",
                 background: "#fff",
-                color: "#151a2d",
+                color: "#0F172A",
                 fontSize: 14,
                 fontWeight: 500,
                 display: "inline-flex",

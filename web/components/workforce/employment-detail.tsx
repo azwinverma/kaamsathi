@@ -311,7 +311,7 @@ function AttendancePanel({ emp }: { emp: Employment }) {
         { label: t("term.present"), value: row.totals.present, tone: "text-success" },
         { label: t("term.half_day"), value: row.totals.half_day, tone: "text-warning" },
         { label: t("term.absent"), value: row.totals.absent, tone: "text-danger" },
-        { label: t("term.on_leave"), value: row.totals.leave, tone: "text-brand" },
+        { label: t("term.on_leave"), value: row.totals.leave, tone: "text-brand-text" },
         { label: t("term.overtime"), value: row.totals.overtime_hours, tone: "text-fg" },
       ]
     : [];

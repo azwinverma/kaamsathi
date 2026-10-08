@@ -40,7 +40,7 @@ export function MatchExplainTable({ match }: { match: Match }) {
               <td
                 className={cn(
                   "tabular py-0.5 text-right font-medium",
-                  v < 0 && "text-red-300 dark:text-red-700",
+                  v < 0 && "text-danger-on-inverse",
                 )}
               >
                 {v > 0 ? "+" : "−"}
@@ -48,7 +48,7 @@ export function MatchExplainTable({ match }: { match: Match }) {
               </td>
             </tr>
           ))}
-          <tr className="border-t border-white/20 dark:border-black/20">
+          <tr className="border-t border-surface/20">
             <td className="pt-1 pr-3 font-semibold">{t("total")}</td>
             <td className="tabular pt-1 text-right font-semibold">{f.digits(match.score)}</td>
           </tr>

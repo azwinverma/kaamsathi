@@ -48,7 +48,7 @@ export function KybDocument({
             href={src}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-col items-center gap-2 rounded-md p-4 text-sm font-medium text-brand hover:underline focus-visible:outline-2 focus-visible:outline-ring"
+            className="flex flex-col items-center gap-2 rounded-md p-4 text-sm font-medium text-brand-text hover:underline focus-visible:outline-2 focus-visible:outline-ring"
           >
             <FileText className="size-10" aria-hidden />
             {t("open_pdf")}

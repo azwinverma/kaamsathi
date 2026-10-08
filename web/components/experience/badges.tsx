@@ -1,7 +1,7 @@
 "use client";
 import { useTranslations } from "next-intl";
 import { HandHeart, MessageCircleQuestion, ThumbsDown, ThumbsUp, UserCheck } from "lucide-react";
-import { Badge, type BadgeTone } from "@/components/ui/badge";
+import { Badge, TONE_ICON, type BadgeTone } from "@/components/ui/badge";
 import type {
   ApplicationGrowthFields,
   WorkHistoryStatus,
@@ -11,7 +11,7 @@ import type {
 export const WORK_HISTORY_TONE: Record<WorkHistoryStatus, BadgeTone> = {
   self_reported: "neutral",
   reference_pending: "warning",
-  verified: "success",
+  verified: "verified",
   unverifiable: "neutral",
   rejected: "danger",
 };
@@ -32,8 +32,11 @@ export function WorkHistoryStatusBadge({
   className?: string;
 }) {
   const t = useTranslations("experience.status");
+  const tone = WORK_HISTORY_TONE[status] ?? "neutral";
+  const Icon = TONE_ICON[tone];
   return (
-    <Badge tone={WORK_HISTORY_TONE[status] ?? "neutral"} dot className={className}>
+    <Badge tone={tone} className={className}>
+      <Icon aria-hidden />
       {t.has(status) ? t(status) : (label ?? status)}
     </Badge>
   );

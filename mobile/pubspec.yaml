@@ -81,16 +81,22 @@ flutter:
     # Bundled so the app renders correctly offline; google_fonts uses these
     # instead of fetching at runtime.
     - assets/google_fonts/
+    # Noto Sans Devanagari licence, surfaced on the licences page.
+    - assets/fonts/OFL.txt
 
   fonts:
-    # Devanagari fallback (declared directly so `fontFamilyFallback: ['Mukta']` resolves).
-    - family: Mukta
+    # Devanagari fallback (brand: Noto Sans Devanagari). Static instances of
+    # the official Noto build (notofonts/devanagari, same upstream as
+    # google/fonts ofl/notosansdevanagari); licence in assets/fonts/OFL.txt.
+    # Declared directly so `fontFamilyFallback: ['Noto Sans Devanagari']`
+    # resolves offline.
+    - family: Noto Sans Devanagari
       fonts:
-        - asset: assets/fonts/Mukta-Regular.ttf
+        - asset: assets/fonts/NotoSansDevanagari-Regular.ttf
           weight: 400
-        - asset: assets/fonts/Mukta-Medium.ttf
+        - asset: assets/fonts/NotoSansDevanagari-Medium.ttf
           weight: 500
-        - asset: assets/fonts/Mukta-SemiBold.ttf
+        - asset: assets/fonts/NotoSansDevanagari-SemiBold.ttf
           weight: 600
-        - asset: assets/fonts/Mukta-Bold.ttf
+        - asset: assets/fonts/NotoSansDevanagari-Bold.ttf
           weight: 700

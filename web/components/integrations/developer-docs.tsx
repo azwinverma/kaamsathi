@@ -184,12 +184,12 @@ export async function DeveloperDocs() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <header className="mb-8 space-y-3">
-        <p className="text-sm font-medium text-brand">{t("eyebrow")}</p>
+        <p className="text-sm font-medium text-brand-text">{t("eyebrow")}</p>
         <h1 className="text-3xl font-semibold text-fg">{t("title")}</h1>
         <p className="max-w-3xl text-base text-fg-body">{t("intro")}</p>
         <ul className="grid gap-2 pt-2 text-sm text-fg-body sm:grid-cols-3">
           <li className="flex items-start gap-2 rounded-lg border border-border bg-surface p-3">
-            <KeyRound className="mt-0.5 size-4 shrink-0 text-brand" aria-hidden />
+            <KeyRound className="mt-0.5 size-4 shrink-0 text-brand-text" aria-hidden />
             {t("rule_keys")}
           </li>
           <li className="flex items-start gap-2 rounded-lg border border-border bg-surface p-3">
@@ -208,7 +208,7 @@ export async function DeveloperDocs() {
           <ol className="space-y-1 text-sm">
             {toc.map(([id, label]) => (
               <li key={id}>
-                <a href={`#${id}`} className="text-fg-body hover:text-brand">
+                <a href={`#${id}`} className="text-fg-body hover:text-brand-text">
                   {label}
                 </a>
               </li>
@@ -223,7 +223,7 @@ export async function DeveloperDocs() {
               <li>{t("start_3")}</li>
             </ol>
             <p>
-              <Link href="/app/integrations" className="font-medium text-brand hover:underline">
+              <Link href="/app/integrations" className="font-medium text-brand-text hover:underline">
                 {t("open_integrations")}
               </Link>
             </p>

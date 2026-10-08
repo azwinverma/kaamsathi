@@ -112,9 +112,9 @@ export const STATUS_LETTER: Record<AttendanceStatus, string> = {
 
 /** Solid (selected) style per status. */
 export const STATUS_SOLID: Record<AttendanceStatus, string> = {
-  present: "bg-success text-white border-success dark:text-neutral-900",
-  absent: "bg-danger text-white border-danger dark:text-neutral-900",
-  half_day: "bg-warning text-white border-warning dark:text-neutral-900",
+  present: "bg-success text-fg-inverse border-success",
+  absent: "bg-danger text-fg-inverse border-danger",
+  half_day: "bg-warning text-fg-inverse border-warning",
   leave: "bg-brand text-brand-fg border-brand",
   holiday: "bg-surface-hover text-fg-body border-border",
   weekly_off: "bg-surface-hover text-fg-body border-border",

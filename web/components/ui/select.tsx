@@ -80,7 +80,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
           <SelectPrimitive.Content
             position="popper"
             sideOffset={4}
-            className="animate-pop-in z-50 max-h-[min(360px,var(--radix-select-content-available-height))] min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-lg border border-border bg-surface shadow-lg"
+            className="animate-pop-in z-50 max-h-[min(360px,var(--radix-select-content-available-height))] min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-dense border border-border bg-surface shadow-floating"
           >
             <SelectPrimitive.Viewport className="p-1">
               {allowEmpty ? (
@@ -115,7 +115,7 @@ function SelectItem({
     >
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
       <SelectPrimitive.ItemIndicator className="absolute right-2 inline-flex items-center">
-        <Check className="size-4 text-brand" aria-hidden />
+        <Check className="size-4 text-brand-text" aria-hidden />
       </SelectPrimitive.ItemIndicator>
     </SelectPrimitive.Item>
   );

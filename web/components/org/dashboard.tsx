@@ -234,7 +234,7 @@ function HiringCard({ data }: { data: Dashboard }) {
       />
       <CardBody className="space-y-5">
         <div className="flex items-center gap-3">
-          <span className="flex size-10 items-center justify-center rounded-md bg-brand-subtle text-brand">
+          <span className="flex size-10 items-center justify-center rounded-md bg-brand-subtle text-brand-text">
             <Briefcase className="size-5" aria-hidden />
           </span>
           <div>

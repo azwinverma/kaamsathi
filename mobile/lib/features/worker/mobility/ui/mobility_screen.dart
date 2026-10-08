@@ -35,7 +35,7 @@ class MobilitySafetyGuidance extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final lang = context.lang;
-    final c = context.statusColors;
+    final c = context.ks;
     final t = Theme.of(context).textTheme;
     final server = ref.watch(mobilityDocumentsProvider.select((v) => v.value?.data.guidance));
     final serverPoints = server?.points(lang) ?? const <String>[];
@@ -46,18 +46,18 @@ class MobilitySafetyGuidance extends ConsumerWidget {
       key: const Key('mobility_safety'),
       padding: const EdgeInsets.all(KsSpace.s4),
       decoration: BoxDecoration(
-        color: c.warningBg,
-        borderRadius: BorderRadius.circular(KsRadius.lg),
-        border: Border.all(color: c.warningFg.withValues(alpha: 0.4)),
+        color: c.warningSoft,
+        borderRadius: BorderRadius.circular(KsRadius.card),
+        border: Border.all(color: c.warningText.withValues(alpha: 0.4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(LucideIcons.shieldAlert, color: c.warningFg),
+              Icon(LucideIcons.shieldAlert, color: c.warningText),
               const SizedBox(width: KsSpace.s2),
-              Expanded(child: Text(title, style: t.titleSmall?.copyWith(color: c.warningFg))),
+              Expanded(child: Text(title, style: t.titleSmall?.copyWith(color: c.warningText))),
             ],
           ),
           const SizedBox(height: KsSpace.s2),
@@ -69,7 +69,7 @@ class MobilitySafetyGuidance extends ConsumerWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 2, right: KsSpace.s2),
-                    child: Icon(LucideIcons.check, size: 16, color: c.warningFg),
+                    child: Icon(LucideIcons.check, size: 16, color: c.warningText),
                   ),
                   Expanded(child: Text(p, style: t.bodyMedium)),
                 ],
@@ -81,7 +81,7 @@ class MobilitySafetyGuidance extends ConsumerWidget {
               onTap: () => copyText(context, dofe),
               child: Row(
                 children: [
-                  Icon(LucideIcons.link, size: 16, color: c.warningFg),
+                  Icon(LucideIcons.link, size: 16, color: c.warningText),
                   const SizedBox(width: KsSpace.s2),
                   Flexible(child: Text(dofe, style: t.bodyMedium?.copyWith(decoration: TextDecoration.underline))),
                 ],

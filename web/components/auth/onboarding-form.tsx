@@ -137,7 +137,7 @@ export function OnboardingForm() {
   return (
     <div className="space-y-8">
       <div className="space-y-2">
-        <p className="text-sm font-medium text-brand">{t("onboarding.step")}</p>
+        <p className="text-sm font-medium text-brand-text">{t("onboarding.step")}</p>
         <h1 className="text-3xl font-semibold">{t("onboarding.title")}</h1>
         <p className="max-w-xl text-fg-muted">{t("onboarding.subtitle")}</p>
       </div>
@@ -185,7 +185,7 @@ export function OnboardingForm() {
                           onChange={() => field.onChange(value)}
                           className="sr-only"
                         />
-                        <Icon className={cn("size-4 shrink-0", checked ? "text-brand" : "text-fg-muted")} aria-hidden />
+                        <Icon className={cn("size-4 shrink-0", checked ? "text-brand-text" : "text-fg-muted")} aria-hidden />
                         {t(`industry.${value}`)}
                       </label>
                     );

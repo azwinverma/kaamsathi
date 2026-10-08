@@ -56,7 +56,7 @@ class WorkerHomeScreen extends ConsumerWidget {
             const SizedBox(height: KsSpace.s1),
             Text(
               '${weekdayName(today, lang)}, ${formatBsDate(BsDate.fromAd(today), lang)}',
-              style: t.bodyLarge?.copyWith(color: context.statusColors.textSecondary),
+              style: t.bodyLarge?.copyWith(color: context.ks.textMuted),
             ),
             Text(formatAdDate(today, lang), style: t.bodySmall),
             const SizedBox(height: KsSpace.s4),
@@ -184,7 +184,7 @@ class _TodayCardState extends ConsumerState<_TodayCard> {
               ? null
               : Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(999)),
+                decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(KsRadius.pill)),
                 child: Text(attendanceLabel(l, todayStatus), style: t.labelSmall?.copyWith(color: fg)),
               ),
       child: Column(

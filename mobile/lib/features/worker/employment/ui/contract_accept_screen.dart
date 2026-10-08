@@ -128,7 +128,7 @@ class _AcceptBodyState extends ConsumerState<_AcceptBody> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(LucideIcons.check, size: 18, color: context.statusColors.successFg),
+                        Icon(LucideIcons.check, size: 18, color: context.ks.successText),
                         const SizedBox(width: KsSpace.s2),
                         Expanded(child: Text(line, style: t.bodyMedium)),
                       ],

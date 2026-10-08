@@ -350,7 +350,7 @@ function ReferenceCard({ entry: e }: { entry: OpsWorkHistoryEntry }) {
             href={e.document_url}
             target="_blank"
             rel="noreferrer"
-            className="text-brand inline-flex items-center gap-1 text-sm hover:underline"
+            className="text-brand-text inline-flex items-center gap-1 text-sm hover:underline"
           >
             <ExternalLink className="size-3.5" aria-hidden />
             {t("view_document")}

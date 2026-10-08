@@ -176,7 +176,7 @@ export const EmploymentPicker = React.forwardRef<HTMLInputElement, Props>(functi
                       {[emp.designation, emp.site?.name].filter(Boolean).join(" · ")}
                     </span>
                   </span>
-                  {isSel ? <Check className="size-4 text-brand" aria-hidden /> : null}
+                  {isSel ? <Check className="size-4 text-brand-text" aria-hidden /> : null}
                 </li>
               );
             })

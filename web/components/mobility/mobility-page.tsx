@@ -15,7 +15,7 @@ export function MobilityPage() {
     <>
       <PageHeader title={t("title")} description={t("subtitle")} />
       <p className="border-border bg-surface-muted text-fg-body mb-4 flex items-start gap-2 rounded-md border px-3 py-2.5 text-sm">
-        <ShieldAlert className="text-brand mt-0.5 size-4 shrink-0" aria-hidden />
+        <ShieldAlert className="text-brand-text mt-0.5 size-4 shrink-0" aria-hidden />
         <span>{t("rule")}</span>
       </p>
       <Tabs value={tab} onValueChange={setTab}>

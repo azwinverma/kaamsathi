@@ -157,7 +157,7 @@ export function CreateRunDialog({
                 }}
               />
               {isFestivalMonth(month.month) ? (
-                <p className="text-brand flex items-start gap-1.5 text-xs">
+                <p className="text-brand-text flex items-start gap-1.5 text-xs">
                   <Sparkles className="mt-px size-3.5 shrink-0" aria-hidden />
                   {t("festival_suggest", { month: f.monthName(month.month) })}
                 </p>

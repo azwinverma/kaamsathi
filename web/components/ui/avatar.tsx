@@ -4,10 +4,10 @@ import { initials } from "@/lib/format";
 import { mediaSrc } from "@/lib/media";
 
 const PALETTE = [
-  "bg-primary-100 text-primary-800",
-  "bg-accent-50 text-accent-600",
-  "bg-success-subtle text-success",
-  "bg-warning-subtle text-warning",
+  "bg-brand-subtle text-brand-subtle-fg",
+  "bg-coral-subtle text-coral-text",
+  "bg-teal-subtle text-teal-text",
+  "bg-indigo-subtle text-indigo",
   "bg-surface-hover text-fg-body",
 ];
 

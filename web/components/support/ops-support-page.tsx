@@ -285,13 +285,13 @@ function CaseDetail({ c }: { c: SupportCase }) {
             <dt className="text-xs text-fg-muted">{t("about")}</dt>
             <dd className="mt-0.5 text-fg">
               {c.worker ? (
-                <Link href={`/ops/workers/${c.worker.id}`} className="text-brand hover:underline">
+                <Link href={`/ops/workers/${c.worker.id}`} className="text-brand-text hover:underline">
                   {c.worker.full_name}
                 </Link>
               ) : null}
               {c.worker && c.organization ? " · " : null}
               {c.organization ? (
-                <Link href={`/ops/organizations/${c.organization.id}`} className="text-brand hover:underline">
+                <Link href={`/ops/organizations/${c.organization.id}`} className="text-brand-text hover:underline">
                   {c.organization.name}
                 </Link>
               ) : null}
@@ -383,10 +383,10 @@ function SafetyLinks({ c }: { c: SupportCase }) {
         {t("links_title")}
       </h3>
       <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
-        <Field id="link-dispute" label={t("dispute_id")} hint={<Link href="/ops/disputes" className="text-brand hover:underline">{t("open_disputes")}</Link>}>
+        <Field id="link-dispute" label={t("dispute_id")} hint={<Link href="/ops/disputes" className="text-brand-text hover:underline">{t("open_disputes")}</Link>}>
           <Input value={dispute} onChange={(e) => setDispute(e.target.value)} placeholder="uuid" className="font-mono text-xs" />
         </Field>
-        <Field id="link-flag" label={t("risk_flag_id")} hint={<Link href="/ops/risk" className="text-brand hover:underline">{t("open_risk")}</Link>}>
+        <Field id="link-flag" label={t("risk_flag_id")} hint={<Link href="/ops/risk" className="text-brand-text hover:underline">{t("open_risk")}</Link>}>
           <Input value={flag} onChange={(e) => setFlag(e.target.value)} placeholder="uuid" className="font-mono text-xs" />
         </Field>
         <Button variant="secondary" onClick={save} loading={update.isPending}>
@@ -452,7 +452,7 @@ function IdentityPanel({ c }: { c: SupportCase }) {
     <section aria-labelledby={`identity-${c.id}`} className="space-y-3 rounded-lg border border-border p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 id={`identity-${c.id}`} className="flex items-center gap-2 text-sm font-semibold text-fg">
-          <ShieldCheck className="size-4 text-brand" aria-hidden />
+          <ShieldCheck className="size-4 text-brand-text" aria-hidden />
           {t("title")}
         </h3>
         {verified ? (
@@ -565,7 +565,7 @@ function CallerLookup() {
                 {data.workers.map((w) => (
                   <li key={w.id} className="flex items-center justify-between gap-2 py-2">
                     <span>
-                      <Link href={`/ops/workers/${w.id}`} className="font-medium text-brand hover:underline">
+                      <Link href={`/ops/workers/${w.id}`} className="font-medium text-brand-text hover:underline">
                         {w.full_name}
                       </Link>
                       <span className="block text-xs text-fg-muted">
@@ -586,7 +586,7 @@ function CallerLookup() {
                   ))}
                 {data.organizations.map((o) => (
                   <li key={`${o.id}-${o.user_id}`} className="py-2">
-                    <Link href={`/ops/organizations/${o.id}`} className="font-medium text-brand hover:underline">
+                    <Link href={`/ops/organizations/${o.id}`} className="font-medium text-brand-text hover:underline">
                       {o.name}
                     </Link>
                     <span className="block text-xs text-fg-muted">{t("member_role", { role: o.role })}</span>
@@ -608,7 +608,7 @@ function CallerLookup() {
                         onClick={() => router.replace(`/ops/support?case=${c.id}`, { scroll: false })}
                       >
                         <span className="block text-xs font-semibold text-fg-muted tabular">{c.number}</span>
-                        <span className="block truncate font-medium text-brand hover:underline">{c.subject}</span>
+                        <span className="block truncate font-medium text-brand-text hover:underline">{c.subject}</span>
                       </button>
                       <CaseStatusBadge c={c} />
                     </li>

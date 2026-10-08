@@ -89,7 +89,7 @@ export function CredentialDocument({
           <FileText className="size-6" aria-hidden />
         </span>
         <span className="text-fg text-sm font-medium">{t("pdf_document")}</span>
-        <span className="text-brand inline-flex items-center gap-1 text-sm group-hover:underline">
+        <span className="text-brand-text inline-flex items-center gap-1 text-sm group-hover:underline">
           <ExternalLink className="size-4" aria-hidden />
           {t("open_document")}
         </span>

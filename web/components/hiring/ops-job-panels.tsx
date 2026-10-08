@@ -246,7 +246,7 @@ function RunDetail({ jobId, runId }: { jobId: string; runId: string }) {
             <tr key={c.worker.id} className="border-border border-t align-top">
               <td className="tabular py-1.5 pr-3">#{f.digits(c.rank)}</td>
               <td className="py-1.5 pr-3">
-                <Link href={`/ops/workers/${c.worker.id}`} className="text-brand hover:underline">
+                <Link href={`/ops/workers/${c.worker.id}`} className="text-brand-text hover:underline">
                   {c.worker.full_name}
                 </Link>
               </td>

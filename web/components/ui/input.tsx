@@ -2,7 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 export const inputClass =
-  "h-10 w-full min-w-0 rounded-md border border-border-strong bg-surface px-3 text-sm text-fg shadow-sm transition-colors placeholder:text-fg-subtle hover:border-fg-subtle focus-visible:border-primary-500 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-60 aria-invalid:border-danger aria-invalid:focus-visible:outline-danger max-sm:min-h-11 max-sm:text-base";
+  "h-10 w-full min-w-0 rounded-control border border-border-strong bg-surface px-3 text-sm text-fg shadow-sm transition-colors placeholder:text-fg-subtle hover:border-fg-subtle focus-visible:border-ring focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-60 aria-invalid:border-danger aria-invalid:focus-visible:outline-danger max-sm:min-h-11 max-sm:text-base";
 
 export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
   ({ className, type = "text", ...props }, ref) => (
@@ -31,7 +31,7 @@ export const PrefixInput = React.forwardRef<
 >(({ className, prefix, suffix, ...props }, ref) => (
   <div
     className={cn(
-      "flex h-10 w-full items-center overflow-hidden rounded-md border border-border-strong bg-surface shadow-sm transition-colors focus-within:border-primary-500 focus-within:outline-2 focus-within:outline-ring hover:border-fg-subtle has-[[aria-invalid=true]]:border-danger max-sm:min-h-11",
+      "flex h-10 w-full items-center overflow-hidden rounded-control border border-border-strong bg-surface shadow-sm transition-colors focus-within:border-ring focus-within:outline-2 focus-within:outline-ring hover:border-fg-subtle has-[[aria-invalid=true]]:border-danger max-sm:min-h-11",
       className,
     )}
   >

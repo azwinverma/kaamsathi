@@ -257,7 +257,7 @@ function Pricing() {
         <ul className="space-y-4">
           {items.map(({ icon: Icon, title, body }) => (
             <li key={title} className="flex gap-3">
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-brand-subtle text-brand">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-brand-subtle text-brand-text">
                 <Icon className="size-4" aria-hidden />
               </span>
               <div>
@@ -337,7 +337,7 @@ function Invoices() {
                           href={proxyHref(`/org/billing/invoices/${inv.id}/pdf`)}
                           target="_blank"
                           rel="noopener"
-                          className="inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline"
+                          className="inline-flex items-center gap-1 text-sm font-medium text-brand-text hover:underline"
                           aria-label={t("open_pdf", { number: inv.number ?? "" })}
                         >
                           <FileText className="size-4" aria-hidden />

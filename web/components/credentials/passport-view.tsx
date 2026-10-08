@@ -90,7 +90,7 @@ export async function PassportView({
           aria-labelledby="passport-name"
         >
           {/* Identity band */}
-          <div className="bg-primary-900 relative overflow-hidden px-5 pt-5 pb-6 text-white sm:px-8 sm:pt-7">
+          <div className="bg-hero relative overflow-hidden px-5 pt-5 pb-6 text-hero-fg sm:px-8 sm:pt-7">
             <div
               className="absolute inset-0 opacity-[0.08]"
               aria-hidden
@@ -101,14 +101,14 @@ export async function PassportView({
                 maskImage: "radial-gradient(ellipse at 85% 0%, black 15%, transparent 70%)",
               }}
             />
-            <div className="bg-accent-500 absolute inset-x-0 bottom-0 h-1" aria-hidden />
+            <div className="bg-coral absolute inset-x-0 bottom-0 h-1" aria-hidden />
             <div className="relative flex items-center justify-between gap-3">
-              <p className="text-primary-100 text-xs font-semibold tracking-[0.18em] uppercase">
-                {t("brand")} <span className="text-primary-300 mx-1">·</span>
+              <p className="text-hero-muted text-xs font-semibold tracking-[0.18em] uppercase">
+                {t("brand")} <span className="text-hero-muted mx-1">·</span>
                 <span className="tracking-normal normal-case">{t("title")}</span>
               </p>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-white ring-1 ring-white/20">
-                <ShieldCheck className="size-3.5 text-white" aria-hidden />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-hero-fg ring-1 ring-white/20">
+                <ShieldCheck className="size-3.5 text-hero-fg" aria-hidden />
                 {t("verified_by")}
               </span>
             </div>
@@ -123,7 +123,7 @@ export async function PassportView({
                 />
               ) : (
                 <span
-                  className="flex size-20 shrink-0 items-center justify-center rounded-xl bg-white/10 text-2xl font-semibold text-white ring-2 ring-white/20 sm:size-24"
+                  className="flex size-20 shrink-0 items-center justify-center rounded-xl bg-white/10 text-2xl font-semibold text-hero-fg ring-2 ring-white/20 sm:size-24"
                   aria-hidden
                 >
                   {initials(p.name)}
@@ -132,21 +132,21 @@ export async function PassportView({
               <div className="min-w-0 flex-1">
                 <h1
                   id="passport-name"
-                  className="text-2xl leading-tight font-semibold text-white sm:text-3xl"
+                  className="text-2xl leading-tight font-semibold text-hero-fg sm:text-3xl"
                 >
                   {name}
                 </h1>
                 {altName ? (
                   <p
-                    className="text-primary-100 mt-0.5 text-base"
+                    className="text-hero-muted mt-0.5 text-base"
                     lang={locale === "ne" ? "en" : "ne"}
                   >
                     {altName}
                   </p>
                 ) : null}
-                {trade ? <p className="mt-2 text-base font-medium text-white">{trade}</p> : null}
+                {trade ? <p className="mt-2 text-base font-medium text-hero-fg">{trade}</p> : null}
                 {districts ? (
-                  <p className="text-primary-100 mt-1 inline-flex items-center gap-1 text-sm">
+                  <p className="text-hero-muted mt-1 inline-flex items-center gap-1 text-sm">
                     <MapPin className="size-3.5" aria-hidden />
                     {districts}
                   </p>
@@ -362,7 +362,7 @@ export async function PassportView({
                 <span
                   className={cn(
                     "size-2 rounded-full",
-                    p.availability.is_available ? "bg-success" : "bg-neutral-400",
+                    p.availability.is_available ? "bg-success-hue" : "bg-fg-muted",
                   )}
                   aria-hidden
                 />
@@ -385,7 +385,7 @@ export async function PassportView({
                   href={`tel:+977${p.contact.phone}`}
                   className="border-border text-fg tabular hover:bg-surface-hover inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-semibold"
                 >
-                  <Phone className="text-brand size-4" aria-hidden />
+                  <Phone className="text-brand-text size-4" aria-hidden />
                   {formatPhone(p.contact.phone, locale)}
                 </a>
               ) : (
@@ -402,7 +402,7 @@ export async function PassportView({
               <span aria-hidden>·</span>
               <span>
                 {t("verify_link")}:{" "}
-                <span className="text-brand tabular break-all">{verifyHost}</span>
+                <span className="text-brand-text tabular break-all">{verifyHost}</span>
               </span>
             </p>
             <p>{t("only_verified")}</p>
@@ -417,7 +417,7 @@ export async function PassportView({
           </div>
           <Link
             href="/"
-            className="text-brand inline-flex items-center gap-1 text-sm font-medium hover:underline"
+            className="text-brand-text inline-flex items-center gap-1 text-sm font-medium hover:underline"
           >
             <Home className="size-4" aria-hidden />
             {t("home")}
@@ -444,7 +444,7 @@ function Section({
   return (
     <section className={cn("min-w-0 [break-inside:avoid]", className)}>
       <h2 className="text-fg mb-2.5 flex items-center gap-2 text-sm font-semibold">
-        <span className="bg-brand-subtle text-brand flex size-7 items-center justify-center rounded-md">
+        <span className="bg-brand-subtle text-brand-text flex size-7 items-center justify-center rounded-md">
           <Icon className="size-4" aria-hidden />
         </span>
         {title}

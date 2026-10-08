@@ -3,11 +3,18 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'tokens.dart';
 
-/// Builds the KaamSathi Material 3 theme from DESIGN.md tokens.
+/// Devanagari family bundled under assets/fonts (see pubspec.yaml).
+const kDevanagariFamily = 'Noto Sans Devanagari';
+
+/// Inter first, then Noto Sans Devanagari for Nepali glyphs.
+const kFontFallback = ['Inter', kDevanagariFamily];
+
+/// Builds the KaamSathi Material 3 theme from design/tokens.json.
 ///
-/// [lang] tweaks typography: Devanagari gets ~10% taller line-height and no
-/// negative letter-spacing on headings. [useGoogleFonts] is disabled in
-/// widget tests to avoid font loading.
+/// [lang] tweaks typography: Devanagari gets ~10% taller line-height
+/// (tokens.json `devanagariLineHeightBoost`) and no negative letter-spacing on
+/// headings. [useGoogleFonts] is disabled in widget tests to avoid font
+/// loading.
 ThemeData buildTheme(
   Brightness brightness, {
   String lang = 'en',
@@ -15,78 +22,45 @@ ThemeData buildTheme(
 }) {
   final dark = brightness == Brightness.dark;
   final ne = lang == 'ne';
+  final ks = dark ? KsColors.dark : KsColors.light;
 
-  final scheme = dark
-      ? const ColorScheme(
-          brightness: Brightness.dark,
-          primary: KsColors.primary400,
-          onPrimary: Colors.white,
-          primaryContainer: Color(0xFF1A2550),
-          onPrimaryContainer: KsColors.primary100,
-          secondary: KsColors.primary300,
-          onSecondary: KsColors.neutral900,
-          secondaryContainer: Color(0xFF222838),
-          onSecondaryContainer: KsColors.darkText,
-          tertiary: KsColors.accent500,
-          onTertiary: Colors.white,
-          error: Color(0xFFF07A75),
-          onError: KsColors.neutral900,
-          errorContainer: Color(0xFF3A1716),
-          onErrorContainer: Color(0xFFF7B7B4),
-          surface: KsColors.darkSurface,
-          onSurface: KsColors.darkText,
-          onSurfaceVariant: KsColors.darkTextSecondary,
-          surfaceContainerLowest: KsColors.darkBackground,
-          surfaceContainerLow: KsColors.darkBackground,
-          surfaceContainer: KsColors.darkSurface,
-          surfaceContainerHigh: Color(0xFF1C2130),
-          surfaceContainerHighest: Color(0xFF222838),
-          outline: KsColors.darkBorder,
-          outlineVariant: KsColors.darkBorder,
-          inverseSurface: KsColors.darkText,
-          onInverseSurface: KsColors.neutral900,
-          inversePrimary: KsColors.primary600,
-          shadow: Colors.black,
-          scrim: Colors.black,
-        )
-      : const ColorScheme(
-          brightness: Brightness.light,
-          primary: KsColors.primary600,
-          onPrimary: Colors.white,
-          primaryContainer: KsColors.primary50,
-          onPrimaryContainer: KsColors.primary800,
-          secondary: KsColors.primary700,
-          onSecondary: Colors.white,
-          secondaryContainer: KsColors.primary50,
-          onSecondaryContainer: KsColors.primary800,
-          tertiary: KsColors.accent500,
-          onTertiary: Colors.white,
-          error: KsColors.danger600,
-          onError: Colors.white,
-          errorContainer: KsColors.danger50,
-          onErrorContainer: KsColors.danger600,
-          surface: KsColors.neutral0,
-          onSurface: KsColors.neutral900,
-          onSurfaceVariant: KsColors.neutral500,
-          surfaceContainerLowest: KsColors.neutral0,
-          surfaceContainerLow: KsColors.neutral25,
-          surfaceContainer: KsColors.neutral50,
-          surfaceContainerHigh: KsColors.neutral100,
-          surfaceContainerHighest: KsColors.neutral100,
-          outline: KsColors.neutral300,
-          outlineVariant: KsColors.neutral200,
-          inverseSurface: KsColors.neutral900,
-          onInverseSurface: KsColors.neutral0,
-          inversePrimary: KsColors.primary300,
-          shadow: Color(0x0F101828),
-          scrim: Colors.black,
-        );
-
-  final background = dark ? KsColors.darkBackground : KsColors.neutral25;
-  final border = dark ? KsColors.darkBorder : KsColors.neutral200;
-  final bodyColor = dark ? KsColors.darkText : KsColors.neutral700;
-  final headingColor = dark ? KsColors.darkText : KsColors.neutral900;
-  final secondaryText = dark ? KsColors.darkTextSecondary : KsColors.neutral500;
+  final scheme = ColorScheme(
+    brightness: brightness,
+    primary: ks.actionPrimary,
+    onPrimary: ks.onActionPrimary,
+    primaryContainer: ks.actionPrimarySubtle,
+    onPrimaryContainer: ks.onActionPrimarySubtle,
+    // Indigo = brand depth / secondary primary actions (brand §4).
+    secondary: dark ? KsPalette.darkIndigo : KsPalette.brandIndigo,
+    onSecondary: dark ? KsPalette.darkActionPrimaryFg : KsPalette.textInverse,
+    secondaryContainer: ks.indigoSubtle,
+    onSecondaryContainer: ks.indigo,
+    // Teal = growth / skill accent.
+    tertiary: ks.tealText,
+    onTertiary: dark ? KsPalette.accentOnFill : KsPalette.textInverse,
+    tertiaryContainer: ks.tealSubtle,
+    onTertiaryContainer: ks.tealText,
+    error: ks.error,
+    onError: dark ? KsPalette.accentOnFill : KsPalette.textInverse,
+    errorContainer: ks.errorSoft,
+    onErrorContainer: ks.errorText,
+    surface: ks.surface,
+    onSurface: ks.textPrimary,
+    onSurfaceVariant: ks.textMuted,
+    surfaceContainerLowest: ks.surface,
+    surfaceContainerLow: ks.canvas,
+    surfaceContainer: ks.canvas,
+    surfaceContainerHigh: ks.surfaceMuted,
+    surfaceContainerHighest: ks.surfaceMuted,
+    outline: ks.borderStrong,
+    outlineVariant: ks.border,
+    inverseSurface: ks.textPrimary,
+    onInverseSurface: ks.surface,
+    inversePrimary: dark ? KsPalette.actionPrimary : KsPalette.darkActionPrimarySubtleFg,
+    shadow: KsPalette.textPrimary,
+    scrim: KsPalette.textPrimary,
+    surfaceTint: Colors.transparent,
+  );
 
   final lh = ne ? 1.1 : 1.0;
   TextStyle s(
@@ -99,102 +73,140 @@ ThemeData buildTheme(
     fontSize: size,
     height: lineHeight / size * lh,
     fontWeight: w,
-    letterSpacing: heading && !ne ? -0.02 * size : 0,
-    color: color ?? (heading ? headingColor : bodyColor),
-    fontFamilyFallback: const ['Mukta'],
+    letterSpacing: heading && !ne ? -0.01 * size : 0,
+    color: color ?? (heading ? ks.textPrimary : ks.textSecondary),
+    fontFamilyFallback: kFontFallback,
   );
 
+  // Mobile type scale (tokens.json type.mobile): H1 30/38, H2 24/32,
+  // H3 20/28, Body 16/24, Caption 12/16. Body S 14/20 and Body L 18/28 come
+  // from the shared scale. Primary information never goes below 14.
   var textTheme = TextTheme(
-    displayLarge: s(48, 56, FontWeight.w600, heading: true),
-    displayMedium: s(36, 44, FontWeight.w600, heading: true),
-    displaySmall: s(30, 38, FontWeight.w600, heading: true),
-    headlineLarge: s(28, 36, FontWeight.w600, heading: true),
-    headlineMedium: s(24, 32, FontWeight.w600, heading: true),
-    headlineSmall: s(20, 28, FontWeight.w600, heading: true),
-    titleLarge: s(20, 28, FontWeight.w600, heading: true),
-    titleMedium: s(18, 28, FontWeight.w600, heading: true),
-    titleSmall: s(16, 24, FontWeight.w600, heading: true),
-    bodyLarge: s(16, 24, FontWeight.w400),
-    bodyMedium: s(14, 20, FontWeight.w400),
-    bodySmall: s(12, 16, FontWeight.w400, color: secondaryText),
-    labelLarge: s(16, 24, FontWeight.w600),
-    labelMedium: s(14, 20, FontWeight.w500),
-    labelSmall: s(12, 16, FontWeight.w600),
+    displayLarge: s(36, 44, FontWeight.w700, heading: true),
+    displayMedium: s(30, 38, FontWeight.w700, heading: true),
+    displaySmall: s(30, 38, FontWeight.w700, heading: true),
+    headlineLarge: s(30, 38, FontWeight.w700, heading: true), // H1
+    headlineMedium: s(24, 32, FontWeight.w600, heading: true), // H2
+    headlineSmall: s(20, 28, FontWeight.w600, heading: true), // H3
+    titleLarge: s(20, 28, FontWeight.w600, heading: true), // H3 / app bar
+    titleMedium: s(18, 28, FontWeight.w600, heading: true), // Body L semibold
+    titleSmall: s(16, 24, FontWeight.w600, heading: true), // card titles
+    bodyLarge: s(16, 24, FontWeight.w400), // Body
+    bodyMedium: s(14, 20, FontWeight.w400), // Body S
+    bodySmall: s(12, 16, FontWeight.w400, color: ks.textMuted), // Caption
+    labelLarge: s(16, 24, FontWeight.w600), // buttons
+    labelMedium: s(14, 20, FontWeight.w500), // controls, chips
+    labelSmall: s(12, 16, FontWeight.w600), // badges, nav labels
   );
   if (useGoogleFonts) {
-    textTheme = GoogleFonts.interTextTheme(textTheme);
+    // google_fonts replaces the fallback list with just 'Inter'; restore the
+    // Devanagari fallback so Nepali glyphs use Noto Sans Devanagari.
+    textTheme = GoogleFonts.interTextTheme(textTheme).apply(fontFamilyFallback: kFontFallback);
   }
 
-  final buttonShape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(KsRadius.md),
+  final controlShape = RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(KsRadius.control),
   );
+  // ≥44 px touch height (tokens.json touchTargetMin); 48 for primary buttons.
   const buttonSize = Size(64, 48);
   final buttonText = textTheme.labelLarge!.copyWith(color: null);
+  const buttonPadding = EdgeInsets.symmetric(horizontal: 20, vertical: 12);
+  const duration = KsMotion.control;
+
+  OutlineInputBorder inputBorder(Color c, [double w = 1]) => OutlineInputBorder(
+    borderRadius: BorderRadius.circular(KsRadius.control),
+    borderSide: BorderSide(color: c, width: w),
+  );
 
   return ThemeData(
     useMaterial3: true,
     brightness: brightness,
     colorScheme: scheme,
-    scaffoldBackgroundColor: background,
-    canvasColor: background,
+    scaffoldBackgroundColor: ks.canvas,
+    canvasColor: ks.canvas,
     textTheme: textTheme,
-    fontFamilyFallback: const ['Mukta'],
-    dividerColor: border,
-    dividerTheme: DividerThemeData(color: border, thickness: 1, space: 1),
+    fontFamilyFallback: kFontFallback,
+    dividerColor: ks.border,
+    dividerTheme: DividerThemeData(color: ks.border, thickness: 1, space: 1),
     materialTapTargetSize: MaterialTapTargetSize.padded,
     visualDensity: VisualDensity.standard,
-    extensions: [dark ? StatusColors.dark : StatusColors.light],
+    focusColor: ks.focusRing.withValues(alpha: 0.12),
+    extensions: [ks],
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: KsPageTransitionsBuilder(ZoomPageTransitionsBuilder()),
+        TargetPlatform.iOS: KsPageTransitionsBuilder(CupertinoPageTransitionsBuilder()),
+        TargetPlatform.macOS: KsPageTransitionsBuilder(CupertinoPageTransitionsBuilder()),
+        TargetPlatform.linux: KsPageTransitionsBuilder(ZoomPageTransitionsBuilder()),
+        TargetPlatform.windows: KsPageTransitionsBuilder(ZoomPageTransitionsBuilder()),
+        TargetPlatform.fuchsia: KsPageTransitionsBuilder(ZoomPageTransitionsBuilder()),
+      },
+    ),
     appBarTheme: AppBarTheme(
-      backgroundColor: dark ? KsColors.darkSurface : KsColors.neutral0,
-      foregroundColor: headingColor,
+      backgroundColor: ks.surface,
+      foregroundColor: ks.textPrimary,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       scrolledUnderElevation: 0.5,
       centerTitle: false,
       titleTextStyle: textTheme.titleLarge,
-      shape: Border(bottom: BorderSide(color: border)),
+      shape: Border(bottom: BorderSide(color: ks.border)),
     ),
     cardTheme: CardThemeData(
-      color: dark ? KsColors.darkSurface : KsColors.neutral0,
+      color: ks.surface,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(KsRadius.lg),
-        side: BorderSide(color: border),
+        borderRadius: BorderRadius.circular(KsRadius.card),
+        side: BorderSide(color: ks.border),
       ),
     ),
+    // Brand §19 — Primary: blue fill / white text.
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
+        backgroundColor: ks.actionPrimary,
+        foregroundColor: ks.onActionPrimary,
         minimumSize: buttonSize,
-        shape: buttonShape,
+        shape: controlShape,
         textStyle: buttonText,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: buttonPadding,
+        animationDuration: duration,
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
+        backgroundColor: ks.actionPrimary,
+        foregroundColor: ks.onActionPrimary,
         minimumSize: buttonSize,
-        shape: buttonShape,
+        shape: controlShape,
         textStyle: buttonText,
+        padding: buttonPadding,
         elevation: 0,
+        animationDuration: duration,
       ),
     ),
+    // Secondary: surface / blue border / blue text.
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
+        backgroundColor: ks.surface,
+        foregroundColor: ks.actionPrimary,
         minimumSize: buttonSize,
-        shape: buttonShape,
+        shape: controlShape,
         textStyle: buttonText,
-        side: BorderSide(color: dark ? KsColors.darkBorder : KsColors.neutral300),
-        foregroundColor: headingColor,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        side: BorderSide(color: ks.actionPrimary),
+        padding: buttonPadding,
+        animationDuration: duration,
       ),
     ),
+    // Tertiary: text-only blue.
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        minimumSize: const Size(48, 48),
-        shape: buttonShape,
+        foregroundColor: ks.actionPrimary,
+        minimumSize: const Size(KsSize.touchTarget, KsSize.touchTarget + 4),
+        shape: controlShape,
         textStyle: buttonText,
+        animationDuration: duration,
       ),
     ),
     iconButtonTheme: IconButtonThemeData(
@@ -202,68 +214,128 @@ ThemeData buildTheme(
     ),
     segmentedButtonTheme: SegmentedButtonThemeData(
       style: ButtonStyle(
-        minimumSize: const WidgetStatePropertyAll(Size(44, 44)),
-        shape: WidgetStatePropertyAll(buttonShape),
-        side: WidgetStatePropertyAll(BorderSide(color: border)),
+        minimumSize: const WidgetStatePropertyAll(Size(KsSize.touchTarget, KsSize.touchTarget)),
+        shape: WidgetStatePropertyAll(controlShape),
+        side: WidgetStatePropertyAll(BorderSide(color: ks.borderStrong)),
         textStyle: WidgetStatePropertyAll(textTheme.labelMedium),
       ),
     ),
+    // Brand §19 — inputs: 44px+ high, label shown above the value (never
+    // placeholder-only), helper text below, inline validation.
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: dark ? KsColors.darkSurface : KsColors.neutral0,
+      fillColor: ks.surface,
+      constraints: const BoxConstraints(minHeight: KsSize.touchTarget + 4),
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-      hintStyle: TextStyle(color: dark ? KsColors.darkTextSecondary : KsColors.neutral400),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(KsRadius.md),
-        borderSide: BorderSide(color: dark ? KsColors.darkBorder : KsColors.neutral300),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(KsRadius.md),
-        borderSide: BorderSide(color: dark ? KsColors.darkBorder : KsColors.neutral300),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(KsRadius.md),
-        borderSide: const BorderSide(color: KsColors.primary500, width: 2),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(KsRadius.md),
-        borderSide: BorderSide(color: scheme.error),
-      ),
+      floatingLabelBehavior: FloatingLabelBehavior.always,
+      floatingLabelAlignment: FloatingLabelAlignment.start,
+      labelStyle: textTheme.labelMedium?.copyWith(color: ks.textSecondary),
+      floatingLabelStyle: textTheme.labelMedium?.copyWith(color: ks.textSecondary),
+      hintStyle: textTheme.bodyLarge?.copyWith(color: ks.textMuted),
+      helperStyle: textTheme.bodySmall?.copyWith(color: ks.textMuted),
+      errorStyle: textTheme.bodySmall?.copyWith(color: ks.errorText),
+      helperMaxLines: 3,
+      errorMaxLines: 3,
+      border: inputBorder(ks.borderStrong),
+      enabledBorder: inputBorder(ks.borderStrong),
+      focusedBorder: inputBorder(ks.focusRing, 2),
+      errorBorder: inputBorder(ks.error),
+      focusedErrorBorder: inputBorder(ks.error, 2),
+      disabledBorder: inputBorder(ks.border),
     ),
     chipTheme: ChipThemeData(
       shape: const StadiumBorder(),
-      side: BorderSide(color: border),
-      labelStyle: textTheme.labelMedium,
+      side: BorderSide(color: ks.borderStrong),
+      backgroundColor: ks.surface,
+      selectedColor: ks.actionPrimarySubtle,
+      checkmarkColor: ks.onActionPrimarySubtle,
+      labelStyle: textTheme.labelMedium?.copyWith(color: ks.textSecondary),
+      secondaryLabelStyle: textTheme.labelMedium?.copyWith(color: ks.onActionPrimarySubtle),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
     ),
     listTileTheme: ListTileThemeData(
       minVerticalPadding: 12,
-      iconColor: secondaryText,
-      titleTextStyle: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
-      subtitleTextStyle: textTheme.bodyMedium?.copyWith(color: secondaryText),
+      minTileHeight: KsSize.touchTarget + 4,
+      iconColor: ks.textMuted,
+      titleTextStyle: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500, color: ks.textPrimary),
+      subtitleTextStyle: textTheme.bodyMedium?.copyWith(color: ks.textMuted),
     ),
     navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: dark ? KsColors.darkSurface : KsColors.neutral0,
+      backgroundColor: ks.surface,
       surfaceTintColor: Colors.transparent,
-      indicatorColor: dark ? const Color(0xFF1A2550) : KsColors.primary50,
+      indicatorColor: ks.actionPrimarySubtle,
       elevation: 0,
       height: 68,
       labelTextStyle: WidgetStatePropertyAll(textTheme.labelSmall),
     ),
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: ks.actionPrimary,
+      linearTrackColor: ks.neutralSoft,
+      circularTrackColor: Colors.transparent,
+    ),
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(KsRadius.md)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(KsRadius.control)),
     ),
-    bottomSheetTheme: const BottomSheetThemeData(
+    bottomSheetTheme: BottomSheetThemeData(
       showDragHandle: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(KsRadius.xl)),
+      backgroundColor: ks.surface,
+      surfaceTintColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(KsRadius.sheet)),
       ),
     ),
     dialogTheme: DialogThemeData(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(KsRadius.xl)),
+      backgroundColor: ks.surface,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(KsRadius.sheet)),
     ),
     switchTheme: const SwitchThemeData(
       materialTapTargetSize: MaterialTapTargetSize.padded,
     ),
   );
+}
+
+/// Brand §19 — destructive: red, only for destructive actions.
+ButtonStyle destructiveFilledStyle(BuildContext context) {
+  final scheme = Theme.of(context).colorScheme;
+  return FilledButton.styleFrom(backgroundColor: scheme.error, foregroundColor: scheme.onError);
+}
+
+/// Text-only destructive action (AA-safe error text colour).
+ButtonStyle destructiveTextStyle(BuildContext context) =>
+    TextButton.styleFrom(foregroundColor: context.ks.errorText);
+
+/// Wraps a platform page transition and drops it when the user has asked for
+/// reduced motion (MediaQuery.disableAnimations).
+class KsPageTransitionsBuilder extends PageTransitionsBuilder {
+  const KsPageTransitionsBuilder(this.inner);
+
+  final PageTransitionsBuilder inner;
+
+  @override
+  Duration get transitionDuration => inner.transitionDuration;
+
+  @override
+  Duration get reverseTransitionDuration => inner.reverseTransitionDuration;
+
+  @override
+  DelegatedTransitionBuilder? get delegatedTransition {
+    final d = inner.delegatedTransition;
+    if (d == null) return null;
+    return (context, animation, secondaryAnimation, allowSnapshotting, child) =>
+        KsMotion.reduced(context) ? child : d(context, animation, secondaryAnimation, allowSnapshotting, child);
+  }
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    if (KsMotion.reduced(context)) return child;
+    return inner.buildTransitions(route, context, animation, secondaryAnimation, child);
+  }
 }

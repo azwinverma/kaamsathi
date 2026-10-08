@@ -72,14 +72,14 @@ String attendanceShort(AppLocalizations l, String? status) => switch (status) {
 
 /// (background, foreground) for an attendance status.
 (Color, Color) attendanceColors(BuildContext context, String? status) {
-  final c = context.statusColors;
+  final c = context.ks;
   return switch (status) {
-    'present' => (c.successBg, c.successFg),
-    'absent' => (c.dangerBg, c.dangerFg),
-    'half_day' => (c.warningBg, c.warningFg),
-    'leave' => (c.infoBg, c.infoFg),
-    'holiday' || 'weekly_off' => (c.neutralBg, c.neutralFg),
-    _ => (Colors.transparent, c.textSecondary),
+    'present' => (c.successSoft, c.successText),
+    'absent' => (c.errorSoft, c.errorText),
+    'half_day' => (c.warningSoft, c.warningText),
+    'leave' => (c.infoSoft, c.infoText),
+    'holiday' || 'weekly_off' => (c.neutralSoft, c.neutralText),
+    _ => (Colors.transparent, c.textMuted),
   };
 }
 

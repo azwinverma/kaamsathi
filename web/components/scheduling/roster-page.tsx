@@ -257,7 +257,7 @@ function RosterGrid({
                 key={d.date}
                 className={cn(
                   "min-w-28 text-center",
-                  d.date === today && "text-brand",
+                  d.date === today && "text-brand-text",
                   (d.is_holiday || d.is_weekly_off) && "bg-surface-hover",
                 )}
                 title={d.holiday_name ?? undefined}
@@ -298,7 +298,7 @@ function RosterGrid({
                             date: f.bs(d.date_bs),
                           })}
                           className={cn(
-                            "border-border bg-surface text-fg focus-visible:ring-primary-500 h-9 w-full min-w-24 rounded-md border px-1.5 text-xs focus-visible:ring-2",
+                            "border-border bg-surface text-fg focus-visible:ring-ring h-9 w-full min-w-24 rounded-md border px-1.5 text-xs focus-visible:ring-2",
                             value === OFF && "bg-surface-muted text-fg-muted",
                             value === "" && "text-fg-subtle",
                           )}
@@ -315,7 +315,7 @@ function RosterGrid({
                           <Tooltip content={warns.join(" · ")}>
                             <button
                               type="button"
-                              className="text-warning focus-visible:ring-primary-500 shrink-0 rounded-sm focus-visible:ring-2 focus-visible:outline-none"
+                              className="text-warning focus-visible:ring-ring shrink-0 rounded-sm focus-visible:ring-2 focus-visible:outline-none"
                               aria-label={t("warning_label", {
                                 name: r.worker_name,
                                 date: f.bs(d.date_bs),
@@ -368,7 +368,7 @@ function SaveWarnings({ items, onDismiss }: { items: WarningSummary[]; onDismiss
         type="button"
         onClick={onDismiss}
         aria-label={t("save_warnings_dismiss")}
-        className="text-fg-muted hover:text-fg focus-visible:ring-primary-500 shrink-0 rounded-sm focus-visible:ring-2 focus-visible:outline-none"
+        className="text-fg-muted hover:text-fg focus-visible:ring-ring shrink-0 rounded-sm focus-visible:ring-2 focus-visible:outline-none"
       >
         <X className="size-4" aria-hidden />
       </button>

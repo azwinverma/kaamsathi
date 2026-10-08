@@ -83,7 +83,7 @@ export async function HelpIndex({
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "rounded-full border px-3 py-1 text-sm",
-                  active ? "border-brand bg-brand-subtle font-medium text-brand" : "border-border text-fg-body hover:bg-surface-hover",
+                  active ? "border-brand bg-brand-subtle font-medium text-brand-text" : "border-border text-fg-body hover:bg-surface-hover",
                 )}
               >
                 {t(`audience_${a}`)}
@@ -151,7 +151,7 @@ async function ContactBox() {
   return (
     <aside className="grid gap-3 rounded-lg border border-border bg-surface-muted p-5 sm:grid-cols-2">
       <div className="flex gap-3">
-        <LifeBuoy className="mt-0.5 size-5 shrink-0 text-brand" aria-hidden />
+        <LifeBuoy className="mt-0.5 size-5 shrink-0 text-brand-text" aria-hidden />
         <div>
           <p className="font-medium text-fg">{t("contact_title")}</p>
           <p className="text-sm text-fg-muted">{t("contact_body")}</p>

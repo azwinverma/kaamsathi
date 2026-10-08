@@ -53,7 +53,7 @@ function OrgRatings() {
     <div>
       <PageHeader title={tr("title")} description={tr("description")} />
       <Card className="mb-4 flex gap-3 p-4 text-sm text-fg-body">
-        <ShieldCheck className="mt-0.5 size-5 shrink-0 text-brand" aria-hidden />
+        <ShieldCheck className="mt-0.5 size-5 shrink-0 text-brand-text" aria-hidden />
         <p>{tr("anonymous_explain", { min: data?.min_ratings ?? 3 })}</p>
       </Card>
 

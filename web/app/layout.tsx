@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Mukta } from "next/font/google";
+import { Inter, Noto_Sans_Devanagari } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { Providers } from "@/components/providers/providers";
@@ -7,17 +7,17 @@ import { THEME_STORAGE_KEY } from "@/lib/cookies";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
+// Fonts per design/tokens.json: Inter (Latin) + Noto Sans Devanagari (Nepali). Both are variable
+// fonts, so every weight in the 400–800 scale comes from one file each.
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   variable: "--font-inter",
   display: "swap",
 });
 
-const mukta = Mukta({
-  subsets: ["devanagari", "latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-mukta",
+const notoDevanagari = Noto_Sans_Devanagari({
+  subsets: ["latin", "devanagari"],
+  variable: "--font-noto-devanagari",
   display: "swap",
 });
 
@@ -50,8 +50,9 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
+    // surface.default (light) / surface.canvas (dark) from design/tokens.json
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0d1018" },
+    { media: "(prefers-color-scheme: dark)", color: "#020617" },
   ],
   colorScheme: "light dark",
 };
@@ -65,7 +66,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html
       lang={locale}
-      className={`${inter.variable} ${mukta.variable}`}
+      className={`${inter.variable} ${notoDevanagari.variable}`}
       suppressHydrationWarning
     >
       <head>

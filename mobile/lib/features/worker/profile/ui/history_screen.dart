@@ -49,7 +49,7 @@ class HistoryScreen extends ConsumerWidget {
                           final role = [h.designation, h.trade(lang)].whereType<String>().where((s) => s.isNotEmpty);
                           return Card(
                             child: InkWell(
-                              borderRadius: BorderRadius.circular(KsRadius.lg),
+                              borderRadius: BorderRadius.circular(KsRadius.card),
                               onTap: () => context.go(Routes.workerJob(h.id)),
                               child: Padding(
                                 padding: const EdgeInsets.all(KsSpace.s4),

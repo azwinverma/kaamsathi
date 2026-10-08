@@ -17,7 +17,7 @@ export default async function NotFound() {
         <span className="bg-surface-muted text-fg-muted flex size-14 items-center justify-center rounded-full">
           <FileQuestion className="size-7" aria-hidden />
         </span>
-        <p className="text-brand tabular mt-6 text-sm font-semibold">404</p>
+        <p className="text-brand-text tabular mt-6 text-sm font-semibold">404</p>
         <h1 className="text-fg mt-1 text-2xl font-semibold">{t("not_found_title")}</h1>
         <p className="text-fg-muted mt-2">{t("not_found_body")}</p>
         <Link href="/" className={buttonVariants({ className: "mt-8" })}>

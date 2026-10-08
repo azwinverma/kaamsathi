@@ -102,7 +102,7 @@ function EvidenceItem({ evidence: ev }: { evidence: DisputeEvidence }) {
           href={src}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1 text-xs text-brand hover:underline"
+          className="inline-flex items-center gap-1 text-xs text-brand-text hover:underline"
         >
           <ExternalLink className="size-3.5" aria-hidden />
           {label}

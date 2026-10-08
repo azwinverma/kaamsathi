@@ -7,6 +7,7 @@ import '../../../../core/api/cached.dart';
 import '../../../../core/format.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/router/router.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/eco.dart';
@@ -484,7 +485,7 @@ class _DeclineDialogState extends State<_DeclineDialog> {
         TextButton(onPressed: () => Navigator.pop(context), child: Text(l.commonCancel)),
         FilledButton(
           key: const Key('decline_confirm'),
-          style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+          style: destructiveFilledStyle(context),
           onPressed: () => Navigator.pop(context, _reason.text.trim()),
           child: Text(l.appsDecline),
         ),

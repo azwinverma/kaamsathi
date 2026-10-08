@@ -152,7 +152,7 @@ class _Calendar extends StatelessWidget {
     final lang = context.lang;
     final l = context.l10n;
     final t = Theme.of(context).textTheme;
-    final c = context.statusColors;
+    final c = context.ks;
     final byDay = {for (final d in data.days) d.bsDay: d};
     final daysInMonth =
         data.days.isNotEmpty ? data.days.map((d) => d.bsDay).reduce((a, b) => a > b ? a : b) : month.daysInMonth;
@@ -172,7 +172,7 @@ class _Calendar extends StatelessWidget {
             for (var i = 0; i < 7; i++)
               Expanded(
                 child: Center(
-                  child: Text(names[i], style: t.labelSmall?.copyWith(color: i == 6 ? c.dangerFg : c.textSecondary)),
+                  child: Text(names[i], style: t.labelSmall?.copyWith(color: i == 6 ? c.errorText : c.textMuted)),
                 ),
               ),
           ],
@@ -199,12 +199,12 @@ class _Calendar extends StatelessWidget {
                     button: tap != null && day != null,
                     child: InkWell(
                       key: Key('hajiri_day_$d'),
-                      borderRadius: BorderRadius.circular(KsRadius.md),
+                      borderRadius: BorderRadius.circular(KsRadius.control),
                       onTap: tap == null || day == null ? null : () => tap(day),
                       child: Container(
                         decoration: BoxDecoration(
                           color: status == null ? null : bg,
-                          borderRadius: BorderRadius.circular(KsRadius.md),
+                          borderRadius: BorderRadius.circular(KsRadius.control),
                           border: isToday ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2) : null,
                         ),
                         alignment: Alignment.center,
@@ -263,7 +263,7 @@ class AttendanceTotals extends StatelessWidget {
               final (bg, fg) = attendanceColors(context, status);
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(KsRadius.md)),
+                decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(KsRadius.dense)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

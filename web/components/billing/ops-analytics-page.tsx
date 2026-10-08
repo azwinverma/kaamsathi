@@ -19,7 +19,7 @@ export function OpsAnalyticsPage() {
     <>
       <PageHeader title={t("title")} description={t("subtitle")} />
       <p className="mb-4 flex items-start gap-2 rounded-md border border-border bg-surface-muted px-3 py-2 text-xs text-fg-muted">
-        <Info className="mt-px size-4 shrink-0 text-brand" aria-hidden />
+        <Info className="mt-px size-4 shrink-0 text-brand-text" aria-hidden />
         {t("privacy_note")}
       </p>
       <div className="space-y-6">

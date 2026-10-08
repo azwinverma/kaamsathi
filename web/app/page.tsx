@@ -100,7 +100,7 @@ export default async function Home() {
 
       <main id="main">
         {/* Hero */}
-        <section className="relative overflow-hidden bg-primary-900 text-white">
+        <section className="relative overflow-hidden bg-hero text-hero-fg">
           <div
             className="absolute inset-0 opacity-[0.1]"
             aria-hidden
@@ -111,32 +111,32 @@ export default async function Home() {
               maskImage: "radial-gradient(ellipse at 30% 30%, black 20%, transparent 75%)",
             }}
           />
-          <div className="absolute -top-24 -right-24 size-96 rounded-full bg-primary-600/40 blur-3xl" aria-hidden />
+          <div className="absolute -top-24 -right-24 size-96 rounded-full bg-brand/40 blur-3xl" aria-hidden />
           <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
-            <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-primary-100 ring-1 ring-white/15">
-              <span className="size-1.5 rounded-full bg-accent-500" aria-hidden />
+            <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-hero-muted ring-1 ring-white/15">
+              <span className="size-1.5 rounded-full bg-coral" aria-hidden />
               {t("landing.eyebrow")}
             </p>
-            <h1 className="mt-5 max-w-3xl text-4xl font-semibold text-white sm:text-5xl sm:leading-[56px]">
+            <h1 className="mt-5 max-w-3xl text-4xl font-semibold text-hero-fg sm:text-5xl sm:leading-[56px]">
               {t("landing.headline")}
             </h1>
-            <p className="mt-5 max-w-2xl text-lg text-primary-100/85">{t("landing.subhead")}</p>
+            <p className="mt-5 max-w-2xl text-lg text-hero-muted">{t("landing.subhead")}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href="/login" className={cn(buttonVariants({ size: "lg" }), "bg-white text-primary-800 hover:bg-primary-50")}>
+              <Link href="/login" className={cn(buttonVariants({ size: "lg" }), "bg-white text-hero-cta-fg hover:bg-hero-cta-hover")}>
                 {t("landing.cta_employer")}
                 <ArrowRight aria-hidden />
               </Link>
               <a
                 href="#workers"
-                className={cn(buttonVariants({ size: "lg", variant: "ghost" }), "text-white ring-1 ring-white/25 hover:bg-white/10 hover:text-white")}
+                className={cn(buttonVariants({ size: "lg", variant: "ghost" }), "text-hero-fg ring-1 ring-white/25 hover:bg-white/10 hover:text-hero-fg")}
               >
                 {t("nav.for_workers")}
               </a>
             </div>
-            <ul className="mt-12 grid max-w-3xl grid-cols-1 gap-4 text-sm text-primary-100/85 sm:grid-cols-3">
+            <ul className="mt-12 grid max-w-3xl grid-cols-1 gap-4 text-sm text-hero-muted sm:grid-cols-3">
               {[t("landing.stat_1"), t("landing.stat_2"), t("landing.stat_3")].map((s) => (
                 <li key={s} className="flex items-center gap-2">
-                  <BadgeCheck className="size-4 shrink-0 text-white" aria-hidden />
+                  <BadgeCheck className="size-4 shrink-0 text-hero-fg" aria-hidden />
                   {s}
                 </li>
               ))}
@@ -159,7 +159,7 @@ export default async function Home() {
                 <ul className="space-y-3">
                   {s.points.map(({ icon: Icon, text }) => (
                     <li key={text} className="flex items-start gap-4 rounded-lg border border-border bg-surface p-4 shadow-sm">
-                      <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-brand-subtle text-brand">
+                      <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-brand-subtle text-brand-text">
                         <Icon className="size-5" aria-hidden />
                       </span>
                       <span className="pt-2 text-sm text-fg-body">{text}</span>
@@ -180,13 +180,13 @@ export default async function Home() {
             <p className="mt-2 max-w-2xl text-fg-muted">{t("landing.pricing_body")}</p>
             <div className="mt-8 grid gap-4 md:grid-cols-2">
               <div className="rounded-xl border border-border bg-surface p-6 shadow-sm">
-                <UserSearch className="size-6 text-brand" aria-hidden />
+                <UserSearch className="size-6 text-brand-text" aria-hidden />
                 <p className="mt-3 text-sm font-medium text-fg-muted">{t("landing.price_hire_label")}</p>
                 <p className="mt-1 text-3xl font-semibold text-fg tabular">{t("landing.price_hire")}</p>
                 <p className="mt-2 text-sm text-fg-muted">{t("landing.price_hire_note")}</p>
               </div>
               <div className="rounded-xl border border-border bg-surface p-6 shadow-sm">
-                <Banknote className="size-6 text-brand" aria-hidden />
+                <Banknote className="size-6 text-brand-text" aria-hidden />
                 <p className="mt-3 text-sm font-medium text-fg-muted">{t("landing.price_manage_label")}</p>
                 <p className="mt-1 text-3xl font-semibold text-fg tabular">{t("landing.price_manage")}</p>
                 <p className="mt-2 text-sm text-fg-muted">{t("landing.price_manage_note")}</p>
@@ -218,9 +218,9 @@ export default async function Home() {
           <div className="mx-auto flex max-w-6xl flex-col items-start gap-5 rounded-xl bg-brand px-6 py-10 text-brand-fg sm:flex-row sm:items-center sm:justify-between sm:px-10">
             <div className="space-y-1">
               <h2 className="text-2xl font-semibold text-brand-fg">{t("landing.cta_title")}</h2>
-              <p className="opacity-85">{t("landing.cta_body")}</p>
+              <p>{t("landing.cta_body")}</p>
             </div>
-            <Link href="/login" className={cn(buttonVariants({ size: "lg" }), "bg-white text-primary-800 hover:bg-primary-50")}>
+            <Link href="/login" className={cn(buttonVariants({ size: "lg" }), "bg-white text-hero-cta-fg hover:bg-hero-cta-hover")}>
               {t("landing.cta_employer")}
               <ArrowRight aria-hidden />
             </Link>

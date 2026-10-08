@@ -72,7 +72,7 @@ class _RecTile extends StatelessWidget {
     final reason = rec.reasonFor(lang);
     final uplift = rec.expectedUpliftPct;
     return InkWell(
-      borderRadius: BorderRadius.circular(KsRadius.md),
+      borderRadius: BorderRadius.circular(KsRadius.control),
       onTap: () {
         final route = careerRoute(rec);
         // Tab roots are switched to, sub-pages are pushed.

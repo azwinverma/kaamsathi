@@ -356,7 +356,7 @@ class _AddCredentialScreenState extends ConsumerState<AddCredentialScreen> {
             const SizedBox(height: KsSpace.s2),
             if (_photo != null)
               ClipRRect(
-                borderRadius: BorderRadius.circular(KsRadius.lg),
+                borderRadius: BorderRadius.circular(KsRadius.card),
                 child: Image.file(File(_photo!), height: 180, fit: BoxFit.cover, cacheWidth: 600),
               ),
             const SizedBox(height: KsSpace.s2),

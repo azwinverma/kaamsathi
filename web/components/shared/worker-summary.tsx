@@ -30,7 +30,7 @@ export function SkillChips({ skills, max = 3 }: { skills: WorkerSkill[]; max?: n
               <span className="text-fg-muted">· {t("term.years", { count: s.years_experience })}</span>
             ) : null}
             {s.nstb_level && s.nstb_level !== "none" ? (
-              <span className="text-brand">· NSTB {t(`nstb.${s.nstb_level}`)}</span>
+              <span className="text-brand-text">· NSTB {t(`nstb.${s.nstb_level}`)}</span>
             ) : null}
           </Badge>
         );

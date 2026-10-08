@@ -252,7 +252,7 @@ export function LoginFlow() {
           {t("security.login.start_over")}
         </button>
         <div className="space-y-1.5">
-          <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-brand-subtle text-brand">
+          <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-brand-subtle text-brand-text">
             <LockKeyhole className="size-5" aria-hidden />
           </div>
           <h1 ref={headingRef} tabIndex={-1} id="mfa-heading" className="text-2xl font-semibold focus:outline-none">
@@ -310,7 +310,7 @@ export function LoginFlow() {
         <p className="text-center text-sm">
           <button
             type="button"
-            className="font-medium text-brand hover:underline"
+            className="font-medium text-brand-text hover:underline"
             aria-pressed={useRecovery}
             onClick={() => {
               setUseRecovery((v) => !v);
@@ -341,7 +341,7 @@ export function LoginFlow() {
           {t("auth.change_number")}
         </button>
         <div className="space-y-1.5">
-          <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-brand-subtle text-brand">
+          <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-brand-subtle text-brand-text">
             <KeyRound className="size-5" aria-hidden />
           </div>
           <h1 ref={headingRef} tabIndex={-1} id="otp-heading" className="text-2xl font-semibold focus:outline-none">
@@ -399,7 +399,7 @@ export function LoginFlow() {
           ) : (
             <button
               type="button"
-              className="font-medium text-brand hover:underline disabled:opacity-50"
+              className="font-medium text-brand-text hover:underline disabled:opacity-50"
               onClick={() => sendCode()}
               disabled={requestOtp.isPending}
             >
@@ -414,7 +414,7 @@ export function LoginFlow() {
   return (
     <div className="space-y-6">
       <div className="space-y-1.5">
-        <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-brand-subtle text-brand">
+        <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-brand-subtle text-brand-text">
           <Smartphone className="size-5" aria-hidden />
         </div>
         <h1 ref={headingRef} tabIndex={-1} className="text-2xl font-semibold focus:outline-none">
@@ -463,7 +463,7 @@ function ChoiceCard({
       onClick={onClick}
       className="flex items-start gap-4 rounded-xl border border-border bg-surface p-4 text-left shadow-sm transition-colors hover:border-brand/50 hover:bg-brand-subtle/40"
     >
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-subtle text-brand-text">
         <Icon className="size-5" aria-hidden />
       </span>
       <span>

@@ -125,7 +125,7 @@ function HiddenValue({ label }: { label: string }) {
     <Tooltip content={label}>
       <button
         type="button"
-        className="text-fg-subtle focus-visible:ring-primary-500 cursor-help rounded-sm focus-visible:ring-2 focus-visible:outline-none"
+        className="text-fg-subtle focus-visible:ring-ring cursor-help rounded-sm focus-visible:ring-2 focus-visible:outline-none"
         aria-label={label}
       >
         —

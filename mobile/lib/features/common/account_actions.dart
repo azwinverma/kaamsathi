@@ -7,6 +7,7 @@ import '../../core/auth/session.dart';
 import '../../core/format.dart';
 import '../../core/l10n/l10n.dart';
 import '../../core/router/router.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/widgets/eco.dart';
 import '../supervisor/hajiri/hajiri_providers.dart';
 
@@ -23,7 +24,7 @@ Future<void> confirmLogout(BuildContext context, WidgetRef ref) async {
           actions: [
             TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.commonCancel)),
             FilledButton(
-              style: pending > 0 ? FilledButton.styleFrom(backgroundColor: Theme.of(ctx).colorScheme.error) : null,
+              style: pending > 0 ? destructiveFilledStyle(ctx) : null,
               onPressed: () => Navigator.pop(ctx, true),
               child: Text(l.logout),
             ),

@@ -169,7 +169,7 @@ class _Grid extends StatelessWidget {
     final l = context.l10n;
     final lang = context.lang;
     final t = Theme.of(context).textTheme;
-    final c = context.statusColors;
+    final c = context.ks;
     final byId = {for (final s in shifts) s.id: s};
     final today = isoDate(nepalToday());
 
@@ -187,7 +187,7 @@ class _Grid extends StatelessWidget {
             children: [
               Text(
                 ad == null ? '' : weekdayName(ad, lang, short: true),
-                style: t.labelSmall?.copyWith(color: c.textSecondary),
+                style: t.labelSmall?.copyWith(color: c.textMuted),
               ),
               Text(
                 bs == null ? '' : localizeDigits('${bs.day}', lang),
@@ -204,10 +204,10 @@ class _Grid extends StatelessWidget {
       final shift = v?.shiftId == null ? null : byId[v!.shiftId];
       final (bg, fg) =
           v == null
-              ? (Colors.transparent, c.textSecondary)
+              ? (Colors.transparent, c.textMuted)
               : v.isOff
-              ? (c.warningBg, c.warningFg)
-              : (c.infoBg, c.infoFg);
+              ? (c.warningSoft, c.warningText)
+              : (c.infoSoft, c.infoText);
       final text = v == null ? '' : (v.isOff ? l.rosterOffShort : (shift?.short ?? '•'));
       final warns = row.warnings[date] ?? const <String>[];
       final warnText = warns.map((w) => rosterWarningLabel(l, w, week.warningLabels)).join(', ');
@@ -218,7 +218,7 @@ class _Grid extends StatelessWidget {
             '${warns.isEmpty ? '' : ' · $warnText'}',
         child: InkWell(
           onTap: () => onTap(row, date),
-          borderRadius: BorderRadius.circular(KsRadius.sm),
+          borderRadius: BorderRadius.circular(KsRadius.xs),
           child: Container(
             width: _cellW - 4,
             height: 40,
@@ -226,7 +226,7 @@ class _Grid extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: bg,
-              borderRadius: BorderRadius.circular(KsRadius.sm),
+              borderRadius: BorderRadius.circular(KsRadius.xs),
               border: v == null ? Border.all(color: c.border) : null,
             ),
             child: Stack(
@@ -243,10 +243,10 @@ class _Grid extends StatelessWidget {
                       width: 16,
                       height: 16,
                       alignment: Alignment.center,
-                      decoration: BoxDecoration(color: c.dangerFg, shape: BoxShape.circle),
-                      child: const Text(
+                      decoration: BoxDecoration(color: Theme.of(context).colorScheme.error, shape: BoxShape.circle),
+                      child: Text(
                         '!',
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Colors.white),
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Theme.of(context).colorScheme.onError),
                       ),
                     ),
                   ),

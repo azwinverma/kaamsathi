@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/format.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../common/inbox/inbox_screen.dart';
@@ -89,7 +90,7 @@ class _LeaveCardState extends ConsumerState<_LeaveCard> {
               actions: [
                 TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.commonCancel)),
                 FilledButton(
-                  style: FilledButton.styleFrom(backgroundColor: Theme.of(ctx).colorScheme.error),
+                  style: destructiveFilledStyle(ctx),
                   onPressed: () => Navigator.pop(ctx, true),
                   child: Text(l.leaveReject),
                 ),

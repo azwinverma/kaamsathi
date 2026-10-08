@@ -196,7 +196,7 @@ function RegisterGrid({
               <Td numeric className="h-10 border-l border-border font-medium text-success">{f.number(r.totals.present)}</Td>
               <Td numeric className="h-10 text-warning">{f.number(r.totals.half_day)}</Td>
               <Td numeric className="h-10 text-danger">{f.number(r.totals.absent)}</Td>
-              <Td numeric className="h-10 text-brand">{f.number(r.totals.leave)}</Td>
+              <Td numeric className="h-10 text-brand-text">{f.number(r.totals.leave)}</Td>
               <Td numeric className="h-10">{f.number(r.totals.overtime_hours)}</Td>
             </Tr>
           ))}

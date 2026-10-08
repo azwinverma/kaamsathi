@@ -165,7 +165,7 @@ function JobCard({ job }: { job: Job }) {
           <div className="flex flex-wrap items-center gap-2">
             <Link
               href={`/app/jobs/${job.id}`}
-              className="text-fg hover:text-brand text-base font-semibold hover:underline"
+              className="text-fg hover:text-brand-text text-base font-semibold hover:underline"
             >
               {job.title}
             </Link>

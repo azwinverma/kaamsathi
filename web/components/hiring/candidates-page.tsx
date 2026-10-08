@@ -262,7 +262,7 @@ function CandidatesInner() {
                           <Link
                             href={`/app/jobs/${a.job.id}`}
                             onClick={(e) => e.stopPropagation()}
-                            className="text-fg hover:text-brand hover:underline"
+                            className="text-fg hover:text-brand-text hover:underline"
                           >
                             {a.job.title}
                           </Link>

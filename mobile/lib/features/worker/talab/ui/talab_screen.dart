@@ -68,7 +68,7 @@ class PayslipTile extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     return Card(
       child: InkWell(
-        borderRadius: BorderRadius.circular(KsRadius.lg),
+        borderRadius: BorderRadius.circular(KsRadius.card),
         onTap: () => context.go(Routes.payslip(slip.id)),
         child: Padding(
           padding: const EdgeInsets.all(KsSpace.s4),

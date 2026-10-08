@@ -16,13 +16,13 @@ class SyncBanner extends ConsumerWidget {
     final l = context.l10n;
     final lang = context.lang;
     final s = ref.watch(syncControllerProvider);
-    final c = context.statusColors;
+    final c = context.ks;
     final ctrl = ref.read(syncControllerProvider.notifier);
 
     if (s.failedCount > 0) {
       return _Strip(
-        bg: c.dangerBg,
-        fg: c.dangerFg,
+        bg: c.errorSoft,
+        fg: c.errorText,
         icon: LucideIcons.triangleAlert,
         text: l.hajiriSyncFailed(localizeDigits('${s.failedCount}', lang)),
         action: TextButton(onPressed: ctrl.retryAllFailed, child: Text(l.hajiriRetrySync)),
@@ -31,8 +31,8 @@ class SyncBanner extends ConsumerWidget {
     if (s.pendingCount > 0) {
       return _Strip(
         key: const Key('pending_banner'),
-        bg: c.warningBg,
-        fg: c.warningFg,
+        bg: c.warningSoft,
+        fg: c.warningText,
         icon: s.online ? LucideIcons.cloudUpload : LucideIcons.wifiOff,
         text: s.syncing
             ? l.hajiriSyncing
@@ -46,7 +46,7 @@ class SyncBanner extends ConsumerWidget {
       );
     }
     if (!s.online) {
-      return _Strip(bg: c.neutralBg, fg: c.neutralFg, icon: LucideIcons.wifiOff, text: l.commonOffline);
+      return _Strip(bg: c.neutralSoft, fg: c.neutralText, icon: LucideIcons.wifiOff, text: l.commonOffline);
     }
     return const SizedBox.shrink();
   }
@@ -67,7 +67,7 @@ class _Strip extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: KsSpace.s3),
       padding: const EdgeInsets.symmetric(horizontal: KsSpace.s3, vertical: 2),
       constraints: const BoxConstraints(minHeight: 48),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(KsRadius.md)),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(KsRadius.dense)),
       child: Row(
         children: [
           Icon(icon, size: 18, color: fg),

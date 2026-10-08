@@ -102,7 +102,7 @@ function DrawerBody({ id, showJobLink }: { id: string; showJobLink: boolean }) {
           {showJobLink ? (
             <Link
               href={`/app/jobs/${app.job.id}`}
-              className="text-brand inline-flex items-center gap-1 text-sm hover:underline"
+              className="text-brand-text inline-flex items-center gap-1 text-sm hover:underline"
             >
               <Briefcase className="size-3.5" aria-hidden />
               {app.job.title}
@@ -258,7 +258,7 @@ function ProfileFacts({
       value: (
         <a
           href={`tel:+977${profile.phone}`}
-          className="text-brand tabular inline-flex items-center gap-1 hover:underline"
+          className="text-brand-text tabular inline-flex items-center gap-1 hover:underline"
         >
           <Phone className="size-3.5" aria-hidden />
           {f.phone(profile.phone)}

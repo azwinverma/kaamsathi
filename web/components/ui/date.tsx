@@ -181,7 +181,7 @@ export function BsCalendar({
               )}
             >
               <span className="leading-none font-medium">{f.digits(d)}</span>
-              <span className={cn("mt-0.5 text-[9px] leading-none", isSel ? "opacity-80" : "text-fg-subtle")}>
+              <span className={cn("mt-0.5 text-[9px] leading-none", isSel ? undefined : "text-fg-subtle")}>
                 {adDay}
               </span>
             </button>
@@ -191,7 +191,7 @@ export function BsCalendar({
       <div className="mt-2 flex justify-end border-t border-border pt-2">
         <button
           type="button"
-          className="rounded px-2 py-1 text-xs font-medium text-brand hover:bg-brand-subtle"
+          className="rounded px-2 py-1 text-xs font-medium text-brand-text hover:bg-brand-subtle"
           onClick={() => onSelect(today)}
         >
           {t("today")}

@@ -18,17 +18,18 @@ export function StatCard({
   icon?: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
   hint?: React.ReactNode;
   delta?: React.ReactNode;
-  tone?: "neutral" | "brand" | "success" | "warning" | "danger";
+  tone?: "neutral" | "brand" | "success" | "warning" | "danger" | "info";
   loading?: boolean;
   className?: string;
   href?: string;
 }) {
   const toneClass = {
     neutral: "bg-surface-muted text-fg-muted",
-    brand: "bg-brand-subtle text-brand",
+    brand: "bg-brand-subtle text-brand-text",
     success: "bg-success-subtle text-success",
     warning: "bg-warning-subtle text-warning",
     danger: "bg-danger-subtle text-danger",
+    info: "bg-info-subtle text-info",
   }[tone];
   const inner = (
     <>
@@ -52,7 +53,7 @@ export function StatCard({
     </>
   );
   const cls = cn(
-    "block rounded-lg border border-border bg-surface p-4 shadow-sm",
+    "block rounded-dense border border-border bg-surface p-4 shadow-sm",
     href && "transition-colors hover:border-border-strong hover:bg-surface-hover/40",
     className,
   );

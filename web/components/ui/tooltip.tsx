@@ -25,12 +25,12 @@ export function Tooltip({
           side={side}
           sideOffset={6}
           className={cn(
-            "animate-fade-in z-50 max-w-xs rounded-md bg-neutral-900 px-2.5 py-1.5 text-xs text-white shadow-md dark:bg-neutral-100 dark:text-neutral-900",
+            "animate-fade-in z-50 max-w-xs rounded-sm bg-fg px-2.5 py-1.5 text-xs text-surface shadow-floating",
             className,
           )}
         >
           {content}
-          <TooltipPrimitive.Arrow className="fill-neutral-900 dark:fill-neutral-100" />
+          <TooltipPrimitive.Arrow className="fill-fg" />
         </TooltipPrimitive.Content>
       </TooltipPrimitive.Portal>
     </TooltipPrimitive.Root>

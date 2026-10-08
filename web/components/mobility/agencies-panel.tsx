@@ -291,7 +291,7 @@ function ComplianceDialog({
                   href={DOFE_URL}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-brand inline-flex items-center gap-1 text-sm hover:underline"
+                  className="text-brand-text inline-flex items-center gap-1 text-sm hover:underline"
                 >
                   <ExternalLink className="size-4" aria-hidden />
                   {t("check_dofe")}

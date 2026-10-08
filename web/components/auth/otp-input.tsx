@@ -99,7 +99,7 @@ export function OtpInput({
             setAt(0, e.clipboardData.getData("text"));
           }}
           className={cn(
-            "size-12 rounded-lg border border-border-strong bg-surface text-center text-xl font-semibold text-fg shadow-sm tabular transition-colors focus-visible:border-primary-500 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-ring sm:size-14 sm:text-2xl",
+            "size-12 rounded-control border border-border-strong bg-surface text-center text-xl font-semibold text-fg shadow-sm tabular transition-colors focus-visible:border-ring focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-ring sm:size-14 sm:text-2xl",
             invalid && "border-danger",
             disabled && "opacity-60",
           )}

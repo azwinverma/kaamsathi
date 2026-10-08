@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/l10n/l10n.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/widgets/common.dart';
 import '../../../core/widgets/eco.dart';
@@ -177,7 +178,7 @@ class _NoteDialogState extends State<_NoteDialog> {
         TextButton(onPressed: () => Navigator.pop(context), child: Text(l.commonCancel)),
         FilledButton(
           key: const Key('decision_confirm'),
-          style: approve ? null : FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+          style: approve ? null : destructiveFilledStyle(context),
           onPressed: ok ? () => Navigator.pop(context, _c.text.trim()) : null,
           child: Text(approve ? l.corrApprove : l.corrReject),
         ),

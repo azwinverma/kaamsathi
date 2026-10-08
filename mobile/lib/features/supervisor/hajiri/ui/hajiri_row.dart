@@ -50,7 +50,7 @@ class HajiriRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final t = Theme.of(context).textTheme;
-    final c = context.statusColors;
+    final c = context.ks;
     final showOt = status == AttendanceStatus.present || status == AttendanceStatus.halfDay;
     return Card(
       child: Padding(
@@ -70,7 +70,7 @@ class HajiriRow extends StatelessWidget {
                       if (designation != null && designation!.isNotEmpty)
                         Text(
                           designation!,
-                          style: t.bodyMedium?.copyWith(color: c.textSecondary),
+                          style: t.bodyMedium?.copyWith(color: c.textMuted),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -101,7 +101,7 @@ class HajiriRow extends StatelessWidget {
               const SizedBox(height: KsSpace.s2),
               Row(
                 children: [
-                  Icon(LucideIcons.timer, size: 18, color: c.textSecondary),
+                  Icon(LucideIcons.timer, size: 18, color: c.textMuted),
                   const SizedBox(width: KsSpace.s2),
                   Expanded(
                     child: Text(
@@ -134,17 +134,17 @@ class HajiriRow extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(KsSpace.s2),
                 decoration: BoxDecoration(
-                  color: c.dangerBg,
-                  borderRadius: BorderRadius.circular(KsRadius.md),
+                  color: c.errorSoft,
+                  borderRadius: BorderRadius.circular(KsRadius.control),
                 ),
                 child: Row(
                   children: [
-                    Icon(LucideIcons.circleAlert, size: 18, color: c.dangerFg),
+                    Icon(LucideIcons.circleAlert, size: 18, color: c.errorText),
                     const SizedBox(width: KsSpace.s2),
                     Expanded(
                       child: Text(
                         errorMessage?.isNotEmpty == true ? errorMessage! : l.commonErrorGeneric,
-                        style: t.bodyMedium?.copyWith(color: c.dangerFg),
+                        style: t.bodyMedium?.copyWith(color: c.errorText),
                       ),
                     ),
                     if (onRetry != null)
@@ -180,7 +180,7 @@ class _StatusButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final (bg, fg) = attendanceColors(context, status);
-    final border = context.statusColors.border;
+    final border = context.ks.border;
     return Semantics(
       button: true,
       selected: selected,
@@ -189,11 +189,11 @@ class _StatusButton extends StatelessWidget {
       child: Material(
         color: selected ? bg : Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(KsRadius.md),
+          borderRadius: BorderRadius.circular(KsRadius.control),
           side: BorderSide(color: selected ? fg : border, width: selected ? 2 : 1),
         ),
         child: InkWell(
-          borderRadius: BorderRadius.circular(KsRadius.md),
+          borderRadius: BorderRadius.circular(KsRadius.control),
           onTap: enabled ? onTap : null,
           child: SizedBox(
             height: 48,
@@ -201,7 +201,7 @@ class _StatusButton extends StatelessWidget {
               child: Text(
                 attendanceShort(l, status),
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: selected ? fg : context.statusColors.textSecondary,
+                  color: selected ? fg : context.ks.textMuted,
                   fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                 ),
               ),
@@ -219,15 +219,15 @@ class _SyncIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.statusColors;
+    final c = context.ks;
     final l = context.l10n;
     return switch (state) {
       null => const SizedBox.shrink(),
       QueueState.pending || QueueState.syncing => Tooltip(
         message: l.hajiriNotSynced,
-        child: Icon(LucideIcons.cloudUpload, size: 20, color: c.warningFg, key: const Key('sync_pending')),
+        child: Icon(LucideIcons.cloudUpload, size: 20, color: c.warningText, key: const Key('sync_pending')),
       ),
-      QueueState.error => Icon(LucideIcons.triangleAlert, size: 20, color: c.dangerFg),
+      QueueState.error => Icon(LucideIcons.triangleAlert, size: 20, color: c.errorText),
     };
   }
 }

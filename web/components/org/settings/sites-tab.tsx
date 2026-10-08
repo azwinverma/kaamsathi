@@ -219,7 +219,7 @@ function QrDialog({ site, onClose }: { site: Site; onClose: () => void }) {
           <DialogBody className="flex flex-col items-center gap-3">
             <div className="flex size-60 items-center justify-center rounded-lg border border-border bg-white p-2">
               {imgError ? (
-                <p className="px-4 text-center text-sm text-neutral-500">{t("settings.qr_error")}</p>
+                <p className="px-4 text-center text-sm text-hero">{t("settings.qr_error")}</p>
               ) : (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img

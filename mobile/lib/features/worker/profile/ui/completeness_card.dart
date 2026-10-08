@@ -8,6 +8,7 @@ import '../../../../core/l10n/l10n.dart';
 import '../../../../core/router/router.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
+import '../../../../core/widgets/motion.dart';
 import '../../data/worker_models.dart';
 import '../../data/worker_repository.dart';
 
@@ -92,11 +93,14 @@ class CompletenessView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(999),
-            child: LinearProgressIndicator(
+            borderRadius: BorderRadius.circular(KsRadius.pill),
+            child: KsAnimatedFraction(
               value: c.percent / 100,
-              minHeight: 8,
-              backgroundColor: context.statusColors.neutralBg,
+              builder: (context, v) => LinearProgressIndicator(
+                value: v,
+                minHeight: 8,
+                backgroundColor: context.ks.neutralSoft,
+              ),
             ),
           ),
           const SizedBox(height: KsSpace.s2),

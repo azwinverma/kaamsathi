@@ -5,6 +5,7 @@ import 'package:open_filex/open_filex.dart';
 
 import '../../../../core/format.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/eco.dart';
@@ -218,9 +219,9 @@ class _DeletionDialogState extends State<_DeletionDialog> {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final c = context.statusColors;
+    final c = context.ks;
     return AlertDialog(
-      icon: Icon(LucideIcons.triangleAlert, color: c.dangerFg),
+      icon: Icon(LucideIcons.triangleAlert, color: c.errorText),
       title: Text(l.privacyDeletion),
       content: SingleChildScrollView(
         child: Column(
@@ -229,8 +230,8 @@ class _DeletionDialogState extends State<_DeletionDialog> {
           children: [
             Container(
               padding: const EdgeInsets.all(KsSpace.s3),
-              decoration: BoxDecoration(color: c.dangerBg, borderRadius: BorderRadius.circular(KsRadius.md)),
-              child: Text(l.privacyDeletionWarning, style: TextStyle(color: c.dangerFg)),
+              decoration: BoxDecoration(color: c.errorSoft, borderRadius: BorderRadius.circular(KsRadius.dense)),
+              child: Text(l.privacyDeletionWarning, style: TextStyle(color: c.errorText)),
             ),
             const SizedBox(height: KsSpace.s3),
             TextField(controller: _reason, decoration: InputDecoration(labelText: l.ecoOptional(l.privacyReason))),
@@ -248,7 +249,7 @@ class _DeletionDialogState extends State<_DeletionDialog> {
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text(l.commonCancel)),
         FilledButton(
-          style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+          style: destructiveFilledStyle(context),
           onPressed: _understood ? () => Navigator.pop(context, _reason.text.trim()) : null,
           child: Text(l.privacyDeletion),
         ),

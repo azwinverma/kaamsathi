@@ -62,7 +62,7 @@ class _MyShiftsScreenState extends ConsumerState<MyShiftsScreen> {
     final l = context.l10n;
     final lang = context.lang;
     final t = Theme.of(context).textTheme;
-    final c = context.statusColors;
+    final c = context.ks;
     final value = ref.watch(myRosterProvider(_week));
     final today = nepalToday();
     return Scaffold(
@@ -107,7 +107,7 @@ class _MyShiftsScreenState extends ConsumerState<MyShiftsScreen> {
                               shape:
                                   isToday
                                       ? RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(KsRadius.lg),
+                                        borderRadius: BorderRadius.circular(KsRadius.card),
                                         side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
                                       )
                                       : null,
@@ -119,7 +119,7 @@ class _MyShiftsScreenState extends ConsumerState<MyShiftsScreen> {
                                     children: [
                                       Text(
                                         weekdayName(d, lang, short: true),
-                                        style: t.labelSmall?.copyWith(color: c.textSecondary),
+                                        style: t.labelSmall?.copyWith(color: c.textMuted),
                                       ),
                                       Text(localizeDigits('${BsDate.fromAd(d).day}', lang), style: t.titleMedium),
                                     ],

@@ -12,8 +12,10 @@ import '../api/cached.dart';
 import '../format.dart';
 import '../l10n/l10n.dart';
 import '../providers.dart';
+import '../theme/app_theme.dart';
 import '../theme/tokens.dart';
 import 'common.dart';
+import 'motion.dart';
 
 /// Like [AsyncBody], but an endpoint that is not switched on yet (404/501)
 /// shows a calm "coming soon" state instead of an error, and the whole body
@@ -55,19 +57,19 @@ class CachedNotice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.statusColors;
+    final c = context.ks;
     return Container(
       margin: const EdgeInsets.only(bottom: KsSpace.s3),
       padding: const EdgeInsets.symmetric(horizontal: KsSpace.s3, vertical: KsSpace.s2),
-      decoration: BoxDecoration(color: c.warningBg, borderRadius: BorderRadius.circular(KsRadius.md)),
+      decoration: BoxDecoration(color: c.warningSoft, borderRadius: BorderRadius.circular(KsRadius.dense)),
       child: Row(
         children: [
-          Icon(LucideIcons.wifiOff, size: 16, color: c.warningFg),
+          Icon(LucideIcons.wifiOff, size: 16, color: c.warningText),
           const SizedBox(width: KsSpace.s2),
           Expanded(
             child: Text(
               context.l10n.ecoOfflineCached,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: c.warningFg),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: c.warningText),
             ),
           ),
         ],
@@ -86,31 +88,35 @@ class ScoreRing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.statusColors;
+    final c = context.ks;
     final s = score;
     final color =
         s == null
-            ? c.neutralFg
+            ? c.neutralText
             : s >= 75
-            ? c.successFg
+            ? c.successText
             : s >= 50
-            ? c.warningFg
-            : c.dangerFg;
+            ? c.warningText
+            : c.errorText;
     return SizedBox(
       width: size,
       height: size,
-      child: CustomPaint(
-        painter: _RingPainter(fraction: (s ?? 0) / 100, color: color, track: c.neutralBg),
-        child: Center(
-          child: Text(
-            s == null ? '–' : localizeDigits('$s', context.lang),
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w700,
-              fontFeatures: const [FontFeature.tabularFigures()],
+      child: KsAnimatedFraction(
+        value: (s ?? 0) / 100,
+        builder:
+            (context, f) => CustomPaint(
+              painter: _RingPainter(fraction: f, color: color, track: c.neutralSoft),
+              child: Center(
+                child: Text(
+                  s == null ? '–' : localizeDigits('$s', context.lang),
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.w700,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
       ),
     );
   }
@@ -157,7 +163,7 @@ class FractionBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
-    final c = context.statusColors;
+    final c = context.ks;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Column(
@@ -174,8 +180,11 @@ class FractionBar extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           ClipRRect(
-            borderRadius: BorderRadius.circular(999),
-            child: LinearProgressIndicator(value: value.clamp(0, 1), minHeight: 8, backgroundColor: c.neutralBg),
+            borderRadius: BorderRadius.circular(KsRadius.pill),
+            child: KsAnimatedFraction(
+              value: value,
+              builder: (context, v) => LinearProgressIndicator(value: v, minHeight: 8, backgroundColor: c.neutralSoft),
+            ),
           ),
         ],
       ),
@@ -206,7 +215,7 @@ class StarInput extends StatelessWidget {
               icon: Icon(
                 LucideIcons.star,
                 size: 30,
-                color: i <= value ? KsColors.warning600 : context.statusColors.border,
+                color: i <= value ? context.ks.ratingStar : context.ks.border,
                 fill: i <= value ? 1 : 0,
               ),
             ),
@@ -225,10 +234,7 @@ class GroupLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(4, KsSpace.s4, 4, KsSpace.s2),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(color: context.statusColors.textSecondary),
-      ),
+      child: Text(text, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: context.ks.textMuted)),
     );
   }
 }
@@ -308,7 +314,7 @@ Future<bool> confirmDialog(
           actions: [
             TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.commonCancel)),
             FilledButton(
-              style: danger ? FilledButton.styleFrom(backgroundColor: Theme.of(ctx).colorScheme.error) : null,
+              style: danger ? destructiveFilledStyle(ctx) : null,
               onPressed: () => Navigator.pop(ctx, true),
               child: Text(confirmLabel),
             ),
@@ -344,7 +350,7 @@ class InfoNote extends StatelessWidget {
     final (bg, fg) = toneColors(context, tone);
     return Container(
       padding: const EdgeInsets.all(KsSpace.s3),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(KsRadius.md)),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(KsRadius.dense)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

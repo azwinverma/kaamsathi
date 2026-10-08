@@ -440,7 +440,7 @@ function MatchRow({
                 {t("term.placements")}: {f.digits(m.worker.placements_count)}
               </span>
             ) : null}
-            <Link href={`/ops/workers/${m.worker.id}`} className="text-brand hover:underline">
+            <Link href={`/ops/workers/${m.worker.id}`} className="text-brand-text hover:underline">
               {t("common.view")}
             </Link>
           </span>

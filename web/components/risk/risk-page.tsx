@@ -225,7 +225,7 @@ function Matches({ f }: { f: RiskFlag }) {
       {people.map((p, i) => (
         <React.Fragment key={p.worker_id}>
           {i > 0 ? ", " : null}
-          <Link href={`/ops/workers/${p.worker_id}`} className="text-brand hover:underline" onClick={(e) => e.stopPropagation()}>
+          <Link href={`/ops/workers/${p.worker_id}`} className="text-brand-text hover:underline" onClick={(e) => e.stopPropagation()}>
             {p.full_name}
           </Link>
         </React.Fragment>
@@ -254,7 +254,7 @@ function FlagRow({ f, onResolve }: { f: RiskFlag; onResolve: () => void }) {
       <Td className="py-2">
         <span className="block text-xs text-fg-muted">{f.subject_type_label}</span>
         {f.subject.link ? (
-          <Link href={f.subject.link} className="font-medium text-brand hover:underline">
+          <Link href={f.subject.link} className="font-medium text-brand-text hover:underline">
             {f.subject.label ?? f.subject_id}
           </Link>
         ) : (

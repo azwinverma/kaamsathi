@@ -124,7 +124,7 @@ export async function PartnerApiDocs() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <header className="mb-8 space-y-3">
-        <p className="text-sm font-medium text-brand">{t("eyebrow")}</p>
+        <p className="text-sm font-medium text-brand-text">{t("eyebrow")}</p>
         <h1 className="text-3xl font-semibold text-fg">{t("title")}</h1>
         <p className="max-w-3xl text-base text-fg-body">{t("intro")}</p>
         <ul className="grid gap-2 pt-2 text-sm text-fg-body sm:grid-cols-3">
@@ -133,7 +133,7 @@ export async function PartnerApiDocs() {
             {t("rule_consent")}
           </li>
           <li className="flex items-start gap-2 rounded-lg border border-border bg-surface p-3">
-            <Lock className="mt-0.5 size-4 shrink-0 text-brand" aria-hidden />
+            <Lock className="mt-0.5 size-4 shrink-0 text-brand-text" aria-hidden />
             {t("rule_funds")}
           </li>
           <li className="flex items-start gap-2 rounded-lg border border-border bg-surface p-3">
@@ -148,7 +148,7 @@ export async function PartnerApiDocs() {
           <ol className="space-y-1 text-sm">
             {toc.map(([id, label]) => (
               <li key={id}>
-                <a href={`#${id}`} className="text-fg-body hover:text-brand">
+                <a href={`#${id}`} className="text-fg-body hover:text-brand-text">
                   {label}
                 </a>
               </li>
@@ -241,7 +241,7 @@ export async function PartnerApiDocs() {
 
           <Section id="webhooks" title={t("toc_webhooks")}>
             <p className="flex items-start gap-2">
-              <Webhook className="mt-0.5 size-4 shrink-0 text-brand" aria-hidden />
+              <Webhook className="mt-0.5 size-4 shrink-0 text-brand-text" aria-hidden />
               <span>
                 When a worker applies to one of your offers we POST a <code>referral.created</code> event to your{" "}
                 <code>webhook_url</code> (timeout 5 s, up to 3 retries). Respond with any 2xx. The body is signed with your

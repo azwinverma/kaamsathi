@@ -185,7 +185,7 @@ function SidebarContents({
                       )}
                     >
                       <Icon
-                        className={cn("size-[18px] shrink-0 stroke-[1.75]", active ? "text-brand" : "")}
+                        className={cn("size-[18px] shrink-0 stroke-[1.75]", active ? "text-brand-text" : "")}
                         aria-hidden
                       />
                       {!collapsed ? <span className="truncate">{t(item.label)}</span> : (
@@ -268,7 +268,7 @@ function OrgSwitcher({ collapsed }: { collapsed: boolean }) {
               <span className="block text-xs text-fg-muted">{t(`role.${m.role}`)}</span>
             </span>
             {m.organization.id === membership?.organization.id ? (
-              <Check className="!text-brand" aria-hidden />
+              <Check className="!text-brand-text" aria-hidden />
             ) : null}
           </DropdownMenuItem>
         ))}

@@ -20,10 +20,10 @@ export function DialogContent({
 }) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="animate-fade-in fixed inset-0 z-50 bg-neutral-900/50 backdrop-blur-[2px]" />
+      <DialogPrimitive.Overlay className="animate-fade-in fixed inset-0 z-50 bg-scrim/50 backdrop-blur-[2px]" />
       <DialogPrimitive.Content
         className={cn(
-          "animate-pop-in fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-32px)] w-[calc(100vw-32px)] -translate-x-1/2 -translate-y-1/2 flex-col rounded-xl border border-border bg-surface shadow-lg focus:outline-none",
+          "animate-pop-in fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-32px)] w-[calc(100vw-32px)] -translate-x-1/2 -translate-y-1/2 flex-col rounded-sheet border border-border bg-surface shadow-floating focus:outline-none",
           size === "sm" && "max-w-sm",
           size === "md" && "max-w-lg",
           size === "lg" && "max-w-2xl",
@@ -96,10 +96,10 @@ export function SheetContent({
 }) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="animate-fade-in fixed inset-0 z-50 bg-neutral-900/40" />
+      <DialogPrimitive.Overlay className="animate-fade-in fixed inset-0 z-50 bg-scrim/40" />
       <DialogPrimitive.Content
         className={cn(
-          "fixed top-0 bottom-0 z-50 flex w-full flex-col border-border bg-surface shadow-lg focus:outline-none",
+          "fixed top-0 bottom-0 z-50 flex w-full flex-col border-border bg-surface shadow-floating focus:outline-none",
           side === "right"
             ? "animate-slide-in-right right-0 max-w-xl border-l"
             : "animate-slide-in-left left-0 max-w-[280px] border-r",

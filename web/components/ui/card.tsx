@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("rounded-lg border border-border bg-surface shadow-sm", className)}
+      className={cn("rounded-card border border-border bg-surface shadow-card", className)}
       {...props}
     />
   );
@@ -42,7 +42,7 @@ export function CardFooter({ className, ...props }: React.HTMLAttributes<HTMLDiv
   return (
     <div
       className={cn(
-        "flex items-center justify-end gap-2 rounded-b-lg border-t border-border bg-surface-muted/60 px-5 py-3",
+        "flex items-center justify-end gap-2 rounded-b-card border-t border-border bg-surface-muted/60 px-5 py-3",
         className,
       )}
       {...props}

@@ -136,12 +136,12 @@ export function OpsRatingsPage() {
                       )}
                     </Td>
                     <Td className="max-md:hidden">
-                      <Link href={`/ops/organizations/${r.organization.id}`} className="text-brand hover:underline">
+                      <Link href={`/ops/organizations/${r.organization.id}`} className="text-brand-text hover:underline">
                         {r.organization.name}
                       </Link>
                     </Td>
                     <Td className="max-md:hidden">
-                      <Link href={`/ops/workers/${r.worker.id}`} className="text-brand hover:underline">
+                      <Link href={`/ops/workers/${r.worker.id}`} className="text-brand-text hover:underline">
                         {r.worker.full_name}
                       </Link>
                     </Td>

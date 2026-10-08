@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/l10n/l10n.dart';
 import '../../../core/router/router.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/widgets/common.dart';
 import 'support_data.dart';
@@ -22,19 +23,19 @@ class DangerCallout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.statusColors;
+    final c = context.ks;
     return Container(
       key: const Key('safety_danger'),
       padding: const EdgeInsets.all(KsSpace.s4),
-      decoration: BoxDecoration(color: c.dangerBg, borderRadius: BorderRadius.circular(KsRadius.lg)),
+      decoration: BoxDecoration(color: c.errorSoft, borderRadius: BorderRadius.circular(KsRadius.card)),
       child: Row(
         children: [
-          Icon(LucideIcons.siren, color: c.dangerFg, size: 28),
+          Icon(LucideIcons.siren, color: c.errorText, size: 28),
           const SizedBox(width: KsSpace.s3),
           Expanded(
             child: Text(
               context.l10n.safetyDanger,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(color: c.dangerFg, fontWeight: FontWeight.w700),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(color: c.errorText, fontWeight: FontWeight.w700),
             ),
           ),
         ],
@@ -100,7 +101,7 @@ class _SafetyReportScreenState extends ConsumerState<SafetyReportScreen> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final t = Theme.of(context).textTheme;
-    final c = context.statusColors;
+    final c = context.ks;
     return Scaffold(
       appBar: AppBar(title: Text(l.safetyTitle)),
       body: Form(
@@ -113,13 +114,13 @@ class _SafetyReportScreenState extends ConsumerState<SafetyReportScreen> {
             Container(
               key: const Key('safety_confidential'),
               padding: const EdgeInsets.all(KsSpace.s3),
-              decoration: BoxDecoration(color: c.infoBg, borderRadius: BorderRadius.circular(KsRadius.md)),
+              decoration: BoxDecoration(color: c.infoSoft, borderRadius: BorderRadius.circular(KsRadius.dense)),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(LucideIcons.lock, size: 18, color: c.infoFg),
+                  Icon(LucideIcons.lock, size: 18, color: c.infoText),
                   const SizedBox(width: KsSpace.s2),
-                  Expanded(child: Text(l.safetyConfidential, style: t.bodyMedium?.copyWith(color: c.infoFg))),
+                  Expanded(child: Text(l.safetyConfidential, style: t.bodyMedium?.copyWith(color: c.infoText))),
                 ],
               ),
             ),
@@ -166,7 +167,7 @@ class _SafetyReportScreenState extends ConsumerState<SafetyReportScreen> {
             const SizedBox(height: KsSpace.s4),
             FilledButton(
               key: const Key('safety_submit'),
-              style: _emergency ? FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error) : null,
+              style: _emergency ? destructiveFilledStyle(context) : null,
               onPressed: _busy ? null : _submit,
               child:
                   _busy

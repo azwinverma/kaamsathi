@@ -30,7 +30,7 @@ class TimesheetDetails extends StatelessWidget {
     final l = context.l10n;
     final lang = context.lang;
     final t = Theme.of(context).textTheme;
-    final c = context.statusColors;
+    final c = context.ks;
     final s = sheet;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -63,12 +63,12 @@ class TimesheetDetails extends StatelessWidget {
                         width: 64,
                         child: Text(
                           '${weekdayName(d, lang, short: true)} ${localizeDigits('${BsDate.fromAd(d).day}', lang)}',
-                          style: t.bodyMedium?.copyWith(color: c.textSecondary),
+                          style: t.bodyMedium?.copyWith(color: c.textMuted),
                         ),
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(999)),
+                        decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(KsRadius.pill)),
                         child: Text(attendanceShort(l, day?.status), style: t.labelSmall?.copyWith(color: fg)),
                       ),
                       const SizedBox(width: KsSpace.s2),

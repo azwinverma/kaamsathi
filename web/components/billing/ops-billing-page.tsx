@@ -55,7 +55,7 @@ export function OpsBillingPage() {
     <>
       <PageHeader title={t("title")} description={t("subtitle")} />
       <p className="mb-4 flex items-start gap-2 rounded-md border border-border bg-surface-muted px-3 py-2 text-xs text-fg-muted">
-        <Info className="mt-px size-4 shrink-0 text-brand" aria-hidden />
+        <Info className="mt-px size-4 shrink-0 text-brand-text" aria-hidden />
         {t("rules_note")}
       </p>
       <Tabs defaultValue="invoices">
@@ -303,7 +303,7 @@ function InvoiceDialog({ id, onClose }: { id: string | null; onClose: () => void
               href={proxyHref(`/ops/billing/invoices/${inv.id}/pdf`)}
               target="_blank"
               rel="noopener"
-              className="inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline sm:me-auto"
+              className="inline-flex items-center gap-1 text-sm font-medium text-brand-text hover:underline sm:me-auto"
             >
               <FileText className="size-4" aria-hidden />
               {t("pdf")}

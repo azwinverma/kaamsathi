@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -11,6 +13,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Fonts are bundled under assets/google_fonts so the app looks right offline.
   GoogleFonts.config.allowRuntimeFetching = false;
+  LicenseRegistry.addLicense(() async* {
+    final ofl = await rootBundle.loadString('assets/fonts/OFL.txt');
+    yield LicenseEntryWithLineBreaks(['Noto Sans Devanagari'], ofl);
+  });
   final prefs = await Prefs.load();
   final db = await LocalDb.open();
   runApp(

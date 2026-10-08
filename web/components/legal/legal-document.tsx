@@ -90,7 +90,7 @@ async function ContactCard() {
       icon: Mail,
       label: t("contact.email_label"),
       value: (
-        <a href={`mailto:${t("contact.email")}`} className="text-brand hover:underline">
+        <a href={`mailto:${t("contact.email")}`} className="text-brand-text hover:underline">
           {t("contact.email")}
         </a>
       ),
@@ -203,7 +203,7 @@ export async function LegalDocument({ doc }: { doc: LegalDoc }) {
             </div>
 
             <div className="border-border mt-10 flex flex-wrap gap-4 border-t pt-6 text-sm">
-              <Link href={`/${other}`} className="text-brand font-medium hover:underline">
+              <Link href={`/${other}`} className="text-brand-text font-medium hover:underline">
                 {t(`${other}_link`)}
               </Link>
               <Link href="/" className="text-fg-muted hover:text-fg">

@@ -7,6 +7,7 @@ import '../../../../core/api/cached.dart';
 import '../../../../core/format.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/router/router.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/eco.dart';
@@ -62,20 +63,20 @@ class _NoLendBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.statusColors;
+    final c = context.ks;
     return Container(
       margin: const EdgeInsets.only(bottom: KsSpace.s3),
       padding: const EdgeInsets.all(KsSpace.s3),
-      decoration: BoxDecoration(color: c.infoBg, borderRadius: BorderRadius.circular(KsRadius.md)),
+      decoration: BoxDecoration(color: c.infoSoft, borderRadius: BorderRadius.circular(KsRadius.dense)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(LucideIcons.info, color: c.infoFg, size: 18),
+          Icon(LucideIcons.info, color: c.infoText, size: 18),
           const SizedBox(width: KsSpace.s2),
           Expanded(
             child: Text(
               context.l10n.moneyNoLend,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: c.infoFg),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: c.infoText),
             ),
           ),
         ],
@@ -105,7 +106,7 @@ class _Earnings extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: t.bodySmall?.copyWith(color: context.statusColors.textSecondary)),
+                Text(label, style: t.bodySmall?.copyWith(color: context.ks.textMuted)),
                 Text(value, style: t.titleLarge?.copyWith(fontFeatures: const [FontFeature.tabularFigures()])),
                 if (sub != null) Text(sub, style: t.bodySmall),
               ],
@@ -171,7 +172,7 @@ class MonthlyBars extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final lang = context.lang;
-    final c = context.statusColors;
+    final c = context.ks;
     final t = Theme.of(context).textTheme;
     final shown = months.length > 12 ? months.sublist(months.length - 12) : months;
     final values = [for (final m in shown) (parsePaisa(m.net) ?? 0) / 100];
@@ -197,7 +198,7 @@ class MonthlyBars extends StatelessWidget {
                           height: max <= 0 ? 2 : (values[i] / max * h).clamp(2, h),
                           margin: const EdgeInsets.symmetric(horizontal: 3),
                           decoration: BoxDecoration(
-                            color: shown[i].paid ? c.successFg : c.neutralFg.withValues(alpha: 0.4),
+                            color: shown[i].paid ? c.successText : c.neutralText.withValues(alpha: 0.4),
                             borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
                           ),
                         ),
@@ -219,8 +220,8 @@ class MonthlyBars extends StatelessWidget {
         Wrap(
           spacing: KsSpace.s4,
           children: [
-            _Legend(color: c.successFg, label: l.finPaid),
-            if (shown.any((m) => !m.paid)) _Legend(color: c.neutralFg.withValues(alpha: 0.4), label: l.finUnpaid),
+            _Legend(color: c.successText, label: l.finPaid),
+            if (shown.any((m) => !m.paid)) _Legend(color: c.neutralText.withValues(alpha: 0.4), label: l.finUnpaid),
           ],
         ),
       ],
@@ -456,7 +457,7 @@ class _Sharing extends ConsumerWidget {
                           Align(
                             alignment: Alignment.centerRight,
                             child: TextButton.icon(
-                              style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error),
+                              style: destructiveTextStyle(context),
                               onPressed: () => _revoke(context, ref, g),
                               icon: const Icon(LucideIcons.ban, size: 18),
                               label: Text(l.ecoRevoke),

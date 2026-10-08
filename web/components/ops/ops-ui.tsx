@@ -113,7 +113,7 @@ export function DocImage({
                 href={src}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1 text-sm text-brand hover:underline"
+                className="inline-flex items-center gap-1 text-sm text-brand-text hover:underline"
               >
                 <ExternalLink className="size-4" aria-hidden />
                 {t("open_original")}

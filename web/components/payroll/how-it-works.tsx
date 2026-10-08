@@ -21,7 +21,7 @@ export function HowPayrollWorks({ className }: { className?: string }) {
       <ol className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {STEPS.map(({ key, icon: Icon }, i) => (
           <li key={key} className="flex gap-3">
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-subtle text-brand">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-subtle text-brand-text">
               <Icon className="size-4" aria-hidden />
             </span>
             <div className="min-w-0 space-y-0.5">

@@ -20,7 +20,7 @@ export function Forbidden() {
       <Logo href="/" name={t("app.name")} />
       <h1 className="text-xl font-semibold">{t("errors.forbidden_title")}</h1>
       <p className="max-w-sm text-sm text-fg-muted">{t("errors.forbidden_body")}</p>
-      <a href="/app" className="text-sm font-medium text-brand hover:underline">
+      <a href="/app" className="text-sm font-medium text-brand-text hover:underline">
         {t("nav.employer_portal")}
       </a>
     </div>

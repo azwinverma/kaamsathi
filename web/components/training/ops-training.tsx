@@ -1257,7 +1257,7 @@ function ShortagesTab({
         />
         <div className="text-fg-muted flex items-center gap-4 text-xs sm:ml-auto">
           <span className="inline-flex items-center gap-1.5">
-            <span className="bg-accent size-2.5 rounded-sm" aria-hidden />
+            <span className="bg-coral size-2.5 rounded-sm" aria-hidden />
             {t("legend_demand")}
           </span>
           <span className="inline-flex items-center gap-1.5">
@@ -1326,7 +1326,7 @@ function ShortageBar({
       >
         <div className="flex items-center gap-2">
           <div className="bg-surface-hover h-2.5 flex-1 overflow-hidden rounded-full">
-            <div className="bg-accent h-full rounded-full" style={{ width: pct(r.demand) }} />
+            <div className="bg-coral h-full rounded-full" style={{ width: pct(r.demand) }} />
           </div>
           <span className="text-fg-muted tabular w-10 text-right text-xs">
             {f.digits(r.demand)}

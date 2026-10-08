@@ -144,7 +144,7 @@ class _TimesheetsScreenState extends ConsumerState<TimesheetsScreen> {
                                   ].join(' · '),
                                 ),
                                 leading: s.overCap
-                                    ? Icon(LucideIcons.triangleAlert, color: context.statusColors.warningFg)
+                                    ? Icon(LucideIcons.triangleAlert, color: context.ks.warningText)
                                     : null,
                                 trailing: StatusBadge(label: label, tone: tone),
                                 childrenPadding: const EdgeInsets.fromLTRB(KsSpace.s4, 0, KsSpace.s4, KsSpace.s4),

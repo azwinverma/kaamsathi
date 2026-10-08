@@ -90,7 +90,7 @@ class SupportScreen extends ConsumerWidget {
                   for (final c in items)
                     Card(
                       child: InkWell(
-                        borderRadius: BorderRadius.circular(KsRadius.lg),
+                        borderRadius: BorderRadius.circular(KsRadius.card),
                         onTap: () => context.push(Routes.helpCase(c.id)),
                         child: Padding(
                           padding: const EdgeInsets.all(KsSpace.s4),
@@ -389,7 +389,7 @@ class _Bubble extends StatelessWidget {
     final lang = context.lang;
     final t = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
-    final c = context.statusColors;
+    final c = context.ks;
     final mine = message.mine;
     final who =
         mine
@@ -405,20 +405,20 @@ class _Bubble extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: KsSpace.s2),
           padding: const EdgeInsets.all(KsSpace.s3),
           decoration: BoxDecoration(
-            color: mine ? scheme.primaryContainer : c.neutralBg,
-            borderRadius: BorderRadius.circular(KsRadius.lg),
+            color: mine ? scheme.primaryContainer : c.neutralSoft,
+            borderRadius: BorderRadius.circular(KsRadius.card),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(who, style: t.labelSmall?.copyWith(color: c.textSecondary)),
+              Text(who, style: t.labelSmall?.copyWith(color: c.textMuted)),
               const SizedBox(height: 2),
               Text(message.body, style: t.bodyMedium),
               if (message.createdAt != null) ...[
                 const SizedBox(height: 2),
                 Text(
                   '${formatBsDateTime(message.createdAt, lang)} · ${formatTime(message.createdAt!.toLocal(), lang)}',
-                  style: t.bodySmall?.copyWith(color: c.textSecondary),
+                  style: t.bodySmall?.copyWith(color: c.textMuted),
                 ),
               ],
             ],

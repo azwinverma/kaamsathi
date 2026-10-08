@@ -51,7 +51,7 @@ export function NotificationBell() {
             <Bell className="size-5" aria-hidden />
             {count > 0 ? (
               <span
-                className="absolute top-1.5 right-1.5 inline-flex min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] leading-4 font-semibold text-white tabular"
+                className="absolute top-1.5 right-1.5 inline-flex min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] leading-4 font-semibold text-fg-inverse tabular"
                 aria-hidden
               >
                 {count > 99 ? "99+" : f.digits(count)}

@@ -147,7 +147,7 @@ export function ContractPanel({ employmentId, active }: { employmentId: string; 
                         <span className="flex items-center gap-2">
                           <AcceptedBadge contract={v} />
                           <a
-                            className="text-brand text-xs hover:underline"
+                            className="text-brand-text text-xs hover:underline"
                             href={pdfHref(v.version)}
                             target="_blank"
                             rel="noreferrer"

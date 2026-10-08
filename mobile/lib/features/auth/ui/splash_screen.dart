@@ -35,32 +35,32 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: KsColors.primary600,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       body: SafeArea(
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(KsRadius.xl),
+                borderRadius: BorderRadius.circular(KsRadius.card),
                 child: Image.asset('assets/logo.png', width: 96, height: 96),
               ),
               const SizedBox(height: KsSpace.s4),
               Text(
                 'KaamSathi · कामसाथी',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.white),
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
               ),
               const SizedBox(height: KsSpace.s2),
               Text(
                 context.l10n.appTagline,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: KsColors.primary100),
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
               ),
               const SizedBox(height: KsSpace.s8),
               if (_error == null)
-                const SizedBox(
+                SizedBox(
                   width: 28,
                   height: 28,
-                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
+                  child: CircularProgressIndicator(color: Theme.of(context).colorScheme.onPrimary, strokeWidth: 3),
                 )
               else
                 Card(

@@ -3,10 +3,10 @@ import { AlertTriangle, CheckCircle2, Info, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const TONES = {
-  info: { cls: "border-brand/30 bg-brand-subtle text-brand-subtle-fg", Icon: Info },
-  success: { cls: "border-success/30 bg-success-subtle text-success", Icon: CheckCircle2 },
-  warning: { cls: "border-warning/40 bg-warning-subtle text-warning", Icon: AlertTriangle },
-  danger: { cls: "border-danger/30 bg-danger-subtle text-danger", Icon: ShieldAlert },
+  info: { cls: "border-info/30 bg-info-soft text-info", Icon: Info },
+  success: { cls: "border-success/30 bg-success-soft text-success", Icon: CheckCircle2 },
+  warning: { cls: "border-warning/40 bg-warning-soft text-warning", Icon: AlertTriangle },
+  danger: { cls: "border-danger/30 bg-danger-soft text-danger", Icon: ShieldAlert },
 } as const;
 
 /** Inline alert box used across the security pages. */
@@ -30,7 +30,7 @@ export function Notice({
     <div
       role={role}
       className={cn(
-        "flex flex-col gap-3 rounded-lg border px-4 py-3 text-sm sm:flex-row sm:items-start",
+        "flex flex-col gap-3 rounded-control border px-4 py-3 text-sm sm:flex-row sm:items-start",
         cls,
         className,
       )}

@@ -7,37 +7,54 @@ import '../format.dart';
 import '../l10n/l10n.dart';
 import '../theme/tokens.dart';
 
-enum Tone { success, warning, danger, info, neutral }
+enum Tone { success, warning, danger, info, verified, neutral }
 
+/// (soft background, AA text colour) for a [Tone] — text always uses the
+/// `*.text` token on the `*.soft` background (design/tokens.json).
 (Color, Color) toneColors(BuildContext context, Tone tone) {
-  final c = context.statusColors;
+  final c = context.ks;
   return switch (tone) {
-    Tone.success => (c.successBg, c.successFg),
-    Tone.warning => (c.warningBg, c.warningFg),
-    Tone.danger => (c.dangerBg, c.dangerFg),
-    Tone.info => (c.infoBg, c.infoFg),
-    Tone.neutral => (c.neutralBg, c.neutralFg),
+    Tone.success => (c.successSoft, c.successText),
+    Tone.warning => (c.warningSoft, c.warningText),
+    Tone.danger => (c.errorSoft, c.errorText),
+    Tone.info => (c.infoSoft, c.infoText),
+    Tone.verified => (c.verifiedSoft, c.verifiedText),
+    Tone.neutral => (c.neutralSoft, c.neutralText),
   };
 }
 
-/// Pill badge: 12px/600, tinted bg-50 + text-600 (DESIGN.md).
+/// Default icon per tone so status is never colour-only. Neutral badges are
+/// labels/categories rather than states and carry no icon by default.
+IconData? toneIcon(Tone tone) => switch (tone) {
+  Tone.success => LucideIcons.circleCheck,
+  Tone.warning => LucideIcons.triangleAlert,
+  Tone.danger => LucideIcons.circleAlert,
+  Tone.info => LucideIcons.info,
+  Tone.verified => LucideIcons.badgeCheck,
+  Tone.neutral => null,
+};
+
+/// Status chip: pill, 12/16 semibold label in `*.text` on `*.soft`, with an
+/// icon (the tone default unless [icon] is given or [showIcon] is false).
 class StatusBadge extends StatelessWidget {
-  const StatusBadge({super.key, required this.label, this.tone = Tone.neutral, this.icon});
+  const StatusBadge({super.key, required this.label, this.tone = Tone.neutral, this.icon, this.showIcon = true});
 
   final String label;
   final Tone tone;
   final IconData? icon;
+  final bool showIcon;
 
   @override
   Widget build(BuildContext context) {
     final (bg, fg) = toneColors(context, tone);
+    final glyph = showIcon ? (icon ?? toneIcon(tone)) : null;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(999)),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(KsRadius.pill)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (icon != null) ...[Icon(icon, size: 14, color: fg), const SizedBox(width: 4)],
+          if (glyph != null) ...[ExcludeSemantics(child: Icon(glyph, size: 14, color: fg)), const SizedBox(width: 4)],
           Flexible(
             child: Text(
               label,
@@ -92,19 +109,19 @@ class EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.statusColors;
+    final c = context.ks;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(KsSpace.s8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 40, color: c.textSecondary),
+            Icon(icon, size: 40, color: c.textMuted),
             const SizedBox(height: KsSpace.s3),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: c.textSecondary),
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: c.textMuted),
             ),
             if (action != null) ...[const SizedBox(height: KsSpace.s4), action!],
           ],

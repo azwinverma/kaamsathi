@@ -115,7 +115,7 @@ function RunsList() {
                           e.preventDefault();
                           router.push(href);
                         }}
-                        className="text-fg hover:text-brand font-medium hover:underline"
+                        className="text-fg hover:text-brand-text font-medium hover:underline"
                         aria-label={t("open_run", { month })}
                       >
                         {month}

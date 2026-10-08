@@ -23,7 +23,7 @@ class LanguageScreen extends ConsumerWidget {
               const Spacer(),
               Center(
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(KsRadius.xl),
+                  borderRadius: BorderRadius.circular(KsRadius.card),
                   child: Image.asset('assets/logo.png', width: 72, height: 72),
                 ),
               ),
@@ -33,7 +33,7 @@ class LanguageScreen extends ConsumerWidget {
               Text(
                 'Choose your language',
                 textAlign: TextAlign.center,
-                style: t.bodyLarge?.copyWith(color: context.statusColors.textSecondary),
+                style: t.bodyLarge?.copyWith(color: context.ks.textMuted),
               ),
               const SizedBox(height: KsSpace.s8),
               _LangButton(
@@ -71,11 +71,11 @@ class _LangButton extends StatelessWidget {
     return Material(
       color: scheme.surface,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(KsRadius.lg),
-        side: BorderSide(color: context.statusColors.border, width: 1.5),
+        borderRadius: BorderRadius.circular(KsRadius.card),
+        side: BorderSide(color: context.ks.border, width: 1.5),
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(KsRadius.lg),
+        borderRadius: BorderRadius.circular(KsRadius.card),
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: KsSpace.s6, vertical: KsSpace.s6),
@@ -89,7 +89,7 @@ class _LangButton extends StatelessWidget {
                     Text(
                       subtitle,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: context.statusColors.textSecondary,
+                        color: context.ks.textMuted,
                       ),
                     ),
                   ],

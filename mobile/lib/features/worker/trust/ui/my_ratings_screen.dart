@@ -173,7 +173,7 @@ class _Stars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.statusColors;
+    final c = context.ks;
     return Semantics(
       label: '$label $value / 5',
       excludeSemantics: true,
@@ -184,7 +184,7 @@ class _Stars extends StatelessWidget {
             Icon(
               LucideIcons.star,
               size: 16,
-              color: i <= value ? KsColors.warning600 : c.border,
+              color: i <= value ? c.ratingStar : c.border,
               fill: i <= value ? 1 : 0,
             ),
         ],

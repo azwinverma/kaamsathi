@@ -239,7 +239,7 @@ function ReviewBody({ org: o, onClose }: { org: OpsEmployer; onClose: () => void
             {
               label: t("profile"),
               value: (
-                <Link href={`/ops/organizations/${o.id}`} className="text-brand hover:underline">
+                <Link href={`/ops/organizations/${o.id}`} className="text-brand-text hover:underline">
                   {t("open_profile")}
                 </Link>
               ),

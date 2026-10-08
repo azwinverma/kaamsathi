@@ -82,8 +82,8 @@ export function Notice({
     <div
       role={tone === "danger" ? "alert" : "status"}
       className={cn(
-        "flex flex-col gap-3 rounded-lg border px-4 py-3 text-sm sm:flex-row sm:items-center",
-        tone === "info" && "border-brand/25 bg-brand-subtle text-brand-subtle-fg",
+        "flex flex-col gap-3 rounded-control border px-4 py-3 text-sm sm:flex-row sm:items-center",
+        tone === "info" && "border-info/25 bg-info-soft text-info",
         tone === "warning" && "border-warning/30 bg-warning-subtle text-warning",
         tone === "danger" && "border-danger/30 bg-danger-subtle text-danger",
         tone === "locked" && "border-border bg-surface-muted text-fg-body",

@@ -21,7 +21,7 @@ export function DropdownMenuContent({
         align={align}
         sideOffset={sideOffset}
         className={cn(
-          "animate-pop-in z-50 min-w-48 overflow-hidden rounded-lg border border-border bg-surface p-1 shadow-lg",
+          "animate-pop-in z-50 min-w-48 overflow-hidden rounded-dense border border-border bg-surface p-1 shadow-floating",
           className,
         )}
         {...props}
@@ -61,7 +61,7 @@ export function DropdownMenuCheckboxItem({
       {...props}
     >
       <Menu.ItemIndicator className="absolute left-2.5 inline-flex">
-        <Check className="size-4 text-brand" aria-hidden />
+        <Check className="size-4 text-brand-text" aria-hidden />
       </Menu.ItemIndicator>
       {children}
     </Menu.CheckboxItem>

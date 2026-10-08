@@ -75,7 +75,7 @@ class _DetailState extends ConsumerState<_Detail> {
             : p.hourlyWage ??
                 ref.watch(myEmploymentsProvider).value?.where((e) => e.id == p.employmentId).firstOrNull?.hourlyWage;
 
-    final c = context.statusColors;
+    final c = context.ks;
     return ListView(
       padding: const EdgeInsets.all(KsSpace.page),
       children: [
@@ -84,23 +84,23 @@ class _DetailState extends ConsumerState<_Detail> {
           padding: const EdgeInsets.all(KsSpace.s6),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primary,
-            borderRadius: BorderRadius.circular(KsRadius.xl),
+            borderRadius: BorderRadius.circular(KsRadius.card),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 p.monthLabel(lang),
-                style: t.titleMedium?.copyWith(color: Colors.white),
+                style: t.titleMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
               ),
               if (p.organizationName != null)
-                Text(p.organizationName!, style: t.bodyMedium?.copyWith(color: KsColors.primary100)),
+                Text(p.organizationName!, style: t.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary)),
               const SizedBox(height: KsSpace.s4),
-              Text(l.talabNetPay, style: t.bodyMedium?.copyWith(color: KsColors.primary100)),
+              Text(l.talabNetPay, style: t.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary)),
               Text(
                 m(p.netPay),
                 style: t.displaySmall?.copyWith(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onPrimary,
                   fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
@@ -111,12 +111,12 @@ class _DetailState extends ConsumerState<_Detail> {
                           ? l.talabPaidOn(formatBsDate(BsDate.fromAd(p.paidAt!.toLocal()), lang))
                           : l.payrollPaid)
                     : l.talabPaymentPending,
-                style: t.bodyMedium?.copyWith(color: Colors.white),
+                style: t.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
               ),
               if (p.paymentMethod != null)
                 Text(
                   '${l.talabPaymentMethod}: ${paymentMethodLabel(l, p.paymentMethod)}',
-                  style: t.bodySmall?.copyWith(color: KsColors.primary100),
+                  style: t.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
                 ),
             ],
           ),
@@ -166,13 +166,13 @@ class _DetailState extends ConsumerState<_Detail> {
           title: l.talabDeductions,
           child: Column(
             children: [
-              KeyValueRow(label: l.talabSsfEmployee, value: '− ${m(p.ssfEmployee)}', valueColor: c.dangerFg),
-              KeyValueRow(label: l.talabTds, value: '− ${m(p.tds)}', valueColor: c.dangerFg),
-              KeyValueRow(label: l.talabPeskiRecovery, value: '− ${m(p.advanceRecovery)}', valueColor: c.dangerFg),
+              KeyValueRow(label: l.talabSsfEmployee, value: '− ${m(p.ssfEmployee)}', valueColor: c.errorText),
+              KeyValueRow(label: l.talabTds, value: '− ${m(p.tds)}', valueColor: c.errorText),
+              KeyValueRow(label: l.talabPeskiRecovery, value: '− ${m(p.advanceRecovery)}', valueColor: c.errorText),
               if (nonZero(p.otherDeductions))
-                KeyValueRow(label: l.talabOtherDeductions, value: '− ${m(p.otherDeductions)}', valueColor: c.dangerFg),
+                KeyValueRow(label: l.talabOtherDeductions, value: '− ${m(p.otherDeductions)}', valueColor: c.errorText),
               const Divider(),
-              KeyValueRow(label: l.talabNetPay, value: m(p.netPay), bold: true, valueColor: c.successFg),
+              KeyValueRow(label: l.talabNetPay, value: m(p.netPay), bold: true, valueColor: c.successText),
             ],
           ),
         ),

@@ -161,14 +161,14 @@ class PassportPreview extends StatelessWidget {
     final l = context.l10n;
     final lang = context.lang;
     final t = Theme.of(context).textTheme;
-    final c = context.statusColors;
+    final c = context.ks;
     final p = payload;
     Widget check(String label, bool ok) => Padding(
       padding: const EdgeInsets.only(right: KsSpace.s3),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(ok ? LucideIcons.circleCheck : LucideIcons.circle, size: 16, color: ok ? c.successFg : c.textSecondary),
+          Icon(ok ? LucideIcons.circleCheck : LucideIcons.circle, size: 16, color: ok ? c.successText : c.textMuted),
           const SizedBox(width: 4),
           Text(label, style: t.bodySmall),
         ],
@@ -192,7 +192,7 @@ class PassportPreview extends StatelessWidget {
                     if (p.districts.isNotEmpty) Text(p.districts.join(', '), style: t.bodySmall),
                     Text(
                       '${l.trustLevelN(localizeDigits('${p.verificationLevel}', lang))} · ${trustLevelLabel(l, p.verificationLevel)}',
-                      style: t.labelSmall?.copyWith(color: c.successFg),
+                      style: t.labelSmall?.copyWith(color: c.successText),
                     ),
                   ],
                 ),
@@ -230,7 +230,7 @@ class PassportPreview extends StatelessWidget {
             for (final cr in p.credentials)
               Row(
                 children: [
-                  Icon(LucideIcons.shieldCheck, size: 16, color: c.successFg),
+                  Icon(LucideIcons.shieldCheck, size: 16, color: c.successText),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(

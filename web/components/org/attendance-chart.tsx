@@ -9,9 +9,9 @@ import { cn } from "@/lib/utils";
 type Day = Dashboard["attendance_14d"][number];
 
 const SERIES = [
-  { key: "present", className: "bg-success" },
-  { key: "leave", className: "bg-primary-400" },
-  { key: "absent", className: "bg-danger" },
+  { key: "present", className: "bg-success-hue" },
+  { key: "leave", className: "bg-brand" },
+  { key: "absent", className: "bg-danger-hue" },
 ] as const;
 
 /** 14-day stacked bar chart (present / leave / absent) in plain CSS. */

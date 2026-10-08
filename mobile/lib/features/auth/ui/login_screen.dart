@@ -76,7 +76,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             children: [
               Text(l.loginTitle, style: t.headlineMedium),
               const SizedBox(height: KsSpace.s2),
-              Text(l.loginSubtitle, style: t.bodyLarge?.copyWith(color: context.statusColors.textSecondary)),
+              Text(l.loginSubtitle, style: t.bodyLarge?.copyWith(color: context.ks.textMuted)),
               const SizedBox(height: KsSpace.s6),
               TextFormField(
                 key: const Key('phone_field'),

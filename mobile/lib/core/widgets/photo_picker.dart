@@ -71,7 +71,7 @@ class DocumentPhotoPicker extends ConsumerWidget {
           Stack(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(KsRadius.lg),
+                borderRadius: BorderRadius.circular(KsRadius.card),
                 child: Image.file(
                   File(path!),
                   height: 160,
@@ -141,7 +141,7 @@ class DateField extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(KsRadius.md),
+      borderRadius: BorderRadius.circular(KsRadius.control),
       child: InputDecorator(
         decoration: InputDecoration(labelText: label, errorText: errorText, suffixIcon: Icon(icon)),
         isEmpty: text == null,

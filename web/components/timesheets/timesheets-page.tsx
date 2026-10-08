@@ -198,7 +198,7 @@ export function TimesheetsPage() {
                   {t("col_worker")}
                 </Th>
                 {dates.map((d) => (
-                  <Th key={d} className={cn("min-w-16 px-2 text-center", d === today && "text-brand")}>
+                  <Th key={d} className={cn("min-w-16 px-2 text-center", d === today && "text-brand-text")}>
                     <span className="block">{f.weekday(weekdayOf(d))}</span>
                     <span className="tabular block font-normal">{f.digits(adToBs(d)?.day ?? "")}</span>
                   </Th>

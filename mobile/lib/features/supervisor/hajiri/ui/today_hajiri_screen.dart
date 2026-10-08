@@ -198,12 +198,12 @@ class _DateHeader extends StatelessWidget {
       children: [
         Text(
           '${isToday ? '${context.l10n.commonToday} · ' : ''}${weekdayName(date, lang)}',
-          style: t.bodyMedium?.copyWith(color: context.statusColors.textSecondary),
+          style: t.bodyMedium?.copyWith(color: context.ks.textMuted),
         ),
         Text(formatBsDate(bs, lang), style: t.displaySmall),
         Text(
           '${formatAdDate(date, lang)} ${context.l10n.termAd}',
-          style: t.bodyMedium?.copyWith(color: context.statusColors.textSecondary),
+          style: t.bodyMedium?.copyWith(color: context.ks.textMuted),
         ),
       ],
     );
@@ -240,11 +240,11 @@ class _DateStrip extends ConsumerWidget {
           return Material(
             color: sel ? scheme.primary : scheme.surface,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(KsRadius.md),
-              side: BorderSide(color: sel ? scheme.primary : context.statusColors.border),
+              borderRadius: BorderRadius.circular(KsRadius.control),
+              side: BorderSide(color: sel ? scheme.primary : context.ks.border),
             ),
             child: InkWell(
-              borderRadius: BorderRadius.circular(KsRadius.md),
+              borderRadius: BorderRadius.circular(KsRadius.control),
               onTap: () => ref.read(hajiriDateProvider.notifier).set(d),
               child: Container(
                 constraints: const BoxConstraints(minWidth: 64),
@@ -257,7 +257,7 @@ class _DateStrip extends ConsumerWidget {
                       top,
                       style: TextStyle(
                         fontSize: 12,
-                        color: sel ? scheme.onPrimary : context.statusColors.textSecondary,
+                        color: sel ? scheme.onPrimary : context.ks.textMuted,
                       ),
                     ),
                     Text(
@@ -289,11 +289,11 @@ class _CountChip extends StatelessWidget {
     final l = context.l10n;
     final (bg, fg) =
         status == null
-            ? (context.statusColors.neutralBg, context.statusColors.neutralFg)
+            ? (context.ks.neutralSoft, context.ks.neutralText)
             : attendanceColors(context, status);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(999)),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(KsRadius.pill)),
       child: Text(
         '${attendanceLabel(l, status)} ${localizeDigits('$count', context.lang)}',
         style: Theme.of(context).textTheme.labelMedium?.copyWith(color: fg, fontWeight: FontWeight.w600),
@@ -309,16 +309,16 @@ class _Note extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.statusColors;
+    final c = context.ks;
     return Container(
       margin: const EdgeInsets.only(bottom: KsSpace.s3),
       padding: const EdgeInsets.all(KsSpace.s3),
-      decoration: BoxDecoration(color: c.infoBg, borderRadius: BorderRadius.circular(KsRadius.md)),
+      decoration: BoxDecoration(color: c.infoSoft, borderRadius: BorderRadius.circular(KsRadius.dense)),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: c.infoFg),
+          Icon(icon, size: 18, color: c.infoText),
           const SizedBox(width: KsSpace.s2),
-          Expanded(child: Text(text, style: TextStyle(color: c.infoFg))),
+          Expanded(child: Text(text, style: TextStyle(color: c.infoText))),
         ],
       ),
     );

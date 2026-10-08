@@ -146,7 +146,7 @@ export function WorkerCredentialsPanel({
                   href={`/p/${data.passport.public_code}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-brand mt-2 inline-flex items-center gap-1 text-sm hover:underline"
+                  className="text-brand-text mt-2 inline-flex items-center gap-1 text-sm hover:underline"
                 >
                   <ExternalLink className="size-4" aria-hidden />
                   {t("open_passport")}

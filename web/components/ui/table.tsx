@@ -2,7 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Data table per DESIGN.md: sticky neutral-50 header, 52px rows, money right-aligned tabular.
+ * Data table per DESIGN.md: dense radius (10px), sticky surface-muted header, 52px rows, money right-aligned tabular.
  * Wrapper scrolls horizontally on small screens; `stickyFirst` keeps the first column pinned.
  */
 export function TableContainer({
@@ -13,7 +13,7 @@ export function TableContainer({
   return (
     <div
       className={cn(
-        "scrollbar-thin relative w-full overflow-auto rounded-lg border border-border bg-surface shadow-sm",
+        "scrollbar-thin relative w-full overflow-auto rounded-dense border border-border bg-surface shadow-sm",
         className,
       )}
       style={maxHeight ? { maxHeight } : undefined}

@@ -306,7 +306,7 @@ class _DistrictPickerScreenState extends ConsumerState<DistrictPickerScreen> {
                           padding: const EdgeInsets.fromLTRB(KsSpace.page, KsSpace.s3, KsSpace.page, KsSpace.s1),
                           child: Text(
                             '${l.termProvince} ${localizeDigits('${d.province}', lang)}',
-                            style: t.labelLarge?.copyWith(color: context.statusColors.textSecondary),
+                            style: t.labelLarge?.copyWith(color: context.ks.textMuted),
                           ),
                         ),
                       );

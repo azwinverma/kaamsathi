@@ -1,18 +1,20 @@
 @import "tailwindcss";
 
 /*
- * KaamSathi design tokens (docs/DESIGN.md).
- * Raw palette lives in @theme so Tailwind generates utilities (bg-primary-600, …).
- * Semantic tokens (bg, surface, fg, border, brand, …) switch between light and dark.
- * Default = system preference; [data-theme] on <html> pins a choice.
+ * KaamSathi design foundations — source of truth: design/tokens.json (see docs/DESIGN.md).
+ * Runtime semantic variables (--ks-*) switch between light and dark; @theme maps them to
+ * Tailwind utilities (bg-surface, text-fg-muted, bg-success-subtle, …).
+ * Tailwind's default palette is disabled on purpose: feature code uses semantic tokens only.
+ * Default theme = system preference; [data-theme] on <html> pins a choice.
  */
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme {
-  --font-sans: var(--font-inter), var(--font-mukta), ui-sans-serif, system-ui, sans-serif;
-  --font-devanagari: var(--font-mukta), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), var(--font-noto-devanagari), ui-sans-serif, system-ui, sans-serif;
+  --font-devanagari: var(--font-noto-devanagari), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
+  /* Type scale (tokens.json type.web); ne locale boosts line-heights ×1.1 below. */
   --text-xs: 12px;
   --text-xs--line-height: 16px;
   --text-sm: 14px;
@@ -31,49 +33,38 @@
   --text-4xl--line-height: 44px;
   --text-5xl: 48px;
   --text-5xl--line-height: 56px;
-  --text-6xl: 60px;
-  --text-6xl--line-height: 68px;
+  --text-6xl: 56px;
+  --text-6xl--line-height: 64px;
 
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-2xl: 20px;
+  /* Radius (tokens.json radius). Role names first; the size scale is aligned to the roles. */
+  --radius-control: 12px; /* buttons, inputs, selects */
+  --radius-card: 16px; /* standard cards */
+  --radius-dense: 10px; /* dense data cards, tables */
+  --radius-sheet: 22px; /* dialogs, sheets */
+  --radius-pill: 9999px; /* chips, status badges, avatars only */
+  --radius-sm: 6px; /* tiny marks, menu items (radius.xs) */
+  --radius-md: 12px; /* = control */
+  --radius-lg: 16px; /* = card */
+  --radius-xl: 22px; /* = sheet */
+  --radius-2xl: 24px; /* radius.xl — hero/marketing tiles */
 
-  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
-  --shadow-md: 0 4px 12px -2px rgba(16, 24, 40, 0.08), 0 2px 4px -2px rgba(16, 24, 40, 0.04);
-  --shadow-lg: 0 16px 40px -8px rgba(16, 24, 40, 0.14), 0 4px 10px -4px rgba(16, 24, 40, 0.06);
+  /* Elevation (tokens.json shadow). Prefer borders; shadow-card for cards, shadow-floating for overlays. */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06); /* hairline: controls */
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.06), 0 6px 18px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 1px 2px rgba(15, 23, 42, 0.06), 0 6px 18px rgba(15, 23, 42, 0.06);
+  --shadow-floating: 0 12px 32px rgba(15, 23, 42, 0.12);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
 
-  /* Raw palette */
-  --color-primary-50: #eef3ff;
-  --color-primary-100: #dce6ff;
-  --color-primary-200: #b9ccff;
-  --color-primary-300: #8aa8fa;
-  --color-primary-400: #5b80f0;
-  --color-primary-500: #3a5fe0;
-  --color-primary-600: #2647c4;
-  --color-primary-700: #1f399d;
-  --color-primary-800: #1d327d;
-  --color-primary-900: #1b2c63;
+  /* Motion (tokens.json motion): 150 control / 200 base / 280 slow / 360 content. */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --default-transition-duration: 150ms;
+  --default-transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
 
-  --color-accent-50: #fff0f3;
-  --color-accent-500: #dc2b4b;
-  --color-accent-600: #c21d3d;
+  /* Colours: disable Tailwind's default palette; only semantic tokens below exist. */
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
 
-  --color-neutral-0: #ffffff;
-  --color-neutral-25: #fbfbfc;
-  --color-neutral-50: #f6f7f9;
-  --color-neutral-100: #edeff3;
-  --color-neutral-200: #dde1e8;
-  --color-neutral-300: #c4cad4;
-  --color-neutral-400: #959dab;
-  --color-neutral-500: #5f6776;
-  --color-neutral-600: #4d5465;
-  --color-neutral-700: #373d4c;
-  --color-neutral-800: #252a37;
-  --color-neutral-900: #161a26;
-
-  /* Semantic tokens → mapped to runtime variables below */
   --color-bg: var(--ks-bg);
   --color-surface: var(--ks-surface);
   --color-surface-muted: var(--ks-surface-muted);
@@ -84,120 +75,272 @@
   --color-fg-body: var(--ks-fg-body);
   --color-fg-muted: var(--ks-fg-muted);
   --color-fg-subtle: var(--ks-fg-subtle);
+  --color-fg-inverse: var(--ks-fg-inverse);
   --color-brand: var(--ks-brand);
   --color-brand-hover: var(--ks-brand-hover);
   --color-brand-fg: var(--ks-brand-fg);
+  --color-brand-text: var(--ks-brand-text);
   --color-brand-subtle: var(--ks-brand-subtle);
+  --color-brand-subtle-hover: var(--ks-brand-subtle-hover);
   --color-brand-subtle-fg: var(--ks-brand-subtle-fg);
+  --color-indigo: var(--ks-indigo);
+  --color-indigo-subtle: var(--ks-indigo-subtle);
   --color-accent: var(--ks-accent);
   --color-accent-subtle: var(--ks-accent-subtle);
+  --color-coral: var(--ks-coral);
+  --color-coral-text: var(--ks-coral-text);
+  --color-coral-subtle: var(--ks-coral-subtle);
+  --color-yellow: var(--ks-yellow);
+  --color-yellow-subtle: var(--ks-yellow-subtle);
+  --color-teal: var(--ks-teal);
+  --color-teal-text: var(--ks-teal-text);
+  --color-teal-subtle: var(--ks-teal-subtle);
+  --color-on-accent: var(--ks-on-accent);
   --color-success: var(--ks-success);
+  --color-success-hue: var(--ks-success-hue);
   --color-success-subtle: var(--ks-success-subtle);
+  --color-success-soft: var(--ks-success-subtle);
   --color-warning: var(--ks-warning);
+  --color-warning-hue: var(--ks-warning-hue);
   --color-warning-subtle: var(--ks-warning-subtle);
+  --color-warning-soft: var(--ks-warning-subtle);
   --color-danger: var(--ks-danger);
+  --color-danger-hue: var(--ks-danger-hue);
   --color-danger-subtle: var(--ks-danger-subtle);
+  --color-danger-soft: var(--ks-danger-subtle);
+  --color-danger-on-inverse: var(--ks-danger-on-inverse);
   --color-info: var(--ks-info);
+  --color-info-hue: var(--ks-info-hue);
   --color-info-subtle: var(--ks-info-subtle);
+  --color-info-soft: var(--ks-info-subtle);
+  --color-verified: var(--ks-verified);
+  --color-verified-hue: var(--ks-verified-hue);
+  --color-verified-subtle: var(--ks-verified-subtle);
+  --color-verified-soft: var(--ks-verified-subtle);
   --color-ring: var(--ks-ring);
+  --color-scrim: #0f172a;
+
+  /* Fixed deep-brand panel (landing hero, auth side panel, passport header): same in both themes. */
+  --color-hero: #172554; /* tokens dark action.primary.subtle; white text 14.69:1 */
+  --color-hero-fg: #ffffff;
+  --color-hero-muted: #bfdbfe; /* 10.34:1 on hero */
+  --color-hero-cta-fg: #1d4ed8; /* on white CTA, 6.70:1 */
+  --color-hero-cta-hover: #eff6ff;
 }
 
 :root {
   color-scheme: light dark;
   accent-color: var(--ks-brand);
 
-  --ks-bg: #fbfbfc;
-  --ks-surface: #ffffff;
-  --ks-surface-muted: #f6f7f9;
-  --ks-surface-hover: #edeff3;
-  --ks-border: #dde1e8;
-  --ks-border-strong: #c4cad4;
-  --ks-fg: #161a26;
-  --ks-fg-body: #373d4c;
-  /* Text tokens meet WCAG AA (≥4.5:1) on surface and surface-muted; checked by e2e/a11y. */
-  --ks-fg-muted: #5f6776;
-  --ks-fg-subtle: #687080;
-  --ks-brand: #2647c4;
-  --ks-brand-hover: #1f399d;
-  --ks-brand-fg: #ffffff;
-  --ks-brand-subtle: #eef3ff;
-  --ks-brand-subtle-fg: #1f399d;
-  --ks-accent: #c21d3d;
-  --ks-accent-subtle: #fff0f3;
-  --ks-success: #0f7352;
-  --ks-success-subtle: #e8f7f0;
-  --ks-warning: #9a5107;
-  --ks-warning-subtle: #fff4e5;
-  --ks-danger: #c8302b;
-  --ks-danger-subtle: #fdecec;
-  --ks-info: #2647c4;
-  --ks-info-subtle: #eef3ff;
-  --ks-ring: #3a5fe0;
+  /* Surfaces & text (design/tokens.json color.light) */
+  --ks-bg: #f8fafc; /* surface.canvas */
+  --ks-surface: #ffffff; /* surface.default */
+  --ks-surface-muted: #f1f5f9; /* surface.muted */
+  --ks-surface-hover: #e9eef4; /* derived: between surface.muted and border.default; text.muted 4.98:1 */
+  --ks-border: #e2e8f0; /* border.default */
+  --ks-border-strong: #cbd5e1; /* border.strong */
+  --ks-fg: #0f172a; /* text.primary */
+  --ks-fg-body: #334155; /* text.secondary */
+  --ks-fg-muted: #5a6679; /* text.muted (5.31:1 on surface.muted) */
+  --ks-fg-subtle: #5a6679; /* alias of text.muted (placeholders, meta) */
+  --ks-fg-inverse: #ffffff; /* text.inverse: text on status/danger fills */
+
+  /* Action / brand */
+  --ks-brand: #2563eb; /* action.primary (fills, borders, icons) */
+  --ks-brand-hover: #1d4ed8; /* action.primary.hover */
+  --ks-brand-fg: #ffffff; /* action.primary.fg */
+  --ks-brand-text: #2563eb; /* action.primary used as text/links */
+  --ks-brand-subtle: #eff6ff; /* action.primary.subtle */
+  --ks-brand-subtle-hover: #dbeafe;
+  --ks-brand-subtle-fg: #1d4ed8; /* action.primary.subtle.fg */
+  --ks-indigo: #4f46e5; /* brand.indigo */
+  --ks-indigo-subtle: #eef2ff; /* brand.indigo.subtle */
+  --ks-ring: #2563eb; /* focus.ring */
+
+  /* Accents: fills/illustration/highlights. Text ON a raw accent fill = --ks-on-accent. */
+  --ks-coral: #ff6b6b; /* accent.coral (fill only, 2.78:1 — never text) */
+  --ks-coral-text: #c2410c; /* accent.coral.text */
+  --ks-coral-subtle: #fff1f1; /* accent.coral.subtle */
+  --ks-yellow: #fbbf24; /* accent.yellow (fill only) */
+  --ks-yellow-subtle: #fef9e7; /* accent.yellow.subtle */
+  --ks-teal: #14b8a6; /* accent.teal (fill only) */
+  --ks-teal-text: #0f766e; /* accent.teal.text */
+  --ks-teal-subtle: #f0fdfa; /* accent.teal.subtle */
+  --ks-on-accent: #0f172a; /* accent.onFill */
+  /* Legacy "accent" names now point at coral (text-safe variant). */
+  --ks-accent: var(--ks-coral-text);
+  --ks-accent-subtle: var(--ks-coral-subtle);
+
+  /* Status: --ks-<s> is the AA-safe *.text variant (also safe as a fill under --ks-fg-inverse);
+     --ks-<s>-hue is the raw brand hue for icons, dots, chart marks only. */
+  --ks-success: #15803d; /* status.success.text */
+  --ks-success-hue: #16a34a; /* status.success */
+  --ks-success-subtle: #dcfce7; /* status.success.soft */
+  --ks-warning: #a14a07; /* status.warning.text */
+  --ks-warning-hue: #d97706; /* status.warning */
+  --ks-warning-subtle: #fef3c7; /* status.warning.soft */
+  --ks-danger: #b91c1c; /* status.error.text */
+  --ks-danger-hue: #dc2626; /* status.error */
+  --ks-danger-subtle: #fee2e2; /* status.error.soft */
+  --ks-info: #0369a1; /* status.info.text */
+  --ks-info-hue: #0284c7; /* status.info */
+  --ks-info-subtle: #e0f2fe; /* status.info.soft */
+  --ks-verified: #0f766e; /* status.verified.text */
+  --ks-verified-hue: #0f766e; /* status.verified */
+  --ks-verified-subtle: #ccfbf1; /* status.verified.soft */
+  /* Danger text inside inverse surfaces (tooltips use bg-fg / text-surface). */
+  --ks-danger-on-inverse: #f87171;
+
+  --ks-shadow-card: 0 1px 2px rgba(15, 23, 42, 0.06), 0 6px 18px rgba(15, 23, 42, 0.06);
+  --ks-shadow-floating: 0 12px 32px rgba(15, 23, 42, 0.12);
+
+  /* Gradients (tokens.json gradient) — marketing hero/campaign, onboarding, milestone celebrations
+     ONLY. Never behind tables, forms or long text. */
+  --ks-gradient-hero: linear-gradient(135deg, #2563eb 0%, #4f46e5 55%, #7c3aed 100%);
+  --ks-gradient-joy: linear-gradient(135deg, #ff6b6b 0%, #f59e0b 100%);
+  --ks-gradient-skill: linear-gradient(135deg, #14b8a6 0%, #2563eb 100%);
+
+  /* Radius / motion as plain variables for inline styles and non-Tailwind CSS. */
+  --ks-radius-control: 12px;
+  --ks-radius-card: 16px;
+  --ks-radius-dense: 10px;
+  --ks-radius-sheet: 22px;
+  --ks-radius-pill: 9999px;
+  --ks-motion-control: 150ms;
+  --ks-motion-base: 200ms;
+  --ks-motion-slow: 280ms;
+  --ks-motion-content: 360ms;
+  --ks-ease: cubic-bezier(0.2, 0, 0, 1);
 }
 
+/* Dark (tokens.json color.dark; values not in tokens.json were derived and AA-checked, see DESIGN.md). */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --ks-bg: #0d1018;
-    --ks-surface: #161a26;
-    --ks-surface-muted: #12151f;
-    --ks-surface-hover: #1e2331;
-    --ks-border: #2a3040;
-    --ks-border-strong: #3a4256;
-    --ks-fg: #e6e9ef;
-    --ks-fg-body: #cdd2dc;
-    --ks-fg-muted: #9aa3b2;
-    --ks-fg-subtle: #6f7889;
-    --ks-brand: #5b80f0;
-    --ks-brand-hover: #8aa8fa;
-    --ks-brand-fg: #0d1018;
-    --ks-brand-subtle: rgba(91, 128, 240, 0.14);
-    --ks-brand-subtle-fg: #b9ccff;
-    --ks-accent: #f0536f;
-    --ks-accent-subtle: rgba(220, 43, 75, 0.16);
-    --ks-success: #3fc493;
-    --ks-success-subtle: rgba(18, 128, 92, 0.2);
-    --ks-warning: #f0a54a;
-    --ks-warning-subtle: rgba(178, 94, 9, 0.22);
-    --ks-danger: #f2706b;
-    --ks-danger-subtle: rgba(200, 48, 43, 0.2);
-    --ks-info: #8aa8fa;
-    --ks-info-subtle: rgba(91, 128, 240, 0.14);
-    --ks-ring: #5b80f0;
+    --ks-bg: #020617;
+    --ks-surface: #0f172a;
+    --ks-surface-muted: #1e293b;
+    --ks-surface-hover: #273449;
+    --ks-border: #1e293b;
+    --ks-border-strong: #334155;
+    --ks-fg: #f1f5f9;
+    --ks-fg-body: #cbd5e1;
+    --ks-fg-muted: #94a3b8;
+    --ks-fg-subtle: #94a3b8;
+    --ks-fg-inverse: #0f172a;
+    --ks-brand: #3b82f6;
+    --ks-brand-hover: #60a5fa;
+    --ks-brand-fg: #0b1220;
+    /* action.primary #3B82F6 is 3.98:1 on surface.muted, so text/links use the lighter hover hue. */
+    --ks-brand-text: #60a5fa;
+    --ks-brand-subtle: #172554;
+    --ks-brand-subtle-hover: #1e3a8a;
+    --ks-brand-subtle-fg: #bfdbfe;
+    --ks-indigo: #a5b4fc;
+    --ks-indigo-subtle: rgba(79, 70, 229, 0.2);
+    --ks-ring: #3b82f6;
+    --ks-coral-text: #ff8a8a;
+    --ks-coral-subtle: rgba(255, 107, 107, 0.14);
+    --ks-yellow-subtle: rgba(251, 191, 36, 0.14);
+    --ks-teal-text: #2dd4bf;
+    --ks-teal-subtle: rgba(20, 184, 166, 0.14);
+    --ks-success: #4ade80;
+    --ks-success-subtle: rgba(22, 163, 74, 0.16);
+    --ks-warning: #fbbf24;
+    --ks-warning-subtle: rgba(217, 119, 6, 0.18);
+    --ks-danger: #f87171;
+    --ks-danger-subtle: rgba(220, 38, 38, 0.18);
+    --ks-info: #38bdf8;
+    --ks-info-subtle: rgba(2, 132, 199, 0.18);
+    --ks-verified: #2dd4bf;
+    --ks-verified-hue: #14b8a6;
+    --ks-verified-subtle: rgba(15, 118, 110, 0.24);
+    --ks-danger-on-inverse: #b91c1c;
+    --ks-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 18px rgba(0, 0, 0, 0.3);
+    --ks-shadow-floating: 0 12px 32px rgba(0, 0, 0, 0.5);
   }
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --ks-bg: #0d1018;
-  --ks-surface: #161a26;
-  --ks-surface-muted: #12151f;
-  --ks-surface-hover: #1e2331;
-  --ks-border: #2a3040;
-  --ks-border-strong: #3a4256;
-  --ks-fg: #e6e9ef;
-  --ks-fg-body: #cdd2dc;
-  --ks-fg-muted: #9aa3b2;
-  --ks-fg-subtle: #6f7889;
-  --ks-brand: #5b80f0;
-  --ks-brand-hover: #8aa8fa;
-  --ks-brand-fg: #0d1018;
-  --ks-brand-subtle: rgba(91, 128, 240, 0.14);
-  --ks-brand-subtle-fg: #b9ccff;
-  --ks-accent: #f0536f;
-  --ks-accent-subtle: rgba(220, 43, 75, 0.16);
-  --ks-success: #3fc493;
-  --ks-success-subtle: rgba(18, 128, 92, 0.2);
-  --ks-warning: #f0a54a;
-  --ks-warning-subtle: rgba(178, 94, 9, 0.22);
-  --ks-danger: #f2706b;
-  --ks-danger-subtle: rgba(200, 48, 43, 0.2);
-  --ks-info: #8aa8fa;
-  --ks-info-subtle: rgba(91, 128, 240, 0.14);
-  --ks-ring: #5b80f0;
+  --ks-bg: #020617;
+  --ks-surface: #0f172a;
+  --ks-surface-muted: #1e293b;
+  --ks-surface-hover: #273449;
+  --ks-border: #1e293b;
+  --ks-border-strong: #334155;
+  --ks-fg: #f1f5f9;
+  --ks-fg-body: #cbd5e1;
+  --ks-fg-muted: #94a3b8;
+  --ks-fg-subtle: #94a3b8;
+  --ks-fg-inverse: #0f172a;
+  --ks-brand: #3b82f6;
+  --ks-brand-hover: #60a5fa;
+  --ks-brand-fg: #0b1220;
+  /* action.primary #3B82F6 is 3.98:1 on surface.muted, so text/links use the lighter hover hue. */
+  --ks-brand-text: #60a5fa;
+  --ks-brand-subtle: #172554;
+  --ks-brand-subtle-hover: #1e3a8a;
+  --ks-brand-subtle-fg: #bfdbfe;
+  --ks-indigo: #a5b4fc;
+  --ks-indigo-subtle: rgba(79, 70, 229, 0.2);
+  --ks-ring: #3b82f6;
+  --ks-coral-text: #ff8a8a;
+  --ks-coral-subtle: rgba(255, 107, 107, 0.14);
+  --ks-yellow-subtle: rgba(251, 191, 36, 0.14);
+  --ks-teal-text: #2dd4bf;
+  --ks-teal-subtle: rgba(20, 184, 166, 0.14);
+  --ks-success: #4ade80;
+  --ks-success-subtle: rgba(22, 163, 74, 0.16);
+  --ks-warning: #fbbf24;
+  --ks-warning-subtle: rgba(217, 119, 6, 0.18);
+  --ks-danger: #f87171;
+  --ks-danger-subtle: rgba(220, 38, 38, 0.18);
+  --ks-info: #38bdf8;
+  --ks-info-subtle: rgba(2, 132, 199, 0.18);
+  --ks-verified: #2dd4bf;
+  --ks-verified-hue: #14b8a6;
+  --ks-verified-subtle: rgba(15, 118, 110, 0.24);
+  --ks-danger-on-inverse: #b91c1c;
+  --ks-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 18px rgba(0, 0, 0, 0.3);
+  --ks-shadow-floating: 0 12px 32px rgba(0, 0, 0, 0.5);
 }
 
 :root[data-theme="light"] {
   color-scheme: light;
+}
+
+/* Devanagari has tall matras: tokens.json type.devanagariLineHeightBoost = 1.1 for every step. */
+html[lang="ne"] {
+  --text-xs--line-height: calc(16px * 1.1);
+  --text-sm--line-height: calc(20px * 1.1);
+  --text-base--line-height: calc(24px * 1.1);
+  --text-lg--line-height: calc(28px * 1.1);
+  --text-xl--line-height: calc(28px * 1.1);
+  --text-2xl--line-height: calc(32px * 1.1);
+  --text-3xl--line-height: calc(38px * 1.1);
+  --text-4xl--line-height: calc(44px * 1.1);
+  --text-5xl--line-height: calc(56px * 1.1);
+  --text-6xl--line-height: calc(64px * 1.1);
+}
+
+/* Sonner toasts: AA-safe status text on soft backgrounds (sonner shows an icon + message). */
+:root [data-sonner-toaster][data-sonner-theme] {
+  --normal-bg: var(--ks-surface);
+  --normal-border: var(--ks-border);
+  --normal-text: var(--ks-fg);
+  --success-bg: var(--ks-success-subtle);
+  --success-border: color-mix(in srgb, var(--ks-success) 30%, transparent);
+  --success-text: var(--ks-success);
+  --info-bg: var(--ks-info-subtle);
+  --info-border: color-mix(in srgb, var(--ks-info) 30%, transparent);
+  --info-text: var(--ks-info);
+  --warning-bg: var(--ks-warning-subtle);
+  --warning-border: color-mix(in srgb, var(--ks-warning) 30%, transparent);
+  --warning-text: var(--ks-warning);
+  --error-bg: var(--ks-danger-subtle);
+  --error-border: color-mix(in srgb, var(--ks-danger) 30%, transparent);
+  --error-text: var(--ks-danger);
+  --border-radius: var(--ks-radius-control);
 }
 
 @layer base {
@@ -290,7 +433,7 @@
   );
   background-size: 200% 100%;
   animation: ks-shimmer 1.4s ease-in-out infinite;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
 }
 
 @keyframes ks-shimmer {
@@ -302,18 +445,18 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+/* Gradient fills — allowed surfaces only (see :root note). */
+@utility bg-hero-gradient {
+  background-image: var(--ks-gradient-hero);
+}
+@utility bg-joy-gradient {
+  background-image: var(--ks-gradient-joy);
+}
+@utility bg-skill-gradient {
+  background-image: var(--ks-gradient-skill);
 }
 
-/* Radix dialog / popover motion */
+/* Motion: overlays and content entrances use the token durations + standard easing. */
 @keyframes ks-fade-in {
   from {
     opacity: 0;
@@ -336,14 +479,41 @@
   }
 }
 .animate-fade-in {
-  animation: ks-fade-in 150ms ease-out;
+  animation: ks-fade-in var(--ks-motion-control) var(--ks-ease);
 }
 .animate-pop-in {
-  animation: ks-pop-in 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: ks-pop-in var(--ks-motion-base) var(--ks-ease);
 }
 .animate-slide-in-right {
-  animation: ks-slide-in-right 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: ks-slide-in-right var(--ks-motion-slow) var(--ks-ease);
 }
 .animate-slide-in-left {
-  animation: ks-slide-in-left 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: ks-slide-in-left var(--ks-motion-slow) var(--ks-ease);
+}
+
+/* Reduced motion: no entrances, lifts, shimmer or smooth scrolling. State changes still happen
+   instantly; the loading spinner keeps turning (it is the only essential animation). */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ks-motion-control: 0ms;
+    --ks-motion-base: 0ms;
+    --ks-motion-slow: 0ms;
+    --ks-motion-content: 0ms;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-spin {
+    animation-duration: 1s !important;
+    animation-iteration-count: infinite !important;
+  }
+  .skeleton {
+    animation: none !important;
+  }
 }

@@ -160,7 +160,7 @@ function Enrol({
           <p className="self-start text-sm font-medium text-fg">{t("step_scan")}</p>
           <div className="flex size-48 items-center justify-center rounded-lg border border-border bg-white p-2">
             {qrFailed ? (
-              <p className="px-3 text-center text-xs text-neutral-600">{t("qr_failed")}</p>
+              <p className="px-3 text-center text-xs text-hero">{t("qr_failed")}</p>
             ) : (
               // eslint-disable-next-line @next/next/no-img-element -- SVG streamed through the BFF proxy
               <img

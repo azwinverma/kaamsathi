@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors select-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:stroke-[1.75]",
+  "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-control text-sm font-medium transition-colors select-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:stroke-[1.75]",
   {
     variants: {
       variant: {
@@ -13,12 +13,13 @@ export const buttonVariants = cva(
         secondary:
           "border border-border bg-surface text-fg shadow-sm hover:bg-surface-hover hover:border-border-strong",
         ghost: "text-fg-body hover:bg-surface-hover hover:text-fg",
-        danger: "bg-danger text-white shadow-sm hover:opacity-90 dark:text-neutral-900",
+        danger: "bg-danger text-fg-inverse shadow-sm hover:opacity-90",
         "danger-outline":
           "border border-border bg-surface text-danger shadow-sm hover:bg-danger-subtle hover:border-danger/40",
-        subtle: "bg-brand-subtle text-brand-subtle-fg hover:bg-primary-100 dark:hover:bg-primary-900/50",
-        link: "h-auto px-0 text-brand underline-offset-4 hover:underline",
-        accent: "bg-accent text-white shadow-sm hover:bg-accent-600",
+        subtle: "bg-brand-subtle text-brand-subtle-fg hover:bg-brand-subtle-hover",
+        link: "h-auto px-0 text-brand-text underline-offset-4 hover:underline",
+        // Coral accent fill: text is accent.onFill (#0F172A), never white.
+        accent: "bg-coral text-on-accent shadow-sm hover:brightness-95",
       },
       size: {
         sm: "h-8 px-3 text-xs",

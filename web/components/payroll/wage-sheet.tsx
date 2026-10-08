@@ -154,7 +154,7 @@ export function WageSheet({
                       e.stopPropagation();
                       onOpen(p);
                     }}
-                    className="block max-w-full truncate text-left font-medium text-fg hover:text-brand hover:underline"
+                    className="block max-w-full truncate text-left font-medium text-fg hover:text-brand-text hover:underline"
                     aria-label={t("open_payslip", { name: p.worker.full_name })}
                   >
                     {p.worker.full_name}

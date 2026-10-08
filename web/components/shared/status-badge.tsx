@@ -1,7 +1,7 @@
 "use client";
 import { BadgeCheck, Clock, ShieldAlert, ShieldQuestion } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Badge, STATUS_TONE } from "@/components/ui/badge";
+import { Badge, STATUS_TONE, TONE_ICON } from "@/components/ui/badge";
 import type { VerificationStatus } from "@/lib/api/types";
 
 /**
@@ -21,8 +21,11 @@ export function StatusBadge({
 }) {
   const t = useTranslations();
   const key = `${ns}.${status}`;
+  const tone = STATUS_TONE[status] ?? "neutral";
+  const Icon = TONE_ICON[tone];
   return (
-    <Badge tone={STATUS_TONE[status] ?? "neutral"} dot className={className}>
+    <Badge tone={tone} className={className}>
+      <Icon aria-hidden />
       {label ?? (t.has(key) ? t(key) : status)}
     </Badge>
   );

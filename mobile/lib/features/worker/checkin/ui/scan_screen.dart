@@ -50,16 +50,16 @@ class _ScanScreenState extends State<ScanScreen> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: context.ks.media,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        title: Text(l.scanTitle, style: const TextStyle(color: Colors.white)),
+        backgroundColor: context.ks.media,
+        foregroundColor: context.ks.onMedia,
+        title: Text(l.scanTitle, style: TextStyle(color: context.ks.onMedia)),
         actions: [
           IconButton(
             tooltip: l.scanTorch,
             onPressed: _controller.toggleTorch,
-            icon: const Icon(LucideIcons.flashlight, color: Colors.white),
+            icon: Icon(LucideIcons.flashlight, color: context.ks.onMedia),
           ),
         ],
       ),
@@ -81,8 +81,8 @@ class _ScanScreenState extends State<ScanScreen> {
                 width: 240,
                 height: 240,
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white, width: 3),
-                  borderRadius: BorderRadius.circular(KsRadius.xl),
+                  border: Border.all(color: context.ks.onMedia, width: 3),
+                  borderRadius: BorderRadius.circular(KsRadius.card),
                 ),
               ),
             ),
@@ -94,7 +94,7 @@ class _ScanScreenState extends State<ScanScreen> {
             child: Text(
               l.scanInstructions,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(color: context.ks.onMedia),
             ),
           ),
         ],
@@ -110,16 +110,16 @@ class _ScanError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
-      color: Colors.black,
+      color: context.ks.media,
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(LucideIcons.cameraOff, color: Colors.white, size: 40),
+              Icon(LucideIcons.cameraOff, color: context.ks.onMedia, size: 40),
               const SizedBox(height: 16),
-              Text(message, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white, fontSize: 16)),
+              Text(message, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: context.ks.onMedia)),
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: () => CheckInController.openSettings(CheckInProblem.locationDenied),

@@ -102,7 +102,7 @@ class _ConsentViewState extends State<ConsentView> {
     final l = context.l10n;
     final lang = context.lang;
     final t = Theme.of(context).textTheme;
-    final c = context.statusColors;
+    final c = context.ks;
     final o = widget.offer;
     final p = o.partner;
     final reg = regulatorLabel(l, p);
@@ -119,7 +119,7 @@ class _ConsentViewState extends State<ConsentView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: t.labelLarge?.copyWith(color: c.textSecondary)),
+                Text(title, style: t.labelLarge?.copyWith(color: c.textMuted)),
                 const SizedBox(height: 2),
                 body,
               ],
@@ -171,7 +171,7 @@ class _ConsentViewState extends State<ConsentView> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Icon(LucideIcons.check, size: 16, color: c.successFg),
+                              Icon(LucideIcons.check, size: 16, color: c.successText),
                               const SizedBox(width: 6),
                               Expanded(child: Text(scopeLabel(l, s), style: t.bodyMedium)),
                             ],
@@ -182,7 +182,7 @@ class _ConsentViewState extends State<ConsentView> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(LucideIcons.x, size: 16, color: c.dangerFg),
+                            Icon(LucideIcons.x, size: 16, color: c.errorText),
                             const SizedBox(width: 6),
                             Expanded(child: Text(l.consentNotShared, style: t.bodyMedium)),
                           ],
@@ -228,13 +228,13 @@ class _ConsentViewState extends State<ConsentView> {
         Container(
           key: const Key('consent_no_lend'),
           padding: const EdgeInsets.all(KsSpace.s3),
-          decoration: BoxDecoration(color: c.infoBg, borderRadius: BorderRadius.circular(KsRadius.md)),
+          decoration: BoxDecoration(color: c.infoSoft, borderRadius: BorderRadius.circular(KsRadius.dense)),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(LucideIcons.info, color: c.infoFg, size: 20),
+              Icon(LucideIcons.info, color: c.infoText, size: 20),
               const SizedBox(width: KsSpace.s2),
-              Expanded(child: Text(l.consentNoLend(p.name), style: t.bodyMedium?.copyWith(color: c.infoFg))),
+              Expanded(child: Text(l.consentNoLend(p.name), style: t.bodyMedium?.copyWith(color: c.infoText))),
             ],
           ),
         ),

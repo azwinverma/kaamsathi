@@ -90,7 +90,7 @@ class TrustCardView extends StatelessWidget {
     final l = context.l10n;
     final lang = context.lang;
     final t = Theme.of(context).textTheme;
-    final c = context.statusColors;
+    final c = context.ks;
     final s = summary;
     final level = s.verificationLevel;
     final levelLabel =
@@ -113,7 +113,7 @@ class TrustCardView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(l.trustScoreLabel, style: t.bodySmall?.copyWith(color: c.textSecondary)),
+                      Text(l.trustScoreLabel, style: t.bodySmall?.copyWith(color: c.textMuted)),
                       Text(
                         s.reliabilityScore == null
                             ? l.trustScoreNone
@@ -165,7 +165,7 @@ class TrustCardView extends StatelessWidget {
                 ),
             ],
             const SizedBox(height: KsSpace.s2),
-            Text(l.trustNotCredit, style: t.bodySmall?.copyWith(color: c.textSecondary)),
+            Text(l.trustNotCredit, style: t.bodySmall?.copyWith(color: c.textMuted)),
             if (onViews != null)
               Align(
                 alignment: Alignment.centerLeft,
@@ -190,7 +190,7 @@ class _LevelBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final c = context.statusColors;
+    final c = context.ks;
     final t = Theme.of(context).textTheme;
     final strong = level >= 2;
     return Semantics(
@@ -201,12 +201,12 @@ class _LevelBadge extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(LucideIcons.shieldCheck, size: 18, color: strong ? c.successFg : c.infoFg),
+              Icon(LucideIcons.shieldCheck, size: 18, color: strong ? c.successText : c.infoText),
               const SizedBox(width: 4),
               Flexible(
                 child: Text(
                   '${l.trustLevelN(localizeDigits('$level', context.lang))} · $label',
-                  style: t.labelMedium?.copyWith(color: strong ? c.successFg : c.infoFg),
+                  style: t.labelMedium?.copyWith(color: strong ? c.successText : c.infoText),
                 ),
               ),
             ],
@@ -220,8 +220,8 @@ class _LevelBadge extends StatelessWidget {
                   height: 6,
                   margin: const EdgeInsets.only(right: 4),
                   decoration: BoxDecoration(
-                    color: i <= level ? (strong ? c.successFg : c.infoFg) : c.neutralBg,
-                    borderRadius: BorderRadius.circular(999),
+                    color: i <= level ? (strong ? c.successText : c.infoText) : c.neutralSoft,
+                    borderRadius: BorderRadius.circular(KsRadius.pill),
                   ),
                 ),
             ],

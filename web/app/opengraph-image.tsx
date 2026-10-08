@@ -15,7 +15,7 @@ export default function OpengraphImage() {
         flexDirection: "column",
         justifyContent: "space-between",
         padding: "72px 80px",
-        background: "linear-gradient(135deg, #142a7a 0%, #2647C4 100%)",
+        background: "linear-gradient(135deg, #2563EB 0%, #4F46E5 55%, #7C3AED 100%)",
         color: "#ffffff",
       }}
     >
@@ -24,13 +24,13 @@ export default function OpengraphImage() {
           <rect width="32" height="32" rx="8" fill="#ffffff" />
           <path
             d="M10 8v16M10 16.5 19.5 8M13.5 13.5 21 24"
-            stroke="#2647C4"
+            stroke="#2563EB"
             strokeWidth="3"
             strokeLinecap="round"
             strokeLinejoin="round"
             fill="none"
           />
-          <circle cx="23.5" cy="9.5" r="2.5" fill="#DC2B4B" />
+          <circle cx="23.5" cy="9.5" r="2.5" fill="#FF6B6B" />
         </svg>
         <div style={{ fontSize: 64, fontWeight: 700, letterSpacing: -1 }}>KaamSathi</div>
       </div>
@@ -43,7 +43,7 @@ export default function OpengraphImage() {
         </div>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 26, opacity: 0.8 }}>
-        <div style={{ width: 14, height: 14, borderRadius: 7, background: "#DC2B4B" }} />
+        <div style={{ width: 14, height: 14, borderRadius: 7, background: "#FF6B6B" }} />
         Workers never pay a fee
       </div>
     </div>,

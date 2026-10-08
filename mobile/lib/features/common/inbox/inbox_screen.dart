@@ -199,13 +199,13 @@ class _Tile extends StatelessWidget {
   Widget build(BuildContext context) {
     final lang = context.lang;
     final t = Theme.of(context).textTheme;
-    final c = context.statusColors;
+    final c = context.ks;
     final scheme = Theme.of(context).colorScheme;
     final body = n.bodyFor(lang);
     return Card(
       color: read ? null : scheme.primaryContainer.withValues(alpha: 0.35),
       child: InkWell(
-        borderRadius: BorderRadius.circular(KsRadius.lg),
+        borderRadius: BorderRadius.circular(KsRadius.card),
         onTap: () => onTap(n),
         child: Padding(
           padding: const EdgeInsets.all(KsSpace.s4),
@@ -230,7 +230,7 @@ class _Tile extends StatelessWidget {
                       const SizedBox(height: KsSpace.s1),
                       Text(
                         '${formatBsDateTime(n.createdAt, lang)} · ${formatTime(n.createdAt!.toLocal(), lang)}',
-                        style: t.bodySmall?.copyWith(color: c.textSecondary),
+                        style: t.bodySmall?.copyWith(color: c.textMuted),
                       ),
                     ],
                   ],

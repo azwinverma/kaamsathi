@@ -102,7 +102,7 @@ function VerificationContent() {
         </div>
         <aside className="space-y-3 rounded-lg border border-border bg-surface p-4 text-sm shadow-sm">
           <h2 className="flex items-center gap-2 font-semibold text-fg">
-            <Info className="size-4 text-brand" aria-hidden />
+            <Info className="size-4 text-brand-text" aria-hidden />
             {t("why_title")}
           </h2>
           <ul className="list-disc space-y-1.5 pl-5 text-fg-body">
