@@ -159,6 +159,21 @@ def _notify_org(dispute: Dispute):
             f"KaamSathi: A worker raised a {dispute.kind} dispute. Please respond in KaamSathi → Disputes.",
             kind="dispute_raised",
         )
+    # Enterprise webhook (docs/CONTRACT-EXTENSIONS.md §4). No worker personal details in the payload.
+    try:
+        from apps.integrations.services import emit
+    except ImportError:  # pragma: no cover
+        return
+    emit(
+        dispute.organization,
+        "dispute.raised",
+        {
+            "dispute_id": str(dispute.id),
+            "kind": dispute.kind,
+            "status": dispute.status,
+            "raised_at": dispute.raised_at.isoformat(),
+        },
+    )
 
 
 # --------------------------------------------------------------------------- employer (/org)

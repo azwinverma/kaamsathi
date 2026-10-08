@@ -17,3 +17,13 @@ def monthly_subscription_charges(force: bool = False):
         _, was_created = create_subscription_charge(org, today.year, today.month)
         created += int(was_created)
     return created
+
+
+@shared_task
+def generate_monthly_invoices(bs_year: int | None = None, bs_month: int | None = None):
+    """Draft invoices for the previous BS month (or the given one). Ops reviews and issues them."""
+    from .services import generate_invoices, previous_bs_month
+
+    if bs_year is None or bs_month is None:
+        bs_year, bs_month = previous_bs_month()
+    return len(generate_invoices(bs_year, bs_month))

@@ -2,6 +2,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, type QueryParams } from "../client";
 import { qk } from "../keys";
+import { track } from "../../telemetry";
 import type {
   Application,
   ApplicationDetail,
@@ -31,7 +32,10 @@ export function useCreateJob() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (body: JobInput) => api.post<Job>("/org/jobs", body),
-    onSuccess: () => qc.invalidateQueries({ queryKey: qk.org.jobsAll }),
+    onSuccess: (job) => {
+      track("job_created", { job_id: job.id, wage_type: job.wage_type, status: job.status });
+      return qc.invalidateQueries({ queryKey: qk.org.jobsAll });
+    },
   });
 }
 

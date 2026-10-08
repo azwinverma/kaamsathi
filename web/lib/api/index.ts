@@ -45,3 +45,4 @@ export * from "./types-mobility";
 export * from "./hooks/mobility";
 export * from "./types-security";
 export * from "./hooks/security";
+export * from "./hooks/notifications";

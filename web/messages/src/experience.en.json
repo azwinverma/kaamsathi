@@ -1,0 +1,173 @@
+{
+  "experience": {
+    "status": {
+      "self_reported": "Self-reported",
+      "reference_pending": "Reference check pending",
+      "verified": "Verified",
+      "unverifiable": "Could not verify",
+      "rejected": "Rejected"
+    },
+    "method": {
+      "reference_call": "Reference call",
+      "document": "Document checked",
+      "employer_confirmed": "Confirmed by employer"
+    },
+    "method_hint": {
+      "reference_call": "You spoke to the reference and they confirmed the role and dates.",
+      "document": "An experience letter, payslip or contract matches the details.",
+      "employer_confirmed": "The employer (on KaamSathi or by phone) confirmed the worker was employed."
+    },
+    "source": {
+      "ops": "KaamSathi match",
+      "worker_interest": "Worker applied",
+      "employer_invite": "Invited"
+    },
+    "response": {
+      "pending": "Awaiting worker",
+      "interested": "Worker interested",
+      "declined": "Worker declined",
+      "pending_hint": "We asked the worker by SMS to confirm interest.",
+      "interested_hint": "The worker confirmed they want this job.",
+      "declined_hint": "The worker said no to this job."
+    },
+    "queue": {
+      "title": "Reference checks",
+      "subtitle": "Verify past work that workers did outside KaamSathi. Call the reference, then record what you found.",
+      "filter_label": "Filter by status",
+      "filter_all": "All",
+      "search_placeholder": "Search worker, employer or role",
+      "remaining": "{count, plural, =0 {Nothing waiting} one {# waiting} other {# waiting}}",
+      "list_label": "Work history",
+      "oldest_first": "Oldest first",
+      "waiting": "Waiting {time}",
+      "on_platform": "On KaamSathi",
+      "on_platform_hint": "{name} is on KaamSathi and can confirm this from their account. You can still verify it yourself.",
+      "empty_title": "No reference checks waiting",
+      "empty_body": "New work history with a reference phone number will appear here.",
+      "empty_filtered": "Nothing matches these filters.",
+      "done_title": "Queue cleared",
+      "select_prompt": "Select an entry to review",
+      "back_to_queue": "Back to the list",
+      "months": "{count, plural, one {# month} other {# months}}",
+      "worker": "Worker",
+      "view_worker": "Open worker profile",
+      "identity_unverified": "This worker's identity is not verified yet. Check it before trusting their history.",
+      "employer": "Employer",
+      "period": "Period",
+      "present": "present",
+      "trade": "Trade",
+      "district": "District",
+      "description": "What they did",
+      "reference": "Reference",
+      "no_reference": "No reference phone given",
+      "call": "Call {phone}",
+      "view_document": "View document",
+      "no_document": "No document uploaded",
+      "decision": "Decision",
+      "decided_by": "by {name}",
+      "change_decision": "Change decision",
+      "method_label": "How did you verify it?",
+      "note_label": "Note",
+      "note_hint": "required unless verified — the worker sees it",
+      "note_placeholder": "e.g. Spoke to the head chef, confirmed 2022–2023 as line cook.",
+      "note_required": "Add a note so the worker knows what to fix.",
+      "verify": "Verify",
+      "unverifiable": "Could not verify",
+      "reject": "Reject",
+      "toast_verified": "Verified {name}'s work history",
+      "toast_unverifiable": "Marked as could not verify",
+      "toast_rejected": "Work history rejected",
+      "script": {
+        "title": "Call script",
+        "reference_fallback": "the reference",
+        "now": "now",
+        "intro": "Namaste, may I speak to {reference}? I am calling from KaamSathi about {worker}.",
+        "confirm_worked": "Did {worker} work at {employer}?",
+        "role_dates": "Were they a {role} from {from} to {to}? (Don't read the dates out first — ask them.)",
+        "rehire": "Would you hire them again? Any reason they left?",
+        "close": "Thank you. We only record whether the details were confirmed.",
+        "privacy": "Never share the worker's phone, ID or wage with the reference."
+      }
+    },
+    "confirm": {
+      "tab": "Work history confirmations",
+      "description": "These workers say they worked for you before. Confirming helps them get hired elsewhere; reject only if it isn't true.",
+      "filter_label": "Show",
+      "filter_pending": "Waiting",
+      "filter_all": "All",
+      "empty_title": "No confirmation requests",
+      "empty_body": "When a worker lists your organization as a past employer, it appears here.",
+      "worked_as": "Says they worked as {role} at {employer}",
+      "present": "present",
+      "months": "{count, plural, one {# month} other {# months}}",
+      "confirm": "Confirm",
+      "reject": "Not correct",
+      "reject_title": "{name} did not work here?",
+      "reject_body": "The entry will be marked as rejected and the worker will be told.",
+      "reject_note_label": "What is wrong?",
+      "reject_note_placeholder": "e.g. Worked here for 3 months, not 2 years.",
+      "confirmed_toast": "Confirmed {name}'s work history",
+      "rejected_toast": "Marked {name}'s entry as not correct",
+      "privacy_note": "You only see what the worker wrote. Their references and documents stay private."
+    },
+    "match": {
+      "explain_title": "How this score is built",
+      "explain_aria": "Score {score}: show breakdown",
+      "total": "Score",
+      "clamped": "Scores are capped between 0 and 100.",
+      "interested": "Interested",
+      "interested_hint": "This worker asked for this job in the app.",
+      "component": {
+        "trade": "Trade match",
+        "district": "Same district",
+        "preferred_district": "Prefers this area",
+        "verified": "Identity verified",
+        "nstb": "NSTB level",
+        "experience": "Experience",
+        "reliability": "Reliability",
+        "outcomes": "Stays in jobs",
+        "wage": "Expects higher wage",
+        "declined_before": "Declined this employer before"
+      },
+      "reason": {
+        "prefers_area": "Prefers this area",
+        "stays_in_jobs": "Stays in jobs",
+        "declined_before": "Declined this employer before",
+        "reliable": "Reliable"
+      }
+    },
+    "offer": {
+      "title": "Offer to {name}",
+      "description": "The worker gets the offer by SMS and in the app, and can accept or decline. You can still join them without an offer.",
+      "send": "Send offer",
+      "send_again": "Send a new offer",
+      "withdraw": "Withdraw",
+      "withdrawn_toast": "Offer withdrawn",
+      "sent_toast": "Offer sent to {name}",
+      "site": "Site",
+      "designation": "Job title",
+      "contract_type": "Contract",
+      "ends_on": "Contract ends on",
+      "ends_on_required": "Choose when the contract ends.",
+      "expires_in": "Worker must answer within",
+      "expires_in_hint": "After this the offer expires and you can send a new one.",
+      "days": "{count, plural, one {# day} other {# days}}",
+      "expires": "Expires {when}",
+      "join_from_offer": "Terms below are filled from the offer the worker accepted.",
+      "join_without_offer": "No accepted offer yet. You can still join them, but a written offer avoids wage disputes later.",
+      "status": {
+        "sent": "Offer sent",
+        "accepted": "Offer accepted",
+        "declined": "Offer declined",
+        "expired": "Offer expired",
+        "withdrawn": "Offer withdrawn"
+      },
+      "contract": {
+        "permanent": "Permanent",
+        "fixed_term": "Fixed term",
+        "daily": "Daily wage",
+        "probation": "Probation"
+      }
+    }
+  }
+}

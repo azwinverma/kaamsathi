@@ -1,6 +1,7 @@
 """Localised labels for partners / finance / insights enums (``*_label`` fields)."""
 
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
 
 PARTNER_KIND = {
     "bank": _("Bank"),
@@ -22,6 +23,9 @@ SCOPE = {
     "profile.read": _("Read your verified profile"),
     "earnings.read": _("Read your verified earnings"),
     "passport.read": _("Read your Skill Passport"),
+    "mobility.read": pgettext_lazy(
+        "mobility", "Read the verification status of your foreign-employment documents"
+    ),
     "referrals.write": _("Update referral status"),
 }
 PURPOSE = {
@@ -31,6 +35,11 @@ PURPOSE = {
     "recruitment": _("Recruitment"),
     "training": _("Training"),
     "verification": _("Verification"),
+}
+COMPLIANCE_STATUS = {
+    "unverified": pgettext_lazy("mobility", "Not verified"),
+    "verified": pgettext_lazy("mobility", "Licence verified"),
+    "suspended": pgettext_lazy("mobility", "Suspended"),
 }
 GRANT_STATUS = {"active": _("Active"), "revoked": _("Revoked"), "expired": _("Expired")}
 OFFER_KIND = {
@@ -52,4 +61,6 @@ REFERRAL_STATUS = {
 
 # Scopes a key may hold vs. scopes that read a worker's data (need a ConsentGrant).
 KEY_SCOPES = list(SCOPE.keys())
-DATA_SCOPES = ["profile.read", "earnings.read", "passport.read"]
+DATA_SCOPES = ["profile.read", "earnings.read", "passport.read", "mobility.read"]
+# Grants with this purpose / these scopes may only go to an eligible recruitment agency.
+RECRUITMENT_ONLY_SCOPES = {"mobility.read"}

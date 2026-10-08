@@ -66,7 +66,10 @@
     "ops_audit": "अडिट विवरण",
     "ops_staff": "कर्मचारी र भूमिका",
     "ops_taxonomy": "पेशा र सीप",
-    "ops_system": "प्रणाली स्वास्थ्य"
+    "ops_system": "प्रणाली स्वास्थ्य",
+    "ops_billing": "बिलिङ र बिजक",
+    "ops_analytics": "उत्पादन विश्लेषण",
+    "ops_notifications": "सन्देश टेम्प्लेट"
   },
   "term": {
     "basic_salary": "आधारभूत तलब",

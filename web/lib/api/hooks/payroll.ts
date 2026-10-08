@@ -2,6 +2,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, fetchAllPages } from "../client";
 import { qk } from "../keys";
+import { track } from "../../telemetry";
 import type {
   Paginated,
   PaymentMethod,
@@ -44,7 +45,8 @@ export function useCreatePayrollRun() {
   return useMutation({
     mutationFn: (body: { bs_year: number; bs_month: number; include_festival_allowance: boolean }) =>
       api.post<PayrollRun>("/org/payroll-runs", body),
-    onSuccess: () => {
+    onSuccess: (run) => {
+      track("payroll_run_created", { bs_year: run.bs_year, bs_month: run.bs_month });
       qc.invalidateQueries({ queryKey: qk.org.payrollRuns });
       qc.invalidateQueries({ queryKey: qk.org.dashboard });
     },

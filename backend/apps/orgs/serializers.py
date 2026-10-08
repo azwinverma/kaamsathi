@@ -43,6 +43,10 @@ class OrganizationSerializer(BSModelSerializer):
         data["district"] = district_ref(instance.district)
         data["logo"] = file_url(self.context.get("request"), instance.logo)
         data["industry_label"] = labels.label(labels.INDUSTRY, instance.industry)
+        from .kyb import STATUS as KYB_STATUS
+
+        data["verification_status"] = instance.verification_status
+        data["verification_status_label"] = labels.label(KYB_STATUS, instance.verification_status)
         membership = self.context.get("membership")
         if membership is not None:
             data["my_role"] = membership.role

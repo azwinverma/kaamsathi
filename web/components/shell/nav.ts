@@ -1,5 +1,8 @@
 import {
   Activity,
+  BellRing,
+  Funnel,
+  ReceiptText,
   BadgeCheck,
   Building,
   ClipboardList,
@@ -39,6 +42,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { Role } from "@/lib/api/types";
+import type { StaffRole } from "@/lib/api/types-security";
 
 export interface NavItem {
   href: string;
@@ -46,6 +50,8 @@ export interface NavItem {
   label: string;
   icon: LucideIcon;
   roles?: Role[];
+  /** Ops only: staff roles that may open this page (superadmin always can). Unset = any staff. */
+  staffRoles?: StaffRole[];
   exact?: boolean;
 }
 export interface NavGroup {
@@ -55,6 +61,12 @@ export interface NavGroup {
 
 const FULL: Role[] = ["owner", "admin", "hr"];
 const ADMIN: Role[] = ["owner", "admin"];
+
+// Mirrors backend apps/accounts/staff_roles.py ROUTE_ROLES (docs/CONTRACT-EXTENSIONS.md §1).
+const VERIFIER: StaffRole[] = ["verifier"];
+const SUPPORT: StaffRole[] = ["support"];
+const VERIFIER_OR_SUPPORT: StaffRole[] = ["verifier", "support"];
+const SUPERADMIN: StaffRole[] = ["superadmin"];
 
 export const APP_NAV: NavGroup[] = [
   { items: [{ href: "/app", label: "nav.dashboard", icon: LayoutDashboard, exact: true }] },
@@ -110,47 +122,70 @@ export const OPS_NAV: NavGroup[] = [
   {
     label: "nav.ops",
     items: [
-      { href: "/ops/workers", label: "nav.ops_workers", icon: Users },
-      { href: "/ops/verification", label: "nav.ops_verification", icon: ShieldCheck },
-      { href: "/ops/jobs", label: "nav.ops_jobs", icon: Briefcase },
-      { href: "/ops/organizations", label: "nav.ops_organizations", icon: Building2 },
+      { href: "/ops/workers", label: "nav.ops_workers", icon: Users, staffRoles: VERIFIER },
+      { href: "/ops/verification", label: "nav.ops_verification", icon: ShieldCheck, staffRoles: VERIFIER },
+      { href: "/ops/jobs", label: "nav.ops_jobs", icon: Briefcase, staffRoles: VERIFIER_OR_SUPPORT },
+      { href: "/ops/organizations", label: "nav.ops_organizations", icon: Building2, staffRoles: VERIFIER_OR_SUPPORT },
     ],
   },
   {
     label: "nav.ops_trust",
     items: [
-      { href: "/ops/credentials", label: "nav.ops_credentials", icon: BadgeCheck },
-      { href: "/ops/disputes", label: "nav.ops_disputes", icon: FileWarning },
-      { href: "/ops/crews", label: "nav.ops_crews", icon: UsersRound },
-      { href: "/ops/privacy", label: "nav.ops_privacy", icon: Lock },
-      { href: "/ops/employers", label: "nav.ops_employers", icon: Building },
-      { href: "/ops/references", label: "nav.ops_references", icon: UserCheck },
-      { href: "/ops/risk", label: "nav.ops_risk", icon: ShieldAlert },
-      { href: "/ops/support", label: "nav.ops_support", icon: LifeBuoy },
+      { href: "/ops/credentials", label: "nav.ops_credentials", icon: BadgeCheck, staffRoles: VERIFIER },
+      { href: "/ops/disputes", label: "nav.ops_disputes", icon: FileWarning, staffRoles: SUPPORT },
+      { href: "/ops/crews", label: "nav.ops_crews", icon: UsersRound, staffRoles: VERIFIER_OR_SUPPORT },
+      { href: "/ops/privacy", label: "nav.ops_privacy", icon: Lock, staffRoles: SUPPORT },
+      { href: "/ops/employers", label: "nav.ops_employers", icon: Building, staffRoles: VERIFIER },
+      { href: "/ops/references", label: "nav.ops_references", icon: UserCheck, staffRoles: VERIFIER },
+      { href: "/ops/risk", label: "nav.ops_risk", icon: ShieldAlert, staffRoles: ["risk_analyst"] },
+      { href: "/ops/support", label: "nav.ops_support", icon: LifeBuoy, staffRoles: SUPPORT },
     ],
   },
   {
     label: "nav.ops_ecosystem",
     items: [
-      { href: "/ops/training", label: "nav.ops_training", icon: GraduationCap },
-      { href: "/ops/partners", label: "nav.ops_partners", icon: Handshake },
-      { href: "/ops/finance", label: "nav.ops_finance", icon: Landmark },
+      { href: "/ops/training", label: "nav.ops_training", icon: GraduationCap, staffRoles: VERIFIER_OR_SUPPORT },
+      { href: "/ops/partners", label: "nav.ops_partners", icon: Handshake, staffRoles: ["partner_manager"] },
+      { href: "/ops/finance", label: "nav.ops_finance", icon: Landmark, staffRoles: ["finance_ops"] },
+      { href: "/ops/billing", label: "nav.ops_billing", icon: ReceiptText, staffRoles: ["finance_ops"] },
       { href: "/ops/insights", label: "nav.ops_insights", icon: LineChart },
       { href: "/ops/kpis", label: "nav.ops_kpis", icon: Gauge },
-      { href: "/ops/mobility", label: "nav.ops_mobility", icon: Plane },
+      { href: "/ops/analytics", label: "nav.ops_analytics", icon: Funnel },
+      { href: "/ops/mobility", label: "nav.ops_mobility", icon: Plane, staffRoles: VERIFIER },
     ],
   },
   {
     label: "nav.ops_admin",
     items: [
-      { href: "/ops/audit", label: "nav.ops_audit", icon: ScrollText },
-      { href: "/ops/staff", label: "nav.ops_staff", icon: ClipboardList },
-      { href: "/ops/taxonomy", label: "nav.ops_taxonomy", icon: Tags },
-      { href: "/ops/system", label: "nav.ops_system", icon: Activity },
+      { href: "/ops/audit", label: "nav.ops_audit", icon: ScrollText, staffRoles: SUPERADMIN },
+      { href: "/ops/staff", label: "nav.ops_staff", icon: ClipboardList, staffRoles: SUPERADMIN },
+      { href: "/ops/taxonomy", label: "nav.ops_taxonomy", icon: Tags, staffRoles: SUPERADMIN },
+      { href: "/ops/system", label: "nav.ops_system", icon: Activity, staffRoles: SUPERADMIN },
+      { href: "/ops/notifications", label: "nav.ops_notifications", icon: BellRing, staffRoles: SUPPORT },
       { href: "/ops/account", label: "nav.account_security", icon: KeyRound },
     ],
   },
 ];
+
+/**
+ * Can a staff member with `staffRoles` open this ops nav item?
+ * Undefined roles (older backend without `Me.staff_roles`) → show everything.
+ */
+export function canSeeStaffItem(item: NavItem, staffRoles: readonly StaffRole[] | undefined): boolean {
+  if (!item.staffRoles || staffRoles === undefined) return true;
+  if (staffRoles.includes("superadmin")) return true;
+  return item.staffRoles.some((r) => staffRoles.includes(r));
+}
+
+/** OPS_NAV filtered to what the staff member can open; empty groups are dropped. */
+export function filterNavForStaff(
+  nav: NavGroup[],
+  staffRoles: readonly StaffRole[] | undefined,
+): NavGroup[] {
+  return nav
+    .map((g) => ({ ...g, items: g.items.filter((i) => canSeeStaffItem(i, staffRoles)) }))
+    .filter((g) => g.items.length > 0);
+}
 
 export function isActive(pathname: string, item: NavItem): boolean {
   if (item.exact) return pathname === item.href;

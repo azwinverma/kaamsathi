@@ -32,6 +32,9 @@ x-backend-env: &backend-env
   DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?set DJANGO_SECRET_KEY}
   DJANGO_SECRET_KEY_FALLBACKS: ${DJANGO_SECRET_KEY_FALLBACKS:-}
   JWT_SIGNING_KEY: ${JWT_SIGNING_KEY:?set JWT_SIGNING_KEY}
+  # Field encryption (apps/core/crypto.py) — prod refuses to start without them (FIELD_KEYS_REQUIRED).
+  FIELD_ENCRYPTION_KEYS: ${FIELD_ENCRYPTION_KEYS:?set FIELD_ENCRYPTION_KEYS}
+  FIELD_HASH_KEY: ${FIELD_HASH_KEY:?set FIELD_HASH_KEY}
   DJANGO_ADMIN_URL: ${DJANGO_ADMIN_URL:-admin/}
   DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-${API_DOMAIN},backend,localhost,127.0.0.1}
   CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://${DOMAIN}}
@@ -72,6 +75,13 @@ x-backend-env: &backend-env
   THROTTLE_USER: ${THROTTLE_USER:-600/minute}
   THROTTLE_OTP: ${THROTTLE_OTP:-30/hour}
   THROTTLE_PUBLIC: ${THROTTLE_PUBLIC:-60/minute}
+  # Security & platform (docs/SECURITY.md §9, RUNBOOK §11)
+  STAFF_MFA_REQUIRED: ${STAFF_MFA_REQUIRED:-true}
+  METRICS_TOKEN: ${METRICS_TOKEN:-}
+  CLAMAV_HOST: ${CLAMAV_HOST:-}
+  CLAMAV_PORT: ${CLAMAV_PORT:-3310}
+  CLAMAV_REQUIRED: ${CLAMAV_REQUIRED:-false}
+  IDEMPOTENCY_TTL_HOURS: ${IDEMPOTENCY_TTL_HOURS:-24}
 
 x-backend: &backend
   <<: [*restart, *hardening, *logging]
@@ -258,7 +268,26 @@ services:
       resources:
         limits: { cpus: "0.5", memory: 512M }
 
+  # Optional virus scanner for uploads (apps/core/uploads.py). Enable with
+  #   COMPOSE_PROFILES=clamav  and  CLAMAV_HOST=clamav  in the env file. Needs ~1.5 GB RAM.
+  clamav:
+    <<: [*restart, *hardening, *logging]
+    image: clamav/clamav:stable
+    profiles: ["clamav"]
+    volumes:
+      - clamavdb:/var/lib/clamav
+    healthcheck:
+      test: ["CMD-SHELL", "clamdcheck.sh"]
+      interval: 60s
+      timeout: 10s
+      retries: 5
+      start_period: 300s
+    deploy:
+      resources:
+        limits: { cpus: "1.0", memory: 2048M }
+
 volumes:
+  clamavdb:
   pgdata:
   redisdata:
   media:

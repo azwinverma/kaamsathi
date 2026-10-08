@@ -82,6 +82,11 @@ class _BodyState extends ConsumerState<_Body> {
           ),
           child: Column(
             children: [
+              if (e.employerVerified)
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(padding: EdgeInsets.only(bottom: KsSpace.s2), child: EmployerVerifiedBadge()),
+                ),
               if (e.designation?.isNotEmpty ?? false) KeyValueRow(label: l.empDesignation, value: e.designation!),
               if (e.siteName != null) KeyValueRow(label: l.workSite, value: e.siteName!),
               KeyValueRow(label: l.empStart, value: formatBsOrAd(e.startDateBs, e.startDate, lang)),

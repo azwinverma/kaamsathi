@@ -1,0 +1,25 @@
+# gitleaks config used by .github/workflows/ci.yml (secret scan). Extends the default rules;
+# only documented false positives are allowlisted here — never real credentials.
+title = "KaamSathi gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Known non-secrets: RFC 6238 TOTP test vector, example ids in docs, generated/vendored dirs"
+paths = [
+  '''(^|/)node_modules/''',
+  '''(^|/)\.venv/''',
+  '''(^|/)\.next/''',
+  '''(^|/)\.dart_tool/''',
+  '''(^|/)nepal-workforce-os/''',
+  '''(^|/)web/playwright-report/''',
+  '''(^|/)mobile/build/''',
+]
+regexes = [
+  '''GEZDGNBVGY3TQOJQ''',                        # base32("12345678901234567890"), RFC 6238 test secret
+  '''0b8d3c8e-6a52-4b8e-9a4c-1f0d2c9e7b11''',    # example request id in docs/API_CONVENTIONS.md
+  '''citizenship/NID/bank/PAN''',                # prose, not a key
+  '''Phase1ExitKey''',                           # TypeScript type name
+  '''ci-only-[0-9a-f]{64}''',                    # throwaway DJANGO_SECRET_KEY for `check --deploy` in CI
+]

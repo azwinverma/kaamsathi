@@ -310,3 +310,64 @@ Future<bool> confirmDialog(
   );
   return ok ?? false;
 }
+
+/// "Verified employer" pill for job and employment cards (KYB passed).
+class EmployerVerifiedBadge extends StatelessWidget {
+  const EmployerVerifiedBadge({super.key});
+
+  @override
+  Widget build(BuildContext context) => StatusBadge(
+    key: const Key('employer_verified'),
+    label: context.l10n.employerVerified,
+    tone: Tone.success,
+    icon: LucideIcons.badgeCheck,
+  );
+}
+
+/// Calm info box (icon + text) used for notes such as "KaamSathi reviews
+/// your interest first".
+class InfoNote extends StatelessWidget {
+  const InfoNote({super.key, required this.text, this.icon = LucideIcons.info, this.tone = Tone.info});
+  final String text;
+  final IconData icon;
+  final Tone tone;
+
+  @override
+  Widget build(BuildContext context) {
+    final (bg, fg) = toneColors(context, tone);
+    return Container(
+      padding: const EdgeInsets.all(KsSpace.s3),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(KsRadius.md)),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 18, color: fg),
+          const SizedBox(width: KsSpace.s2),
+          Expanded(child: Text(text, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: fg))),
+        ],
+      ),
+    );
+  }
+}
+
+/// Non-scrolling variant of [FeatureAsyncBody] for a section inside a list,
+/// so content above it (e.g. safety guidance) stays visible in every state.
+class FeatureAsyncSection<T> extends StatelessWidget {
+  const FeatureAsyncSection({super.key, required this.value, required this.data, this.onRetry});
+
+  final AsyncValue<T> value;
+  final Widget Function(T data) data;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final v = value;
+    if (v.hasValue) return data(v.requireValue);
+    if (v.hasError) {
+      return isFeatureUnavailable(v.error)
+          ? EmptyState(icon: LucideIcons.hourglass, message: context.l10n.ecoComingSoon)
+          : ErrorView(error: v.error, onRetry: onRetry);
+    }
+    return const Padding(padding: EdgeInsets.all(KsSpace.s8), child: Center(child: CircularProgressIndicator()));
+  }
+}

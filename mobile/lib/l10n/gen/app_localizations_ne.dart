@@ -1804,7 +1804,7 @@ class AppLocalizationsNe extends AppLocalizations {
   String get offerApply => 'आवेदन दिनुहोस्';
 
   @override
-  String get offersEmpty => 'अहिले कुनै प्रस्ताव छैन।';
+  String get offersEmpty => 'अहिलेसम्म कुनै कामको प्रस्ताव छैन।';
 
   @override
   String offerApplied(String partner) {
@@ -2099,4 +2099,891 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get rosterOffShort => 'बिदा';
+
+  @override
+  String get inboxTitle => 'सूचनाहरू';
+
+  @override
+  String get inboxEmpty => 'अहिलेसम्म कुनै सूचना छैन।';
+
+  @override
+  String get inboxMarkAllRead => 'सबै पढेको बनाउनुहोस्';
+
+  @override
+  String inboxUnread(String count) {
+    return '$count नपढेको';
+  }
+
+  @override
+  String get securityTitle => 'लगइन र सुरक्षा';
+
+  @override
+  String get securityMenuSubtitle => 'तपाईं लगइन भएका फोन र ब्राउजरहरू';
+
+  @override
+  String get securityIntro => 'तपाईंको कामसाथी खातामा यी उपकरणहरू लगइन छन्। कुनै चिन्नुहुन्न भने त्यसलाई लगआउट गर्नुहोस्।';
+
+  @override
+  String get securityThisDevice => 'यो फोन';
+
+  @override
+  String securityLastSeen(String date) {
+    return 'अन्तिम प्रयोग $date';
+  }
+
+  @override
+  String securitySignedIn(String date) {
+    return '$date मा लगइन';
+  }
+
+  @override
+  String get securityRevoke => 'लगआउट';
+
+  @override
+  String get securityRevokeConfirm => 'यो उपकरण लगआउट गर्ने?';
+
+  @override
+  String get securityRevoked => 'उपकरण लगआउट भयो।';
+
+  @override
+  String get securityRevokeOthers => 'अरू सबै उपकरण लगआउट गर्नुहोस्';
+
+  @override
+  String get securityRevokeOthersConfirm => 'यो फोनबाहेक सबै उपकरण लगआउट गर्ने?';
+
+  @override
+  String get securityRevokedOthers => 'अरू उपकरणहरू लगआउट भए।';
+
+  @override
+  String get securityPlatformAndroid => 'एन्ड्रोइड फोन';
+
+  @override
+  String get securityPlatformIos => 'आइफोन';
+
+  @override
+  String get securityPlatformWeb => 'वेब ब्राउजर';
+
+  @override
+  String get securityPlatformOther => 'अन्य उपकरण';
+
+  @override
+  String get workHistTitle => 'अघिल्लो काम (कामसाथी बाहिर)';
+
+  @override
+  String get workHistMenuSubtitle => 'पहिले गरेका काम सन्दर्भ व्यक्तिसहित थप्नुहोस्';
+
+  @override
+  String get workHistIntro => 'कामसाथीभन्दा पहिले गरेको काम थप्नुहोस्। हाम्रो टोलीले सन्दर्भ व्यक्तिसँग पुष्टि गरेपछि यो तपाईंको सीप राहदानीमा प्रमाणित देखिन्छ।';
+
+  @override
+  String get workHistEmpty => 'अहिलेसम्म अघिल्लो काम थपिएको छैन।';
+
+  @override
+  String get workHistAdd => 'अघिल्लो काम थप्नुहोस्';
+
+  @override
+  String get workHistEdit => 'अघिल्लो काम सच्याउनुहोस्';
+
+  @override
+  String get workHistEmployer => 'रोजगारदाता / कम्पनीको नाम';
+
+  @override
+  String get workHistRole => 'तपाईंको पद / काम';
+
+  @override
+  String get workHistTrade => 'सीप / पेसा';
+
+  @override
+  String get workHistStart => 'सुरु मिति';
+
+  @override
+  String get workHistEnd => 'अन्त्य मिति';
+
+  @override
+  String get workHistStillThere => 'म अझै यहाँ काम गर्छु';
+
+  @override
+  String get workHistDescription => 'त्यहाँ के काम गर्नुभयो?';
+
+  @override
+  String get workHistReference => 'सन्दर्भ व्यक्ति (पुष्टि गर्न सक्ने)';
+
+  @override
+  String get workHistRefName => 'सन्दर्भ व्यक्तिको नाम';
+
+  @override
+  String get workHistRefPhone => 'सन्दर्भ व्यक्तिको फोन';
+
+  @override
+  String get workHistRefHint => 'तपाईंको काम पुष्टि गर्न हाम्रो टोलीले यो व्यक्तिलाई फोन गर्न सक्छ। उहाँलाई पहिल्यै भन्नुहोस्।';
+
+  @override
+  String get workHistRefBoth => 'सन्दर्भ व्यक्तिको नाम र फोन दुवै भर्नुहोस्।';
+
+  @override
+  String get workHistDocument => 'कामको पत्र वा परिचयपत्रको फोटो';
+
+  @override
+  String get workHistSaved => 'सुरक्षित भयो। हामी जाँच गर्नेछौं।';
+
+  @override
+  String get workHistDeleteConfirm => 'यो अघिल्लो काम हटाउने?';
+
+  @override
+  String get workHistDeleted => 'हटाइयो।';
+
+  @override
+  String get workHistStatusSelf => 'आफैंले भनेको';
+
+  @override
+  String get workHistStatusRefPending => 'सन्दर्भ व्यक्तिसँग जाँच हुँदै';
+
+  @override
+  String get workHistStatusUnverifiable => 'पुष्टि हुन सकेन';
+
+  @override
+  String get workHistStatusRejected => 'स्वीकार भएन';
+
+  @override
+  String get workHistByReference => 'सन्दर्भ व्यक्तिबाट पुष्टि';
+
+  @override
+  String get workHistByEmployer => 'रोजगारदाताबाट पुष्टि';
+
+  @override
+  String get workHistByDocument => 'कागजातबाट पुष्टि';
+
+  @override
+  String get workHistEndBeforeStart => 'अन्त्य मिति सुरु मितिभन्दा पछि हुनुपर्छ।';
+
+  @override
+  String get workHistLocked => 'प्रमाणित भएको काम बदल्न मिल्दैन।';
+
+  @override
+  String get jobsTitle => 'तपाईंका लागि काम';
+
+  @override
+  String get jobsMenuSubtitle => 'तपाईंको सीप र क्षेत्रसँग मिल्ने काम';
+
+  @override
+  String get jobsTabForYou => 'तपाईंका लागि';
+
+  @override
+  String get jobsTabApplications => 'मेरा आवेदन';
+
+  @override
+  String get jobsReviewNote => 'रोजगारदाताले तपाईंलाई देख्नुअघि कामसाथीको टोलीले तपाईंको चासो जाँच गर्छ।';
+
+  @override
+  String get jobsEmpty => 'अहिले मिल्ने काम छैन। थप काम हेर्न आफ्नो सीप र रुचाइएका क्षेत्र थप्नुहोस्।';
+
+  @override
+  String get jobsUpdatePrefs => 'मेरा क्षेत्र अद्यावधिक गर्नुहोस्';
+
+  @override
+  String get jobsInterested => 'मलाई चासो छ';
+
+  @override
+  String get jobsInterestConfirmTitle => 'यो काममा चासो देखाउने?';
+
+  @override
+  String get jobsInterestSent => 'चासो पठाइयो। हामी खबर गर्नेछौं।';
+
+  @override
+  String get jobsInterestSentBadge => 'चासो पठाइयो';
+
+  @override
+  String get jobsFood => 'खाना दिइन्छ';
+
+  @override
+  String get jobsStay => 'बस्ने ठाउँ दिइन्छ';
+
+  @override
+  String jobsStarts(String date) {
+    return '$date देखि सुरु';
+  }
+
+  @override
+  String jobsOpenings(String count) {
+    return '$count जना चाहिएको';
+  }
+
+  @override
+  String get employerVerified => 'प्रमाणित रोजगारदाता';
+
+  @override
+  String get appsEmpty => 'तपाईंले अहिलेसम्म कुनै काममा आवेदन दिनुभएको छैन।';
+
+  @override
+  String get appsConfirmPrompt => 'तपाईं छानिनुभयो। के तपाईंलाई अझै चासो छ?';
+
+  @override
+  String get appsConfirm => 'हो, चासो छ';
+
+  @override
+  String get appsDecline => 'होइन, अस्वीकार';
+
+  @override
+  String get appsDeclineConfirmTitle => 'यो काम अस्वीकार गर्ने?';
+
+  @override
+  String get appsDeclineConfirmBody => 'तपाईंलाई चासो छैन भनी हामी रोजगारदातालाई जानकारी दिनेछौं। यो फिर्ता गर्न मिल्दैन।';
+
+  @override
+  String get appsDeclineReason => 'कारण';
+
+  @override
+  String get appsConfirmed => 'धन्यवाद। हामीले रोजगारदातालाई जानकारी दियौं।';
+
+  @override
+  String get appsDeclined => 'अस्वीकार गरियो।';
+
+  @override
+  String get appsResponseInterested => 'तपाईंले चासो पुष्टि गर्नुभयो';
+
+  @override
+  String get appsResponseDeclined => 'तपाईंले अस्वीकार गर्नुभयो';
+
+  @override
+  String appsInterview(String date) {
+    return 'अन्तर्वार्ता: $date';
+  }
+
+  @override
+  String get appsUnderReview => 'कामसाथीले जाँच गर्दैछ';
+
+  @override
+  String get availTitle => 'उपलब्धता र कामका क्षेत्र';
+
+  @override
+  String get availMenuSubtitle => 'कहाँ र कहिलेदेखि काम गर्न सक्नुहुन्छ, अपेक्षित तलब';
+
+  @override
+  String get availAreas => 'रुचाइएका जिल्ला';
+
+  @override
+  String get availAreasHint => 'काम गर्न इच्छुक जिल्लाहरू छान्नुहोस्।';
+
+  @override
+  String get availAreasNone => 'अहिलेसम्म कुनै जिल्ला छानिएको छैन';
+
+  @override
+  String get availPickDistricts => 'जिल्ला छान्नुहोस्';
+
+  @override
+  String get availSearchDistrict => 'जिल्ला खोज्नुहोस्';
+
+  @override
+  String availSelectedCount(String count) {
+    return '$count छानियो';
+  }
+
+  @override
+  String get availRadius => 'कामका लागि कति टाढासम्म जान सक्नुहुन्छ?';
+
+  @override
+  String availRadiusKm(String km) {
+    return '$km कि.मि.';
+  }
+
+  @override
+  String get availRadiusAny => 'जहाँसुकै';
+
+  @override
+  String get availWage => 'अपेक्षित मासिक तलब (रु.)';
+
+  @override
+  String get availFrom => 'उपलब्ध हुने मिति';
+
+  @override
+  String get availDone => 'भयो';
+
+  @override
+  String get availNumberInvalid => 'अङ्कमा लेख्नुहोस्।';
+
+  @override
+  String get supportTitle => 'सहायता';
+
+  @override
+  String get supportMenuSubtitle => 'हाम्रो टोलीसँग सहायता माग्नुहोस्';
+
+  @override
+  String get supportEmpty => 'अहिलेसम्म कुनै सहायता अनुरोध छैन।';
+
+  @override
+  String get supportNew => 'सहायता माग्नुहोस्';
+
+  @override
+  String get supportCategory => 'कुन विषयमा?';
+
+  @override
+  String get supportCatAccount => 'खाता / लगइन';
+
+  @override
+  String get supportCatPayment => 'तलब / भुक्तानी';
+
+  @override
+  String get supportCatAttendance => 'हाजिरी';
+
+  @override
+  String get supportCatJob => 'काम / रोजगारी';
+
+  @override
+  String get supportCatPrivacy => 'गोपनीयता';
+
+  @override
+  String get supportCatTechnical => 'एपमा समस्या';
+
+  @override
+  String get supportCatOther => 'अन्य';
+
+  @override
+  String get supportSubject => 'छोटो शीर्षक';
+
+  @override
+  String get supportDescription => 'के भयो, बताउनुहोस्';
+
+  @override
+  String get supportSent => 'पठाइयो। हाम्रो टोलीले यहीँ जवाफ दिनेछ।';
+
+  @override
+  String get supportStatusOpen => 'खुला';
+
+  @override
+  String get supportStatusPendingUser => 'तपाईंको जवाफ पर्खँदै';
+
+  @override
+  String get supportStatusResolved => 'समाधान भयो';
+
+  @override
+  String get supportStatusClosed => 'बन्द';
+
+  @override
+  String get supportReplyHint => 'सन्देश लेख्नुहोस्';
+
+  @override
+  String get supportSend => 'पठाउनुहोस्';
+
+  @override
+  String get supportYou => 'तपाईं';
+
+  @override
+  String get supportTeam => 'कामसाथी टोली';
+
+  @override
+  String get supportNoMessages => 'अहिलेसम्म जवाफ आएको छैन। हामी प्रायः एक दिनभित्र जवाफ दिन्छौं।';
+
+  @override
+  String get supportClosedNote => 'यो अनुरोध बन्द भयो। अझै सहायता चाहिए फेरि सोध्नुहोस्।';
+
+  @override
+  String get mobTitle => 'वैदेशिक रोजगारका कागजात';
+
+  @override
+  String get mobMenuSubtitle => 'राहदानी, श्रम स्वीकृति र अन्य कागजात — तपाईंले चाहेमा मात्र सेयर';
+
+  @override
+  String get mobIntro => 'आफ्ना कागजात एकै ठाउँमा सुरक्षित राख्नुहोस् र आफूले रोजेको इजाजतपत्रप्राप्त एजेन्सीसँग सेयर गर्नुहोस्। कामसाथीले विदेशमा काम खोजिदिँदैन।';
+
+  @override
+  String get mobSafetyTitle => 'सुरक्षित रहनुहोस्';
+
+  @override
+  String get mobSafety1 => 'वैदेशिक रोजगार विभागबाट इजाजतपत्र पाएका एजेन्सी मात्र प्रयोग गर्नुहोस्।';
+
+  @override
+  String get mobSafety2 => 'पैसा तिर्नु वा कुनै कागजमा सही गर्नुअघि वैदेशिक रोजगार विभागको आधिकारिक वेबसाइट (dofe.gov.np) मा एजेन्सीको इजाजतपत्र आफैं जाँच्नुहोस्।';
+
+  @override
+  String get mobSafety3 => 'हरेक भुक्तानीको रसिद लिनुहोस्। सरकारले तोकेभन्दा बढी शुल्क कहिल्यै नतिर्नुहोस्।';
+
+  @override
+  String get mobSafety4 => 'रसिद नलिई आफ्नो सक्कल राहदानी कसैलाई नदिनुहोस्।';
+
+  @override
+  String get mobTabDocuments => 'मेरा कागजात';
+
+  @override
+  String get mobTabAgencies => 'एजेन्सी र सेयरिङ';
+
+  @override
+  String get mobTravel => 'यात्रा कागजात';
+
+  @override
+  String get mobClearance => 'स्वीकृति र प्रमाणपत्र';
+
+  @override
+  String get mobEmpty => 'अहिलेसम्म कुनै कागजात थपिएको छैन।';
+
+  @override
+  String get mobAdd => 'कागजात थप्नुहोस्';
+
+  @override
+  String get mobKind => 'कागजातको प्रकार';
+
+  @override
+  String get mobKindPassport => 'राहदानी';
+
+  @override
+  String get mobKindLabourPermit => 'श्रम स्वीकृति';
+
+  @override
+  String get mobKindVisa => 'भिसा';
+
+  @override
+  String get mobKindPolice => 'प्रहरी चारित्रिक प्रमाणपत्र';
+
+  @override
+  String get mobKindMedical => 'स्वास्थ्य परीक्षण';
+
+  @override
+  String get mobKindOrientation => 'अभिमुखीकरण तालिम';
+
+  @override
+  String get mobKindInsurance => 'बीमा';
+
+  @override
+  String get mobKindLanguage => 'भाषा परीक्षा';
+
+  @override
+  String get mobNumber => 'कागजात नम्बर';
+
+  @override
+  String get mobCountry => 'जारी गर्ने देश';
+
+  @override
+  String get mobTitleField => 'कागजातको नाम';
+
+  @override
+  String get mobIssuer => 'जारी गर्ने निकाय';
+
+  @override
+  String get mobScore => 'अंक वा तह';
+
+  @override
+  String get mobSaved => 'सुरक्षित भयो। हाम्रो टोलीले जाँच गर्नेछ।';
+
+  @override
+  String get mobDeleteConfirm => 'यो कागजात हटाउने?';
+
+  @override
+  String get mobExpired => 'म्याद सकियो';
+
+  @override
+  String mobExpiresInDays(String days) {
+    return '$days दिनमा म्याद सकिन्छ';
+  }
+
+  @override
+  String get mobAgenciesIntro => 'कामसाथीले जाँच गरेका, मान्य इजाजतपत्र भएका एजेन्सी मात्र यहाँ देखिन्छन्।';
+
+  @override
+  String get mobAgenciesEmpty => 'अहिलेसम्म जाँच गरिएको एजेन्सी छैन।';
+
+  @override
+  String mobLicence(String number) {
+    return 'इजाजतपत्र नं. $number';
+  }
+
+  @override
+  String mobLicenceValid(String date) {
+    return 'इजाजतपत्र $date सम्म मान्य';
+  }
+
+  @override
+  String get mobShare => 'मेरा कागजात सेयर गर्नुहोस्';
+
+  @override
+  String mobShareTitle(String agency) {
+    return '$agency सँग सेयर गर्ने?';
+  }
+
+  @override
+  String get mobShareBody => 'एजेन्सीले तपाईंसँग कुन कागजात छन्, ती प्रमाणित छन् कि छैनन् र कहिले म्याद सकिन्छ भन्ने मात्र देख्नेछ। फोटो वा पूरा नम्बर देख्ने छैन। तपाईं जुनसुकै बेला सेयर रोक्न सक्नुहुन्छ।';
+
+  @override
+  String get mobShareDays => 'कति दिनका लागि';
+
+  @override
+  String get mobShared => 'सेयर गरियो। जुनसुकै बेला रोक्न सक्नुहुन्छ।';
+
+  @override
+  String get mobSharesTitle => 'मेरा कागजात कसले हेर्न सक्छ';
+
+  @override
+  String get mobSharesEmpty => 'तपाईंले कुनै एजेन्सीसँग सेयर गर्नुभएको छैन।';
+
+  @override
+  String get careerTitle => 'आम्दानी बढाउने उपाय';
+
+  @override
+  String get careerMenuSubtitle => 'बढी कमाइ दिने प्रमाणपत्र, तालिम र सीप';
+
+  @override
+  String get careerEmpty => 'अहिले कुनै सुझाव छैन। पछि फेरि हेर्नुहोस्।';
+
+  @override
+  String careerUplift(String pct) {
+    return '$pct% सम्म बढी तलब';
+  }
+
+  @override
+  String get careerSeeAll => 'सबै हेर्नुहोस्';
+
+  @override
+  String get careerKindCredential => 'प्रमाणपत्र';
+
+  @override
+  String get careerKindCourse => 'तालिम';
+
+  @override
+  String get careerKindSkill => 'सीप';
+
+  @override
+  String get careerKindProfile => 'प्रोफाइल';
+
+  @override
+  String get careerYourTrades => 'तपाईंका सीप';
+
+  @override
+  String get careerEstimateNote => 'तलबको अनुमान कामसाथीमा देखिएको ज्यालाबाट निकालिएको हो, ग्यारेन्टी होइन।';
+
+  @override
+  String get tsTitle => 'टाइमसिट';
+
+  @override
+  String get tsMenuSubtitle => 'हरेक हप्ताको घण्टा र ओभरटाइम';
+
+  @override
+  String get tsSupMenuSubtitle => 'हप्ताको घण्टा जाँचेर पेस गर्नुहोस्';
+
+  @override
+  String get tsEmpty => 'यो हप्ताको टाइमसिट अझै बनेको छैन।';
+
+  @override
+  String get tsSupEmpty => 'यो हप्ताको टाइमसिट छैन। हाजिरीबाट तयार गर्नुहोस्।';
+
+  @override
+  String get tsRegular => 'नियमित घण्टा';
+
+  @override
+  String get tsOtClaimed => 'माग गरिएको ओभरटाइम';
+
+  @override
+  String get tsOtApproved => 'स्वीकृत ओभरटाइम';
+
+  @override
+  String tsHours(String hours) {
+    return '$hours घण्टा';
+  }
+
+  @override
+  String tsOtShort(String hours) {
+    return 'ओभरटाइम $hours घण्टा';
+  }
+
+  @override
+  String get tsStatusSubmitted => 'पेस गरिएको';
+
+  @override
+  String get tsStatusRejected => 'फिर्ता गरिएको';
+
+  @override
+  String get tsOverCap => 'ओभरटाइम हप्ताको २४ घण्टाको सीमाभन्दा बढी छ।';
+
+  @override
+  String get tsNote => 'टिप्पणी';
+
+  @override
+  String get tsSubmitConfirm => 'यो टाइमसिट स्वीकृतिका लागि पेस गर्ने?';
+
+  @override
+  String get tsSubmitted => 'स्वीकृतिका लागि पेस गरियो।';
+
+  @override
+  String tsSubmitAll(String count) {
+    return 'सबै मस्यौदा पेस गर्नुहोस् ($count)';
+  }
+
+  @override
+  String get tsSubmitAllConfirm => 'यो हप्ताका सबै मस्यौदा टाइमसिट पेस गर्ने?';
+
+  @override
+  String get tsGenerate => 'हाजिरीबाट तयार गर्नुहोस्';
+
+  @override
+  String get tsGenerated => 'टाइमसिट तयार भयो।';
+
+  @override
+  String get ecoGroupAbroad => 'वैदेशिक रोजगार';
+
+  @override
+  String get ecoGroupAccount => 'खाता र सहायता';
+
+  @override
+  String availMaxDistricts(String count) {
+    return 'बढीमा $count जिल्ला छान्न सकिन्छ।';
+  }
+
+  @override
+  String get offersTab => 'प्रस्ताव';
+
+  @override
+  String get offerContractType => 'करारको किसिम';
+
+  @override
+  String get offerContractPermanent => 'स्थायी';
+
+  @override
+  String get offerContractFixedTerm => 'निश्चित अवधि';
+
+  @override
+  String get offerContractDaily => 'दैनिक ज्यालादारी';
+
+  @override
+  String get offerContractPartTime => 'आंशिक समय';
+
+  @override
+  String get offerContractProbation => 'परीक्षणकाल';
+
+  @override
+  String get offerContractSeasonal => 'मौसमी';
+
+  @override
+  String offerExpiresInDays(String days) {
+    return '$days दिनभित्र जवाफ दिनुहोस्';
+  }
+
+  @override
+  String offerExpiresInHours(String hours) {
+    return '$hours घण्टाभित्र जवाफ दिनुहोस्';
+  }
+
+  @override
+  String get offerExpired => 'प्रस्तावको म्याद सकियो';
+
+  @override
+  String get offerStatusPending => 'तपाईंको जवाफ पर्खँदै';
+
+  @override
+  String get offerStatusAccepted => 'स्वीकार गरियो';
+
+  @override
+  String get offerStatusDeclined => 'अस्वीकार गरियो';
+
+  @override
+  String get offerStatusWithdrawn => 'रोजगारदाताले फिर्ता लियो';
+
+  @override
+  String get offerReview => 'हेरेर स्वीकार गर्नुहोस्';
+
+  @override
+  String get offerDecline => 'अस्वीकार';
+
+  @override
+  String get offerDeclineTitle => 'यो प्रस्ताव अस्वीकार गर्ने?';
+
+  @override
+  String get offerDeclineBody => 'तपाईंले अस्वीकार गर्नुभएको कुरा हामी रोजगारदातालाई बताउनेछौं। यो फिर्ता गर्न मिल्दैन।';
+
+  @override
+  String get offerSummaryTitle => 'स्वीकार गर्नुअघि';
+
+  @override
+  String get offerSummaryIntro => 'यी विवरण जाँच्नुहोस्। रोजगारदाताले तपाईंलाई दिन लागेको प्रस्ताव यही हो।';
+
+  @override
+  String get offerNoFee => 'कामसाथीले कामदारसँग कहिल्यै शुल्क लिँदैन। यो काम पाउन कसैलाई पैसा नतिर्नुहोस्।';
+
+  @override
+  String get offerAgree => 'मैले यी विवरण पढेँ र म यो काम गर्न चाहन्छु।';
+
+  @override
+  String get offerAccept => 'प्रस्ताव स्वीकार गर्नुहोस्';
+
+  @override
+  String get offerAccepted => 'प्रस्ताव स्वीकार गरियो। रोजगारदाताले सम्पर्क गर्नुहुनेछ।';
+
+  @override
+  String offerAnswerBy(String date) {
+    return '$date सम्म जवाफ दिनुहोस्';
+  }
+
+  @override
+  String get alertsTitle => 'कामको अलर्ट';
+
+  @override
+  String get alertsMenuSubtitle => 'मिल्ने काम खुल्दा सूचना पाउनुहोस्';
+
+  @override
+  String get alertsEmpty => 'अहिलेसम्म कुनै अलर्ट छैन।';
+
+  @override
+  String get alertsAdd => 'नयाँ अलर्ट';
+
+  @override
+  String get alertsEdit => 'अलर्ट सच्याउनुहोस्';
+
+  @override
+  String get alertsAnyTrade => 'जुनसुकै सीप';
+
+  @override
+  String get alertsAnyDistrict => 'जुनसुकै जिल्ला';
+
+  @override
+  String get alertsMinWage => 'न्यूनतम मासिक तलब (रु.)';
+
+  @override
+  String alertsFrom(String amount) {
+    return '$amount देखि';
+  }
+
+  @override
+  String get alertsFrequency => 'कति पटक?';
+
+  @override
+  String get freqInstant => 'तुरुन्तै';
+
+  @override
+  String get freqDaily => 'दिनमा एक पटक';
+
+  @override
+  String get freqWeekly => 'हप्तामा एक पटक';
+
+  @override
+  String get alertsDeleteConfirm => 'यो अलर्ट हटाउने?';
+
+  @override
+  String get alertsSaved => 'अलर्ट सुरक्षित भयो।';
+
+  @override
+  String get legalTitle => 'कृपया पढेर स्वीकार गर्नुहोस्';
+
+  @override
+  String get legalIntro => 'हामीले नियम तथा सर्तहरू अद्यावधिक गरेका छौं। कामसाथी प्रयोग गर्न जारी राख्नुअघि कृपया पढ्नुहोस्।';
+
+  @override
+  String get legalKindTerms => 'प्रयोगका सर्तहरू';
+
+  @override
+  String get legalKindPrivacy => 'गोपनीयता नीति';
+
+  @override
+  String get legalKindOther => 'कागजात';
+
+  @override
+  String legalVersion(String version) {
+    return 'संस्करण $version';
+  }
+
+  @override
+  String get legalOpenHint => 'पढ्न यो लिङ्क फोनको ब्राउजरमा खोल्नुहोस्:';
+
+  @override
+  String get legalAgree => 'मैले यी कागजात पढेँ र स्वीकार गर्छु।';
+
+  @override
+  String get legalAccept => 'स्वीकार गरी अगाडि बढ्नुहोस्';
+
+  @override
+  String get notifPrefsTitle => 'सूचना सेटिङ';
+
+  @override
+  String get notifPrefsAlways => 'तपाईंले यहाँ जे छाने पनि तलब विवरण, खाता सुरक्षा र सुरक्षासम्बन्धी सन्देश सधैं आउँछन्।';
+
+  @override
+  String get notifSms => 'एसएमएस सन्देश';
+
+  @override
+  String get notifPush => 'एप सूचना';
+
+  @override
+  String get notifEmail => 'इमेल';
+
+  @override
+  String get notifMarketing => 'कामसाथीका समाचार र प्रस्ताव';
+
+  @override
+  String get notifJobAlertFreq => 'कामको अलर्ट';
+
+  @override
+  String get notifQuietHours => 'शान्त समय (रातिमा एसएमएस नआउने)';
+
+  @override
+  String get notifQuietFrom => 'देखि';
+
+  @override
+  String get notifQuietTo => 'सम्म';
+
+  @override
+  String get notifQuietOff => 'बन्द';
+
+  @override
+  String get helpCenterTitle => 'सहायता लेखहरू';
+
+  @override
+  String get helpCenterSubtitle => 'सामान्य प्रश्नका छिटो जवाफ';
+
+  @override
+  String get helpSearch => 'सहायता खोज्नुहोस्';
+
+  @override
+  String get helpEmpty => 'कुनै लेख भेटिएन।';
+
+  @override
+  String get helpStillNeed => 'अझै सहायता चाहिन्छ? हाम्रो टोलीलाई सोध्नुहोस्।';
+
+  @override
+  String get safetyTitle => 'सुरक्षा समस्या रिपोर्ट गर्नुहोस्';
+
+  @override
+  String get safetyMenuSubtitle => 'असुरक्षित काम, दुर्व्यवहार वा तलब रोकिएको — गोप्य रूपमा';
+
+  @override
+  String get safetyDanger => 'अहिले खतरामा हुनुहुन्छ भने १०० (प्रहरी) मा फोन गर्नुहोस्।';
+
+  @override
+  String get safetyConfidential => 'यो रिपोर्ट गोप्य हुन्छ। तपाईंको रोजगारदाताले यो देख्नुहुने छैन। कामसाथीको सुरक्षा टोलीले मात्र पढ्छ।';
+
+  @override
+  String get safetyKind => 'के भयो?';
+
+  @override
+  String get safetyKindUnsafe => 'असुरक्षित कार्यस्थल';
+
+  @override
+  String get safetyKindHarassment => 'दुर्व्यवहार वा हिंसा';
+
+  @override
+  String get safetyKindWages => 'तलब रोकिएको';
+
+  @override
+  String get safetyKindOther => 'अन्य सुरक्षा समस्या';
+
+  @override
+  String get safetyDescription => 'के, कहाँ र कहिले भयो, बताउनुहोस्';
+
+  @override
+  String get safetyEmergency => 'यो आपतकालीन हो — मलाई तुरुन्तै फोन गर्नुहोस्';
+
+  @override
+  String get safetyEmergencyHint => 'हाम्रो टोलीले सकेसम्म छिटो फोन गर्नेछ।';
+
+  @override
+  String get safetyAnonymous => 'कहिल्यै सेयर गरिए मेरो नाम लुकाउनुहोस्';
+
+  @override
+  String get safetySent => 'रिपोर्ट पठाइयो। हाम्रो सुरक्षा टोलीले सम्पर्क गर्नेछ।';
+
+  @override
+  String get supportCatSafety => 'सुरक्षा';
+
+  @override
+  String get offerEmployer => 'रोजगारदाता';
+
+  @override
+  String get offerStart => 'काम सुरु हुने मिति';
+
+  @override
+  String get offerAnswerByLabel => 'जवाफ दिने अन्तिम मिति';
 }

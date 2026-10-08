@@ -7,6 +7,7 @@ from rest_framework import permissions
 from rest_framework.authentication import SessionAuthentication
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from apps.core.system_views import MetricsView
 from apps.core.views import ReadinessView
 from apps.geo.views import HealthView
 
@@ -39,6 +40,7 @@ urlpatterns = [
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema", **_docs), name="swagger-ui"),
     re_path(r"^health/?$", HealthView.as_view(), name="root-health"),
     re_path(r"^readiness/?$", ReadinessView.as_view(), name="root-readiness"),
+    re_path(r"^metrics/?$", MetricsView.as_view(), name="root-metrics"),
 ]
 
 # Media is private (apps.core.files): ID photos, worker photos, certificates and exports are only

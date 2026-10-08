@@ -371,3 +371,21 @@ def test_dispute_role_permissions(disputing, org, owner_client, make_member, sta
     res = owner_client.post(f"/api/v1/org/disputes/{d.id}/respond", {"note": "late"}, format="json")
     assert res.json()["error"]["code"] == "invalid_state"
     assert staff_client.get("/api/v1/ops/disputes", {"status": "resolved"}).json()["count"] == 1
+
+
+def test_dispute_raised_emits_enterprise_webhook(disputing, org):
+    from apps.integrations.models import WebhookDelivery, WebhookEndpoint
+
+    WebhookEndpoint.objects.create(
+        organization=org, url="https://example.com/hook", secret="s", events=["dispute.raised"], is_active=True
+    )
+    _w, emp, client = disputing
+    res = client.post(
+        "/api/v1/me/disputes",
+        {"kind": "wage", "description": "Short paid", "employment_id": str(emp.id)},
+        format="json",
+    )
+    assert res.status_code == 201, res.json()
+    delivery = WebhookDelivery.objects.get(event="dispute.raised")
+    assert delivery.payload["dispute_id"] == res.json()["id"]
+    assert "description" not in delivery.payload  # no free text / personal details in webhooks

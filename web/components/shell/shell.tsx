@@ -34,7 +34,8 @@ import {
 import { Tooltip } from "@/components/ui/tooltip";
 import { LanguageToggle, ThemeToggle } from "@/components/providers/preferences";
 import { useOptionalSession, useSession } from "@/components/providers/session";
-import { isActive, type NavGroup } from "./nav";
+import { NotificationBell } from "@/components/notifications/notification-bell";
+import { canSeeStaffItem, isActive, type NavGroup } from "./nav";
 
 const COLLAPSE_KEY = "ks-sidebar-collapsed";
 
@@ -152,7 +153,11 @@ function SidebarContents({
       ) : null}
       <nav className="scrollbar-thin flex-1 overflow-y-auto px-3 py-2" aria-label={t("app.name")}>
         {nav.map((group, gi) => {
-          const items = group.items.filter((i) => !i.roles || (role && i.roles.includes(role)) || variant === "ops");
+          const items = group.items.filter((i) =>
+            variant === "ops"
+              ? canSeeStaffItem(i, session?.me.staff_roles)
+              : !i.roles || (role && i.roles.includes(role)),
+          );
           if (!items.length) return null;
           return (
             <div key={gi} className="mb-4">
@@ -311,6 +316,7 @@ function Topbar({ onMenu, variant }: { onMenu: () => void; variant: "app" | "ops
       <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
         <LanguageToggle compact />
         <ThemeToggle />
+        {me ? <NotificationBell /> : null}
         {me ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

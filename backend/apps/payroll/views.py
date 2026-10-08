@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from apps.audit.services import diff, log, snapshot
 from apps.core.bs import MONTHS_EN, BSDateError
 from apps.core.exceptions import APIError, InvalidState
+from apps.core.idempotency import idempotent
 from apps.core.permissions import OrgScopedMixin
 from apps.notifications.services import enqueue
 
@@ -50,6 +51,7 @@ class PayrollRunViewSet(
             .order_by("-bs_year", "-bs_month")
         )
 
+    @idempotent
     def create(self, request, *args, **kwargs):
         s = PayrollRunCreateSerializer(data=request.data)
         s.is_valid(raise_exception=True)
@@ -101,6 +103,7 @@ class PayrollRunViewSet(
     @action(detail=True, methods=["get"], url_path=r"wage-sheet\.xlsx")
     def wage_sheet(self, request, pk=None):
         run = self.get_object()
+        log(request, "payroll.export.wage_sheet", run, organization=self.org)
         return file_response(
             exports.wage_sheet_xlsx(run),
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -110,6 +113,7 @@ class PayrollRunViewSet(
     @action(detail=True, methods=["get"], url_path=r"bank-transfer\.csv")
     def bank_transfer(self, request, pk=None):
         run = self.get_object()
+        log(request, "payroll.export.bank_file", run, organization=self.org)
         return file_response(
             exports.bank_transfer_csv(run),
             "text/csv; charset=utf-8",
@@ -119,6 +123,7 @@ class PayrollRunViewSet(
     @action(detail=True, methods=["get"], url_path=r"ssf\.csv")
     def ssf(self, request, pk=None):
         run = self.get_object()
+        log(request, "payroll.export.ssf_file", run, organization=self.org)
         return file_response(
             exports.ssf_csv(run), "text/csv; charset=utf-8", f"ssf-{run.bs_year}-{run.bs_month:02d}.csv"
         )

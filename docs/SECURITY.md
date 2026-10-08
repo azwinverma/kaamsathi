@@ -118,3 +118,41 @@ backup, a public bucket, an ID photo reachable without auth, a stolen staff lapt
 * Penetration test of auth, org scoping and file access.
 * Confirm the hosting location/provider and a data-processing agreement with each processor
   (hosting, S3, SMS gateways, Sentry).
+
+## 9. Security & platform controls (CONTRACT-EXTENSIONS §1)
+
+* **Staff roles** — `user.is_staff` plus a role per URL prefix, enforced centrally in
+  `apps.core.permissions.IsOpsStaff` from `apps/accounts/staff_roles.py: ROUTE_ROLES`
+  (verifier · support · finance_ops · partner_manager · risk_analyst · superadmin). Unlisted `/ops/*`
+  routes are superadmin-only (fail closed). Production: a staff user without a profile has no roles.
+* **MFA** — TOTP (RFC 6238, SHA1, 30 s, 6 digits, ±1 step) in `apps/accounts/mfa.py`, no third-party
+  dependency. Secrets are field-encrypted (`StaffProfile.mfa_secret`), codes can't be replayed within their
+  window, recovery codes are stored as SHA-256 hashes and are single-use, the login step token is signed
+  and lives 5 minutes, 5 failures lock the step for 15 minutes. `STAFF_MFA_REQUIRED` (prod) blocks `/ops`
+  with 403 `mfa_required` until enrolled. Enrol/disable/reset/recovery-code use are audited.
+* **Sessions** — `SessionDevice` per refresh-token family (`sid` claim); users see and revoke devices;
+  revocation blacklists the refresh token and rejects outstanding access tokens.
+* **Audit integrity** — append-only (DB trigger blocks UPDATE/DELETE, model refuses saves of existing rows),
+  SHA-256 hash chain with gap-free `seq`; `/ops/audit/verify` detects edits, deletions and re-ordering.
+  Actor/org references are plain ids so user/org deletion never rewrites history. Audited, in addition to
+  org/ops CRUD: staff role/MFA changes, KYB decisions, identity/credential/work-history/mobility
+  verifications, payroll approve/mark-paid, wage-sheet/bank/SSF/payout bank-file exports, privacy export
+  downloads, ID-document views, every partner data read (`partner.data.read`), enterprise key creation,
+  legal acceptances, maintenance-mode changes.
+* **Uploads** — `validate_upload`: magic-byte sniff (jpeg/png/webp/pdf/xlsx/csv), extension and declared
+  type must agree, images re-encoded (EXIF/GPS/XMP dropped, ≤ 4000 px, decompression bombs refused), PDFs
+  with `/JavaScript`, `/JS`, `/EmbeddedFile(s)`, `/Launch` refused (`#xx` name escapes decoded), xlsx zip
+  bombs refused, optional ClamAV INSTREAM. Limitation: PDF active content inside compressed object streams
+  is only caught by ClamAV — enable it in production.
+* **Request IDs** — `X-Request-ID` on every response, in logs, Sentry and `error.request_id`; safe to show
+  users (random, no personal data).
+* **Idempotency** — `Idempotency-Key` on money/state-changing POSTs; scoped per principal; different body
+  with the same key → 409 `idempotency_conflict`.
+* **Web BFF** — mutating `/api/*` handlers reject cross-site requests (`Origin` / `Sec-Fetch-Site`),
+  in addition to `SameSite=Lax` HttpOnly cookies; token-issuing endpoints are never reachable through the proxy.
+* **Metrics** — `/api/v1/metrics` exists only when `METRICS_TOKEN` is set and requires it as a bearer token;
+  label values are route groups/status classes only (no ids, phones or tokens).
+* **Legal acceptance** — versioned `LegalDocument`s; each acceptance stores user, version, time, IP,
+  user agent and channel (evidence of consent under the Privacy Act 2075).
+* **Secrets** — production requires `FIELD_ENCRYPTION_KEYS` and `FIELD_HASH_KEY` (compose refuses to start
+  without them). Rotation: RUNBOOK §6. Incident playbooks: RUNBOOK §12.

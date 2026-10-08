@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import PhoneOTP, User
+from .models import LegalAcceptance, LegalDocument, PhoneOTP, SessionDevice, StaffProfile, User
 
 
 @admin.register(User)
@@ -45,3 +45,43 @@ class PhoneOTPAdmin(admin.ModelAdmin):
         "ip",
         "created_at",
     ]
+
+
+@admin.register(StaffProfile)
+class StaffProfileAdmin(admin.ModelAdmin):
+    list_display = ["user", "roles", "mfa_enabled", "mfa_enrolled_at", "updated_at"]
+    search_fields = ["user__phone", "user__full_name"]
+    exclude = ["mfa_secret", "recovery_codes", "mfa_last_step"]
+    readonly_fields = ["mfa_enabled", "mfa_enrolled_at"]
+
+
+@admin.register(SessionDevice)
+class SessionDeviceAdmin(admin.ModelAdmin):
+    list_display = ["user", "platform", "ip", "created_at", "last_seen_at", "revoked_at"]
+    search_fields = ["user__phone"]
+    readonly_fields = [
+        "user",
+        "jti",
+        "user_agent",
+        "ip",
+        "platform",
+        "created_at",
+        "last_seen_at",
+        "revoked_at",
+    ]
+
+
+@admin.register(LegalDocument)
+class LegalDocumentAdmin(admin.ModelAdmin):
+    list_display = ["kind", "version", "is_current", "published_at", "url"]
+    list_filter = ["kind", "is_current"]
+
+
+@admin.register(LegalAcceptance)
+class LegalAcceptanceAdmin(admin.ModelAdmin):
+    list_display = ["user", "document", "accepted_at", "channel", "ip"]
+    search_fields = ["user__phone"]
+    readonly_fields = ["user", "document", "accepted_at", "ip", "user_agent", "channel"]
+
+    def has_change_permission(self, request, obj=None):
+        return False

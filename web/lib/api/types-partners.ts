@@ -2,16 +2,12 @@
 import type { ISODateTime, UUID } from "./types";
 
 export type PartnerKind =
-  | "bank"
-  | "microfinance"
-  | "insurer"
-  | "wallet"
-  | "training"
-  | "recruitment_agency"
-  | "government";
+  "bank" | "microfinance" | "insurer" | "wallet" | "training" | "recruitment_agency" | "government";
 export type PartnerRegulator = "nrb" | "beema_samiti" | "dofe" | "ctevt" | "other";
-export type PartnerScope = "profile.read" | "earnings.read" | "passport.read" | "referrals.write";
-export type ConsentPurpose = "loan_assessment" | "insurance" | "ewa" | "recruitment" | "training" | "verification";
+export type PartnerScope =
+  "profile.read" | "earnings.read" | "passport.read" | "mobility.read" | "referrals.write";
+export type ConsentPurpose =
+  "loan_assessment" | "insurance" | "ewa" | "recruitment" | "training" | "verification";
 export type ConsentGrantStatus = "active" | "revoked" | "expired";
 
 export const PARTNER_KINDS: PartnerKind[] = [
@@ -23,8 +19,20 @@ export const PARTNER_KINDS: PartnerKind[] = [
   "recruitment_agency",
   "government",
 ];
-export const PARTNER_REGULATORS: PartnerRegulator[] = ["nrb", "beema_samiti", "dofe", "ctevt", "other"];
-export const PARTNER_SCOPES: PartnerScope[] = ["profile.read", "earnings.read", "passport.read", "referrals.write"];
+export const PARTNER_REGULATORS: PartnerRegulator[] = [
+  "nrb",
+  "beema_samiti",
+  "dofe",
+  "ctevt",
+  "other",
+];
+export const PARTNER_SCOPES: PartnerScope[] = [
+  "profile.read",
+  "earnings.read",
+  "passport.read",
+  "mobility.read",
+  "referrals.write",
+];
 
 export interface PartnerRef {
   id: UUID;
@@ -54,7 +62,12 @@ export interface OpsPartner {
   has_webhook_secret: boolean;
   is_active: boolean;
   created_at: ISODateTime;
-  stats: { active_keys: number | null; active_grants: number | null; offers: number | null; referrals: number | null };
+  stats: {
+    active_keys: number | null;
+    active_grants: number | null;
+    offers: number | null;
+    referrals: number | null;
+  };
   /** Only in the POST response (shown once). */
   webhook_secret?: string;
 }

@@ -6,6 +6,7 @@ import '../../../../core/format.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
+import '../../../common/inbox/inbox_screen.dart';
 import '../data/leave_repository.dart';
 
 class LeavesScreen extends StatelessWidget {
@@ -19,20 +20,11 @@ class LeavesScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(l.navLeave),
-          bottom: TabBar(
-            tabs: [
-              Tab(text: l.leavePending),
-              Tab(text: l.leaveApproved),
-              Tab(text: l.leaveRejected),
-            ],
-          ),
+          actions: const [InboxBell()],
+          bottom: TabBar(tabs: [Tab(text: l.leavePending), Tab(text: l.leaveApproved), Tab(text: l.leaveRejected)]),
         ),
         body: const TabBarView(
-          children: [
-            _LeaveList(status: 'pending'),
-            _LeaveList(status: 'approved'),
-            _LeaveList(status: 'rejected'),
-          ],
+          children: [_LeaveList(status: 'pending'), _LeaveList(status: 'approved'), _LeaveList(status: 'rejected')],
         ),
       ),
     );
@@ -57,14 +49,16 @@ class _LeaveList extends ConsumerWidget {
       child: AsyncBody<List<LeaveRequest>>(
         value: value,
         onRetry: () => ref.invalidate(leavesProvider(status)),
-        data: (items) => items.isEmpty
-            ? ListView(children: [EmptyState(icon: LucideIcons.calendarOff, message: l.leaveEmpty)])
-            : ListView.separated(
-                padding: const EdgeInsets.all(KsSpace.page),
-                itemCount: items.length,
-                separatorBuilder: (_, _) => const SizedBox(height: KsSpace.s3),
-                itemBuilder: (_, i) => _LeaveCard(item: items[i]),
-              ),
+        data:
+            (items) =>
+                items.isEmpty
+                    ? ListView(children: [EmptyState(icon: LucideIcons.calendarOff, message: l.leaveEmpty)])
+                    : ListView.separated(
+                      padding: const EdgeInsets.all(KsSpace.page),
+                      itemCount: items.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: KsSpace.s3),
+                      itemBuilder: (_, i) => _LeaveCard(item: items[i]),
+                    ),
       ),
     );
   }
@@ -88,18 +82,19 @@ class _LeaveCardState extends ConsumerState<_LeaveCard> {
       final ctrl = TextEditingController();
       final ok = await showDialog<bool>(
         context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text(l.leaveRejectTitle),
-          content: TextField(controller: ctrl, decoration: InputDecoration(labelText: l.leaveRejectNote)),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.commonCancel)),
-            FilledButton(
-              style: FilledButton.styleFrom(backgroundColor: Theme.of(ctx).colorScheme.error),
-              onPressed: () => Navigator.pop(ctx, true),
-              child: Text(l.leaveReject),
+        builder:
+            (ctx) => AlertDialog(
+              title: Text(l.leaveRejectTitle),
+              content: TextField(controller: ctrl, decoration: InputDecoration(labelText: l.leaveRejectNote)),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.commonCancel)),
+                FilledButton(
+                  style: FilledButton.styleFrom(backgroundColor: Theme.of(ctx).colorScheme.error),
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: Text(l.leaveReject),
+                ),
+              ],
             ),
-          ],
-        ),
       );
       note = ctrl.text;
       ctrl.dispose();
@@ -131,9 +126,7 @@ class _LeaveCardState extends ConsumerState<_LeaveCard> {
     final it = widget.item;
     final from = it.fromDateBs != null ? formatBsString(it.fromDateBs, lang) : it.fromDate;
     final to = it.toDateBs != null ? formatBsString(it.toDateBs, lang) : it.toDate;
-    final typeLabel = lang == 'en' || it.leaveTypeLabel == null
-        ? leaveTypeLabel(l, it.leaveType)
-        : it.leaveTypeLabel!;
+    final typeLabel = lang == 'en' || it.leaveTypeLabel == null ? leaveTypeLabel(l, it.leaveType) : it.leaveTypeLabel!;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(KsSpace.s4),
@@ -153,10 +146,7 @@ class _LeaveCardState extends ConsumerState<_LeaveCard> {
                     ],
                   ),
                 ),
-                StatusBadge(
-                  label: l.leaveDays(formatNumber(it.days, lang: lang)),
-                  tone: Tone.info,
-                ),
+                StatusBadge(label: l.leaveDays(formatNumber(it.days, lang: lang)), tone: Tone.info),
               ],
             ),
             const SizedBox(height: KsSpace.s3),
@@ -171,17 +161,11 @@ class _LeaveCardState extends ConsumerState<_LeaveCard> {
               Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton(
-                      onPressed: _busy ? null : () => _act(false),
-                      child: Text(l.leaveReject),
-                    ),
+                    child: OutlinedButton(onPressed: _busy ? null : () => _act(false), child: Text(l.leaveReject)),
                   ),
                   const SizedBox(width: KsSpace.s3),
                   Expanded(
-                    child: FilledButton(
-                      onPressed: _busy ? null : () => _act(true),
-                      child: Text(l.leaveApprove),
-                    ),
+                    child: FilledButton(onPressed: _busy ? null : () => _act(true), child: Text(l.leaveApprove)),
                   ),
                 ],
               ),

@@ -45,6 +45,8 @@ class OrganizationFactory(factory.django.DjangoModelFactory):
     address = "Thamel"
     phone = "014000000"
     weekly_off_day = 6
+    # KYB_REQUIRED_FOR_SHORTLIST gates ops shortlisting; test orgs are verified unless a test says otherwise.
+    verification_status = "verified"
 
 
 class SiteFactory(factory.django.DjangoModelFactory):

@@ -23,6 +23,8 @@ class Trade(models.Model):
     name_en = models.CharField(max_length=80)
     name_ne = models.CharField(max_length=80)
     category = models.CharField(max_length=20, choices=CATEGORIES)
+    # Inactive trades stay on existing records but are hidden from /ref/trades (ops taxonomy).
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         ordering = ["category", "name_en"]

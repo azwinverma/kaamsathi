@@ -120,6 +120,11 @@ TRADES = [
     ("ward_attendant", "Ward attendant", "वार्ड सहयोगी", "healthcare"),
     ("tailor", "Tailor", "दर्जी (टेलर)", "manufacturing"),
     ("technician", "Technician", "प्राविधिक", "manufacturing"),
+    # First-wave skilled trades (docs/GO_TO_MARKET.md)
+    ("hvac_technician", "HVAC / refrigeration technician", "एचभीएसी / रेफ्रिजेरेसन प्राविधिक", "construction"),
+    ("maintenance_technician", "Maintenance technician", "मर्मतसम्भार प्राविधिक", "general"),
+    ("solar_technician", "Solar technician", "सोलार प्राविधिक", "construction"),
+    ("ev_technician", "EV technician", "विद्युतीय सवारी (EV) प्राविधिक", "transport"),
     ("store_keeper", "Store keeper", "स्टोर किपर", "general"),
     ("loader", "Loader", "लोडर", "general"),
 ]

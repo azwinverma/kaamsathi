@@ -9,6 +9,9 @@ import { DateText } from "@/components/ui/date";
 import { DialogDescription, DialogTitle, Sheet, SheetContent } from "@/components/ui/dialog";
 import { ErrorState, Skeleton } from "@/components/ui/feedback";
 import { StatusBadge, VerificationBadge } from "@/components/shared/status-badge";
+import { ApplicationGrowthBadges } from "@/components/experience/badges";
+import { OfferChip } from "@/components/experience/offer-dialog";
+import type { ApplicationGrowthFields, ApplicationOfferField } from "@/lib/api/types-experience";
 import {
   RatingStars,
   SkillChips,
@@ -87,6 +90,11 @@ function DrawerBody({ id, showJobLink }: { id: string; showJobLink: boolean }) {
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <StatusBadge status={app.stage} ns="stage" />
           <VerificationBadge status={worker.verification_status} />
+          <ApplicationGrowthBadges
+            application={app as ApplicationGrowthFields}
+            className="contents"
+          />
+          <OfferChip offer={(app as ApplicationOfferField).offer} />
           {showJobLink ? (
             <Link
               href={`/app/jobs/${app.job.id}`}

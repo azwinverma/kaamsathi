@@ -120,6 +120,7 @@ class MyEmploymentSerializer(EmploymentSerializer):
         data = super().to_representation(instance)
         org = instance.organization
         data["organization"] = {"id": str(org.id), "name": org.name, "name_ne": org.name_ne}
+        data["employer_verified"] = org.verification_status == "verified"
         data.pop("supervisor", None)
         return data
 

@@ -45,12 +45,36 @@ class Partner(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     # Shared secret for signing outbound webhooks (X-KaamSathi-Signature). Ops can rotate it.
     webhook_secret = models.CharField(max_length=64, blank=True, default="")
+    # Licence compliance (recruitment agencies: DoFE licence). Set only via
+    # POST /ops/mobility/agencies/{id}/compliance (docs/CONTRACT-EXTENSIONS.md §5).
+    COMPLIANCE_STATUSES = [("unverified", "Unverified"), ("verified", "Verified"), ("suspended", "Suspended")]
+    license_valid_until = models.DateField(null=True, blank=True)
+    compliance_status = models.CharField(max_length=12, choices=COMPLIANCE_STATUSES, default="unverified")
+    compliance_verified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    compliance_verified_at = models.DateTimeField(null=True, blank=True)
+    compliance_note = models.TextField(blank=True, default="")
 
     class Meta:
         ordering = ["name"]
 
     def __str__(self):
         return self.name
+
+    def license_valid_on(self, on=None) -> bool:
+        on = on or timezone.localdate()
+        return self.license_valid_until is not None and self.license_valid_until >= on
+
+    def is_eligible_agency(self, on=None) -> bool:
+        """A recruitment agency may receive worker documents only when active, compliance-verified
+        by ops and holding an unexpired licence."""
+        return (
+            self.is_active
+            and self.kind == "recruitment_agency"
+            and self.compliance_status == "verified"
+            and self.license_valid_on(on)
+        )
 
 
 def new_webhook_secret() -> str:

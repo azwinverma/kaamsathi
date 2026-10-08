@@ -23,6 +23,9 @@ def partner_public(p: Partner) -> dict:
         "regulator": p.regulator or None,
         "regulator_label": labels.label(plabels.REGULATOR, p.regulator),
         "license_no": p.license_no or None,
+        "license_valid_until": p.license_valid_until.isoformat() if p.license_valid_until else None,
+        "compliance_status": p.compliance_status,
+        "compliance_status_label": labels.label(plabels.COMPLIANCE_STATUS, p.compliance_status),
     }
 
 
@@ -95,6 +98,7 @@ class OpsPartnerSerializer(serializers.ModelSerializer):
     regulator_label = serializers.SerializerMethodField()
     stats = serializers.SerializerMethodField()
     has_webhook_secret = serializers.SerializerMethodField()
+    compliance_status_label = serializers.SerializerMethodField()
 
     class Meta:
         model = Partner
@@ -113,11 +117,27 @@ class OpsPartnerSerializer(serializers.ModelSerializer):
             "is_active",
             "created_at",
             "stats",
+            "license_valid_until",
+            "compliance_status",
+            "compliance_status_label",
+            "compliance_verified_at",
+            "compliance_note",
         ]
-        read_only_fields = ["id", "created_at"]
+        # Compliance is changed only via POST /ops/mobility/agencies/{id}/compliance (audited).
+        read_only_fields = [
+            "id",
+            "created_at",
+            "license_valid_until",
+            "compliance_status",
+            "compliance_verified_at",
+            "compliance_note",
+        ]
 
     def get_kind_label(self, obj):
         return labels.label(plabels.PARTNER_KIND, obj.kind)
+
+    def get_compliance_status_label(self, obj):
+        return labels.label(plabels.COMPLIANCE_STATUS, obj.compliance_status)
 
     def get_regulator_label(self, obj):
         return labels.label(plabels.REGULATOR, obj.regulator)

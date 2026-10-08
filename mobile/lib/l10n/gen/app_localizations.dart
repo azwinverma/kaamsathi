@@ -3464,7 +3464,7 @@ abstract class AppLocalizations {
   /// No description provided for @offersEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No offers right now.'**
+  /// **'No job offers yet.'**
   String get offersEmpty;
 
   /// No description provided for @offerApplied.
@@ -4018,6 +4018,1692 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Off'**
   String get rosterOffShort;
+
+  /// No description provided for @inboxTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get inboxTitle;
+
+  /// No description provided for @inboxEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet.'**
+  String get inboxEmpty;
+
+  /// No description provided for @inboxMarkAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all as read'**
+  String get inboxMarkAllRead;
+
+  /// No description provided for @inboxUnread.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} unread'**
+  String inboxUnread(String count);
+
+  /// No description provided for @securityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Login & security'**
+  String get securityTitle;
+
+  /// No description provided for @securityMenuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Phones and browsers where you are logged in'**
+  String get securityMenuSubtitle;
+
+  /// No description provided for @securityIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'These devices are logged in to your KaamSathi account. If you don\'t recognise one, log it out.'**
+  String get securityIntro;
+
+  /// No description provided for @securityThisDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone'**
+  String get securityThisDevice;
+
+  /// No description provided for @securityLastSeen.
+  ///
+  /// In en, this message translates to:
+  /// **'Last used {date}'**
+  String securityLastSeen(String date);
+
+  /// No description provided for @securitySignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Logged in {date}'**
+  String securitySignedIn(String date);
+
+  /// No description provided for @securityRevoke.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get securityRevoke;
+
+  /// No description provided for @securityRevokeConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out this device?'**
+  String get securityRevokeConfirm;
+
+  /// No description provided for @securityRevoked.
+  ///
+  /// In en, this message translates to:
+  /// **'Device logged out.'**
+  String get securityRevoked;
+
+  /// No description provided for @securityRevokeOthers.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out all other devices'**
+  String get securityRevokeOthers;
+
+  /// No description provided for @securityRevokeOthersConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out every device except this phone?'**
+  String get securityRevokeOthersConfirm;
+
+  /// No description provided for @securityRevokedOthers.
+  ///
+  /// In en, this message translates to:
+  /// **'Other devices logged out.'**
+  String get securityRevokedOthers;
+
+  /// No description provided for @securityPlatformAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'Android phone'**
+  String get securityPlatformAndroid;
+
+  /// No description provided for @securityPlatformIos.
+  ///
+  /// In en, this message translates to:
+  /// **'iPhone'**
+  String get securityPlatformIos;
+
+  /// No description provided for @securityPlatformWeb.
+  ///
+  /// In en, this message translates to:
+  /// **'Web browser'**
+  String get securityPlatformWeb;
+
+  /// No description provided for @securityPlatformOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other device'**
+  String get securityPlatformOther;
+
+  /// No description provided for @workHistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Past work (outside KaamSathi)'**
+  String get workHistTitle;
+
+  /// No description provided for @workHistMenuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add jobs you did before, with a reference'**
+  String get workHistMenuSubtitle;
+
+  /// No description provided for @workHistIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Add work you did before KaamSathi. When our team confirms it with your reference, it shows as verified on your Skill Passport.'**
+  String get workHistIntro;
+
+  /// No description provided for @workHistEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No past work added yet.'**
+  String get workHistEmpty;
+
+  /// No description provided for @workHistAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add past work'**
+  String get workHistAdd;
+
+  /// No description provided for @workHistEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit past work'**
+  String get workHistEdit;
+
+  /// No description provided for @workHistEmployer.
+  ///
+  /// In en, this message translates to:
+  /// **'Employer / company name'**
+  String get workHistEmployer;
+
+  /// No description provided for @workHistRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Your role'**
+  String get workHistRole;
+
+  /// No description provided for @workHistTrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Trade'**
+  String get workHistTrade;
+
+  /// No description provided for @workHistStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Started'**
+  String get workHistStart;
+
+  /// No description provided for @workHistEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Ended'**
+  String get workHistEnd;
+
+  /// No description provided for @workHistStillThere.
+  ///
+  /// In en, this message translates to:
+  /// **'I still work here'**
+  String get workHistStillThere;
+
+  /// No description provided for @workHistDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'What did you do there?'**
+  String get workHistDescription;
+
+  /// No description provided for @workHistReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference (someone who can confirm)'**
+  String get workHistReference;
+
+  /// No description provided for @workHistRefName.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference name'**
+  String get workHistRefName;
+
+  /// No description provided for @workHistRefPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference phone'**
+  String get workHistRefPhone;
+
+  /// No description provided for @workHistRefHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Our team may call this person to confirm your work. Tell them first.'**
+  String get workHistRefHint;
+
+  /// No description provided for @workHistRefBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in both the name and the phone of your reference.'**
+  String get workHistRefBoth;
+
+  /// No description provided for @workHistDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo of a letter or work ID'**
+  String get workHistDocument;
+
+  /// No description provided for @workHistSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved. We will check it.'**
+  String get workHistSaved;
+
+  /// No description provided for @workHistDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this past work?'**
+  String get workHistDeleteConfirm;
+
+  /// No description provided for @workHistDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed.'**
+  String get workHistDeleted;
+
+  /// No description provided for @workHistStatusSelf.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-reported'**
+  String get workHistStatusSelf;
+
+  /// No description provided for @workHistStatusRefPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking with reference'**
+  String get workHistStatusRefPending;
+
+  /// No description provided for @workHistStatusUnverifiable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not confirm'**
+  String get workHistStatusUnverifiable;
+
+  /// No description provided for @workHistStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not accepted'**
+  String get workHistStatusRejected;
+
+  /// No description provided for @workHistByReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed by reference'**
+  String get workHistByReference;
+
+  /// No description provided for @workHistByEmployer.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed by employer'**
+  String get workHistByEmployer;
+
+  /// No description provided for @workHistByDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed by document'**
+  String get workHistByDocument;
+
+  /// No description provided for @workHistEndBeforeStart.
+  ///
+  /// In en, this message translates to:
+  /// **'The end date must be after the start date.'**
+  String get workHistEndBeforeStart;
+
+  /// No description provided for @workHistLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified work can\'t be changed.'**
+  String get workHistLocked;
+
+  /// No description provided for @jobsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs for you'**
+  String get jobsTitle;
+
+  /// No description provided for @jobsMenuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs that match your skills and areas'**
+  String get jobsMenuSubtitle;
+
+  /// No description provided for @jobsTabForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'For you'**
+  String get jobsTabForYou;
+
+  /// No description provided for @jobsTabApplications.
+  ///
+  /// In en, this message translates to:
+  /// **'My applications'**
+  String get jobsTabApplications;
+
+  /// No description provided for @jobsReviewNote.
+  ///
+  /// In en, this message translates to:
+  /// **'KaamSathi\'s team reviews your interest before the employer sees you.'**
+  String get jobsReviewNote;
+
+  /// No description provided for @jobsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching jobs right now. Add your skills and preferred areas to see more.'**
+  String get jobsEmpty;
+
+  /// No description provided for @jobsUpdatePrefs.
+  ///
+  /// In en, this message translates to:
+  /// **'Update my areas'**
+  String get jobsUpdatePrefs;
+
+  /// No description provided for @jobsInterested.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m interested'**
+  String get jobsInterested;
+
+  /// No description provided for @jobsInterestConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show interest in this job?'**
+  String get jobsInterestConfirmTitle;
+
+  /// No description provided for @jobsInterestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest sent. We will let you know.'**
+  String get jobsInterestSent;
+
+  /// No description provided for @jobsInterestSentBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest sent'**
+  String get jobsInterestSentBadge;
+
+  /// No description provided for @jobsFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Food provided'**
+  String get jobsFood;
+
+  /// No description provided for @jobsStay.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay provided'**
+  String get jobsStay;
+
+  /// No description provided for @jobsStarts.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts {date}'**
+  String jobsStarts(String date);
+
+  /// No description provided for @jobsOpenings.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} openings'**
+  String jobsOpenings(String count);
+
+  /// No description provided for @employerVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified employer'**
+  String get employerVerified;
+
+  /// No description provided for @appsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have not applied to any job yet.'**
+  String get appsEmpty;
+
+  /// No description provided for @appsConfirmPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'You were shortlisted. Are you still interested?'**
+  String get appsConfirmPrompt;
+
+  /// No description provided for @appsConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, interested'**
+  String get appsConfirm;
+
+  /// No description provided for @appsDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'No, decline'**
+  String get appsDecline;
+
+  /// No description provided for @appsDeclineConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline this job?'**
+  String get appsDeclineConfirmTitle;
+
+  /// No description provided for @appsDeclineConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We will tell the employer you are not interested. This can\'t be undone.'**
+  String get appsDeclineConfirmBody;
+
+  /// No description provided for @appsDeclineReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get appsDeclineReason;
+
+  /// No description provided for @appsConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you. We have told the employer.'**
+  String get appsConfirmed;
+
+  /// No description provided for @appsDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined.'**
+  String get appsDeclined;
+
+  /// No description provided for @appsResponseInterested.
+  ///
+  /// In en, this message translates to:
+  /// **'You confirmed interest'**
+  String get appsResponseInterested;
+
+  /// No description provided for @appsResponseDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'You declined'**
+  String get appsResponseDeclined;
+
+  /// No description provided for @appsInterview.
+  ///
+  /// In en, this message translates to:
+  /// **'Interview: {date}'**
+  String appsInterview(String date);
+
+  /// No description provided for @appsUnderReview.
+  ///
+  /// In en, this message translates to:
+  /// **'KaamSathi is reviewing'**
+  String get appsUnderReview;
+
+  /// No description provided for @availTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability & areas'**
+  String get availTitle;
+
+  /// No description provided for @availMenuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Where and when you can work, expected pay'**
+  String get availMenuSubtitle;
+
+  /// No description provided for @availAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred districts'**
+  String get availAreas;
+
+  /// No description provided for @availAreasHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the districts where you are happy to work.'**
+  String get availAreasHint;
+
+  /// No description provided for @availAreasNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No districts chosen yet'**
+  String get availAreasNone;
+
+  /// No description provided for @availPickDistricts.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose districts'**
+  String get availPickDistricts;
+
+  /// No description provided for @availSearchDistrict.
+  ///
+  /// In en, this message translates to:
+  /// **'Search district'**
+  String get availSearchDistrict;
+
+  /// No description provided for @availSelectedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String availSelectedCount(String count);
+
+  /// No description provided for @availRadius.
+  ///
+  /// In en, this message translates to:
+  /// **'How far can you travel for work?'**
+  String get availRadius;
+
+  /// No description provided for @availRadiusKm.
+  ///
+  /// In en, this message translates to:
+  /// **'{km} km'**
+  String availRadiusKm(String km);
+
+  /// No description provided for @availRadiusAny.
+  ///
+  /// In en, this message translates to:
+  /// **'Anywhere'**
+  String get availRadiusAny;
+
+  /// No description provided for @availWage.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected monthly salary (Rs.)'**
+  String get availWage;
+
+  /// No description provided for @availFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Available from'**
+  String get availFrom;
+
+  /// No description provided for @availDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get availDone;
+
+  /// No description provided for @availNumberInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number.'**
+  String get availNumberInvalid;
+
+  /// No description provided for @supportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & support'**
+  String get supportTitle;
+
+  /// No description provided for @supportMenuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask our team for help'**
+  String get supportMenuSubtitle;
+
+  /// No description provided for @supportEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No help requests yet.'**
+  String get supportEmpty;
+
+  /// No description provided for @supportNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for help'**
+  String get supportNew;
+
+  /// No description provided for @supportCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'What is it about?'**
+  String get supportCategory;
+
+  /// No description provided for @supportCatAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account / login'**
+  String get supportCatAccount;
+
+  /// No description provided for @supportCatPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Salary / payment'**
+  String get supportCatPayment;
+
+  /// No description provided for @supportCatAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'Hajiri (attendance)'**
+  String get supportCatAttendance;
+
+  /// No description provided for @supportCatJob.
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs'**
+  String get supportCatJob;
+
+  /// No description provided for @supportCatPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get supportCatPrivacy;
+
+  /// No description provided for @supportCatTechnical.
+  ///
+  /// In en, this message translates to:
+  /// **'Problem with the app'**
+  String get supportCatTechnical;
+
+  /// No description provided for @supportCatOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get supportCatOther;
+
+  /// No description provided for @supportSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Short title'**
+  String get supportSubject;
+
+  /// No description provided for @supportDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us what happened'**
+  String get supportDescription;
+
+  /// No description provided for @supportSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent. Our team will reply here.'**
+  String get supportSent;
+
+  /// No description provided for @supportStatusOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get supportStatusOpen;
+
+  /// No description provided for @supportStatusPendingUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for your reply'**
+  String get supportStatusPendingUser;
+
+  /// No description provided for @supportStatusResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get supportStatusResolved;
+
+  /// No description provided for @supportStatusClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get supportStatusClosed;
+
+  /// No description provided for @supportReplyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a message'**
+  String get supportReplyHint;
+
+  /// No description provided for @supportSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get supportSend;
+
+  /// No description provided for @supportYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get supportYou;
+
+  /// No description provided for @supportTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'KaamSathi team'**
+  String get supportTeam;
+
+  /// No description provided for @supportNoMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'No replies yet. We usually answer within a day.'**
+  String get supportNoMessages;
+
+  /// No description provided for @supportClosedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This request is closed. Ask again if you still need help.'**
+  String get supportClosedNote;
+
+  /// No description provided for @mobTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Working abroad documents'**
+  String get mobTitle;
+
+  /// No description provided for @mobMenuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Passport, permits and clearances — shared only when you choose'**
+  String get mobMenuSubtitle;
+
+  /// No description provided for @mobIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your documents safe in one place and share them with a licensed agency you choose. KaamSathi does not find jobs abroad.'**
+  String get mobIntro;
+
+  /// No description provided for @mobSafetyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay safe'**
+  String get mobSafetyTitle;
+
+  /// No description provided for @mobSafety1.
+  ///
+  /// In en, this message translates to:
+  /// **'Use only agencies licensed by the Department of Foreign Employment (DoFE).'**
+  String get mobSafety1;
+
+  /// No description provided for @mobSafety2.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the agency\'s licence yourself on the official DoFE website (dofe.gov.np) before you pay or sign anything.'**
+  String get mobSafety2;
+
+  /// No description provided for @mobSafety3.
+  ///
+  /// In en, this message translates to:
+  /// **'Get a receipt for every payment. Never pay more than the government-approved fee.'**
+  String get mobSafety3;
+
+  /// No description provided for @mobSafety4.
+  ///
+  /// In en, this message translates to:
+  /// **'Never hand over your original passport without a receipt.'**
+  String get mobSafety4;
+
+  /// No description provided for @mobTabDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'My documents'**
+  String get mobTabDocuments;
+
+  /// No description provided for @mobTabAgencies.
+  ///
+  /// In en, this message translates to:
+  /// **'Agencies & sharing'**
+  String get mobTabAgencies;
+
+  /// No description provided for @mobTravel.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel documents'**
+  String get mobTravel;
+
+  /// No description provided for @mobClearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Clearances & certificates'**
+  String get mobClearance;
+
+  /// No description provided for @mobEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No documents added yet.'**
+  String get mobEmpty;
+
+  /// No description provided for @mobAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add document'**
+  String get mobAdd;
+
+  /// No description provided for @mobKind.
+  ///
+  /// In en, this message translates to:
+  /// **'Document type'**
+  String get mobKind;
+
+  /// No description provided for @mobKindPassport.
+  ///
+  /// In en, this message translates to:
+  /// **'Passport'**
+  String get mobKindPassport;
+
+  /// No description provided for @mobKindLabourPermit.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour permit'**
+  String get mobKindLabourPermit;
+
+  /// No description provided for @mobKindVisa.
+  ///
+  /// In en, this message translates to:
+  /// **'Visa'**
+  String get mobKindVisa;
+
+  /// No description provided for @mobKindPolice.
+  ///
+  /// In en, this message translates to:
+  /// **'Police clearance'**
+  String get mobKindPolice;
+
+  /// No description provided for @mobKindMedical.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical fitness'**
+  String get mobKindMedical;
+
+  /// No description provided for @mobKindOrientation.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-departure orientation'**
+  String get mobKindOrientation;
+
+  /// No description provided for @mobKindInsurance.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance'**
+  String get mobKindInsurance;
+
+  /// No description provided for @mobKindLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language test'**
+  String get mobKindLanguage;
+
+  /// No description provided for @mobNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Document number'**
+  String get mobNumber;
+
+  /// No description provided for @mobCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Issuing country'**
+  String get mobCountry;
+
+  /// No description provided for @mobTitleField.
+  ///
+  /// In en, this message translates to:
+  /// **'Name of the document'**
+  String get mobTitleField;
+
+  /// No description provided for @mobIssuer.
+  ///
+  /// In en, this message translates to:
+  /// **'Issued by'**
+  String get mobIssuer;
+
+  /// No description provided for @mobScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Score or level'**
+  String get mobScore;
+
+  /// No description provided for @mobSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved. Our team will check it.'**
+  String get mobSaved;
+
+  /// No description provided for @mobDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this document?'**
+  String get mobDeleteConfirm;
+
+  /// No description provided for @mobExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get mobExpired;
+
+  /// No description provided for @mobExpiresInDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires in {days} days'**
+  String mobExpiresInDays(String days);
+
+  /// No description provided for @mobAgenciesIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Only agencies with a valid DoFE licence that KaamSathi has checked are listed.'**
+  String get mobAgenciesIntro;
+
+  /// No description provided for @mobAgenciesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No checked agencies yet.'**
+  String get mobAgenciesEmpty;
+
+  /// No description provided for @mobLicence.
+  ///
+  /// In en, this message translates to:
+  /// **'Licence no. {number}'**
+  String mobLicence(String number);
+
+  /// No description provided for @mobLicenceValid.
+  ///
+  /// In en, this message translates to:
+  /// **'Licence valid until {date}'**
+  String mobLicenceValid(String date);
+
+  /// No description provided for @mobShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share my documents'**
+  String get mobShare;
+
+  /// No description provided for @mobShareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share with {agency}?'**
+  String mobShareTitle(String agency);
+
+  /// No description provided for @mobShareBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The agency will see which documents you have, whether they are verified and when they expire. It will not see photos or full numbers. You can stop sharing at any time.'**
+  String get mobShareBody;
+
+  /// No description provided for @mobShareDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Share for'**
+  String get mobShareDays;
+
+  /// No description provided for @mobShared.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared. You can stop it at any time.'**
+  String get mobShared;
+
+  /// No description provided for @mobSharesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Who can see my documents'**
+  String get mobSharesTitle;
+
+  /// No description provided for @mobSharesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You are not sharing with any agency.'**
+  String get mobSharesEmpty;
+
+  /// No description provided for @careerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grow your earnings'**
+  String get careerTitle;
+
+  /// No description provided for @careerMenuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificates, courses and skills that pay more'**
+  String get careerMenuSubtitle;
+
+  /// No description provided for @careerEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No suggestions right now. Check again later.'**
+  String get careerEmpty;
+
+  /// No description provided for @careerUplift.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to {pct}% more pay'**
+  String careerUplift(String pct);
+
+  /// No description provided for @careerSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get careerSeeAll;
+
+  /// No description provided for @careerKindCredential.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate'**
+  String get careerKindCredential;
+
+  /// No description provided for @careerKindCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Course'**
+  String get careerKindCourse;
+
+  /// No description provided for @careerKindSkill.
+  ///
+  /// In en, this message translates to:
+  /// **'Skill'**
+  String get careerKindSkill;
+
+  /// No description provided for @careerKindProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get careerKindProfile;
+
+  /// No description provided for @careerYourTrades.
+  ///
+  /// In en, this message translates to:
+  /// **'Your trades'**
+  String get careerYourTrades;
+
+  /// No description provided for @careerEstimateNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay estimates come from wages on KaamSathi. They are not a promise.'**
+  String get careerEstimateNote;
+
+  /// No description provided for @tsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Timesheets'**
+  String get tsTitle;
+
+  /// No description provided for @tsMenuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours and overtime each week'**
+  String get tsMenuSubtitle;
+
+  /// No description provided for @tsSupMenuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check and submit weekly hours'**
+  String get tsSupMenuSubtitle;
+
+  /// No description provided for @tsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No timesheet for this week yet.'**
+  String get tsEmpty;
+
+  /// No description provided for @tsSupEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No timesheets for this week. Prepare them from hajiri.'**
+  String get tsSupEmpty;
+
+  /// No description provided for @tsRegular.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular hours'**
+  String get tsRegular;
+
+  /// No description provided for @tsOtClaimed.
+  ///
+  /// In en, this message translates to:
+  /// **'OT claimed'**
+  String get tsOtClaimed;
+
+  /// No description provided for @tsOtApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'OT approved'**
+  String get tsOtApproved;
+
+  /// No description provided for @tsHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h'**
+  String tsHours(String hours);
+
+  /// No description provided for @tsOtShort.
+  ///
+  /// In en, this message translates to:
+  /// **'OT {hours} h'**
+  String tsOtShort(String hours);
+
+  /// No description provided for @tsStatusSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted'**
+  String get tsStatusSubmitted;
+
+  /// No description provided for @tsStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned'**
+  String get tsStatusRejected;
+
+  /// No description provided for @tsOverCap.
+  ///
+  /// In en, this message translates to:
+  /// **'Overtime is above the weekly limit of 24 hours.'**
+  String get tsOverCap;
+
+  /// No description provided for @tsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get tsNote;
+
+  /// No description provided for @tsSubmitConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit this timesheet for approval?'**
+  String get tsSubmitConfirm;
+
+  /// No description provided for @tsSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted for approval.'**
+  String get tsSubmitted;
+
+  /// No description provided for @tsSubmitAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit all drafts ({count})'**
+  String tsSubmitAll(String count);
+
+  /// No description provided for @tsSubmitAllConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit every draft timesheet for this week?'**
+  String get tsSubmitAllConfirm;
+
+  /// No description provided for @tsGenerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare from hajiri'**
+  String get tsGenerate;
+
+  /// No description provided for @tsGenerated.
+  ///
+  /// In en, this message translates to:
+  /// **'Timesheets prepared.'**
+  String get tsGenerated;
+
+  /// No description provided for @ecoGroupAbroad.
+  ///
+  /// In en, this message translates to:
+  /// **'Working abroad'**
+  String get ecoGroupAbroad;
+
+  /// No description provided for @ecoGroupAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account & help'**
+  String get ecoGroupAccount;
+
+  /// No description provided for @availMaxDistricts.
+  ///
+  /// In en, this message translates to:
+  /// **'You can choose up to {count} districts.'**
+  String availMaxDistricts(String count);
+
+  /// No description provided for @offersTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers'**
+  String get offersTab;
+
+  /// No description provided for @offerContractType.
+  ///
+  /// In en, this message translates to:
+  /// **'Contract type'**
+  String get offerContractType;
+
+  /// No description provided for @offerContractPermanent.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanent'**
+  String get offerContractPermanent;
+
+  /// No description provided for @offerContractFixedTerm.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed term'**
+  String get offerContractFixedTerm;
+
+  /// No description provided for @offerContractDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily wage'**
+  String get offerContractDaily;
+
+  /// No description provided for @offerContractPartTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Part time'**
+  String get offerContractPartTime;
+
+  /// No description provided for @offerContractProbation.
+  ///
+  /// In en, this message translates to:
+  /// **'Probation'**
+  String get offerContractProbation;
+
+  /// No description provided for @offerContractSeasonal.
+  ///
+  /// In en, this message translates to:
+  /// **'Seasonal'**
+  String get offerContractSeasonal;
+
+  /// No description provided for @offerExpiresInDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer within {days} days'**
+  String offerExpiresInDays(String days);
+
+  /// No description provided for @offerExpiresInHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer within {hours} hours'**
+  String offerExpiresInHours(String hours);
+
+  /// No description provided for @offerExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer expired'**
+  String get offerExpired;
+
+  /// No description provided for @offerStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for your answer'**
+  String get offerStatusPending;
+
+  /// No description provided for @offerStatusAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get offerStatusAccepted;
+
+  /// No description provided for @offerStatusDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get offerStatusDeclined;
+
+  /// No description provided for @offerStatusWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawn by employer'**
+  String get offerStatusWithdrawn;
+
+  /// No description provided for @offerReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review and accept'**
+  String get offerReview;
+
+  /// No description provided for @offerDecline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get offerDecline;
+
+  /// No description provided for @offerDeclineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline this offer?'**
+  String get offerDeclineTitle;
+
+  /// No description provided for @offerDeclineBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We will tell the employer you said no. This can\'t be undone.'**
+  String get offerDeclineBody;
+
+  /// No description provided for @offerSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Before you accept'**
+  String get offerSummaryTitle;
+
+  /// No description provided for @offerSummaryIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check these details. This is what the employer is offering you.'**
+  String get offerSummaryIntro;
+
+  /// No description provided for @offerNoFee.
+  ///
+  /// In en, this message translates to:
+  /// **'KaamSathi never charges workers. Do not pay anyone to get this job.'**
+  String get offerNoFee;
+
+  /// No description provided for @offerAgree.
+  ///
+  /// In en, this message translates to:
+  /// **'I have read these details and I want this job.'**
+  String get offerAgree;
+
+  /// No description provided for @offerAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept offer'**
+  String get offerAccept;
+
+  /// No description provided for @offerAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer accepted. The employer will contact you.'**
+  String get offerAccepted;
+
+  /// No description provided for @offerAnswerBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer by {date}'**
+  String offerAnswerBy(String date);
+
+  /// No description provided for @alertsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Job alerts'**
+  String get alertsTitle;
+
+  /// No description provided for @alertsMenuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get told when a matching job opens'**
+  String get alertsMenuSubtitle;
+
+  /// No description provided for @alertsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No job alerts yet.'**
+  String get alertsEmpty;
+
+  /// No description provided for @alertsAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'New alert'**
+  String get alertsAdd;
+
+  /// No description provided for @alertsEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit alert'**
+  String get alertsEdit;
+
+  /// No description provided for @alertsAnyTrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Any trade'**
+  String get alertsAnyTrade;
+
+  /// No description provided for @alertsAnyDistrict.
+  ///
+  /// In en, this message translates to:
+  /// **'Any district'**
+  String get alertsAnyDistrict;
+
+  /// No description provided for @alertsMinWage.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum monthly wage (Rs.)'**
+  String get alertsMinWage;
+
+  /// No description provided for @alertsFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From {amount}'**
+  String alertsFrom(String amount);
+
+  /// No description provided for @alertsFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'How often?'**
+  String get alertsFrequency;
+
+  /// No description provided for @freqInstant.
+  ///
+  /// In en, this message translates to:
+  /// **'Right away'**
+  String get freqInstant;
+
+  /// No description provided for @freqDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Once a day'**
+  String get freqDaily;
+
+  /// No description provided for @freqWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Once a week'**
+  String get freqWeekly;
+
+  /// No description provided for @alertsDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this alert?'**
+  String get alertsDeleteConfirm;
+
+  /// No description provided for @alertsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert saved.'**
+  String get alertsSaved;
+
+  /// No description provided for @legalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please review and accept'**
+  String get legalTitle;
+
+  /// No description provided for @legalIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'We have updated our terms. Please read them before you continue using KaamSathi.'**
+  String get legalIntro;
+
+  /// No description provided for @legalKindTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of use'**
+  String get legalKindTerms;
+
+  /// No description provided for @legalKindPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get legalKindPrivacy;
+
+  /// No description provided for @legalKindOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Document'**
+  String get legalKindOther;
+
+  /// No description provided for @legalVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String legalVersion(String version);
+
+  /// No description provided for @legalOpenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Open this link in your phone\'s browser to read it:'**
+  String get legalOpenHint;
+
+  /// No description provided for @legalAgree.
+  ///
+  /// In en, this message translates to:
+  /// **'I have read and accept these documents.'**
+  String get legalAgree;
+
+  /// No description provided for @legalAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept and continue'**
+  String get legalAccept;
+
+  /// No description provided for @notifPrefsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification settings'**
+  String get notifPrefsTitle;
+
+  /// No description provided for @notifPrefsAlways.
+  ///
+  /// In en, this message translates to:
+  /// **'Payslip, security and safety messages always come, whatever you choose here.'**
+  String get notifPrefsAlways;
+
+  /// No description provided for @notifSms.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS messages'**
+  String get notifSms;
+
+  /// No description provided for @notifPush.
+  ///
+  /// In en, this message translates to:
+  /// **'App notifications'**
+  String get notifPush;
+
+  /// No description provided for @notifEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get notifEmail;
+
+  /// No description provided for @notifMarketing.
+  ///
+  /// In en, this message translates to:
+  /// **'News and offers from KaamSathi'**
+  String get notifMarketing;
+
+  /// No description provided for @notifJobAlertFreq.
+  ///
+  /// In en, this message translates to:
+  /// **'Job alerts'**
+  String get notifJobAlertFreq;
+
+  /// No description provided for @notifQuietHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet hours (no SMS at night)'**
+  String get notifQuietHours;
+
+  /// No description provided for @notifQuietFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get notifQuietFrom;
+
+  /// No description provided for @notifQuietTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get notifQuietTo;
+
+  /// No description provided for @notifQuietOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get notifQuietOff;
+
+  /// No description provided for @helpCenterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help articles'**
+  String get helpCenterTitle;
+
+  /// No description provided for @helpCenterSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick answers to common questions'**
+  String get helpCenterSubtitle;
+
+  /// No description provided for @helpSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search help'**
+  String get helpSearch;
+
+  /// No description provided for @helpEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No articles found.'**
+  String get helpEmpty;
+
+  /// No description provided for @helpStillNeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Still need help? Ask our team.'**
+  String get helpStillNeed;
+
+  /// No description provided for @safetyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a safety problem'**
+  String get safetyTitle;
+
+  /// No description provided for @safetyMenuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsafe work, harassment or wages withheld — in confidence'**
+  String get safetyMenuSubtitle;
+
+  /// No description provided for @safetyDanger.
+  ///
+  /// In en, this message translates to:
+  /// **'If you are in danger now, call 100 (Police).'**
+  String get safetyDanger;
+
+  /// No description provided for @safetyConfidential.
+  ///
+  /// In en, this message translates to:
+  /// **'This report is confidential. Your employer will not see it. Only KaamSathi\'s safety team reads it.'**
+  String get safetyConfidential;
+
+  /// No description provided for @safetyKind.
+  ///
+  /// In en, this message translates to:
+  /// **'What happened?'**
+  String get safetyKind;
+
+  /// No description provided for @safetyKindUnsafe.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsafe workplace'**
+  String get safetyKindUnsafe;
+
+  /// No description provided for @safetyKindHarassment.
+  ///
+  /// In en, this message translates to:
+  /// **'Harassment or abuse'**
+  String get safetyKindHarassment;
+
+  /// No description provided for @safetyKindWages.
+  ///
+  /// In en, this message translates to:
+  /// **'Wages withheld'**
+  String get safetyKindWages;
+
+  /// No description provided for @safetyKindOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other safety concern'**
+  String get safetyKindOther;
+
+  /// No description provided for @safetyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us what happened, where and when'**
+  String get safetyDescription;
+
+  /// No description provided for @safetyEmergency.
+  ///
+  /// In en, this message translates to:
+  /// **'This is an emergency — call me now'**
+  String get safetyEmergency;
+
+  /// No description provided for @safetyEmergencyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Our team will call you as soon as possible.'**
+  String get safetyEmergencyHint;
+
+  /// No description provided for @safetyAnonymous.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide my name if this is ever shared'**
+  String get safetyAnonymous;
+
+  /// No description provided for @safetySent.
+  ///
+  /// In en, this message translates to:
+  /// **'Report sent. Our safety team will contact you.'**
+  String get safetySent;
+
+  /// No description provided for @supportCatSafety.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety'**
+  String get supportCatSafety;
+
+  /// No description provided for @offerEmployer.
+  ///
+  /// In en, this message translates to:
+  /// **'Employer'**
+  String get offerEmployer;
+
+  /// No description provided for @offerStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start date'**
+  String get offerStart;
+
+  /// No description provided for @offerAnswerByLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer by'**
+  String get offerAnswerByLabel;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

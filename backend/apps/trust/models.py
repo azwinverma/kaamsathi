@@ -87,9 +87,48 @@ class Dispute(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
     )
     resolved_at = models.DateTimeField(null=True, blank=True)
+    # SLA (docs/CONTRACT-EXTENSIONS.md §2): open → employer has 7 days to respond;
+    # employer_responded → ops has 7 days to decide. Escalated once by apps.support.tasks.
+    sla_due_at = models.DateTimeField(null=True, blank=True, db_index=True)
+    escalated = models.BooleanField(default=False)
+
+    SLA_DAYS = 7
 
     class Meta:
         ordering = ["-raised_at"]
 
     def __str__(self):
         return f"{self.kind} dispute by {self.worker_id} [{self.status}]"
+
+    def save(self, *args, **kwargs):
+        # Recompute the SLA only when the dispute enters a new phase (not on every save).
+        phase = self._phase()
+        if phase != getattr(self, "_sla_phase", "new") or (phase and self.sla_due_at is None):
+            self.sla_due_at = self.compute_sla_due_at()
+            self.escalated = False  # a new SLA window starts fresh
+            update_fields = kwargs.get("update_fields")
+            if update_fields is not None:
+                kwargs["update_fields"] = set(update_fields) | {"sla_due_at", "escalated"}
+        super().save(*args, **kwargs)
+        self._sla_phase = phase
+
+    def compute_sla_due_at(self):
+        import datetime as dt
+
+        from django.utils import timezone
+
+        if self.status == "open":
+            return (self.raised_at or timezone.now()) + dt.timedelta(days=self.SLA_DAYS)
+        if self.status == "employer_responded":
+            return (self.responded_at or timezone.now()) + dt.timedelta(days=self.SLA_DAYS)
+        return None
+
+    def _phase(self):
+        return self.status if self.status in ("open", "employer_responded") else None
+
+    @classmethod
+    def from_db(cls, db, field_names, values):
+        instance = super().from_db(db, field_names, values)
+        if "status" in field_names:  # never trigger a deferred-field load from here
+            instance._sla_phase = instance._phase()
+        return instance

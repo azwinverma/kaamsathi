@@ -74,3 +74,34 @@ Personal data is handled under the Individual Privacy Act 2075: uploaded documen
 only through short-lived signed links, workers can export or delete their data
 (`/me/privacy-requests`, ops queue at `/ops/privacy`), and `seed_demo` refuses to run when
 `DEBUG` is off.
+
+## Documentation
+
+| Doc | For | What |
+| --- | --- | --- |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | engineers | Surfaces, Django apps per bounded context, auth schemes, data flows, Celery beat, storage, deployment diagram, where encryption/audit/consent live |
+| [docs/API_CONVENTIONS.md](docs/API_CONVENTIONS.md) | engineers, partners | Base URL, auth (JWT, `X-Org-Id`, partner/org keys, signed files), errors + `request_id`, idempotency, pagination, BS dates, money, versioning, webhook signature verification (Python/Node) |
+| [docs/CONTRACT.md](docs/CONTRACT.md) · [CONTRACT-ECOSYSTEM.md](docs/CONTRACT-ECOSYSTEM.md) · [CONTRACT-EXTENSIONS.md](docs/CONTRACT-EXTENSIONS.md) | engineers | API and data model: the source of truth |
+| [docs/DESIGN.md](docs/DESIGN.md) · [docs/GLOSSARY.md](docs/GLOSSARY.md) | design, engineers | Design tokens and formatting; English/नेपाली UI terms |
+| [docs/RUNBOOK.md](docs/RUNBOOK.md) · [docs/SECURITY.md](docs/SECURITY.md) | engineers, ops | Deploy, rollback, backups, secret rotation, SMS failover, incidents; data handling, consent, retention, breach |
+| [docs/PRODUCTION_CHECKLIST.md](docs/PRODUCTION_CHECKLIST.md) | founders, engineers | Launch readiness, item by item (✅ / 🟡 / 🔴), including launch blockers and known gaps |
+| [docs/ROADMAP.md](docs/ROADMAP.md) | founders | Phases 0–6: what's built, the gate to switch each on, what remains; 90-day pilot plan and exit criteria |
+| [docs/GO_TO_MARKET.md](docs/GO_TO_MARKET.md) | founders, sales | Segments, trades, geography sequence, employer and worker acquisition, pricing hypotheses, pilot design, launch KPIs |
+
+**Ops SOPs** ([docs/ops/](docs/ops/)), with bilingual scripts where staff talk to workers:
+
+- Verification:
+  - [KYC / identity](docs/ops/kyc-identity-verification.md)
+  - [credentials](docs/ops/credential-verification.md)
+  - [employer KYB](docs/ops/employer-verification-kyb.md)
+  - [work-history reference checks](docs/ops/work-history-reference-checks.md)
+- Trust:
+  - [fraud escalation](docs/ops/fraud-escalation.md)
+  - [dispute handling SLA](docs/ops/dispute-handling-sla.md)
+  - [data-protection requests](docs/ops/data-protection-requests.md)
+  - [foreign-employment documents](docs/ops/foreign-employment-documents.md)
+- Field and customers:
+  - [support scripts](docs/ops/support-scripts.md)
+  - [employer onboarding playbook](docs/ops/employer-onboarding-playbook.md)
+  - [worker registration camps](docs/ops/worker-registration-camps.md)
+- Incidents: [incident communications](docs/ops/incident-communications.md)

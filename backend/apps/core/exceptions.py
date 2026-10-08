@@ -93,7 +93,13 @@ def _all_codes(codes):
 
 
 def envelope(code: str, message=None, fields=None) -> dict:
-    return {"error": {"code": code, "message": _message(code, message), "fields": fields or {}}}
+    from .request_id import get_request_id
+
+    error = {"code": code, "message": _message(code, message), "fields": fields or {}}
+    rid = get_request_id()
+    if rid:
+        error["request_id"] = rid
+    return {"error": error}
 
 
 def exception_handler(exc, context):

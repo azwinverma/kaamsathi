@@ -66,11 +66,7 @@ class WorkerAvatar extends StatelessWidget {
       backgroundColor: scheme.primaryContainer,
       child: Text(
         initials(name),
-        style: TextStyle(
-          color: scheme.onPrimaryContainer,
-          fontWeight: FontWeight.w600,
-          fontSize: size * 0.36,
-        ),
+        style: TextStyle(color: scheme.onPrimaryContainer, fontWeight: FontWeight.w600, fontSize: size * 0.36),
       ),
     );
     if (photo == null || photo!.isEmpty) return fallback;
@@ -129,13 +125,14 @@ class ErrorView extends StatelessWidget {
     return EmptyState(
       icon: LucideIcons.circleAlert,
       message: errorText(context, error),
-      action: onRetry == null
-          ? null
-          : OutlinedButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(LucideIcons.refreshCw, size: 18),
-              label: Text(context.l10n.commonRetry),
-            ),
+      action:
+          onRetry == null
+              ? null
+              : OutlinedButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(LucideIcons.refreshCw, size: 18),
+                label: Text(context.l10n.commonRetry),
+              ),
     );
   }
 }
@@ -214,7 +211,8 @@ class KeyValueRow extends StatelessWidget {
         children: [
           Expanded(child: Text(label, style: bold ? t.titleSmall : t.bodyLarge)),
           const SizedBox(width: KsSpace.s3),
-          Text(value, style: style, textAlign: TextAlign.right),
+          // Long values (site names, addresses) wrap instead of overflowing.
+          Flexible(child: Text(value, style: style, textAlign: TextAlign.right)),
         ],
       ),
     );
@@ -227,9 +225,6 @@ void showSnack(BuildContext context, String message, {bool error = false}) {
   m
     ..hideCurrentSnackBar()
     ..showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: error ? Theme.of(context).colorScheme.error : null,
-      ),
+      SnackBar(content: Text(message), backgroundColor: error ? Theme.of(context).colorScheme.error : null),
     );
 }

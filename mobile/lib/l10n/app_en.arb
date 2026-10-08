@@ -965,7 +965,7 @@
     }
   },
   "offerApply": "Apply",
-  "offersEmpty": "No offers right now.",
+  "offersEmpty": "No job offers yet.",
   "offerApplied": "Application sent to {partner}. They will contact you.",
   "@offerApplied": {
     "placeholders": {
@@ -1123,5 +1123,440 @@
   "rosterEmpty": "No workers to roster at this site.",
   "rosterTapHint": "Tap a box to change the shift.",
   "rosterClear": "No shift",
-  "rosterOffShort": "Off"
+  "rosterOffShort": "Off",
+  "inboxTitle": "Notifications",
+  "inboxEmpty": "No notifications yet.",
+  "inboxMarkAllRead": "Mark all as read",
+  "inboxUnread": "{count} unread",
+  "@inboxUnread": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "securityTitle": "Login & security",
+  "securityMenuSubtitle": "Phones and browsers where you are logged in",
+  "securityIntro": "These devices are logged in to your KaamSathi account. If you don't recognise one, log it out.",
+  "securityThisDevice": "This phone",
+  "securityLastSeen": "Last used {date}",
+  "@securityLastSeen": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "securitySignedIn": "Logged in {date}",
+  "@securitySignedIn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "securityRevoke": "Log out",
+  "securityRevokeConfirm": "Log out this device?",
+  "securityRevoked": "Device logged out.",
+  "securityRevokeOthers": "Log out all other devices",
+  "securityRevokeOthersConfirm": "Log out every device except this phone?",
+  "securityRevokedOthers": "Other devices logged out.",
+  "securityPlatformAndroid": "Android phone",
+  "securityPlatformIos": "iPhone",
+  "securityPlatformWeb": "Web browser",
+  "securityPlatformOther": "Other device",
+  "workHistTitle": "Past work (outside KaamSathi)",
+  "workHistMenuSubtitle": "Add jobs you did before, with a reference",
+  "workHistIntro": "Add work you did before KaamSathi. When our team confirms it with your reference, it shows as verified on your Skill Passport.",
+  "workHistEmpty": "No past work added yet.",
+  "workHistAdd": "Add past work",
+  "workHistEdit": "Edit past work",
+  "workHistEmployer": "Employer / company name",
+  "workHistRole": "Your role",
+  "workHistTrade": "Trade",
+  "workHistStart": "Started",
+  "workHistEnd": "Ended",
+  "workHistStillThere": "I still work here",
+  "workHistDescription": "What did you do there?",
+  "workHistReference": "Reference (someone who can confirm)",
+  "workHistRefName": "Reference name",
+  "workHistRefPhone": "Reference phone",
+  "workHistRefHint": "Our team may call this person to confirm your work. Tell them first.",
+  "workHistRefBoth": "Fill in both the name and the phone of your reference.",
+  "workHistDocument": "Photo of a letter or work ID",
+  "workHistSaved": "Saved. We will check it.",
+  "workHistDeleteConfirm": "Remove this past work?",
+  "workHistDeleted": "Removed.",
+  "workHistStatusSelf": "Self-reported",
+  "workHistStatusRefPending": "Checking with reference",
+  "workHistStatusUnverifiable": "Could not confirm",
+  "workHistStatusRejected": "Not accepted",
+  "workHistByReference": "Confirmed by reference",
+  "workHistByEmployer": "Confirmed by employer",
+  "workHistByDocument": "Confirmed by document",
+  "workHistEndBeforeStart": "The end date must be after the start date.",
+  "workHistLocked": "Verified work can't be changed.",
+  "jobsTitle": "Jobs for you",
+  "jobsMenuSubtitle": "Jobs that match your skills and areas",
+  "jobsTabForYou": "For you",
+  "jobsTabApplications": "My applications",
+  "jobsReviewNote": "KaamSathi's team reviews your interest before the employer sees you.",
+  "jobsEmpty": "No matching jobs right now. Add your skills and preferred areas to see more.",
+  "jobsUpdatePrefs": "Update my areas",
+  "jobsInterested": "I'm interested",
+  "jobsInterestConfirmTitle": "Show interest in this job?",
+  "jobsInterestSent": "Interest sent. We will let you know.",
+  "jobsInterestSentBadge": "Interest sent",
+  "jobsFood": "Food provided",
+  "jobsStay": "Stay provided",
+  "jobsStarts": "Starts {date}",
+  "@jobsStarts": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "jobsOpenings": "{count} openings",
+  "@jobsOpenings": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "employerVerified": "Verified employer",
+  "appsEmpty": "You have not applied to any job yet.",
+  "appsConfirmPrompt": "You were shortlisted. Are you still interested?",
+  "appsConfirm": "Yes, interested",
+  "appsDecline": "No, decline",
+  "appsDeclineConfirmTitle": "Decline this job?",
+  "appsDeclineConfirmBody": "We will tell the employer you are not interested. This can't be undone.",
+  "appsDeclineReason": "Reason",
+  "appsConfirmed": "Thank you. We have told the employer.",
+  "appsDeclined": "Declined.",
+  "appsResponseInterested": "You confirmed interest",
+  "appsResponseDeclined": "You declined",
+  "appsInterview": "Interview: {date}",
+  "@appsInterview": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "appsUnderReview": "KaamSathi is reviewing",
+  "availTitle": "Availability & areas",
+  "availMenuSubtitle": "Where and when you can work, expected pay",
+  "availAreas": "Preferred districts",
+  "availAreasHint": "Pick the districts where you are happy to work.",
+  "availAreasNone": "No districts chosen yet",
+  "availPickDistricts": "Choose districts",
+  "availSearchDistrict": "Search district",
+  "availSelectedCount": "{count} selected",
+  "@availSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "availRadius": "How far can you travel for work?",
+  "availRadiusKm": "{km} km",
+  "@availRadiusKm": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "availRadiusAny": "Anywhere",
+  "availWage": "Expected monthly salary (Rs.)",
+  "availFrom": "Available from",
+  "availDone": "Done",
+  "availNumberInvalid": "Enter a number.",
+  "supportTitle": "Help & support",
+  "supportMenuSubtitle": "Ask our team for help",
+  "supportEmpty": "No help requests yet.",
+  "supportNew": "Ask for help",
+  "supportCategory": "What is it about?",
+  "supportCatAccount": "Account / login",
+  "supportCatPayment": "Salary / payment",
+  "supportCatAttendance": "Hajiri (attendance)",
+  "supportCatJob": "Jobs",
+  "supportCatPrivacy": "Privacy",
+  "supportCatTechnical": "Problem with the app",
+  "supportCatOther": "Other",
+  "supportSubject": "Short title",
+  "supportDescription": "Tell us what happened",
+  "supportSent": "Sent. Our team will reply here.",
+  "supportStatusOpen": "Open",
+  "supportStatusPendingUser": "Waiting for your reply",
+  "supportStatusResolved": "Resolved",
+  "supportStatusClosed": "Closed",
+  "supportReplyHint": "Write a message",
+  "supportSend": "Send",
+  "supportYou": "You",
+  "supportTeam": "KaamSathi team",
+  "supportNoMessages": "No replies yet. We usually answer within a day.",
+  "supportClosedNote": "This request is closed. Ask again if you still need help.",
+  "mobTitle": "Working abroad documents",
+  "mobMenuSubtitle": "Passport, permits and clearances — shared only when you choose",
+  "mobIntro": "Keep your documents safe in one place and share them with a licensed agency you choose. KaamSathi does not find jobs abroad.",
+  "mobSafetyTitle": "Stay safe",
+  "mobSafety1": "Use only agencies licensed by the Department of Foreign Employment (DoFE).",
+  "mobSafety2": "Check the agency's licence yourself on the official DoFE website (dofe.gov.np) before you pay or sign anything.",
+  "mobSafety3": "Get a receipt for every payment. Never pay more than the government-approved fee.",
+  "mobSafety4": "Never hand over your original passport without a receipt.",
+  "mobTabDocuments": "My documents",
+  "mobTabAgencies": "Agencies & sharing",
+  "mobTravel": "Travel documents",
+  "mobClearance": "Clearances & certificates",
+  "mobEmpty": "No documents added yet.",
+  "mobAdd": "Add document",
+  "mobKind": "Document type",
+  "mobKindPassport": "Passport",
+  "mobKindLabourPermit": "Labour permit",
+  "mobKindVisa": "Visa",
+  "mobKindPolice": "Police clearance",
+  "mobKindMedical": "Medical fitness",
+  "mobKindOrientation": "Pre-departure orientation",
+  "mobKindInsurance": "Insurance",
+  "mobKindLanguage": "Language test",
+  "mobNumber": "Document number",
+  "mobCountry": "Issuing country",
+  "mobTitleField": "Name of the document",
+  "mobIssuer": "Issued by",
+  "mobScore": "Score or level",
+  "mobSaved": "Saved. Our team will check it.",
+  "mobDeleteConfirm": "Remove this document?",
+  "mobExpired": "Expired",
+  "mobExpiresInDays": "Expires in {days} days",
+  "@mobExpiresInDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "mobAgenciesIntro": "Only agencies with a valid DoFE licence that KaamSathi has checked are listed.",
+  "mobAgenciesEmpty": "No checked agencies yet.",
+  "mobLicence": "Licence no. {number}",
+  "@mobLicence": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "mobLicenceValid": "Licence valid until {date}",
+  "@mobLicenceValid": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "mobShare": "Share my documents",
+  "mobShareTitle": "Share with {agency}?",
+  "@mobShareTitle": {
+    "placeholders": {
+      "agency": {
+        "type": "String"
+      }
+    }
+  },
+  "mobShareBody": "The agency will see which documents you have, whether they are verified and when they expire. It will not see photos or full numbers. You can stop sharing at any time.",
+  "mobShareDays": "Share for",
+  "mobShared": "Shared. You can stop it at any time.",
+  "mobSharesTitle": "Who can see my documents",
+  "mobSharesEmpty": "You are not sharing with any agency.",
+  "careerTitle": "Grow your earnings",
+  "careerMenuSubtitle": "Certificates, courses and skills that pay more",
+  "careerEmpty": "No suggestions right now. Check again later.",
+  "careerUplift": "Up to {pct}% more pay",
+  "@careerUplift": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "careerSeeAll": "See all",
+  "careerKindCredential": "Certificate",
+  "careerKindCourse": "Course",
+  "careerKindSkill": "Skill",
+  "careerKindProfile": "Profile",
+  "careerYourTrades": "Your trades",
+  "careerEstimateNote": "Pay estimates come from wages on KaamSathi. They are not a promise.",
+  "tsTitle": "Timesheets",
+  "tsMenuSubtitle": "Hours and overtime each week",
+  "tsSupMenuSubtitle": "Check and submit weekly hours",
+  "tsEmpty": "No timesheet for this week yet.",
+  "tsSupEmpty": "No timesheets for this week. Prepare them from hajiri.",
+  "tsRegular": "Regular hours",
+  "tsOtClaimed": "OT claimed",
+  "tsOtApproved": "OT approved",
+  "tsHours": "{hours} h",
+  "@tsHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "tsOtShort": "OT {hours} h",
+  "@tsOtShort": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "tsStatusSubmitted": "Submitted",
+  "tsStatusRejected": "Returned",
+  "tsOverCap": "Overtime is above the weekly limit of 24 hours.",
+  "tsNote": "Note",
+  "tsSubmitConfirm": "Submit this timesheet for approval?",
+  "tsSubmitted": "Submitted for approval.",
+  "tsSubmitAll": "Submit all drafts ({count})",
+  "@tsSubmitAll": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "tsSubmitAllConfirm": "Submit every draft timesheet for this week?",
+  "tsGenerate": "Prepare from hajiri",
+  "tsGenerated": "Timesheets prepared.",
+  "ecoGroupAbroad": "Working abroad",
+  "ecoGroupAccount": "Account & help",
+  "availMaxDistricts": "You can choose up to {count} districts.",
+  "@availMaxDistricts": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "offersTab": "Offers",
+  "offerContractType": "Contract type",
+  "offerContractPermanent": "Permanent",
+  "offerContractFixedTerm": "Fixed term",
+  "offerContractDaily": "Daily wage",
+  "offerContractPartTime": "Part time",
+  "offerContractProbation": "Probation",
+  "offerContractSeasonal": "Seasonal",
+  "offerExpiresInDays": "Answer within {days} days",
+  "@offerExpiresInDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "offerExpiresInHours": "Answer within {hours} hours",
+  "@offerExpiresInHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "offerExpired": "Offer expired",
+  "offerStatusPending": "Waiting for your answer",
+  "offerStatusAccepted": "Accepted",
+  "offerStatusDeclined": "Declined",
+  "offerStatusWithdrawn": "Withdrawn by employer",
+  "offerReview": "Review and accept",
+  "offerDecline": "Decline",
+  "offerDeclineTitle": "Decline this offer?",
+  "offerDeclineBody": "We will tell the employer you said no. This can't be undone.",
+  "offerSummaryTitle": "Before you accept",
+  "offerSummaryIntro": "Please check these details. This is what the employer is offering you.",
+  "offerNoFee": "KaamSathi never charges workers. Do not pay anyone to get this job.",
+  "offerAgree": "I have read these details and I want this job.",
+  "offerAccept": "Accept offer",
+  "offerAccepted": "Offer accepted. The employer will contact you.",
+  "offerAnswerBy": "Answer by {date}",
+  "@offerAnswerBy": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "alertsTitle": "Job alerts",
+  "alertsMenuSubtitle": "Get told when a matching job opens",
+  "alertsEmpty": "No job alerts yet.",
+  "alertsAdd": "New alert",
+  "alertsEdit": "Edit alert",
+  "alertsAnyTrade": "Any trade",
+  "alertsAnyDistrict": "Any district",
+  "alertsMinWage": "Minimum monthly wage (Rs.)",
+  "alertsFrom": "From {amount}",
+  "@alertsFrom": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "alertsFrequency": "How often?",
+  "freqInstant": "Right away",
+  "freqDaily": "Once a day",
+  "freqWeekly": "Once a week",
+  "alertsDeleteConfirm": "Delete this alert?",
+  "alertsSaved": "Alert saved.",
+  "legalTitle": "Please review and accept",
+  "legalIntro": "We have updated our terms. Please read them before you continue using KaamSathi.",
+  "legalKindTerms": "Terms of use",
+  "legalKindPrivacy": "Privacy policy",
+  "legalKindOther": "Document",
+  "legalVersion": "Version {version}",
+  "@legalVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "legalOpenHint": "Open this link in your phone's browser to read it:",
+  "legalAgree": "I have read and accept these documents.",
+  "legalAccept": "Accept and continue",
+  "notifPrefsTitle": "Notification settings",
+  "notifPrefsAlways": "Payslip, security and safety messages always come, whatever you choose here.",
+  "notifSms": "SMS messages",
+  "notifPush": "App notifications",
+  "notifEmail": "Email",
+  "notifMarketing": "News and offers from KaamSathi",
+  "notifJobAlertFreq": "Job alerts",
+  "notifQuietHours": "Quiet hours (no SMS at night)",
+  "notifQuietFrom": "From",
+  "notifQuietTo": "To",
+  "notifQuietOff": "Off",
+  "helpCenterTitle": "Help articles",
+  "helpCenterSubtitle": "Quick answers to common questions",
+  "helpSearch": "Search help",
+  "helpEmpty": "No articles found.",
+  "helpStillNeed": "Still need help? Ask our team.",
+  "safetyTitle": "Report a safety problem",
+  "safetyMenuSubtitle": "Unsafe work, harassment or wages withheld — in confidence",
+  "safetyDanger": "If you are in danger now, call 100 (Police).",
+  "safetyConfidential": "This report is confidential. Your employer will not see it. Only KaamSathi's safety team reads it.",
+  "safetyKind": "What happened?",
+  "safetyKindUnsafe": "Unsafe workplace",
+  "safetyKindHarassment": "Harassment or abuse",
+  "safetyKindWages": "Wages withheld",
+  "safetyKindOther": "Other safety concern",
+  "safetyDescription": "Tell us what happened, where and when",
+  "safetyEmergency": "This is an emergency — call me now",
+  "safetyEmergencyHint": "Our team will call you as soon as possible.",
+  "safetyAnonymous": "Hide my name if this is ever shared",
+  "safetySent": "Report sent. Our safety team will contact you.",
+  "supportCatSafety": "Safety",
+  "offerEmployer": "Employer",
+  "offerStart": "Start date",
+  "offerAnswerByLabel": "Answer by"
 }

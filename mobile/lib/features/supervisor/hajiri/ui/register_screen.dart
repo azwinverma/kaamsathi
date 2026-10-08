@@ -8,6 +8,7 @@ import '../../../../core/l10n/l10n.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/month_switcher.dart';
+import '../../../common/inbox/inbox_screen.dart';
 import '../data/attendance_models.dart';
 import '../hajiri_providers.dart';
 import 'site_picker.dart';
@@ -33,7 +34,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final reg = ref.watch(registerProvider(key));
     final current = BsDate.fromAd(nepalToday()).firstOfMonth;
     return Scaffold(
-      appBar: AppBar(title: Text(l.hajiriRegister), actions: const [SitePickerButton()]),
+      appBar: AppBar(title: Text(l.hajiriRegister), actions: const [SitePickerButton(), InboxBell()]),
       body: Column(
         children: [
           MonthSwitcher(
@@ -52,9 +53,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               child: AsyncBody<Register>(
                 value: reg,
                 onRetry: () => ref.invalidate(registerProvider(key)),
-                data: (r) => r.rows.isEmpty
-                    ? ListView(children: [EmptyState(icon: LucideIcons.calendarDays, message: l.registerEmpty)])
-                    : _Grid(register: r),
+                data:
+                    (r) =>
+                        r.rows.isEmpty
+                            ? ListView(children: [EmptyState(icon: LucideIcons.calendarDays, message: l.registerEmpty)])
+                            : _Grid(register: r),
               ),
             ),
           ),
@@ -96,10 +99,7 @@ class _Grid extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              localizeDigits('${d.bsDay}', lang),
-              style: t.labelSmall?.copyWith(color: off ? c.dangerFg : null),
-            ),
+            Text(localizeDigits('${d.bsDay}', lang), style: t.labelSmall?.copyWith(color: off ? c.dangerFg : null)),
             Text(
               (lang == 'ne' ? weekdaysShortNe : weekdaysShortEn)[d.weekday % 7].characters.first,
               style: headerStyle,
@@ -172,11 +172,7 @@ class _Grid extends StatelessWidget {
                     children: [
                       for (final d in register.days) dayHeader(d),
                       for (final (_, label) in totals)
-                        SizedBox(
-                          width: _totW,
-                          height: 40,
-                          child: Center(child: Text(label, style: t.labelSmall)),
-                        ),
+                        SizedBox(width: _totW, height: 40, child: Center(child: Text(label, style: t.labelSmall))),
                     ],
                   ),
                   for (final r in register.rows)
@@ -192,9 +188,7 @@ class _Grid extends StatelessWidget {
                               child: Text(
                                 formatNumber(r.totals[k] ?? 0, lang: lang),
                                 textAlign: TextAlign.center,
-                                style: t.labelMedium?.copyWith(
-                                  fontFeatures: const [FontFeature.tabularFigures()],
-                                ),
+                                style: t.labelMedium?.copyWith(fontFeatures: const [FontFeature.tabularFigures()]),
                               ),
                             ),
                         ],

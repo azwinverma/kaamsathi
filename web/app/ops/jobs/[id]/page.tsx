@@ -17,12 +17,14 @@ import { DateText, Money } from "@/components/ui/date";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { RatingStars, SkillChips, WorkerIdentity } from "@/components/shared/worker-summary";
 import { HoursOpenBadge, ScoreMeter } from "@/components/ops/ops-ui";
+import { InterestedBadge, MatchExplain, useMatchReasonLabel } from "@/components/experience/match-explain";
 import { SHORTLIST_SLA_HOURS, useReasonLabel } from "@/components/ops/helpers";
 import { useJobMatches, useOpsJob, useShortlist } from "@/lib/api/hooks/ops";
 import type { Match, Stage } from "@/lib/api/types";
 import { toastError } from "@/lib/forms";
 import { useFormat } from "@/lib/use-format";
 import { cn } from "@/lib/utils";
+import { VerifiedEmployerBadge } from "@/components/kyb/kyb-badges";
 
 const STAGES: Stage[] = ["sourced", "shortlisted", "interview", "selected", "joined", "rejected", "dropped"];
 const TARGET_MIN = 5;
@@ -67,10 +69,16 @@ export default function OpsJobDetailPage() {
         back={back}
         title={j.title}
         description={
-          <Link href={`/ops/organizations/${j.organization.id}`} className="inline-flex items-center gap-1 hover:underline">
-            <Building2 className="size-4" aria-hidden />
-            {j.organization.name}
-          </Link>
+          <span className="inline-flex items-center gap-1">
+            <Link href={`/ops/organizations/${j.organization.id}`} className="inline-flex items-center gap-1 hover:underline">
+              <Building2 className="size-4" aria-hidden />
+              {j.organization.name}
+            </Link>
+            <VerifiedEmployerBadge
+              compact
+              status={(j as { employer_verified?: boolean }).employer_verified ? "verified" : null}
+            />
+          </span>
         }
         meta={
           <>
@@ -151,7 +159,7 @@ function MatchesPanel({ jobId, jobOpen }: { jobId: string; jobOpen: boolean }) {
   const t = useTranslations();
   const tj = useTranslations("ops.job");
   const f = useFormat();
-  const reason = useReasonLabel();
+  const reason = useMatchReasonLabel(useReasonLabel());
   const [limit, setLimit] = React.useState(20);
   const [selected, setSelected] = React.useState<Set<string>>(() => new Set());
   const [confirm, setConfirm] = React.useState(false);
@@ -361,7 +369,12 @@ function MatchRow({
           <label htmlFor={id} className="min-w-0 cursor-pointer">
             <WorkerIdentity worker={m.worker} size="sm" />
           </label>
-          <ScoreMeter score={m.score} />
+          <span className="flex items-center gap-2">
+            <InterestedBadge match={m} />
+            <MatchExplain match={m}>
+              <ScoreMeter score={m.score} />
+            </MatchExplain>
+          </span>
         </div>
         <SkillChips skills={m.worker.skills} max={3} />
         <div className="flex flex-wrap items-center gap-1.5">

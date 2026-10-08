@@ -9,11 +9,17 @@ import {
   refreshTokens,
   setAuthCookies,
 } from "@/lib/server/session";
+import { rejectCrossSite, resolveRequestId } from "@/lib/server/origin";
 
 export const dynamic = "force-dynamic";
 
 /** Token-issuing endpoints must never be reachable through the proxy (tokens would leak to JS). */
-const BLOCKED = [/^auth\/otp\/verify\/?$/, /^auth\/token\//, /^auth\/logout\/?$/];
+const BLOCKED = [
+  /^auth\/otp\/verify\/?$/,
+  /^auth\/mfa\/verify\/?$/,
+  /^auth\/token\//,
+  /^auth\/logout\/?$/,
+];
 
 /** Response headers passed back to the browser. */
 const PASS_HEADERS = [
@@ -23,11 +29,27 @@ const PASS_HEADERS = [
   "cache-control",
   "etag",
   "last-modified",
+  "x-request-id",
+  "idempotent-replayed",
 ];
+
+/** Idempotency-Key is forwarded only when it looks sane (backend caps it at 100 chars). */
+const IDEMPOTENCY_KEY_RE = /^[\x21-\x7e]{1,100}$/;
 
 type Ctx = { params: Promise<{ path: string[] }> };
 
 async function handle(req: NextRequest, ctx: Ctx): Promise<Response> {
+  const requestId = resolveRequestId(req.headers.get("x-request-id"));
+  const blocked = rejectCrossSite(req);
+  if (blocked) {
+    blocked.headers.set("x-request-id", requestId);
+    return blocked;
+  }
+  const errorJson = (status: number, code: string, message: string) =>
+    NextResponse.json(
+      { error: { code, message, request_id: requestId } },
+      { status, headers: { "x-request-id": requestId } },
+    );
   const { path } = await ctx.params;
   const segments = (path ?? []).map((s) => decodeURIComponent(s));
   if (segments.some((s) => s === ".." || s === "." || s.includes("/") || s.includes("\\"))) {
@@ -69,6 +91,9 @@ async function handle(req: NextRequest, ctx: Ctx): Promise<Response> {
     headers.set("Accept-Language", locale === "ne" ? "ne" : "en");
     const fwd = req.headers.get("x-forwarded-for");
     if (fwd) headers.set("X-Forwarded-For", fwd);
+    headers.set("X-Request-ID", requestId);
+    const idem = req.headers.get("idempotency-key");
+    if (idem && hasBody && IDEMPOTENCY_KEY_RE.test(idem)) headers.set("Idempotency-Key", idem);
     return fetch(target, { method, headers, body, cache: "no-store", redirect: "manual" }).then(
       async (r) => {
         // Django APPEND_SLASH redirect (GET only): follow once to the same host.
@@ -106,6 +131,7 @@ async function handle(req: NextRequest, ctx: Ctx): Promise<Response> {
     if (v) headers.set(h, v);
   }
   if (!headers.has("cache-control")) headers.set("cache-control", "no-store");
+  if (!headers.has("x-request-id")) headers.set("x-request-id", requestId);
 
   // Stream the body through untouched (JSON, xlsx, csv, pdf, png…).
   const res = new NextResponse(upstream.status === 204 ? null : upstream.body, {
@@ -115,10 +141,6 @@ async function handle(req: NextRequest, ctx: Ctx): Promise<Response> {
   if (refreshed) setAuthCookies(res, refreshed);
   if (refreshFailed || (upstream.status === 401 && !refresh)) clearAuthCookies(res);
   return res;
-}
-
-function errorJson(status: number, code: string, message: string) {
-  return NextResponse.json({ error: { code, message } }, { status });
 }
 
 export const GET = handle;

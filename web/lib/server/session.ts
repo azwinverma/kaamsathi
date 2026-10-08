@@ -51,6 +51,8 @@ export async function backendJson(
   if (init.body !== undefined) headers["Content-Type"] = "application/json";
   if (init.access) headers.Authorization = `Bearer ${init.access}`;
   if (init.lang) headers["Accept-Language"] = init.lang;
+  // Correlates BFF auth calls with backend logs / error envelopes (docs/CONTRACT-EXTENSIONS.md §1).
+  headers["X-Request-ID"] = globalThis.crypto.randomUUID().replace(/-/g, "");
   try {
     const res = await fetch(`${API_BASE_URL}${path}`, {
       method: init.method ?? "GET",

@@ -14,6 +14,7 @@ from rest_framework.views import APIView
 from apps.audit.services import AuditedViewSetMixin, diff, log, snapshot
 from apps.core.bs import bs_str, today_ad
 from apps.core.exceptions import InvalidState
+from apps.core.idempotency import idempotent
 from apps.core.money import q2
 from apps.core.permissions import ADMINS, ALL_ROLES, MANAGERS, OWNER, OrgScopedMixin
 
@@ -121,7 +122,8 @@ class DashboardView(OrgScopedMixin, APIView):
             open_jobs, last_payroll = 0, None
         else:
             stage_counts = dict(
-                Application.objects.filter(job__organization=org, job__status__in=["open", "filled"])
+                Application.employer_visible()
+                .filter(job__organization=org, job__status__in=["open", "filled"])
                 .values_list("stage")
                 .annotate(n=Count("id"))
             )
@@ -168,6 +170,10 @@ class MemberViewSet(OrgScopedMixin, AuditedViewSetMixin, viewsets.ModelViewSet):
     role_rules = {"list": MANAGERS, "retrieve": MANAGERS}
     http_method_names = ["get", "post", "patch", "delete"]
     audit_prefix = "membership"
+
+    @idempotent
+    def create(self, request, *args, **kwargs):  # invite (Idempotency-Key aware, §1)
+        return super().create(request, *args, **kwargs)
 
     def get_queryset(self):
         return (

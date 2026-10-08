@@ -213,6 +213,23 @@ class WorkerDetailSerializer(BSModelSerializer):
             return None
         return {"id": str(obj.verified_by_id), "full_name": obj.verified_by.full_name}
 
+    # Uploads (ops + /me): magic-byte sniff, re-encode without EXIF/GPS, ClamAV (apps/core/uploads.py).
+    def _clean_image(self, value):
+        if not value:
+            return value
+        from apps.core.uploads import validate_upload
+
+        return validate_upload(value, kinds={"image"}, max_mb=8)
+
+    def validate_id_front(self, value):
+        return self._clean_image(value)
+
+    def validate_id_back(self, value):
+        return self._clean_image(value)
+
+    def validate_photo(self, value):
+        return self._clean_image(value)
+
     def validate_phone(self, value):
         phone = normalize_phone(value)
         if not is_valid_phone(phone):
@@ -292,24 +309,52 @@ class WorkerDetailSerializer(BSModelSerializer):
         return worker
 
 
+SELF_EDITABLE = {
+    "full_name_ne",
+    "payment_method",
+    "bank_name",
+    "bank_account_no",
+    "bank_account_name",
+    "wallet_id",
+    "is_available",
+    # preferences (docs/CONTRACT-EXTENSIONS.md §3)
+    "preferred_districts",
+    "service_radius_km",
+    "expected_monthly_wage",
+    "available_from",
+}
+
+
 class SelfWorkerSerializer(WorkerDetailSerializer):
     """/me/worker — a worker can edit only a few self-service fields."""
 
+    preferred_districts = serializers.SlugRelatedField(
+        slug_field="code", queryset=District.objects.all(), many=True, required=False
+    )
+
     class Meta(WorkerDetailSerializer.Meta):
-        read_only_fields = [
-            f
-            for f in WorkerDetailSerializer.Meta.fields
-            if f
-            not in {
-                "full_name_ne",
-                "payment_method",
-                "bank_name",
-                "bank_account_no",
-                "bank_account_name",
-                "wallet_id",
-                "is_available",
-            }
-        ]
+        fields = [*WorkerDetailSerializer.Meta.fields, "preferred_districts", "service_radius_km"]
+        read_only_fields = [f for f in fields if f not in SELF_EDITABLE]
+
+    def validate_preferred_districts(self, value):
+        if len(value) > 10:
+            raise serializers.ValidationError("Choose at most 10 districts.")
+        return value
+
+    def validate_service_radius_km(self, value):
+        if value is not None and not 1 <= value <= 500:
+            raise serializers.ValidationError("Must be between 1 and 500 km.")
+        return value
+
+    def validate_expected_monthly_wage(self, value):
+        if value is not None and value < 0:
+            raise serializers.ValidationError("Must not be negative.")
+        return value
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["preferred_districts"] = [district_ref(d) for d in instance.preferred_districts.all()]
+        return data
 
 
 class ConsentSerializer(serializers.ModelSerializer):

@@ -15,6 +15,7 @@ from apps.audit.services import AuditedViewSetMixin, log, snapshot
 from apps.core import labels
 from apps.core.bs import BSDateError, BSMonth, bs_str, bs_year_range, js_weekday, today_ad
 from apps.core.exceptions import APIError, Duplicate, InvalidState
+from apps.core.idempotency import idempotent
 from apps.core.permissions import ALL_ROLES, OrgScopedMixin
 from apps.geo.models import District
 from apps.workers.models import Rating
@@ -152,6 +153,7 @@ class EmploymentViewSet(OrgScopedMixin, SupervisorScopeMixin, AuditedViewSetMixi
         _log_profile_view(request, self.org, employment)
         return Response(self.get_serializer(employment).data)
 
+    @idempotent
     def create(self, request, *args, **kwargs):
         s = EmploymentCreateSerializer(data=request.data, context=self.get_serializer_context())
         s.is_valid(raise_exception=True)
@@ -215,6 +217,9 @@ class EmploymentViewSet(OrgScopedMixin, SupervisorScopeMixin, AuditedViewSetMixi
         upload = request.FILES.get("file")
         if not upload:
             raise APIError("validation_error", fields={"file": ["This field is required."]})
+        from apps.core.uploads import validate_upload
+
+        upload = validate_upload(upload, kinds={"csv", "xlsx"}, max_mb=5)
         result = importer.import_employments(self.org, upload)
         log(
             request,

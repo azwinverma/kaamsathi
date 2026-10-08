@@ -21,6 +21,12 @@ const ENDPOINTS: { method: string; path: string; scope: string; desc: string }[]
   },
   {
     method: "GET",
+    path: "/partner/workers/{worker_id}/mobility",
+    scope: "mobility.read",
+    desc: "Foreign-employment document summary for licensed recruitment agencies only: kinds, verified/valid flags, issue and expiry dates, masked numbers. Never document images or full numbers. Requires your agency's DoFE licence to be verified by KaamSathi and unexpired; a suspended or lapsed licence returns 403 even with a live grant.",
+  },
+  {
+    method: "GET",
     path: "/partner/grants?status=active|revoked|expired",
     scope: "—",
     desc: "Consent grants workers have given you. Worker names are included only while a grant is active.",
@@ -191,6 +197,7 @@ export async function PartnerApiDocs() {
                     ["profile.read", "Read a consenting worker's verified profile."],
                     ["earnings.read", "Read a consenting worker's verified earnings summary."],
                     ["passport.read", "Read a consenting worker's Skill Passport (reserved)."],
+                    ["mobility.read", "Licensed recruitment agencies only: read the verification status of a consenting worker's passport, permits and clearances (masked; no files). KaamSathi never recruits or matches for jobs abroad — workers choose the agency."],
                     ["referrals.write", "Update the status of referrals sent to you."],
                   ].map(([s, d]) => (
                     <tr key={s} className="border-t border-border">

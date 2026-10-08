@@ -1,5 +1,6 @@
 import '../../../core/api/json.dart';
 import '../../../core/format.dart';
+import '../../common/ref_data.dart';
 
 /// `GET /me/worker` (Worker model fields from CONTRACT).
 class WorkerProfile {
@@ -22,6 +23,10 @@ class WorkerProfile {
     this.ssfId,
     this.districtName,
     this.districtNameNe,
+    this.preferredDistricts = const [],
+    this.serviceRadiusKm,
+    this.expectedMonthlyWage,
+    this.availableFrom,
   });
 
   final String id;
@@ -43,13 +48,17 @@ class WorkerProfile {
   final String? districtName;
   final String? districtNameNe;
 
-  String displayName(String lang) =>
-      lang == 'ne' && (fullNameNe?.isNotEmpty ?? false) ? fullNameNe! : fullName;
+  /// EXTENSIONS §3 preferences (codes or `{code, name_en, name_ne}` refs).
+  final List<District> preferredDistricts;
+  final int? serviceRadiusKm;
+  final String? expectedMonthlyWage;
+  final String? availableFrom;
+
+  String displayName(String lang) => lang == 'ne' && (fullNameNe?.isNotEmpty ?? false) ? fullNameNe! : fullName;
 
   factory WorkerProfile.fromJson(Json j) {
-    final district = asJsonOrNull(j['current_district']) ??
-        asJsonOrNull(j['district']) ??
-        asJsonOrNull(j['permanent_district']);
+    final district =
+        asJsonOrNull(j['current_district']) ?? asJsonOrNull(j['district']) ?? asJsonOrNull(j['permanent_district']);
     return WorkerProfile(
       id: strOr(j['id']),
       fullName: strOr(j['full_name']),
@@ -69,6 +78,13 @@ class WorkerProfile {
       ssfId: str(j['ssf_id']),
       districtName: str(district?['name_en']),
       districtNameNe: str(district?['name_ne']),
+      preferredDistricts: [
+        for (final d in (j['preferred_districts'] is List ? j['preferred_districts'] as List : const <Object>[]))
+          if (District.fromAny(d) case final x?) x,
+      ],
+      serviceRadiusKm: intOf(j['service_radius_km']),
+      expectedMonthlyWage: str(j['expected_monthly_wage']),
+      availableFrom: str(j['available_from']),
     );
   }
 }
@@ -80,11 +96,8 @@ class MyAttendanceDay {
   final int bsDay;
   final String? status;
 
-  factory MyAttendanceDay.fromJson(Json j) => MyAttendanceDay(
-    date: strOr(j['date']),
-    bsDay: intOf(j['bs_day']) ?? 0,
-    status: str(j['status']),
-  );
+  factory MyAttendanceDay.fromJson(Json j) =>
+      MyAttendanceDay(date: strOr(j['date']), bsDay: intOf(j['bs_day']) ?? 0, status: str(j['status']));
 }
 
 class MyAttendanceMonth {
@@ -92,8 +105,7 @@ class MyAttendanceMonth {
   final List<MyAttendanceDay> days;
   final Map<String, num> totals;
 
-  MyAttendanceDay? dayFor(String isoDate) =>
-      days.where((d) => d.date == isoDate).firstOrNull;
+  MyAttendanceDay? dayFor(String isoDate) => days.where((d) => d.date == isoDate).firstOrNull;
 
   factory MyAttendanceMonth.fromJson(Json j) {
     final totals = <String, num>{};
@@ -101,10 +113,7 @@ class MyAttendanceMonth {
       final n = numOf(v);
       if (n != null) totals[k] = n;
     });
-    return MyAttendanceMonth(
-      days: asJsonList(j['days']).map(MyAttendanceDay.fromJson).toList(),
-      totals: totals,
-    );
+    return MyAttendanceMonth(days: asJsonList(j['days']).map(MyAttendanceDay.fromJson).toList(), totals: totals);
   }
 }
 
@@ -245,9 +254,10 @@ class HistoryItem {
 
   factory HistoryItem.fromJson(Json j, String lang) {
     final tradeObj = asJsonOrNull(j['trade']);
-    final trade = tradeObj == null
-        ? str(j['trade'])
-        : str(lang == 'ne' ? (tradeObj['name_ne'] ?? tradeObj['name_en']) : tradeObj['name_en']);
+    final trade =
+        tradeObj == null
+            ? str(j['trade'])
+            : str(lang == 'ne' ? (tradeObj['name_ne'] ?? tradeObj['name_en']) : tradeObj['name_en']);
     return HistoryItem(
       organizationName: strOr(j['organization_name'] ?? asJsonOrNull(j['organization'])?['name']),
       trade: trade,

@@ -164,6 +164,15 @@ def work_summary(worker) -> dict:
     }
 
 
+def external_work(worker) -> list[dict]:
+    """Verified off-platform work history (apps.experience; docs/CONTRACT-EXTENSIONS.md §3)."""
+    try:
+        from apps.experience.services import passport_entries  # noqa: PLC0415
+    except ImportError:
+        return []
+    return passport_entries(worker)
+
+
 def passport_photo_url(worker, request=None) -> str | None:
     """Anonymous short-lived photo URL; re-checked at download (passport still public/shared)."""
     from apps.core.files import signed_url
@@ -258,7 +267,7 @@ def passport_payload(worker, *, include_contact: bool, verify_url: str, request=
             }
             for c in creds
         ],
-        "work": work_summary(worker),
+        "work": {**work_summary(worker), "external": external_work(worker)},
         "availability": {
             "is_available": worker.is_available,
             "expected_monthly_wage": money_str(worker.expected_monthly_wage)

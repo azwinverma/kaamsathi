@@ -3,18 +3,25 @@ from rest_framework import serializers
 
 from apps.core import labels
 from apps.core.serializers import BSModelSerializer, MoneyField, ref, trade_ref
+from apps.geo.models import District
 from apps.orgs.models import Shift, Site
 from apps.workers.models import Consent, Trade
 from apps.workers.serializers import worker_card, worker_profile
 
-from .models import Application, JobOpening, StageEvent
+from . import labels as hiring_labels
+from .models import Application, JobAlert, JobOpening, StageEvent
 from .services import validate_job_wage
 
 STAGES = [k for k in labels.STAGE]
+# Worker-interest rows are invisible to the employer until ops shortlists them.
+_INTEREST = Q(applications__stage="sourced", applications__source="worker_interest")
 
 
 def annotate_counts(qs):
-    return qs.annotate(**{f"n_{s}": Count("applications", filter=Q(applications__stage=s)) for s in STAGES})
+    return qs.annotate(
+        **{f"n_{s}": Count("applications", filter=Q(applications__stage=s) & ~_INTEREST) for s in STAGES},
+        n_interested=Count("applications", filter=_INTEREST),
+    )
 
 
 class JobSerializer(BSModelSerializer):
@@ -80,7 +87,11 @@ class JobSerializer(BSModelSerializer):
         if hasattr(instance, "n_joined"):
             data["counts"] = {s: getattr(instance, f"n_{s}") for s in STAGES}
         else:
-            counts = dict(instance.applications.values_list("stage").annotate(n=Count("id")))
+            counts = dict(
+                Application.employer_visible(instance.applications.all())
+                .values_list("stage")
+                .annotate(n=Count("id"))
+            )
             data["counts"] = {s: counts.get(s, 0) for s in STAGES}
         return data
 
@@ -91,9 +102,15 @@ class OpsJobSerializer(JobSerializer):
 
         data = super().to_representation(instance)
         data["organization"] = {"id": str(instance.organization_id), "name": instance.organization.name}
+        data["employer_verified"] = instance.organization.verification_status == "verified"
         start = instance.published_at or instance.created_at
         end = timezone.now() if instance.status == "open" else (instance.first_shortlist_at or timezone.now())
         data["hours_open"] = round(max((end - start).total_seconds(), 0) / 3600, 1)
+        data["interested_count"] = (
+            instance.n_interested
+            if hasattr(instance, "n_interested")
+            else instance.applications.filter(stage="sourced", source="worker_interest").count()
+        )
         return data
 
 
@@ -123,12 +140,18 @@ class ApplicationSerializer(serializers.ModelSerializer):
             "rejection_reason",
             "created_at",
             "stage_changed_at",
+            "source",
+            "worker_response",
+            "responded_at",
         ]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
         request = self.context.get("request")
+        data["source_label"] = labels.label(hiring_labels.SOURCE, instance.source)
+        data["worker_response_label"] = labels.label(hiring_labels.WORKER_RESPONSE, instance.worker_response)
         data["job"] = {"id": str(instance.job_id), "title": instance.job.title}
+        data["offer"] = latest_offer(instance)
         data["worker"] = worker_card(instance.worker, request)
         data["stage_label"] = labels.label(labels.STAGE, instance.stage)
         emp = next(iter(instance.employments.all()), None) if instance.stage == "joined" else None
@@ -181,3 +204,112 @@ class MoveSerializer(serializers.Serializer):
         if attrs["stage"] == "joined" and not attrs.get("employment"):
             raise serializers.ValidationError({"employment": ["Required when stage is joined."]})
         return attrs
+
+
+# --------------------------------------------------------------------------- offers & alerts
+class OfferInputSerializer(serializers.Serializer):
+    wage_type = serializers.ChoiceField(choices=["monthly", "daily"])
+    basic_salary = MoneyField(required=False, allow_null=True)
+    dearness_allowance = MoneyField(required=False, allow_null=True)
+    daily_wage = MoneyField(required=False, allow_null=True)
+    start_date = serializers.DateField()
+    site_id = serializers.UUIDField(required=False, allow_null=True)
+    designation = serializers.CharField(required=False, allow_blank=True, max_length=120)
+    contract_type = serializers.ChoiceField(
+        choices=list(hiring_labels.CONTRACT_TYPE), required=False, default="permanent"
+    )
+    ends_on = serializers.DateField(required=False, allow_null=True)
+    expires_in_days = serializers.IntegerField(required=False, min_value=1, max_value=14, default=3)
+
+    def validate(self, attrs):
+        from apps.core.bs import today_ad
+
+        if attrs["start_date"] < today_ad():
+            raise serializers.ValidationError({"start_date": ["Start date cannot be in the past."]})
+        ends = attrs.get("ends_on")
+        if attrs.get("contract_type") in ("fixed_term", "probation") and not ends:
+            raise serializers.ValidationError(
+                {"ends_on": ["Required for fixed-term and probation contracts."]}
+            )
+        if ends and ends < attrs["start_date"]:
+            raise serializers.ValidationError({"ends_on": ["Must be after the start date."]})
+        return attrs
+
+
+def offer_payload(offer) -> dict:
+    from apps.core.bs import bs_str
+    from apps.core.money import money_str
+
+    def m(v):
+        return money_str(v) if v is not None else None
+
+    return {
+        "id": str(offer.id),
+        "application_id": str(offer.application_id),
+        "status": offer.status,
+        "status_label": labels.label(hiring_labels.OFFER_STATUS, offer.status),
+        "wage_type": offer.wage_type,
+        "basic_salary": m(offer.basic_salary),
+        "dearness_allowance": m(offer.dearness_allowance),
+        "daily_wage": m(offer.daily_wage),
+        "start_date": offer.start_date.isoformat(),
+        "start_date_bs": bs_str(offer.start_date),
+        "site": ref(offer.site, "id", "name"),
+        "designation": offer.designation,
+        "contract_type": offer.contract_type,
+        "contract_type_label": labels.label(hiring_labels.CONTRACT_TYPE, offer.contract_type),
+        "ends_on": offer.ends_on.isoformat() if offer.ends_on else None,
+        "ends_on_bs": bs_str(offer.ends_on),
+        "expires_at": offer.expires_at.isoformat(),
+        "created_at": offer.created_at.isoformat(),
+        "responded_at": offer.responded_at.isoformat() if offer.responded_at else None,
+        "decline_reason": offer.decline_reason,
+    }
+
+
+def latest_offer(application) -> dict | None:
+    offers = sorted(application.offers.all(), key=lambda o: o.created_at, reverse=True)
+    return offer_payload(offers[0]) if offers else None
+
+
+class JobAlertSerializer(serializers.ModelSerializer):
+    trade = serializers.SlugRelatedField(
+        slug_field="code", queryset=Trade.objects.all(), required=False, allow_null=True
+    )
+    districts = serializers.SlugRelatedField(
+        slug_field="code", queryset=District.objects.all(), many=True, required=False
+    )
+    min_wage = MoneyField(required=False, allow_null=True)
+
+    class Meta:
+        model = JobAlert
+        fields = [
+            "id",
+            "trade",
+            "districts",
+            "min_wage",
+            "frequency",
+            "is_active",
+            "created_at",
+            "last_sent_at",
+        ]
+        read_only_fields = ["id", "created_at", "last_sent_at"]
+
+    def validate_districts(self, value):
+        if len(value) > 10:
+            raise serializers.ValidationError("Choose at most 10 districts.")
+        return value
+
+    def validate_min_wage(self, value):
+        if value is not None and value < 0:
+            raise serializers.ValidationError("Must not be negative.")
+        return value
+
+    def to_representation(self, instance):
+        from apps.core.serializers import district_ref
+
+        data = super().to_representation(instance)
+        data["trade"] = trade_ref(instance.trade)
+        data["districts"] = [district_ref(d) for d in instance.districts.all()]
+        data["frequency_label"] = labels.label(hiring_labels.ALERT_FREQUENCY, instance.frequency)
+        return data

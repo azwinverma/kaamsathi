@@ -6,10 +6,13 @@ logger = logging.getLogger("kaamsathi.notifications")
 
 
 def _sms(phone, body, kind):
+    from .services import mirror_to_inbox
+
     try:
         send_sms.delay(phone, body, kind=kind)
     except Exception:  # noqa: BLE001 - broker down: send inline
         send_sms.apply(args=(phone, body), kwargs={"kind": kind})
+    mirror_to_inbox(phone, body, kind)
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=30)
@@ -61,12 +64,33 @@ def payslip_ready(run_id: str):
     count = 0
     from apps.core.bs import MONTHS_EN
 
-    for slip in run.payslips.select_related("worker"):
+    from .services import notify
+
+    for slip in run.payslips.select_related("worker__user"):
         body = (
             f"KaamSathi: Your {MONTHS_EN[run.bs_month]} {run.bs_year} salary {format_npr(slip.net_pay)} "
             f"from {run.organization.name} is paid. See payslip in the KaamSathi app."
         )
-        _sms(slip.worker.phone, body, "payslip_ready")
+        user = slip.worker.user
+        if user is not None and user.phone == slip.worker.phone:
+            # Templated inbox + SMS (+ email when the user has one), honouring preferences.
+            notify(
+                user,
+                "payslip_ready",
+                "Salary paid",
+                body,
+                sms=True,
+                template="payslip_ready",
+                context={
+                    "month": f"{MONTHS_EN[run.bs_month]} {run.bs_year}",
+                    "amount": format_npr(slip.net_pay),
+                    "organization": run.organization.name,
+                    "name": slip.worker.full_name,
+                },
+                data={"payslip_id": str(slip.pk), "run_id": str(run.pk)},
+            )
+        else:
+            _sms(slip.worker.phone, body, "payslip_ready")
         count += 1
     return count
 
@@ -85,3 +109,52 @@ def notify_employer_shortlist(job_id: str, count: int):
     for phone in phones:
         _sms(phone, body, "shortlist")
     return len(phones)
+
+
+@shared_task
+def send_push(notification_id: str) -> int:
+    """Push one inbox notification to all of the user's devices (FCM). Returns devices reached."""
+    from . import push
+    from .models import DeviceToken, Notification
+    from .services import localized
+
+    if not push.enabled():
+        return 0
+    n = Notification.objects.select_related("user").filter(pk=notification_id).first()
+    if n is None:
+        return 0
+    title, body = localized(n)
+    data = {"kind": n.kind, "notification_id": str(n.pk), **(n.data or {})}
+    sent = 0
+    for device in DeviceToken.objects.filter(user_id=n.user_id):
+        result = push.send(device.token, title, body, data=data, link=n.link)
+        if result == "sent":
+            sent += 1
+        elif result == "unregistered":
+            device.delete()
+    return sent
+
+
+@shared_task
+def send_delivery(delivery_id: str) -> str | None:
+    from django.db import transaction
+
+    from .delivery import deliver
+    from .models import NotificationDelivery
+
+    with transaction.atomic():
+        d = (
+            NotificationDelivery.objects.select_for_update(skip_locked=True)
+            .select_related("notification__user")
+            .filter(pk=delivery_id, status="queued")
+            .first()
+        )
+        return deliver(d).status if d else None
+
+
+@shared_task
+def process_deliveries() -> int:
+    """Beat (every 5 min): deliveries released from quiet hours or due for a retry."""
+    from .delivery import process_due
+
+    return process_due()

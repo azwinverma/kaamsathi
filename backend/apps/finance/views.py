@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 
 from apps.audit.services import diff, log, snapshot
 from apps.core import labels
+from apps.core.idempotency import idempotent
 from apps.core.money import money_str
 from apps.core.permissions import IsOpsStaff
 from apps.partners import labels as plabels
@@ -51,6 +52,7 @@ class MeOffersView(APIView):
 
 
 class MeOfferApplyView(APIView):
+    @idempotent
     def post(self, request, offer_id):
         worker = current_worker(request)
         offer = get_object_or_404(Offer.objects.select_related("partner"), pk=offer_id)

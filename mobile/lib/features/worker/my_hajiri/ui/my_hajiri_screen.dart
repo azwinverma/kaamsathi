@@ -6,6 +6,7 @@ import '../../../../core/l10n/l10n.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/month_switcher.dart';
+import '../../../common/inbox/inbox_screen.dart';
 import '../../data/worker_models.dart';
 import '../../data/worker_repository.dart';
 
@@ -27,7 +28,7 @@ class _MyHajiriScreenState extends ConsumerState<MyHajiriScreen> {
     final value = ref.watch(myAttendanceProvider(key));
     final current = BsDate.fromAd(nepalToday()).firstOfMonth;
     return Scaffold(
-      appBar: AppBar(title: Text(l.navAttendance)),
+      appBar: AppBar(title: Text(l.navAttendance), actions: const [InboxBell()]),
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(myAttendanceProvider(key));
@@ -58,10 +59,7 @@ class _MyHajiriScreenState extends ConsumerState<MyHajiriScreen> {
                 error: error,
                 onRetry: () => ref.invalidate(myAttendanceProvider(key)),
               ),
-              _ => const Padding(
-                padding: EdgeInsets.all(48),
-                child: Center(child: CircularProgressIndicator()),
-              ),
+              _ => const Padding(padding: EdgeInsets.all(48), child: Center(child: CircularProgressIndicator())),
             },
           ],
         ),
@@ -82,13 +80,13 @@ class _Calendar extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     final c = context.statusColors;
     final byDay = {for (final d in data.days) d.bsDay: d};
-    final daysInMonth = data.days.isNotEmpty
-        ? data.days.map((d) => d.bsDay).reduce((a, b) => a > b ? a : b)
-        : month.daysInMonth;
-    final firstAd = data.days.isNotEmpty
-        ? (parseIsoDate(data.days.firstWhere((d) => d.bsDay == 1, orElse: () => data.days.first).date) ??
-              month.toAd())
-        : month.toAd();
+    final daysInMonth =
+        data.days.isNotEmpty ? data.days.map((d) => d.bsDay).reduce((a, b) => a > b ? a : b) : month.daysInMonth;
+    final firstAd =
+        data.days.isNotEmpty
+            ? (parseIsoDate(data.days.firstWhere((d) => d.bsDay == 1, orElse: () => data.days.first).date) ??
+                month.toAd())
+            : month.toAd();
     final leading = firstAd.weekday % 7; // Sunday-first grid
     final today = BsDate.fromAd(nepalToday());
     final names = lang == 'ne' ? weekdaysShortNe : weekdaysShortEn;
@@ -100,10 +98,7 @@ class _Calendar extends StatelessWidget {
             for (var i = 0; i < 7; i++)
               Expanded(
                 child: Center(
-                  child: Text(
-                    names[i],
-                    style: t.labelSmall?.copyWith(color: i == 6 ? c.dangerFg : c.textSecondary),
-                  ),
+                  child: Text(names[i], style: t.labelSmall?.copyWith(color: i == 6 ? c.dangerFg : c.textSecondary)),
                 ),
               ),
           ],
@@ -129,9 +124,7 @@ class _Calendar extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: status == null ? null : bg,
                         borderRadius: BorderRadius.circular(KsRadius.md),
-                        border: isToday
-                            ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2)
-                            : null,
+                        border: isToday ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2) : null,
                       ),
                       alignment: Alignment.center,
                       child: Text(
@@ -202,8 +195,7 @@ class AttendanceTotals extends StatelessWidget {
               );
             },
           ),
-        if (ot != null && ot > 0)
-          StatusBadge(label: l.hajiriOvertime(formatNumber(ot, lang: lang)), tone: Tone.info),
+        if (ot != null && ot > 0) StatusBadge(label: l.hajiriOvertime(formatNumber(ot, lang: lang)), tone: Tone.info),
       ],
     );
   }

@@ -38,15 +38,28 @@ BUILDERS = "Shivam Builders & Construction"
 
 # Ecosystem apps may ship ``apps/<app>/demo.py`` with ``seed(stdout, rng)``; run in this order.
 ECOSYSTEM_DEMOS = (
-    "trust",
+    # Order matters: staff roles first; history/credentials before trust scores; partners before
+    # finance/mobility; modules that react to everything else (webhooks, inbox, privacy) last.
+    # Missing modules are skipped.
+    "accounts",
     "crews",
     "credentials",
     "training",
+    "experience",
+    "trust",
+    "risk",
+    "support",
     "compliance",
     "payouts",
     "scheduling",
+    "timesheets",
     "partners",
     "finance",
+    "mobility",
+    "billing",
+    "telemetry",
+    "integrations",
+    "notifications",
     "privacy",
 )
 

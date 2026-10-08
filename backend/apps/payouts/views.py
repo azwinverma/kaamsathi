@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 
 from apps.audit.services import log
 from apps.core.exceptions import APIError
+from apps.core.idempotency import idempotent
 from apps.core.permissions import OrgScopedMixin
 from apps.payroll.models import PayrollRun
 
@@ -53,6 +54,7 @@ class RunPayoutsView(OrgScopedMixin, APIView):
             )
         return Response({"run_id": str(run.id), "run_status": run.status, "providers": out})
 
+    @idempotent
     def post(self, request, pk):
         run = self.get_run(pk)
         s = CreateBatchSerializer(data=request.data)
@@ -91,6 +93,7 @@ class PayoutBatchViewSet(
         return Response(PayoutBatchSerializer(batch, context={"with_items": True}).data)
 
     @action(detail=True, methods=["post"])
+    @idempotent
     def submit(self, request, pk=None):
         batch = services.submit_batch(self.get_object())
         log(request, "payout.submit", batch, organization=self.org)
@@ -125,6 +128,9 @@ class PayoutBatchViewSet(
         upload = request.FILES.get("file")
         if not upload:
             raise APIError("validation_error", fields={"file": ["This field is required."]})
+        from apps.core.uploads import validate_upload
+
+        upload = validate_upload(upload, kinds={"csv"}, max_mb=5)
         result = services.reconcile(batch, upload)
         log(request, "payout.reconcile", batch, organization=self.org, changes=result)
         batch.refresh_from_db()
@@ -146,11 +152,13 @@ class PayoutBatchViewSet(
     @action(detail=True, methods=["get"], url_path=r"file\.csv")
     def file_csv(self, request, pk=None):
         batch, provider, stem = self._bank_file()
+        log(request, "payout.export.bank_file", batch, organization=self.org, changes={"format": "csv"})
         return file_response(provider.csv_bytes(batch), "text/csv; charset=utf-8", f"{stem}.csv")
 
     @action(detail=True, methods=["get"], url_path=r"file\.xlsx")
     def file_xlsx(self, request, pk=None):
         batch, provider, stem = self._bank_file()
+        log(request, "payout.export.bank_file", batch, organization=self.org, changes={"format": "xlsx"})
         return file_response(provider.xlsx_bytes(batch), XLSX, f"{stem}.xlsx")
 
 

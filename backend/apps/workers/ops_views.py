@@ -15,16 +15,17 @@ from rest_framework.views import APIView
 from apps.audit.services import diff, log, snapshot
 from apps.core.bs import today_ad
 from apps.core.crypto import blind_index
-from apps.core.exceptions import APIError
+from apps.core.exceptions import APIError, InvalidState
+from apps.core.idempotency import idempotent
 from apps.core.permissions import IsOpsStaff
 from apps.hiring.models import JobOpening
 from apps.hiring.serializers import OpsJobSerializer, annotate_counts
-from apps.hiring.services import match_score, shortlist_workers
+from apps.hiring.services import job_matches, shortlist_workers
 from apps.orgs.models import Organization
 from apps.orgs.serializers import OrganizationSerializer
 
 from .models import Worker
-from .serializers import WorkerDetailSerializer, card_queryset, worker_card
+from .serializers import WorkerDetailSerializer, card_queryset
 
 OPS_PERMS = [IsAuthenticated, IsOpsStaff]
 
@@ -105,7 +106,11 @@ class OpsWorkerViewSet(
         from apps.trust.services import log_profile_view
 
         log_profile_view(worker, context="ops", viewer=request.user, object_id=worker.id)
-        return Response(self.get_serializer(worker).data)
+        data = self.get_serializer(worker).data
+        from apps.risk.services import open_flag_count
+
+        data["open_risk_flags"] = open_flag_count(worker)
+        return Response(data)
 
     def perform_create(self, serializer):
         worker = serializer.save()
@@ -123,10 +128,12 @@ class OpsWorkerViewSet(
         )
 
     @action(detail=True, methods=["post"])
-    def verify(self, request, pk=None):
+    def verify(self, request, pk=None):  # docs/ops/kyc-identity-verification.md
         worker = self.get_object()
         s = VerifySerializer(data=request.data)
         s.is_valid(raise_exception=True)
+        if s.validated_data["status"] == "verified":
+            _check_verifiable(worker)
         old = worker.verification_status
         worker.verification_status = s.validated_data["status"]
         worker.verification_note = s.validated_data.get("note") or None
@@ -180,23 +187,18 @@ class OpsJobViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.G
             limit = min(max(int(request.query_params.get("limit", 20)), 1), 100)
         except ValueError as exc:
             raise APIError("validation_error", fields={"limit": ["Must be an integer."]}) from exc
-        in_pipeline = job.applications.values_list("worker_id", flat=True)
-        busy = Worker.objects.filter(employments__organization=job.organization, employments__status="active")
-        candidates = card_queryset(
-            Worker.objects.filter(is_available=True).exclude(id__in=in_pipeline).exclude(id__in=busy)
-        )
-        scored = []
-        for w in candidates:
-            score, reasons = match_score(job, w)
-            scored.append((score, w, reasons))
-        scored.sort(key=lambda x: (-x[0], x[1].full_name))
-        return Response(
-            [{"worker": worker_card(w, request), "score": s, "reasons": r} for s, w, r in scored[:limit]]
-        )
+        # matching v2 (docs/CONTRACT-EXTENSIONS.md §3): rows carry ``explain`` and ``interested``
+        return Response(job_matches(job, limit, request))
 
     @action(detail=True, methods=["post"])
+    @idempotent
     def shortlist(self, request, pk=None):
         job = self.get_object()
+        from apps.orgs.kyb import MESSAGES as KYB_MESSAGES
+        from apps.orgs.kyb import is_verified, kyb_required_for_shortlist
+
+        if kyb_required_for_shortlist() and not is_verified(job.organization):
+            raise InvalidState(message=str(KYB_MESSAGES["not_verified_shortlist"]))
         ids = request.data.get("worker_ids") if isinstance(request.data, dict) else None
         if not isinstance(ids, list) or not ids:
             raise APIError(
@@ -272,3 +274,22 @@ class OpsOrganizationViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, v
             for m in org.memberships.filter(is_active=True).select_related("user")
         ]
         return Response(data)
+
+
+def _check_verifiable(worker) -> None:
+    """KYC minimum before "verified": an ID number, the ID image, and no open duplicate-identity flag."""
+    missing = {}
+    if not (worker.citizenship_no or worker.nid_no):
+        missing["citizenship_no"] = ["Record the citizenship or national ID number before verifying."]
+    if not worker.id_front:
+        missing["id_front"] = ["Upload the front of the ID document before verifying."]
+    if missing:
+        raise APIError("validation_error", fields=missing)
+    try:
+        from apps.risk.models import FraudFlag
+    except ImportError:  # pragma: no cover - risk app always installed
+        return
+    if FraudFlag.objects.filter(
+        subject_type="worker", subject_id=str(worker.pk), kind="duplicate_identity", status="open"
+    ).exists():
+        raise InvalidState(message="Resolve the open duplicate-identity flag before verifying this worker.")

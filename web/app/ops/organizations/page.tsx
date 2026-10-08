@@ -3,7 +3,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Building2 } from "lucide-react";
+import { BadgeCheck, Building2 } from "lucide-react";
 import { PageHeader, Toolbar } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +23,7 @@ const PAGE_SIZE = 25;
 export default function OpsOrganizationsPage() {
   const t = useTranslations();
   const to = useTranslations("ops.orgs");
+  const tv = useTranslations("risk.kyb");
   const f = useFormat();
   const router = useRouter();
   const district = useDistrictLabel();
@@ -87,7 +88,12 @@ export default function OpsOrganizationsPage() {
                       >
                         <Avatar name={o.name} src={o.logo} size="sm" />
                         <span className="min-w-0">
-                          <span className="block truncate font-medium text-fg">{o.name}</span>
+                          <span className="flex min-w-0 items-center gap-1">
+                            <span className="truncate font-medium text-fg">{o.name}</span>
+                            {(o as { verification_status?: string }).verification_status === "verified" ? (
+                              <BadgeCheck className="size-4 shrink-0 text-success" role="img" aria-label={tv("verified_employer")} />
+                            ) : null}
+                          </span>
                           {!o.is_active ? (
                             <Badge tone="neutral" className="mt-0.5">
                               {to("inactive")}

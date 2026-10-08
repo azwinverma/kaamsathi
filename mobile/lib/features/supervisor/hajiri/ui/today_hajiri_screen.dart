@@ -7,6 +7,7 @@ import '../../../../core/format.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
+import '../../../common/inbox/inbox_screen.dart';
 import '../data/attendance_models.dart';
 import '../data/attendance_queue.dart';
 import '../hajiri_providers.dart';
@@ -49,19 +50,14 @@ class TodayHajiriScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l.navAttendance),
-        actions: const [SitePickerButton()],
-      ),
+      appBar: AppBar(title: Text(l.navAttendance), actions: const [SitePickerButton(), InboxBell()]),
       body: RefreshIndicator(
         onRefresh: refresh,
         child: AsyncBody<DayRoster>(
           value: roster,
           onRetry: () => ref.invalidate(dayRosterProvider(key)),
           data: (day) {
-            final rows = [
-              for (final r in day.rows) EffectiveRow(r, local['${r.employmentId}|$dateIso']),
-            ];
+            final rows = [for (final r in day.rows) EffectiveRow(r, local['${r.employmentId}|$dateIso'])];
             return _HajiriList(orgId: orgId, date: date, day: day, rows: rows);
           },
         ),
@@ -99,14 +95,15 @@ class _HajiriList extends ConsumerWidget {
       }
       final ok = await showDialog<bool>(
         context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text(l.hajiriMarkAllPresent),
-          content: Text(l.hajiriMarkAllConfirm(localizeDigits('${unmarked.length}', lang))),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.commonCancel)),
-            FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l.commonConfirm)),
-          ],
-        ),
+        builder:
+            (ctx) => AlertDialog(
+              title: Text(l.hajiriMarkAllPresent),
+              content: Text(l.hajiriMarkAllConfirm(localizeDigits('${unmarked.length}', lang))),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.commonCancel)),
+                FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l.commonConfirm)),
+              ],
+            ),
       );
       if (ok != true) return;
       for (final r in unmarked) {
@@ -127,17 +124,14 @@ class _HajiriList extends ConsumerWidget {
         const SizedBox(height: KsSpace.s3),
         const _DateStrip(),
         const SizedBox(height: KsSpace.s4),
-        if (day.fromCache)
-          _Note(icon: LucideIcons.wifiOff, text: l.hajiriOfflineCached),
-        if (day.isHoliday)
-          _Note(icon: LucideIcons.sparkles, text: l.hajiriHoliday(day.holidayName ?? '')),
+        if (day.fromCache) _Note(icon: LucideIcons.wifiOff, text: l.hajiriOfflineCached),
+        if (day.isHoliday) _Note(icon: LucideIcons.sparkles, text: l.hajiriHoliday(day.holidayName ?? '')),
         const SyncBanner(),
         Wrap(
           spacing: KsSpace.s2,
           runSpacing: KsSpace.s2,
           children: [
-            for (final s in [...AttendanceStatus.markable, null])
-              _CountChip(status: s, count: counts[s] ?? 0),
+            for (final s in [...AttendanceStatus.markable, null]) _CountChip(status: s, count: counts[s] ?? 0),
           ],
         ),
         const SizedBox(height: KsSpace.s4),
@@ -161,22 +155,23 @@ class _HajiriList extends ConsumerWidget {
               overtimeMinutes: r.overtimeMinutes,
               syncState: r.local?.state,
               errorMessage: r.local?.errorMessage,
-              onStatus: (s) => ctrl.record(
-                orgId: orgId,
-                employmentId: r.row.employmentId,
-                date: dateIso,
-                status: s,
-                overtimeMinutes: s == AttendanceStatus.present || s == AttendanceStatus.halfDay
-                    ? r.overtimeMinutes
-                    : 0,
-              ),
-              onOvertime: (m) => ctrl.record(
-                orgId: orgId,
-                employmentId: r.row.employmentId,
-                date: dateIso,
-                status: r.status ?? AttendanceStatus.present,
-                overtimeMinutes: m,
-              ),
+              onStatus:
+                  (s) => ctrl.record(
+                    orgId: orgId,
+                    employmentId: r.row.employmentId,
+                    date: dateIso,
+                    status: s,
+                    overtimeMinutes:
+                        s == AttendanceStatus.present || s == AttendanceStatus.halfDay ? r.overtimeMinutes : 0,
+                  ),
+              onOvertime:
+                  (m) => ctrl.record(
+                    orgId: orgId,
+                    employmentId: r.row.employmentId,
+                    date: dateIso,
+                    status: r.status ?? AttendanceStatus.present,
+                    overtimeMinutes: m,
+                  ),
               onRetry: r.local == null ? null : () => ctrl.retry(r.local!.clientUuid),
               onDiscard: r.local == null ? null : () => ctrl.discard(r.local!.clientUuid),
             ),
@@ -236,11 +231,12 @@ class _DateStrip extends ConsumerWidget {
           final d = days[i];
           final sel = d == selected;
           final scheme = Theme.of(context).colorScheme;
-          final top = i == 0
-              ? l.commonToday
-              : i == 1
-              ? l.commonYesterday
-              : weekdayName(d, lang, short: true);
+          final top =
+              i == 0
+                  ? l.commonToday
+                  : i == 1
+                  ? l.commonYesterday
+                  : weekdayName(d, lang, short: true);
           return Material(
             color: sel ? scheme.primary : scheme.surface,
             shape: RoundedRectangleBorder(
@@ -259,7 +255,10 @@ class _DateStrip extends ConsumerWidget {
                   children: [
                     Text(
                       top,
-                      style: TextStyle(fontSize: 12, color: sel ? scheme.onPrimary : context.statusColors.textSecondary),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: sel ? scheme.onPrimary : context.statusColors.textSecondary,
+                      ),
                     ),
                     Text(
                       localizeDigits('${BsDate.fromAd(d).day}', lang),
@@ -288,9 +287,10 @@ class _CountChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final (bg, fg) = status == null
-        ? (context.statusColors.neutralBg, context.statusColors.neutralFg)
-        : attendanceColors(context, status);
+    final (bg, fg) =
+        status == null
+            ? (context.statusColors.neutralBg, context.statusColors.neutralFg)
+            : attendanceColors(context, status);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(999)),

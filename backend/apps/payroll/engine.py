@@ -64,6 +64,9 @@ class PayInput:
     advances: tuple = ()
     other_deductions: Decimal = ZERO
     include_festival_allowance: bool = False
+    # Timesheet hook (CONTRACT-EXTENSIONS §4): when set, pay this many OT minutes (approved on
+    # timesheets) instead of summing attendance ``overtime_minutes``. None = default behaviour.
+    overtime_minutes_override: int | None = None
 
 
 @dataclass
@@ -201,7 +204,8 @@ def calculate(inp: PayInput) -> PayResult:
     res.holiday_days = c["holiday"]
     res.weekly_off_days = c["weekly_off"]
     res.absent_days = c["absent"]
-    ot_hours = Decimal(c["ot_minutes"]) / Decimal(60)
+    ot_minutes = c["ot_minutes"] if inp.overtime_minutes_override is None else inp.overtime_minutes_override
+    ot_hours = Decimal(ot_minutes) / Decimal(60)
     res.overtime_hours = q2(ot_hours)
 
     basic = D(inp.basic_salary)

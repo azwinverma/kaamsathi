@@ -12,6 +12,7 @@ import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/eco.dart';
 import '../../../../core/widgets/language_toggle.dart';
 import '../../../common/account_actions.dart';
+import '../../../common/inbox/inbox_screen.dart';
 import '../../data/worker_models.dart';
 import '../../data/worker_repository.dart';
 import 'payment_sheet.dart';
@@ -24,7 +25,7 @@ class ProfileScreen extends ConsumerWidget {
     final l = context.l10n;
     final value = ref.watch(workerProfileProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(l.profileTitle)),
+      appBar: AppBar(title: Text(l.profileTitle), actions: const [InboxBell()]),
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(workerProfileProvider);
@@ -38,14 +39,8 @@ class ProfileScreen extends ConsumerWidget {
           children: [
             switch (value) {
               AsyncData(:final value) => _ProfileBody(profile: value),
-              AsyncError(:final error) => ErrorView(
-                error: error,
-                onRetry: () => ref.invalidate(workerProfileProvider),
-              ),
-              _ => const Padding(
-                padding: EdgeInsets.all(48),
-                child: Center(child: CircularProgressIndicator()),
-              ),
+              AsyncError(:final error) => ErrorView(error: error, onRetry: () => ref.invalidate(workerProfileProvider)),
+              _ => const Padding(padding: EdgeInsets.all(48), child: Center(child: CircularProgressIndicator())),
             },
             const SizedBox(height: KsSpace.s4),
             const Card(child: Padding(padding: EdgeInsets.all(KsSpace.s4), child: LanguageSelector())),
@@ -188,7 +183,11 @@ class _PaymentSummary extends StatelessWidget {
       _ => LucideIcons.banknote,
     };
     final detail = switch (p.paymentMethod) {
-      'bank' => [p.bankName, p.bankAccountNo, p.bankAccountName].whereType<String>().where((s) => s.isNotEmpty).join(' · '),
+      'bank' => [
+        p.bankName,
+        p.bankAccountNo,
+        p.bankAccountName,
+      ].whereType<String>().where((s) => s.isNotEmpty).join(' · '),
       'esewa' || 'khalti' => p.walletId ?? '',
       _ => '',
     };
@@ -295,9 +294,39 @@ class _ProfileMenu extends StatelessWidget {
                 onTap: () => context.go(Routes.workerHistory),
               ),
               MenuTile(
+                icon: LucideIcons.history,
+                title: l.workHistTitle,
+                subtitle: l.workHistMenuSubtitle,
+                onTap: () => context.push(Routes.workerWorkHistory),
+              ),
+              MenuTile(
+                icon: LucideIcons.briefcaseBusiness,
+                title: l.jobsTitle,
+                subtitle: l.jobsTabApplications,
+                onTap: () => context.push(Routes.workerJobs),
+              ),
+              MenuTile(
+                icon: LucideIcons.bellPlus,
+                title: l.alertsTitle,
+                subtitle: l.alertsMenuSubtitle,
+                onTap: () => context.push(Routes.workerJobAlerts),
+              ),
+              MenuTile(
+                icon: LucideIcons.mapPin,
+                title: l.availTitle,
+                subtitle: l.availMenuSubtitle,
+                onTap: () => context.push(Routes.workerAvailability),
+              ),
+              MenuTile(
                 icon: LucideIcons.calendarRange,
                 title: l.shiftsTitle,
                 onTap: () => context.push(Routes.workerShifts),
+              ),
+              MenuTile(
+                icon: LucideIcons.clock,
+                title: l.tsTitle,
+                subtitle: l.tsMenuSubtitle,
+                onTap: () => context.push(Routes.workerTimesheets),
               ),
               MenuTile(
                 icon: LucideIcons.users,
@@ -335,7 +364,22 @@ class _ProfileMenu extends StatelessWidget {
                 subtitle: l.trainMenuSubtitle,
                 onTap: () => context.push(Routes.workerTraining),
               ),
+              MenuTile(
+                icon: LucideIcons.trendingUp,
+                title: l.careerTitle,
+                subtitle: l.careerMenuSubtitle,
+                onTap: () => context.push(Routes.workerCareer),
+              ),
             ],
+          ),
+        ),
+        GroupLabel(l.ecoGroupAbroad),
+        Card(
+          child: MenuTile(
+            icon: LucideIcons.plane,
+            title: l.mobTitle,
+            subtitle: l.mobMenuSubtitle,
+            onTap: () => context.push(Routes.workerMobility),
           ),
         ),
         GroupLabel(l.ecoGroupMoney),
@@ -365,6 +409,8 @@ class _ProfileMenu extends StatelessWidget {
             ],
           ),
         ),
+        GroupLabel(l.ecoGroupAccount),
+        const Card(child: AccountHelpTiles()),
       ],
     );
   }

@@ -1,0 +1,57 @@
+{
+  "color": {
+    "brand": {
+      "primary": "#2563EB",
+      "indigo": "#4F46E5",
+      "coral": "#FF6B6B",
+      "yellow": "#FBBF24",
+      "teal": "#14B8A6"
+    },
+    "text": {
+      "primary": "#0F172A",
+      "secondary": "#334155",
+      "muted": "#64748B",
+      "inverse": "#FFFFFF"
+    },
+    "surface": {
+      "canvas": "#F8FAFC",
+      "default": "#FFFFFF",
+      "muted": "#F1F5F9"
+    },
+    "border": {
+      "default": "#E2E8F0",
+      "strong": "#CBD5E1"
+    },
+    "status": {
+      "success": "#16A34A",
+      "successSoft": "#DCFCE7",
+      "warning": "#D97706",
+      "warningSoft": "#FEF3C7",
+      "error": "#DC2626",
+      "errorSoft": "#FEE2E2",
+      "info": "#0284C7",
+      "infoSoft": "#E0F2FE",
+      "verified": "#0F766E",
+      "verifiedSoft": "#CCFBF1"
+    }
+  },
+  "radius": {
+    "xs": 6,
+    "sm": 10,
+    "md": 14,
+    "lg": 18,
+    "xl": 24,
+    "pill": 999
+  },
+  "space": [4, 8, 12, 16, 24, 32, 40, 48, 64, 80, 96],
+  "type": {
+    "fontEnglish": "Inter",
+    "fontNepali": "Noto Sans Devanagari",
+    "weights": [400, 500, 600, 700, 800]
+  },
+  "motion": {
+    "fast": 150,
+    "base": 200,
+    "slow": 280
+  }
+}

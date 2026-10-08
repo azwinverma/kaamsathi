@@ -8,6 +8,7 @@ PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 CELERY_TASK_ALWAYS_EAGER = True
 CELERY_TASK_EAGER_PROPAGATES = True
 SMS_BACKEND = "console"
+STAFF_NO_PROFILE_SUPERADMIN = True  # DEBUG-only rule (staff_roles.py); pytest-django forces DEBUG=False
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.InMemoryStorage"},

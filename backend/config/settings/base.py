@@ -67,9 +67,12 @@ INSTALLED_APPS = [
     "apps.timesheets",
     "apps.integrations",
     "apps.mobility",
+    "apps.telemetry",
 ]
 
 MIDDLEWARE = [
+    "apps.core.request_id.RequestIDMiddleware",
+    "apps.core.maintenance.MaintenanceMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -184,7 +187,8 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
 # --- DRF --------------------------------------------------------------------
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        # JWT + refuses access tokens of signed-out sessions (apps/accounts/sessions.py).
+        "apps.accounts.sessions.SessionJWTAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
@@ -261,8 +265,11 @@ CORS_ALLOW_HEADERS = (
     "x-csrftoken",
     "x-requested-with",
     "x-org-id",
+    "x-request-id",
+    "idempotency-key",
+    "x-client-platform",
 )
-CORS_EXPOSE_HEADERS = ["Content-Disposition"]
+CORS_EXPOSE_HEADERS = ["Content-Disposition", "X-Request-ID", "Idempotent-Replayed"]
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
 # --- Cache / Celery ---------------------------------------------------------
@@ -282,6 +289,26 @@ CELERY_TASK_EAGER_PROPAGATES = True
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_BEAT_SCHEDULE = {
+    # Billing: runs daily, acts on BS day 2 (after subscription charges on day 1). Telemetry purge weekly.
+    "generate-monthly-invoices": {
+        "task": "apps.billing.tasks.generate_monthly_invoices",
+        "schedule": crontab(hour=1, minute=45),
+    },
+    "telemetry-purge": {
+        "task": "apps.telemetry.tasks.purge_old_events",
+        "schedule": crontab(hour=3, minute=30, day_of_week=1),
+    },
+    # Job alerts (instant alerts fire on publish; digests at 07:00 NPT — workers check phones early).
+    "job-alert-digest-daily": {
+        "task": "apps.hiring.tasks.job_alert_digest",
+        "schedule": crontab(hour=7, minute=0),
+        "args": ("daily",),
+    },
+    "job-alert-digest-weekly": {
+        "task": "apps.hiring.tasks.job_alert_digest",
+        "schedule": crontab(hour=7, minute=15, day_of_week=0),
+        "args": ("weekly",),
+    },
     "risk-anomaly-scan": {"task": "apps.risk.tasks.scan", "schedule": crontab(hour=4, minute=0)},
     "support-sla-escalation": {
         "task": "apps.support.tasks.escalate_overdue",
@@ -294,6 +321,11 @@ CELERY_BEAT_SCHEDULE = {
     "integrations-webhook-retry": {
         "task": "apps.integrations.tasks.retry_deliveries",
         "schedule": crontab(minute="*/10"),
+    },
+    # Notification deliveries held for quiet hours or waiting for an SMS/push/email retry.
+    "notifications-process-deliveries": {
+        "task": "apps.notifications.tasks.process_deliveries",
+        "schedule": crontab(minute="*/5"),
     },
     # Runs daily; only acts on BS day 1 (start of a Nepali month).
     "monthly-subscription-charges": {
@@ -323,6 +355,15 @@ CELERY_BEAT_SCHEDULE = {
     "expire-partner-consents": {
         "task": "apps.partners.tasks.expire_grants",
         "schedule": crontab(minute=15),
+    },
+    # Security & platform (apps/core/tasks.py): proves beat + a worker are alive (/ops/system/health).
+    "system-beat-heartbeat": {
+        "task": "apps.core.tasks.beat_heartbeat",
+        "schedule": crontab(minute="*/5"),
+    },
+    "idempotency-records-purge": {
+        "task": "apps.core.tasks.purge_idempotency_records",
+        "schedule": crontab(hour=3, minute=30),
     },
     "privacy-retention": {
         "task": "apps.privacy.tasks.process_requests",
@@ -366,6 +407,39 @@ FIELD_ENCRYPTION_KEYS = env.list("FIELD_ENCRYPTION_KEYS", default=[])
 FIELD_HASH_KEY = env("FIELD_HASH_KEY", default="")
 PUBLIC_WEB_URL = env("PUBLIC_WEB_URL", default="http://localhost:3000")
 PRIVACY_EXPORT_TTL_HOURS = env.int("PRIVACY_EXPORT_TTL_HOURS", default=72)
+# Trust operations (docs/CONTRACT-EXTENSIONS.md §2): ops may only shortlist for verified employers.
+KYB_REQUIRED_FOR_SHORTLIST = env.bool("KYB_REQUIRED_FOR_SHORTLIST", default=True)
+# Push notifications (FCM HTTP v1). Disabled unless both are set; the service account JSON may be
+# inline JSON or a path to the downloaded key file.
+FCM_PROJECT_ID = env("FCM_PROJECT_ID", default="")
+FCM_SERVICE_ACCOUNT_JSON = env("FCM_SERVICE_ACCOUNT_JSON", default="")
+# Enterprise webhooks: request timeout (seconds) for each delivery attempt.
+WEBHOOK_TIMEOUT_SECONDS = env.int("WEBHOOK_TIMEOUT_SECONDS", default=10)
+# Transactional email (notifications email channel). Console in dev; SMTP in production.
+EMAIL_BACKEND = env("EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend")
+EMAIL_HOST = env("EMAIL_HOST", default="localhost")
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+EMAIL_TIMEOUT = env.int("EMAIL_TIMEOUT", default=10)
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="KaamSathi <no-reply@kaamsathi.com.np>")
+
+# --- Security & platform (docs/CONTRACT-EXTENSIONS.md §1) ---------------------
+# Staff must enrol TOTP before any /ops/* call (prod settings force True).
+STAFF_MFA_REQUIRED = env.bool("STAFF_MFA_REQUIRED", default=False)
+# Bearer token for GET /api/v1/metrics (Prometheus). Empty = endpoint returns 404.
+METRICS_TOKEN = env("METRICS_TOKEN", default="")
+# Optional ClamAV daemon for upload scanning (clamd INSTREAM over TCP). Empty host = skipped.
+CLAMAV_HOST = env("CLAMAV_HOST", default="")
+CLAMAV_PORT = env.int("CLAMAV_PORT", default=3310)
+CLAMAV_TIMEOUT = env.float("CLAMAV_TIMEOUT", default=10.0)
+# True = reject uploads while the configured scanner is unreachable (fail closed).
+CLAMAV_REQUIRED = env.bool("CLAMAV_REQUIRED", default=False)
+# Incident switch (apps/core/maintenance.py): off | read_only | full. `manage.py maintenance` overrides.
+MAINTENANCE_MODE = env("MAINTENANCE_MODE", default="off")
+# Idempotency-Key replay window.
+IDEMPOTENCY_TTL_HOURS = env.int("IDEMPOTENCY_TTL_HOURS", default=24)
 
 # --- Logging ----------------------------------------------------------------
 LOG_LEVEL = env("LOG_LEVEL", default="INFO")
@@ -374,11 +448,16 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "plain": {"format": "%(asctime)s %(levelname)s %(name)s %(message)s"},
+        "plain": {"format": "%(asctime)s %(levelname)s %(name)s [%(request_id)s] %(message)s"},
         "json": {"()": "apps.core.logging.JsonFormatter"},
     },
+    "filters": {"request_id": {"()": "apps.core.request_id.RequestIDFilter"}},
     "handlers": {
-        "console": {"class": "logging.StreamHandler", "formatter": "json" if LOG_JSON else "plain"},
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "json" if LOG_JSON else "plain",
+            "filters": ["request_id"],
+        },
     },
     "root": {"handlers": ["console"], "level": LOG_LEVEL},
     "loggers": {

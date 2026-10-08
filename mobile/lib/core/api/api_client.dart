@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:dio/dio.dart';
 
@@ -31,15 +32,14 @@ class ApiClient {
         connectTimeout: AppConfig.connectTimeout,
         receiveTimeout: AppConfig.receiveTimeout,
         contentType: Headers.jsonContentType,
+        headers: {if (clientPlatform != null) 'X-Client-Platform': clientPlatform},
       ),
     );
     if (adapter != null) {
       this.dio.httpClientAdapter = adapter;
       _refreshDio.httpClientAdapter = adapter;
     }
-    this.dio.interceptors.add(
-      InterceptorsWrapper(onRequest: _onRequest, onError: _onError),
-    );
+    this.dio.interceptors.add(InterceptorsWrapper(onRequest: _onRequest, onError: _onError));
   }
 
   final Dio dio;
@@ -63,18 +63,28 @@ class ApiClient {
   /// Options for endpoints that must not carry a bearer token.
   static Options get noAuth => Options(extra: {_kNoAuth: true});
 
+  /// Lets the server label this login in "Login & security"
+  /// (`SessionDevice.platform`). Null on desktop/test hosts.
+  static final String? clientPlatform = () {
+    try {
+      if (Platform.isAndroid) return 'android';
+      if (Platform.isIOS) return 'ios';
+    } catch (_) {}
+    return null;
+  }();
+
   void _onRequest(RequestOptions o, RequestInterceptorHandler h) {
     o.headers['Accept-Language'] = language();
     o.headers['Accept'] = 'application/json';
+    final platform = clientPlatform;
+    if (platform != null) o.headers['X-Client-Platform'] = platform;
     final t = tokens.current;
     if (t != null && o.extra[_kNoAuth] != true) {
       o.headers['Authorization'] = 'Bearer ${t.access}';
     }
     final path = o.path;
     final org = orgId();
-    if (org != null &&
-        !o.headers.containsKey('X-Org-Id') &&
-        (path == '/org' || path.startsWith('/org/'))) {
+    if (org != null && !o.headers.containsKey('X-Org-Id') && (path == '/org' || path.startsWith('/org/'))) {
       o.headers['X-Org-Id'] = org;
     }
     h.next(o);
@@ -83,8 +93,7 @@ class ApiClient {
   Future<void> _onError(DioException e, ErrorInterceptorHandler h) async {
     final req = e.requestOptions;
     final status = e.response?.statusCode;
-    final isAuthCall = req.path.startsWith('/auth/otp') ||
-        req.path.startsWith('/auth/token');
+    final isAuthCall = req.path.startsWith('/auth/otp') || req.path.startsWith('/auth/token');
     if (status == 401 &&
         !isAuthCall &&
         req.extra[_kRetried] != true &&
@@ -106,8 +115,7 @@ class ApiClient {
     h.next(_wrap(e));
   }
 
-  DioException _wrap(DioException e) =>
-      e.error is ApiException ? e : e.copyWith(error: ApiException.fromDio(e));
+  DioException _wrap(DioException e) => e.error is ApiException ? e : e.copyWith(error: ApiException.fromDio(e));
 
   /// Refreshes the JWT pair. Concurrent callers share one in-flight request.
   Future<Tokens?> refreshTokens() {
@@ -118,17 +126,11 @@ class ApiClient {
     final current = tokens.current;
     if (current == null) return null;
     try {
-      final r = await _refreshDio.post<Map<String, dynamic>>(
-        '/auth/token/refresh',
-        data: {'refresh': current.refresh},
-      );
+      final r = await _refreshDio.post<Map<String, dynamic>>('/auth/token/refresh', data: {'refresh': current.refresh});
       final data = r.data ?? const {};
       final access = data['access'] as String?;
       if (access == null) return null;
-      final next = Tokens(
-        access: access,
-        refresh: (data['refresh'] as String?) ?? current.refresh,
-      );
+      final next = Tokens(access: access, refresh: (data['refresh'] as String?) ?? current.refresh);
       await tokens.save(next);
       return next;
     } on DioException catch (e) {
@@ -148,20 +150,17 @@ class ApiClient {
 
   /// Options that pin `X-Org-Id` (e.g. syncing a queue recorded for
   /// another organization than the one currently selected).
-  static Options forOrg(String orgId) =>
-      Options(headers: {'X-Org-Id': orgId});
+  static Options forOrg(String orgId) => Options(headers: {'X-Org-Id': orgId});
 
   Future<T> post<T>(String path, {Object? data, Options? options}) =>
       _call(() => dio.post<T>(path, data: data ?? const {}, options: options));
 
-  Future<T> patch<T>(String path, {Object? data}) =>
-      _call(() => dio.patch<T>(path, data: data));
+  Future<T> patch<T>(String path, {Object? data}) => _call(() => dio.patch<T>(path, data: data));
 
   Future<void> postNoContent(String path, {Object? data}) =>
       _call(() => dio.post<dynamic>(path, data: data ?? const {}));
 
-  Future<T> put<T>(String path, {Object? data}) =>
-      _call(() => dio.put<T>(path, data: data ?? const {}));
+  Future<T> put<T>(String path, {Object? data}) => _call(() => dio.put<T>(path, data: data ?? const {}));
 
   Future<void> delete(String path) => _call(() => dio.delete<dynamic>(path));
 
@@ -177,13 +176,8 @@ class ApiClient {
   }
 
   /// Downloads binary content (e.g. payslip PDF) to [savePath].
-  Future<void> download(String path, String savePath) => _call(
-    () => dio.download(
-      path,
-      savePath,
-      options: Options(headers: {'Accept': 'application/pdf'}),
-    ),
-  );
+  Future<void> download(String path, String savePath) =>
+      _call(() => dio.download(path, savePath, options: Options(headers: {'Accept': 'application/pdf'})));
 
   Future<T> _call<T>(Future<Response<T>> Function() fn) async {
     try {

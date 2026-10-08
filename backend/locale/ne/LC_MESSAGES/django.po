@@ -945,3 +945,948 @@ msgstr "तपाईंको यस्तै अनुरोध पहिल्
 
 msgid "This request has already been handled."
 msgstr "यो अनुरोध पहिल्यै टुङ्गो लागिसकेको छ।"
+
+# ---- mobility (foreign-employment documents, agency compliance) ----
+msgctxt "mobility"
+msgid "Passport"
+msgstr "राहदानी"
+
+msgctxt "mobility"
+msgid "Labour permit"
+msgstr "श्रम स्वीकृति"
+
+msgctxt "mobility"
+msgid "Visa"
+msgstr "भिसा"
+
+msgctxt "mobility"
+msgid "Police clearance"
+msgstr "प्रहरी प्रतिवेदन"
+
+msgctxt "mobility"
+msgid "Medical fitness"
+msgstr "स्वास्थ्य परीक्षण"
+
+msgctxt "mobility"
+msgid "Pre-departure orientation"
+msgstr "अभिमुखीकरण तालिम"
+
+msgctxt "mobility"
+msgid "Insurance"
+msgstr "बिमा"
+
+msgctxt "mobility"
+msgid "Language test"
+msgstr "भाषा परीक्षा"
+
+msgctxt "mobility"
+msgid "Travel document"
+msgstr "यात्रा कागजात"
+
+msgctxt "mobility"
+msgid "Clearance"
+msgstr "स्वीकृति कागजात"
+
+msgctxt "mobility"
+msgid "Waiting for verification"
+msgstr "प्रमाणीकरण हुन बाँकी"
+
+msgctxt "mobility"
+msgid "Verified"
+msgstr "प्रमाणित"
+
+msgctxt "mobility"
+msgid "Rejected"
+msgstr "अस्वीकृत"
+
+msgctxt "mobility"
+msgid "Expired"
+msgstr "म्याद सकिएको"
+
+msgctxt "mobility"
+msgid "Upload a PDF or a photo (JPG, PNG)."
+msgstr "PDF वा फोटो (JPG, PNG) अपलोड गर्नुहोस्।"
+
+msgctxt "mobility"
+msgid "File is too large (maximum %(mb)s MB)."
+msgstr "फाइल धेरै ठूलो भयो (बढीमा %(mb)s MB)।"
+
+msgctxt "mobility"
+msgid "Choose verified or rejected."
+msgstr "प्रमाणित वा अस्वीकृत रोज्नुहोस्।"
+
+msgctxt "mobility"
+msgid "This document has already expired and cannot be verified."
+msgstr "यो कागजातको म्याद सकिइसकेकाले प्रमाणित गर्न मिल्दैन।"
+
+msgctxt "mobility"
+msgid "Upload of the document is missing; it cannot be verified."
+msgstr "कागजात अपलोड गरिएको छैन; प्रमाणित गर्न मिल्दैन।"
+
+msgctxt "mobility"
+msgid "Only recruitment agencies have licence compliance."
+msgstr "इजाजतपत्र अनुपालन म्यानपावर कम्पनीका लागि मात्र हो।"
+
+msgctxt "mobility"
+msgid "Record the agency's DoFE licence number first."
+msgstr "पहिले एजेन्सीको वैदेशिक रोजगार विभागको इजाजतपत्र नम्बर राख्नुहोस्।"
+
+msgctxt "mobility"
+msgid "A verified licence must be valid today or later."
+msgstr "प्रमाणित इजाजतपत्रको म्याद आज वा त्यसपछिसम्म हुनुपर्छ।"
+
+msgctxt "mobility"
+msgid "Must be between 1 and %(max)s days."
+msgstr "१ देखि %(max)s दिनसम्म हुनुपर्छ।"
+
+msgctxt "mobility"
+msgid "The document group cannot be changed."
+msgstr "कागजातको समूह परिवर्तन गर्न मिल्दैन।"
+
+msgctxt "mobility"
+msgid "This kind does not belong to the chosen group."
+msgstr "यो प्रकार रोजिएको समूहमा पर्दैन।"
+
+msgctxt "mobility"
+msgid "Enter the document number."
+msgstr "कागजातको नम्बर लेख्नुहोस्।"
+
+msgctxt "mobility"
+msgid "Enter who issued it."
+msgstr "कसले जारी गरेको हो लेख्नुहोस्।"
+
+msgctxt "mobility"
+msgid "Upload a photo or PDF of the document."
+msgstr "कागजातको फोटो वा PDF अपलोड गर्नुहोस्।"
+
+msgctxt "mobility"
+msgid "Expiry date cannot be before the issue date."
+msgstr "म्याद सकिने मिति जारी मितिभन्दा अघि हुन सक्दैन।"
+
+msgctxt "mobility"
+msgid "Issue date cannot be in the future."
+msgstr "जारी मिति भविष्यको हुन सक्दैन।"
+
+msgctxt "mobility"
+msgid "Tell the worker why it was rejected."
+msgstr "किन अस्वीकृत भयो, कामदारलाई कारण लेख्नुहोस्।"
+
+msgctxt "mobility"
+msgid "Record why the agency is suspended."
+msgstr "एजेन्सी किन निलम्बन गरियो, कारण लेख्नुहोस्।"
+
+msgctxt "mobility"
+msgid "A verified document cannot be edited. Add the new document instead."
+msgstr "प्रमाणित कागजात सम्पादन गर्न मिल्दैन। बरु नयाँ कागजात थप्नुहोस्।"
+
+msgctxt "mobility"
+msgid "Agency not found."
+msgstr "एजेन्सी फेला परेन।"
+
+msgctxt "mobility"
+msgid "Read the verification status of your foreign-employment documents"
+msgstr "तपाईंका वैदेशिक रोजगारी कागजातको प्रमाणीकरण स्थिति हेर्ने"
+
+msgctxt "mobility"
+msgid "Not verified"
+msgstr "प्रमाणित नभएको"
+
+msgctxt "mobility"
+msgid "Licence verified"
+msgstr "इजाजतपत्र प्रमाणित"
+
+msgctxt "mobility"
+msgid "Suspended"
+msgstr "निलम्बित"
+
+msgctxt "mobility"
+msgid ""
+"Documents can only be shared with a recruitment agency whose DoFE licence "
+"KaamSathi has verified and which has not expired."
+msgstr ""
+"कागजात कामसाथीले वैदेशिक रोजगार विभागको इजाजतपत्र प्रमाणित गरेको र म्याद "
+"ननाघेको म्यानपावर कम्पनीलाई मात्र पठाउन सकिन्छ।"
+
+#: apps/timesheets/services.py
+msgctxt "enterprise"
+msgid "Expected YYYY-MM-DD."
+msgstr "YYYY-MM-DD ढाँचामा मिति लेख्नुहोस्।"
+
+#: apps/timesheets/services.py
+msgctxt "enterprise"
+msgid "A timesheet week starts on Sunday."
+msgstr "टाइमसिटको हप्ता आइतबारबाट सुरु हुन्छ।"
+
+#: apps/timesheets/services.py
+msgctxt "enterprise"
+msgid "Approved overtime must be between 0 and the claimed overtime."
+msgstr "स्वीकृत ओभरटाइम ० देखि दाबी गरिएको ओभरटाइमसम्म हुनुपर्छ।"
+
+#: apps/timesheets/services.py
+msgctxt "enterprise"
+msgid "Say why the timesheet is rejected."
+msgstr "टाइमसिट किन अस्वीकृत गरियो, कारण लेख्नुहोस्।"
+
+#: apps/timesheets/views.py
+#, python-format
+msgctxt "enterprise"
+msgid "Overtime is above the weekly limit of %(hours)s hours (Labour Act)."
+msgstr "ओभरटाइम साप्ताहिक सीमा %(hours)s घण्टाभन्दा बढी छ (श्रम ऐन)।"
+
+#: apps/timesheets/views.py
+msgctxt "enterprise"
+msgid "Must be between 60 and 720 minutes."
+msgstr "६० देखि ७२० मिनेटसम्म हुनुपर्छ।"
+
+#: apps/timesheets/views.py
+msgctxt "enterprise"
+msgid "Must be at most 4320 minutes."
+msgstr "बढीमा ४३२० मिनेट हुनुपर्छ।"
+
+#: apps/integrations/services.py
+msgctxt "enterprise"
+msgid "Enter a valid URL."
+msgstr "मान्य URL लेख्नुहोस्।"
+
+#: apps/integrations/services.py
+msgctxt "enterprise"
+msgid "Webhook URLs must use https."
+msgstr "वेबहुक URL मा https प्रयोग गर्नुपर्छ।"
+
+#: apps/integrations/services.py
+msgctxt "enterprise"
+msgid "Webhook URLs must point to a public host."
+msgstr "वेबहुक URL सार्वजनिक होस्टतर्फ हुनुपर्छ।"
+
+#: apps/integrations/views.py
+msgctxt "enterprise"
+msgid "This delivery has not been attempted yet."
+msgstr "यो डेलिभरी अझै पठाउने प्रयास भएको छैन।"
+
+# --- trust operations: risk, support, KYB (docs/CONTRACT-EXTENSIONS.md §2)
+
+msgctxt "trustops"
+msgid "Worker"
+msgstr "कामदार"
+
+msgctxt "trustops"
+msgid "Employer"
+msgstr "रोजगारदाता"
+
+msgctxt "trustops"
+msgid "Employment"
+msgstr "रोजगारी"
+
+msgctxt "trustops"
+msgid "Attendance record"
+msgstr "हाजिरी अभिलेख"
+
+msgctxt "trustops"
+msgid "Credential"
+msgstr "प्रमाणपत्र"
+
+msgctxt "trustops"
+msgid "Work history entry"
+msgstr "कामको अनुभव विवरण"
+
+msgctxt "trustops"
+msgid "Travel document"
+msgstr "यात्रा कागजात"
+
+msgctxt "trustops"
+msgid "Duplicate identity"
+msgstr "दोहोरो पहिचान"
+
+msgctxt "trustops"
+msgid "Shared bank account"
+msgstr "साझा बैंक खाता"
+
+msgctxt "trustops"
+msgid "Document reused"
+msgstr "कागजात दोहोर्‍याइएको"
+
+msgctxt "trustops"
+msgid "Attendance anomaly"
+msgstr "हाजिरीमा असामान्यता"
+
+msgctxt "trustops"
+msgid "Location anomaly"
+msgstr "स्थानमा असामान्यता"
+
+msgctxt "trustops"
+msgid "Unusual onboarding speed"
+msgstr "असामान्य छिटो भर्ना"
+
+msgctxt "trustops"
+msgid "Reference mismatch"
+msgstr "सन्दर्भ मेल नखाएको"
+
+msgctxt "trustops"
+msgid "Raised by staff"
+msgstr "कर्मचारीद्वारा उठाइएको"
+
+msgctxt "trustops"
+msgid "Low"
+msgstr "न्यून"
+
+msgctxt "trustops"
+msgid "Medium"
+msgstr "मध्यम"
+
+msgctxt "trustops"
+msgid "High"
+msgstr "उच्च"
+
+msgctxt "trustops"
+msgid "Open"
+msgstr "खुला"
+
+msgctxt "trustops"
+msgid "Confirmed"
+msgstr "पुष्टि भएको"
+
+msgctxt "trustops"
+msgid "Dismissed"
+msgstr "खारेज गरिएको"
+
+msgctxt "trustops"
+msgid "Same citizenship number as another worker"
+msgstr "अर्को कामदारको जस्तै नागरिकता नम्बर"
+
+msgctxt "trustops"
+msgid "Same national ID number as another worker"
+msgstr "अर्को कामदारको जस्तै राष्ट्रिय परिचयपत्र नम्बर"
+
+msgctxt "trustops"
+msgid "Same bank account as another worker"
+msgstr "अर्को कामदारको जस्तै बैंक खाता"
+
+msgctxt "trustops"
+msgid "Same document file uploaded for another worker"
+msgstr "अर्को कामदारका लागि पनि उही कागजात फाइल अपलोड गरिएको"
+
+msgctxt "trustops"
+msgid "Repeated check-ins outside the site geofence"
+msgstr "कार्यस्थलको सीमाबाहिरबाट पटक-पटक चेक-इन"
+
+msgctxt "trustops"
+msgid "Several workers checked in from identical coordinates within a minute"
+msgstr "एक मिनेटभित्र एउटै स्थानबाट धेरै कामदारको चेक-इन"
+
+msgctxt "trustops"
+msgid "Check-out recorded before check-in"
+msgstr "चेक-इनभन्दा पहिले चेक-आउट दर्ता"
+
+msgctxt "trustops"
+msgid "Onboarded by several employers within a week"
+msgstr "एक हप्ताभित्र धेरै रोजगारदाताले भर्ना गरेको"
+
+msgctxt "trustops"
+msgid "The flagged record was not found."
+msgstr "संकेत गरिएको अभिलेख भेटिएन।"
+
+msgctxt "trustops"
+msgid "This flag is already resolved."
+msgstr "यो संकेत पहिले नै टुङ्गो लागिसकेको छ।"
+
+msgctxt "trustops"
+msgid "Mobile app"
+msgstr "मोबाइल एप"
+
+msgctxt "trustops"
+msgid "Website"
+msgstr "वेबसाइट"
+
+msgctxt "trustops"
+msgid "Phone call"
+msgstr "फोन कल"
+
+msgctxt "trustops"
+msgid "SMS"
+msgstr "एसएमएस"
+
+msgctxt "trustops"
+msgid "Field visit"
+msgstr "फिल्ड भ्रमण"
+
+msgctxt "trustops"
+msgid "Account & login"
+msgstr "खाता र लगइन"
+
+msgctxt "trustops"
+msgid "Wages & payments"
+msgstr "तलब र भुक्तानी"
+
+msgctxt "trustops"
+msgid "Attendance (hajiri)"
+msgstr "हाजिरी"
+
+msgctxt "trustops"
+msgid "Jobs & hiring"
+msgstr "जागिर र भर्ना"
+
+msgctxt "trustops"
+msgid "Privacy & my data"
+msgstr "गोपनीयता र मेरो डाटा"
+
+msgctxt "trustops"
+msgid "Technical problem"
+msgstr "प्राविधिक समस्या"
+
+msgctxt "trustops"
+msgid "Other"
+msgstr "अन्य"
+
+msgctxt "trustops"
+msgid "Normal"
+msgstr "सामान्य"
+
+msgctxt "trustops"
+msgid "Urgent"
+msgstr "अत्यावश्यक"
+
+msgctxt "trustops"
+msgid "Waiting for you"
+msgstr "तपाईंको जवाफ पर्खिँदै"
+
+msgctxt "trustops"
+msgid "Resolved"
+msgstr "समाधान भयो"
+
+msgctxt "trustops"
+msgid "Closed"
+msgstr "बन्द"
+
+msgctxt "trustops"
+msgid "This case is closed. Please open a new case."
+msgstr "यो केस बन्द भइसकेको छ। कृपया नयाँ केस खोल्नुहोस्।"
+
+msgctxt "trustops"
+msgid "Cases can only be assigned to KaamSathi staff."
+msgstr "केस कामसाथी कर्मचारीलाई मात्र जिम्मा दिन मिल्छ।"
+
+msgctxt "trustops"
+msgid "Reply on your support case"
+msgstr "तपाईंको सहायता केसमा जवाफ आयो"
+
+msgctxt "trustops"
+msgid "KaamSathi support replied on case {number}: {subject}"
+msgstr "कामसाथी सहायताले केस {number} मा जवाफ दियो: {subject}"
+
+msgctxt "trustops"
+msgid "Support case updated"
+msgstr "सहायता केस अद्यावधिक भयो"
+
+msgctxt "trustops"
+msgid "Case {number} is now: {status}"
+msgstr "केस {number} को अवस्था अब: {status}"
+
+msgctxt "trustops"
+msgid "Support case overdue"
+msgstr "सहायता केसको समय नाघ्यो"
+
+msgctxt "trustops"
+msgid "Case {number} ({priority}) passed its SLA: {subject}"
+msgstr "केस {number} ({priority}) को तोकिएको समय नाघ्यो: {subject}"
+
+msgctxt "trustops"
+msgid "Dispute overdue"
+msgstr "विवादको समय नाघ्यो"
+
+msgctxt "trustops"
+msgid "A {kind} dispute is past its 7-day SLA ({status})."
+msgstr "{kind} सम्बन्धी विवादको ७ दिने समयसीमा नाघ्यो ({status})।"
+
+msgctxt "trustops"
+msgid "Not verified"
+msgstr "प्रमाणित नभएको"
+
+msgctxt "trustops"
+msgid "Under review"
+msgstr "समीक्षामा"
+
+msgctxt "trustops"
+msgid "Verified employer"
+msgstr "प्रमाणित रोजगारदाता"
+
+msgctxt "trustops"
+msgid "Verification rejected"
+msgstr "प्रमाणीकरण अस्वीकृत"
+
+msgctxt "trustops"
+msgid "This employer is already verified."
+msgstr "यो रोजगारदाता पहिले नै प्रमाणित छ।"
+
+msgctxt "trustops"
+msgid "Upload this document."
+msgstr "यो कागजात अपलोड गर्नुहोस्।"
+
+msgctxt "trustops"
+msgid "Explain why the verification was rejected."
+msgstr "प्रमाणीकरण किन अस्वीकृत गरियो, खुलाउनुहोस्।"
+
+msgctxt "trustops"
+msgid "Employer is not verified yet"
+msgstr "रोजगारदाता अझै प्रमाणित भएको छैन"
+
+msgctxt "trustops"
+msgid "Verification documents received"
+msgstr "प्रमाणीकरणका कागजात प्राप्त भए"
+
+msgctxt "trustops"
+msgid "{org} submitted documents for employer verification."
+msgstr "{org} ले रोजगारदाता प्रमाणीकरणका लागि कागजात पेस गर्‍यो।"
+
+msgctxt "trustops"
+msgid "Your organization is verified"
+msgstr "तपाईंको संस्था प्रमाणित भयो"
+
+msgctxt "trustops"
+msgid "{org} is now a Verified employer on KaamSathi."
+msgstr "{org} अब कामसाथीमा प्रमाणित रोजगारदाता हो।"
+
+msgctxt "trustops"
+msgid "Verification needs attention"
+msgstr "प्रमाणीकरणमा ध्यान दिनुपर्ने"
+
+msgctxt "trustops"
+msgid "{org}: verification was rejected. Open KaamSathi → Verification to fix and resubmit."
+msgstr "{org}: प्रमाणीकरण अस्वीकृत भयो। सच्याएर फेरि पेस गर्न कामसाथी → प्रमाणीकरण खोल्नुहोस्।"
+
+msgctxt "growth"
+msgid "Add a note for the worker."
+msgstr "कामदारका लागि टिप्पणी लेख्नुहोस्।"
+
+msgctxt "growth"
+msgid "Awaiting worker"
+msgstr "कामदारको जवाफ पर्खँदै"
+
+msgctxt "growth"
+msgid "Confirmed by employer"
+msgstr "रोजगारदाताले पुष्टि गरेको"
+
+msgctxt "growth"
+msgid "Could not verify"
+msgstr "प्रमाणित गर्न सकिएन"
+
+msgctxt "growth"
+msgid "Document checked"
+msgstr "कागजात जाँचिएको"
+
+msgctxt "growth"
+msgid "Employer invite"
+msgstr "रोजगारदाताको निमन्त्रणा"
+
+msgctxt "growth"
+msgid "End date cannot be before the start date."
+msgstr "अन्त्य मिति सुरु मितिभन्दा अघि हुन सक्दैन।"
+
+msgctxt "growth"
+msgid "End date cannot be in the future."
+msgstr "अन्त्य मिति भविष्यको हुन सक्दैन।"
+
+msgctxt "growth"
+msgid "Enter a valid phone number."
+msgstr "सही फोन नम्बर लेख्नुहोस्।"
+
+msgctxt "growth"
+msgid "KaamSathi match"
+msgstr "कामसाथी मिलान"
+
+msgctxt "growth"
+msgid "Reference call"
+msgstr "सन्दर्भ व्यक्तिलाई फोन"
+
+msgctxt "growth"
+msgid "Reference check pending"
+msgstr "सन्दर्भ जाँच बाँकी"
+
+msgctxt "growth"
+msgid "Rejected"
+msgstr "अस्वीकृत"
+
+msgctxt "growth"
+msgid "Say how this was verified."
+msgstr "कसरी प्रमाणित गरियो, लेख्नुहोस्।"
+
+msgctxt "growth"
+msgid "Self-reported"
+msgstr "आफैँले भनेको"
+
+msgctxt "growth"
+msgid "Start date cannot be in the future."
+msgstr "सुरु मिति भविष्यको हुन सक्दैन।"
+
+msgctxt "growth"
+msgid "This application is already closed."
+msgstr "यो आवेदन पहिले नै बन्द भइसकेको छ।"
+
+msgctxt "growth"
+msgid "This job is not taking applications."
+msgstr "यो कामका लागि अहिले आवेदन लिइँदैन।"
+
+msgctxt "growth"
+msgid "This work history has already been reviewed."
+msgstr "यो कामको अनुभव पहिले नै जाँच भइसकेको छ।"
+
+msgctxt "growth"
+msgid "Verified"
+msgstr "प्रमाणित"
+
+msgctxt "growth"
+msgid "Verified work history cannot be changed. Contact support."
+msgstr "प्रमाणित भइसकेको कामको अनुभव बदल्न मिल्दैन। सहायता टोलीलाई सम्पर्क गर्नुहोस्।"
+
+msgctxt "growth"
+msgid "Who should we call at this number?"
+msgstr "यो नम्बरमा कसलाई फोन गर्ने?"
+
+msgctxt "growth"
+msgid "Worker applied"
+msgstr "कामदारले आवेदन दिएको"
+
+msgctxt "growth"
+msgid "Worker declined"
+msgstr "कामदारले अस्वीकार गरे"
+
+msgctxt "growth"
+msgid "Worker interested"
+msgstr "कामदार इच्छुक"
+
+msgctxt "growth"
+msgid "You are already in this job's pipeline."
+msgstr "तपाईं यो कामको छनोट प्रक्रियामा पहिले नै हुनुहुन्छ।"
+
+msgctxt "growth"
+msgid "Offer sent"
+msgstr "प्रस्ताव पठाइयो"
+
+msgctxt "growth"
+msgid "Offer accepted"
+msgstr "प्रस्ताव स्वीकार गरियो"
+
+msgctxt "growth"
+msgid "Offer declined"
+msgstr "प्रस्ताव अस्वीकार गरियो"
+
+msgctxt "growth"
+msgid "Offer expired"
+msgstr "प्रस्तावको म्याद सकियो"
+
+msgctxt "growth"
+msgid "Offer withdrawn"
+msgstr "प्रस्ताव फिर्ता लिइयो"
+
+msgctxt "growth"
+msgid "Permanent"
+msgstr "स्थायी"
+
+msgctxt "growth"
+msgid "Fixed term"
+msgstr "निश्चित अवधि"
+
+msgctxt "growth"
+msgid "Daily wage"
+msgstr "दैनिक ज्याला"
+
+msgctxt "growth"
+msgid "Probation"
+msgstr "परीक्षणकाल"
+
+msgctxt "growth"
+msgid "Instant"
+msgstr "तुरुन्तै"
+
+msgctxt "growth"
+msgid "Daily"
+msgstr "दैनिक"
+
+msgctxt "growth"
+msgid "Weekly"
+msgstr "साप्ताहिक"
+
+msgctxt "growth"
+msgid "Offers can only be sent to selected candidates."
+msgstr "छनोट भएका उम्मेदवारलाई मात्र प्रस्ताव पठाउन सकिन्छ।"
+
+msgctxt "growth"
+msgid "This candidate already has an open offer. Withdraw it first."
+msgstr "यो उम्मेदवारसँग पहिले नै खुला प्रस्ताव छ। पहिले त्यसलाई फिर्ता लिनुहोस्।"
+
+msgctxt "growth"
+msgid "Only an open offer can be withdrawn."
+msgstr "खुला प्रस्ताव मात्र फिर्ता लिन सकिन्छ।"
+
+msgctxt "growth"
+msgid "This offer is no longer open."
+msgstr "यो प्रस्ताव अब खुला छैन।"
+
+msgctxt "growth"
+msgid "You can keep up to 10 job alerts."
+msgstr "तपाईं बढीमा १० वटा कामको सूचना राख्न सक्नुहुन्छ।"
+
+msgctxt "trustops"
+msgid "Safety incident"
+msgstr "सुरक्षा घटना"
+
+msgctxt "trustops"
+msgid "Unsafe workplace"
+msgstr "असुरक्षित कार्यस्थल"
+
+msgctxt "trustops"
+msgid "Harassment or abuse"
+msgstr "दुर्व्यवहार वा हिंसा"
+
+msgctxt "trustops"
+msgid "Wages withheld"
+msgstr "तलब रोकिएको"
+
+msgctxt "trustops"
+msgid "Other safety concern"
+msgstr "सुरक्षासम्बन्धी अन्य समस्या"
+
+msgctxt "trustops"
+msgid "One-time code to registered phone"
+msgstr "दर्ता भएको फोनमा एक पटके कोड"
+
+msgctxt "trustops"
+msgid "Security questions"
+msgstr "सुरक्षा प्रश्नहरू"
+
+msgctxt "trustops"
+msgid "Workers"
+msgstr "कामदार"
+
+msgctxt "trustops"
+msgid "Employers"
+msgstr "रोजगारदाता"
+
+msgctxt "trustops"
+msgid "Everyone"
+msgstr "सबै"
+
+msgctxt "trustops"
+msgid "Getting started"
+msgstr "सुरुवात"
+
+msgctxt "trustops"
+msgid "Wages & payslips"
+msgstr "तलब र तलबपर्ची"
+
+msgctxt "trustops"
+msgid "Verification"
+msgstr "प्रमाणीकरण"
+
+msgctxt "trustops"
+msgid "Safety & problems"
+msgstr "सुरक्षा र समस्या"
+
+msgctxt "trustops"
+msgid "Privacy"
+msgstr "गोपनीयता"
+
+msgctxt "trustops"
+msgid "Hiring"
+msgstr "भर्ना"
+
+msgctxt "trustops"
+msgid "Labour law & SSF"
+msgstr "श्रम कानुन र SSF"
+
+msgctxt "trustops"
+msgid "EMERGENCY safety report"
+msgstr "आपत्कालीन सुरक्षा उजुरी"
+
+msgctxt "trustops"
+msgid "Case {number}: {kind} reported as an emergency. Call the reporter now."
+msgstr "केस {number}: {kind} आपत्कालीन रूपमा जनाइएको छ। उजुरीकर्तालाई तुरुन्तै फोन गर्नुहोस्।"
+
+msgctxt "trustops"
+msgid "Choose what kind of safety problem this is."
+msgstr "यो कस्तो सुरक्षा समस्या हो, छान्नुहोस्।"
+
+msgctxt "trustops"
+msgid "Verify the caller's identity (OTP or security questions) in the last 15 minutes first."
+msgstr "पहिले फोन गर्नेको पहिचान (OTP वा सुरक्षा प्रश्न) पछिल्लो १५ मिनेटभित्र पुष्टि गर्नुहोस्।"
+
+msgctxt "trustops"
+msgid "This case is not linked to a worker."
+msgstr "यो केस कुनै कामदारसँग जोडिएको छैन।"
+
+msgctxt "trustops"
+msgid "Search by phone or citizenship number."
+msgstr "फोन वा नागरिकता नम्बरबाट खोज्नुहोस्।"
+
+msgctxt "trustops"
+msgid "Anonymous worker"
+msgstr "नाम नखुलाइएको कामदार"
+
+msgctxt "trustops"
+msgid "Another account already uses this phone number."
+msgstr "यो फोन नम्बर अर्को खातामा प्रयोग भइसकेको छ।"
+
+# --- Security & platform (docs/CONTRACT-EXTENSIONS.md §1) ---
+msgctxt "security"
+msgid "Set up two-step login before using the ops console."
+msgstr "अप्स कन्सोल प्रयोग गर्नुअघि दुई-चरण लगइन सेट गर्नुहोस्।"
+
+msgctxt "security"
+msgid "The authenticator code is incorrect."
+msgstr "अथेन्टिकेटर कोड मिलेन।"
+
+msgctxt "security"
+msgid "Your login step expired. Please log in again."
+msgstr "लगइनको समय सकियो। कृपया फेरि लगइन गर्नुहोस्।"
+
+msgctxt "security"
+msgid "Too many wrong codes. Please try again in 15 minutes."
+msgstr "धेरै पटक गलत कोड हालियो। कृपया १५ मिनेटपछि फेरि प्रयास गर्नुहोस्।"
+
+msgctxt "security"
+msgid "This request was already submitted."
+msgstr "यो अनुरोध पहिले नै पठाइसकिएको छ।"
+
+msgctxt "security"
+msgid "This file was not accepted."
+msgstr "यो फाइल स्वीकार गरिएन।"
+
+msgctxt "security"
+msgid "KaamSathi is under maintenance. Please try again in a few minutes."
+msgstr "कामसाथीमा मर्मत कार्य भइरहेको छ। कृपया केही मिनेटपछि फेरि प्रयास गर्नुहोस्।"
+
+msgctxt "security"
+msgid "The image is too large."
+msgstr "तस्बिर धेरै ठूलो छ।"
+
+msgctxt "security"
+msgid "The image file is damaged or not a real image."
+msgstr "तस्बिर फाइल बिग्रिएको छ वा वास्तविक तस्बिर होइन।"
+
+msgctxt "security"
+msgid "PDFs with scripts, attachments or launch actions are not accepted."
+msgstr "स्क्रिप्ट, संलग्न फाइल वा प्रोग्राम चलाउने निर्देशन भएका PDF स्वीकार गरिँदैनन्।"
+
+msgctxt "security"
+msgid "The file could not be scanned right now. Please try again."
+msgstr "अहिले फाइल जाँच गर्न सकिएन। कृपया फेरि प्रयास गर्नुहोस्।"
+
+msgctxt "security"
+msgid "The file was rejected by the virus scanner."
+msgstr "भाइरस जाँचले यो फाइल अस्वीकार गर्‍यो।"
+
+#, python-format
+msgctxt "security"
+msgid "The file is larger than %(mb)s MB."
+msgstr "फाइल %(mb)s MB भन्दा ठूलो छ।"
+
+msgctxt "security"
+msgid "The file is empty."
+msgstr "फाइल खाली छ।"
+
+msgctxt "security"
+msgid "The spreadsheet is too large."
+msgstr "स्प्रेडसिट धेरै ठूलो छ।"
+
+msgctxt "security"
+msgid "This file type is not accepted."
+msgstr "यो प्रकारको फाइल स्वीकार गरिँदैन।"
+
+msgctxt "security"
+msgid "The file extension does not match its contents."
+msgstr "फाइलको एक्सटेन्सन यसको सामग्रीसँग मेल खाँदैन।"
+
+msgctxt "security"
+msgid "The file type does not match its contents."
+msgstr "फाइलको प्रकार यसको सामग्रीसँग मेल खाँदैन।"
+
+
+#: apps/notifications/views.py
+msgctxt "enterprise"
+msgid "Set both start and end, or neither."
+msgstr "सुरु र अन्त्य दुवै राख्नुहोस्, वा कुनै पनि नराख्नुहोस्।"
+
+# --- billing (plans, invoices, payments) ---
+
+msgctxt "billing2"
+msgid "Verification service fee"
+msgstr "प्रमाणीकरण सेवा शुल्क"
+
+msgctxt "billing2"
+msgid "Training commission"
+msgstr "तालिम कमिसन"
+
+msgctxt "billing2"
+msgid "Partner referral fee"
+msgstr "साझेदार रेफरल शुल्क"
+
+msgctxt "billing2"
+msgid "Pilot"
+msgstr "पाइलट"
+
+msgctxt "billing2"
+msgid "Starter"
+msgstr "स्टार्टर"
+
+msgctxt "billing2"
+msgid "Growth"
+msgstr "ग्रोथ"
+
+msgctxt "billing2"
+msgid "Business"
+msgstr "बिजनेस"
+
+msgctxt "billing2"
+msgid "Enterprise"
+msgstr "इन्टरप्राइज"
+
+msgctxt "billing2"
+msgid "Active"
+msgstr "सक्रिय"
+
+msgctxt "billing2"
+msgid "Paused"
+msgstr "रोकिएको"
+
+msgctxt "billing2"
+msgid "Cancelled"
+msgstr "रद्द गरिएको"
+
+msgctxt "billing2"
+msgid "Draft"
+msgstr "मस्यौदा"
+
+msgctxt "billing2"
+msgid "Issued"
+msgstr "जारी गरिएको"
+
+msgctxt "billing2"
+msgid "Paid"
+msgstr "भुक्तानी भएको"
+
+msgctxt "billing2"
+msgid "Void"
+msgstr "रद्द"
+
+msgctxt "billing2"
+msgid "Bank transfer"
+msgstr "बैंक ट्रान्सफर"
+
+msgctxt "billing2"
+msgid "Cheque"
+msgstr "चेक"
+
+msgctxt "billing2"
+msgid "eSewa"
+msgstr "इसेवा"
+
+msgctxt "billing2"
+msgid "Khalti"
+msgstr "खल्ती"
+
+msgctxt "billing2"
+msgid "Cash"
+msgstr "नगद"
+
+msgctxt "billing2"
+msgid "Other"
+msgstr "अन्य"

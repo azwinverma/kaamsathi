@@ -1,0 +1,415 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+
+import '../../../../core/api/cached.dart';
+import '../../../../core/format.dart';
+import '../../../../core/l10n/l10n.dart';
+import '../../../../core/router/router.dart';
+import '../../../../core/theme/tokens.dart';
+import '../../../../core/widgets/common.dart';
+import '../../../../core/widgets/eco.dart';
+import '../jobs_data.dart';
+import 'offers.dart';
+
+String stageLabel(AppLocalizations l, String stage) => switch (stage) {
+  'shortlisted' => l.stageShortlisted,
+  'interview' => l.stageInterview,
+  'selected' => l.stageSelected,
+  'joined' => l.stageJoined,
+  'rejected' => l.stageRejected,
+  'dropped' => l.stageDropped,
+  _ => l.stageSourced,
+};
+
+Tone stageTone(String stage) => switch (stage) {
+  'selected' || 'joined' => Tone.success,
+  'interview' || 'shortlisted' => Tone.info,
+  'rejected' || 'dropped' => Tone.neutral,
+  _ => Tone.warning,
+};
+
+String jobWageText(AppLocalizations l, JobSummary j, String lang) {
+  if (j.wage == null) return '';
+  final m = formatMoney(j.wage, lang: lang);
+  return j.wageType == 'daily' ? l.empWageDaily(m) : l.empWageMonthly(m);
+}
+
+/// Jobs for you · Offers · My applications (`?tab=offers|applications`).
+class JobsScreen extends StatelessWidget {
+  const JobsScreen({super.key, this.initialTab = 0});
+  final int initialTab;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return DefaultTabController(
+      length: 3,
+      initialIndex: initialTab.clamp(0, 2),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(l.jobsTitle),
+          actions: [
+            IconButton(
+              key: const Key('jobs_alerts'),
+              tooltip: l.alertsTitle,
+              onPressed: () => context.push(Routes.workerJobAlerts),
+              icon: const Icon(LucideIcons.bellPlus),
+            ),
+          ],
+          bottom: TabBar(tabs: [Tab(text: l.jobsTabForYou), Tab(text: l.offersTab), Tab(text: l.jobsTabApplications)]),
+        ),
+        body: const TabBarView(children: [RecommendedJobsTab(), OffersTab(), MyApplicationsTab()]),
+      ),
+    );
+  }
+}
+
+/// Facts row shared by job and application cards.
+class JobFacts extends StatelessWidget {
+  const JobFacts({super.key, required this.job});
+  final JobSummary job;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final lang = context.lang;
+    final t = Theme.of(context).textTheme;
+    final wage = jobWageText(l, job, lang);
+    final where = [
+      if (job.organizationName.isNotEmpty) job.organizationName,
+      if (job.district != null) job.district!.name(lang),
+    ].join(' · ');
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(job.title, style: t.titleSmall),
+        if (where.isNotEmpty) Text(where, style: t.bodyMedium),
+        if (job.employerVerified) ...[const SizedBox(height: KsSpace.s1), const EmployerVerifiedBadge()],
+        if (wage.isNotEmpty) ...[
+          const SizedBox(height: KsSpace.s1),
+          Text(wage, style: t.titleMedium?.copyWith(fontFeatures: const [FontFeature.tabularFigures()])),
+        ],
+        const SizedBox(height: KsSpace.s1),
+        Wrap(
+          spacing: KsSpace.s2,
+          runSpacing: KsSpace.s1,
+          children: [
+            if (job.trade != null) StatusBadge(label: job.trade!.name(lang), icon: LucideIcons.hardHat),
+            if (job.foodProvided) StatusBadge(label: l.jobsFood, icon: LucideIcons.utensils),
+            if (job.accommodationProvided) StatusBadge(label: l.jobsStay, icon: LucideIcons.bedDouble),
+            if (job.startDate != null)
+              StatusBadge(
+                label: l.jobsStarts(formatBsOrAd(job.startDateBs, job.startDate, lang)),
+                icon: LucideIcons.calendar,
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class RecommendedJobsTab extends ConsumerStatefulWidget {
+  const RecommendedJobsTab({super.key});
+
+  @override
+  ConsumerState<RecommendedJobsTab> createState() => _RecommendedJobsTabState();
+}
+
+class _RecommendedJobsTabState extends ConsumerState<RecommendedJobsTab> {
+  final Set<String> _sent = {};
+  String? _busy;
+
+  Future<void> _interest(JobSummary job) async {
+    final l = context.l10n;
+    final ok = await confirmDialog(
+      context,
+      title: l.jobsInterestConfirmTitle,
+      body: '${job.title}\n\n${l.jobsReviewNote}',
+      confirmLabel: l.jobsInterested,
+    );
+    if (!ok || !mounted) return;
+    setState(() => _busy = job.id);
+    try {
+      await ref.read(jobsRepositoryProvider).interest(job.id);
+      if (!mounted) return;
+      setState(() => _sent.add(job.id));
+      ref.invalidate(myApplicationsProvider);
+      showSnack(context, l.jobsInterestSent);
+    } catch (e) {
+      if (mounted) showSnack(context, errorText(context, e), error: true);
+    } finally {
+      if (mounted) setState(() => _busy = null);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final value = ref.watch(recommendedJobsProvider);
+    return RefreshIndicator(
+      onRefresh: () async {
+        ref.invalidate(recommendedJobsProvider);
+        try {
+          await ref.read(recommendedJobsProvider.future);
+        } catch (_) {}
+      },
+      child: FeatureAsyncBody<List<JobSummary>>(
+        value: value,
+        onRetry: () => ref.invalidate(recommendedJobsProvider),
+        data:
+            (jobs) => ListView(
+              padding: const EdgeInsets.all(KsSpace.page),
+              children: [
+                InfoNote(key: const Key('jobs_review_note'), text: l.jobsReviewNote, icon: LucideIcons.shieldCheck),
+                const SizedBox(height: KsSpace.s3),
+                if (jobs.isEmpty)
+                  EmptyState(
+                    icon: LucideIcons.briefcase,
+                    message: l.jobsEmpty,
+                    action: OutlinedButton.icon(
+                      onPressed: () => context.push(Routes.workerAvailability),
+                      icon: const Icon(LucideIcons.mapPin, size: 18),
+                      label: Text(l.jobsUpdatePrefs),
+                    ),
+                  ),
+                for (final j in jobs)
+                  Card(
+                    key: Key('job_${j.id}'),
+                    child: Padding(
+                      padding: const EdgeInsets.all(KsSpace.s4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          JobFacts(job: j),
+                          const SizedBox(height: KsSpace.s3),
+                          if (_sent.contains(j.id))
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: StatusBadge(
+                                key: Key('interest_sent_${j.id}'),
+                                label: l.jobsInterestSentBadge,
+                                tone: Tone.success,
+                                icon: LucideIcons.check,
+                              ),
+                            )
+                          else
+                            FilledButton.icon(
+                              key: Key('interest_${j.id}'),
+                              onPressed: _busy == null ? () => _interest(j) : null,
+                              icon:
+                                  _busy == j.id
+                                      ? const SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: CircularProgressIndicator(strokeWidth: 2),
+                                      )
+                                      : const Icon(LucideIcons.thumbsUp),
+                              label: Text(l.jobsInterested),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+      ),
+    );
+  }
+}
+
+class MyApplicationsTab extends ConsumerStatefulWidget {
+  const MyApplicationsTab({super.key});
+
+  @override
+  ConsumerState<MyApplicationsTab> createState() => _MyApplicationsTabState();
+}
+
+class _MyApplicationsTabState extends ConsumerState<MyApplicationsTab> {
+  /// Answers given in this session (shown before the list reloads).
+  final Map<String, String> _answered = {};
+  String? _busy;
+
+  Future<void> _respond(MyApplication a, {required bool interested}) async {
+    final l = context.l10n;
+    String? note;
+    if (!interested) {
+      note = await showDeclineDialog(context);
+      if (note == null) return;
+    }
+    if (!mounted) return;
+    setState(() => _busy = a.id);
+    try {
+      await ref.read(jobsRepositoryProvider).respond(a.id, interested: interested, note: note);
+      if (!mounted) return;
+      setState(() => _answered[a.id] = interested ? 'interested' : 'declined');
+      showSnack(context, interested ? l.appsConfirmed : l.appsDeclined);
+      ref.invalidate(myApplicationsProvider);
+    } catch (e) {
+      if (mounted) showSnack(context, errorText(context, e), error: true);
+    } finally {
+      if (mounted) setState(() => _busy = null);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final lang = context.lang;
+    final t = Theme.of(context).textTheme;
+    final value = ref.watch(myApplicationsProvider);
+    return RefreshIndicator(
+      onRefresh: () async {
+        ref.invalidate(myApplicationsProvider);
+        try {
+          await ref.read(myApplicationsProvider.future);
+        } catch (_) {}
+      },
+      child: FeatureAsyncBody<Cached<List<MyApplication>>>(
+        value: value,
+        onRetry: () => ref.invalidate(myApplicationsProvider),
+        data: (cached) {
+          final apps = cached.data;
+          return ListView(
+            padding: const EdgeInsets.all(KsSpace.page),
+            children: [
+              if (cached.fromCache) const CachedNotice(),
+              if (apps.isEmpty) EmptyState(icon: LucideIcons.fileText, message: l.appsEmpty),
+              for (final a in apps)
+                Builder(
+                  builder: (_) {
+                    final answered = _answered[a.id];
+                    final response = answered ?? a.workerResponse;
+                    final ask = answered == null && a.needsResponse;
+                    return Card(
+                      key: Key('application_${a.id}'),
+                      child: Padding(
+                        padding: const EdgeInsets.all(KsSpace.s4),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            JobFacts(job: a.job),
+                            const SizedBox(height: KsSpace.s2),
+                            Wrap(
+                              spacing: KsSpace.s2,
+                              runSpacing: KsSpace.s1,
+                              children: [
+                                if (a.underReview)
+                                  StatusBadge(label: l.appsUnderReview, tone: Tone.warning, icon: LucideIcons.hourglass)
+                                else
+                                  StatusBadge(label: stageLabel(l, a.stage), tone: stageTone(a.stage)),
+                                if (response == 'interested')
+                                  StatusBadge(
+                                    label: l.appsResponseInterested,
+                                    tone: Tone.success,
+                                    icon: LucideIcons.check,
+                                  ),
+                                if (response == 'declined')
+                                  StatusBadge(label: l.appsResponseDeclined, tone: Tone.neutral, icon: LucideIcons.x),
+                              ],
+                            ),
+                            if (a.interviewAt != null) ...[
+                              const SizedBox(height: KsSpace.s2),
+                              Text(
+                                l.appsInterview(
+                                  '${formatBsDateTime(a.interviewAt, lang)} · ${formatTime(a.interviewAt!.toLocal(), lang)}',
+                                ),
+                                style: t.bodyMedium,
+                              ),
+                            ],
+                            if (ask) ...[
+                              const SizedBox(height: KsSpace.s3),
+                              Text(l.appsConfirmPrompt, style: t.titleSmall),
+                              const SizedBox(height: KsSpace.s2),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: OutlinedButton(
+                                      key: Key('decline_${a.id}'),
+                                      onPressed: _busy == null ? () => _respond(a, interested: false) : null,
+                                      child: Text(l.appsDecline, textAlign: TextAlign.center),
+                                    ),
+                                  ),
+                                  const SizedBox(width: KsSpace.s2),
+                                  Expanded(
+                                    child: FilledButton(
+                                      key: Key('confirm_${a.id}'),
+                                      onPressed: _busy == null ? () => _respond(a, interested: true) : null,
+                                      child: Text(l.appsConfirm, textAlign: TextAlign.center),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Confirms a decline; returns the optional reason ('' when none), or null
+/// when the worker backs out.
+Future<String?> showDeclineDialog(BuildContext context, {String? title, String? body}) =>
+    showDialog<String>(context: context, builder: (_) => _DeclineDialog(title: title, body: body));
+
+class _DeclineDialog extends StatefulWidget {
+  const _DeclineDialog({this.title, this.body});
+  final String? title;
+  final String? body;
+
+  @override
+  State<_DeclineDialog> createState() => _DeclineDialogState();
+}
+
+class _DeclineDialogState extends State<_DeclineDialog> {
+  final _reason = TextEditingController();
+
+  @override
+  void dispose() {
+    _reason.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return AlertDialog(
+      title: Text(widget.title ?? l.appsDeclineConfirmTitle),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(widget.body ?? l.appsDeclineConfirmBody),
+            const SizedBox(height: KsSpace.s3),
+            TextField(
+              key: const Key('decline_reason'),
+              controller: _reason,
+              maxLength: 300,
+              decoration: InputDecoration(labelText: l.ecoOptional(l.appsDeclineReason)),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l.commonCancel)),
+        FilledButton(
+          key: const Key('decline_confirm'),
+          style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+          onPressed: () => Navigator.pop(context, _reason.text.trim()),
+          child: Text(l.appsDecline),
+        ),
+      ],
+    );
+  }
+}

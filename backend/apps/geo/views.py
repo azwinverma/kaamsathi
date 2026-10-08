@@ -61,8 +61,18 @@ class TradeListView(PublicView):
     def get(self, request):
         return Response(
             [
-                {"code": t.code, "name_en": t.name_en, "name_ne": t.name_ne, "category": t.category}
-                for t in Trade.objects.all()
+                {
+                    "code": t.code,
+                    "name_en": t.name_en,
+                    "name_ne": t.name_ne,
+                    "category": t.category,
+                }
+                # inactive trades (ops taxonomy) are hidden unless ?all=1
+                for t in (
+                    Trade.objects.all()
+                    if request.query_params.get("all") in ("1", "true")
+                    else Trade.objects.filter(is_active=True)
+                )
             ]
         )
 

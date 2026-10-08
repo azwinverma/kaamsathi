@@ -104,6 +104,22 @@ def has_passed_assessment(worker) -> bool:
     return _optional_exists("credentials", "SkillAssessment", worker=worker, result="pass")
 
 
+def verified_external_months(worker, today) -> list[float]:
+    """Tenure (months) of each verified external work-history entry (apps.experience)."""
+    try:
+        model = django_apps.get_model("experience", "WorkHistoryEntry")
+    except LookupError:
+        return []
+    try:
+        with transaction.atomic():
+            rows = list(
+                model.objects.filter(worker=worker, status="verified").values_list("start_date", "end_date")
+            )
+    except (DatabaseError, FieldError, ValueError):
+        return []
+    return [max(((end or today) - start).days, 0) / 30 for start, end in rows]
+
+
 # --------------------------------------------------------------------------- score components
 def _q(value) -> float:
     return float(Decimal(str(value)).quantize(Decimal("0.0001"), ROUND_HALF_UP))
@@ -150,6 +166,7 @@ class _Facts:
                 .annotate(n=Count("id"))
             ):
                 self.worked_days_by_employment[row["employment_id"]] = row["n"]
+        self.external_months = verified_external_months(worker, self.today)
         self.verified_credential = has_verified_credential(worker)
         self.passed_assessment = has_passed_assessment(worker)
         self.nstb_declared = any(s.nstb_level not in (None, "", "none") for s in worker.skills.all())
@@ -197,16 +214,19 @@ class _Facts:
         return 0.3
 
     def stability(self) -> float:
-        if not self.employments:
+        # Verified external work history counts like a platform employment (CONTRACT-EXTENSIONS §3).
+        tenures = [_tenure_months(e, self.today) for e in self.employments] + self.external_months
+        if not tenures:
             return 0.0
-        avg = sum(_tenure_months(e, self.today) for e in self.employments) / len(self.employments)
-        return min(avg / 12, 1.0)
+        return min(sum(tenures) / len(tenures) / 12, 1.0)
 
     def total_months(self) -> float:
         return sum(_tenure_months(e, self.today) for e in self.employments)
 
     # -- level helpers -----------------------------------------------------------
     def employment_verified(self) -> bool:
+        if self.external_months:  # a verified reference / employer confirmation of past work
+            return True
         for e in self.employments:
             if self.worked_days_by_employment.get(e.id, 0) >= EMPLOYMENT_VERIFIED_DAYS:
                 return True
@@ -239,7 +259,9 @@ def compute_level(facts: _Facts, reliability: int | None) -> int:
         facts.employment_verified,  # 2 employment
         lambda: facts.passed_assessment,  # 3 skills assessed
         lambda: facts.verified_credential,  # 4 certification
-        lambda: (reliability or 0) >= 85 and facts.total_months() >= 12,  # 5 highly trusted
+        lambda: (
+            (reliability or 0) >= 85 and facts.total_months() + sum(facts.external_months) >= 12
+        ),  # 5 highly trusted
     ]
     level = 0
     for check in checks:

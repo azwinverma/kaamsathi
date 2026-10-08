@@ -7,7 +7,7 @@ import uuid
 from rest_framework import permissions
 from rest_framework.exceptions import PermissionDenied
 
-from .exceptions import OrgForbidden
+from .exceptions import APIError, OrgForbidden
 
 OWNER, ADMIN, HR, SUPERVISOR = "owner", "admin", "hr", "supervisor"
 ALL_ROLES = frozenset({OWNER, ADMIN, HR, SUPERVISOR})
@@ -57,12 +57,32 @@ class OrgPermission(permissions.BasePermission):
 
 
 class IsOpsStaff(permissions.BasePermission):
+    """``user.is_staff`` + MFA gate + central role check (``apps/accounts/staff_roles.py``).
+
+    Ops view files never check roles themselves: the allowed roles come from the URL prefix
+    (``ROUTE_ROLES``). Staff without MFA while ``STAFF_MFA_REQUIRED`` get 403 ``mfa_required``.
+    """
+
     def has_permission(self, request, view):
         if not (request.user and request.user.is_authenticated):
             return False
         if not request.user.is_staff:
             raise PermissionDenied()
+        from django.conf import settings
+
+        from apps.accounts import staff_roles
+
+        if getattr(settings, "STAFF_MFA_REQUIRED", False) and not _mfa_enabled(request.user):
+            raise APIError("mfa_required", status_code=403)
+        if not staff_roles.can_access(request.user, request.path):
+            raise PermissionDenied()
         return True
+
+
+def _mfa_enabled(user) -> bool:
+    from apps.accounts.models import StaffProfile
+
+    return StaffProfile.objects.filter(user=user, mfa_enabled=True).exists()
 
 
 class OrgScopedMixin:

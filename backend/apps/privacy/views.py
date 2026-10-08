@@ -10,6 +10,7 @@ from rest_framework.throttling import ScopedRateThrottle
 
 from apps.audit.services import log
 from apps.core.exceptions import APIError
+from apps.core.idempotency import idempotent
 from apps.core.permissions import IsOpsStaff
 
 from . import services
@@ -46,6 +47,7 @@ class MePrivacyRequestViewSet(
     def get_queryset(self):
         return PrivacyRequest.objects.filter(user=self.request.user).order_by("-created_at")
 
+    @idempotent
     def create(self, request, *args, **kwargs):
         s = self.get_serializer(data=request.data)
         s.is_valid(raise_exception=True)
@@ -57,7 +59,9 @@ class MePrivacyRequestViewSet(
     @extend_schema(responses={200: bytes})
     @action(detail=True, methods=["get"])
     def download(self, request, pk=None):
-        return _download(self.get_object())
+        req = self.get_object()
+        log(request, "privacy.export.downloaded", req)
+        return _download(req)
 
 
 class OpsPrivacyRequestViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):

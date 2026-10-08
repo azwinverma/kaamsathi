@@ -79,6 +79,10 @@ urlpatterns = [
     # ops
     p("ops/dashboard", ops.OpsDashboardView, "ops-dashboard"),
     *router.urls,
+    # Security & platform (docs/CONTRACT-EXTENSIONS.md §1)
+    path("", include("apps.accounts.urls")),
+    path("", include("apps.audit.urls")),
+    path("", include("apps.core.urls")),
     # Ecosystem apps (docs/CONTRACT-ECOSYSTEM.md) each own their routes.
     path("", include("apps.trust.urls")),
     path("", include("apps.crews.urls")),
@@ -97,4 +101,7 @@ urlpatterns = [
     path("", include("apps.timesheets.urls")),
     path("", include("apps.integrations.urls")),
     path("", include("apps.mobility.urls")),
+    path("", include("apps.notifications.urls")),
+    path("", include("apps.telemetry.urls")),
+    path("", include("apps.billing.urls")),
 ]

@@ -13,8 +13,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.audit.services import diff, log, snapshot
+from apps.audit.services import client_ip, diff, log, snapshot
 from apps.core.exceptions import APIError
+from apps.core.idempotency import idempotent
 from apps.core.pagination import StandardPagination
 from apps.core.permissions import IsOpsStaff
 from apps.workers.me_views import current_worker
@@ -117,6 +118,38 @@ class PartnerWorkerEarningsView(PartnerAPIView):
         return Response(data)
 
 
+class PartnerWorkerMobilityView(PartnerAPIView):
+    """Masked foreign-employment document summary (verified flags, kinds, expiry dates only).
+
+    Readable only by an *eligible* recruitment agency (verified, unexpired licence) holding an
+    active grant with ``mobility.read`` — a suspended or lapsed agency loses access immediately.
+    """
+
+    required_scope = "mobility.read"
+
+    def get(self, request, worker_id):
+        from apps.mobility.services import partner_summary
+
+        worker = self.worker_with_grant(worker_id)
+        if not self.partner.is_eligible_agency():
+            raise PermissionDenied("Your agency licence is not verified or has expired.")
+        data = partner_summary(worker)
+        log_profile_view(worker, self.partner)
+        # Actor is a partner key, not a Django user: record it in ``changes`` (request=None).
+        log(
+            None,
+            "partner.mobility.read",
+            worker,
+            organization=None,
+            changes={
+                "partner": str(self.partner.pk),
+                "key_prefix": request.auth.prefix,
+                "ip": client_ip(request),
+            },
+        )
+        return Response(data)
+
+
 class PartnerGrantsView(PartnerAPIView):
     def get(self, request):
         qs = (
@@ -149,6 +182,7 @@ class PartnerReferralsView(PartnerAPIView):
 class PartnerReferralStatusView(PartnerAPIView):
     required_scope = "referrals.write"
 
+    @idempotent
     def post(self, request, referral_id):
         from apps.finance.models import Referral
         from apps.finance.serializers import referral_dict

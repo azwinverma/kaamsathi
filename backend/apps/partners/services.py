@@ -13,10 +13,11 @@ from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.utils.translation import pgettext
 
 from apps.core.exceptions import APIError
 
-from .labels import DATA_SCOPES
+from .labels import DATA_SCOPES, RECRUITMENT_ONLY_SCOPES
 from .models import ConsentGrant, Partner, PartnerAccessLog, PartnerAPIKey, new_webhook_secret
 
 logger = logging.getLogger("kaamsathi.partners")
@@ -69,6 +70,19 @@ def _write_consent(worker, granted: bool, channel: str):
     )
 
 
+def ensure_eligible_agency(partner: Partner) -> None:
+    """Recruitment shares go only to verified recruitment agencies with an unexpired licence."""
+    if not partner.is_eligible_agency():
+        raise APIError(
+            "invalid_state",
+            message=pgettext(
+                "mobility",
+                "Documents can only be shared with a recruitment agency whose DoFE licence "
+                "KaamSathi has verified and which has not expired.",
+            ),
+        )
+
+
 @transaction.atomic
 def create_grant(
     worker, partner: Partner, *, purpose: str, scopes, days: int, channel: str = "app"
@@ -79,6 +93,8 @@ def create_grant(
     bad = [s for s in scopes if s not in DATA_SCOPES]
     if not scopes or bad:
         raise APIError("validation_error", fields={"scopes": [_("Choose at least one valid data scope.")]})
+    if purpose == "recruitment" or RECRUITMENT_ONLY_SCOPES & set(scopes):
+        ensure_eligible_agency(partner)
     days = int(days)
     if days < 1 or days > max_grant_days():
         raise APIError(
@@ -146,6 +162,15 @@ def log_access(
         scope=scope or "",
         status_code=status_code,
     )
+    if status_code < 400:  # one audit row per partner data read (docs/CONTRACT-EXTENSIONS.md §1)
+        from apps.audit.models import AuditLog
+
+        AuditLog.objects.create(
+            action="partner.data.read",
+            object_type="worker" if worker is not None else "partner",
+            object_id=str(worker.pk) if worker is not None else str(api_key.partner_id),
+            changes={"partner": str(api_key.partner_id), "endpoint": endpoint[:255], "scope": scope or ""},
+        )
 
 
 def log_profile_view(worker, partner: Partner, object_id=None):

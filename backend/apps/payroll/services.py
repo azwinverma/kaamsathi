@@ -97,7 +97,17 @@ def build_input(employment, run_meta: dict, other_deductions=Decimal("0")) -> en
         advances=advances,
         other_deductions=D(other_deductions),
         include_festival_allowance=run_meta["include_festival_allowance"],
+        overtime_minutes_override=_approved_ot(employment, start, end),
     )
+
+
+def _approved_ot(employment, start, end):
+    """Approved timesheet OT when the org's policy requires approval; None otherwise (no-op if absent)."""
+    try:
+        from apps.timesheets.services import approved_ot_minutes
+    except ImportError:  # pragma: no cover
+        return None
+    return approved_ot_minutes(employment, start, end)
 
 
 def _run_meta(run: PayrollRun) -> dict:

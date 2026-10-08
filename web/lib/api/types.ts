@@ -3,6 +3,8 @@
  * Dates = AD ISO "YYYY-MM-DD", each accompanied by `<field>_bs`.
  */
 
+import type { PendingLegal, StaffRole } from "./types-security";
+
 export type UUID = string;
 export type Money = string;
 export type ISODate = string;
@@ -173,6 +175,13 @@ export interface Me {
   is_staff: boolean;
   worker_id: UUID | null;
   memberships: Membership[];
+  /** Ops roles (staff only). Undefined on older backends → treat as "all". */
+  staff_roles?: StaffRole[];
+  mfa_enabled?: boolean;
+  /** Policy requires MFA for this staff user. */
+  mfa_required?: boolean;
+  /** Current legal documents this user has not accepted yet. */
+  pending_legal?: PendingLegal[];
 }
 export interface OtpRequestResponse {
   sent: boolean;

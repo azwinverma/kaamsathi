@@ -10,7 +10,7 @@ export function siteUrl(raw: string | undefined = process.env.NEXT_PUBLIC_SITE_U
 }
 
 /** Public, indexable pages (everything else is behind auth or private by design). */
-export const PUBLIC_PATHS = ["/", "/login", "/privacy", "/terms", "/partners/docs"] as const;
+export const PUBLIC_PATHS = ["/", "/login", "/help", "/privacy", "/terms", "/partners/docs", "/developers"] as const;
 
 /** Never crawl: authenticated areas, the API/BFF, and private Skill Passport share links. */
 export const DISALLOWED_PATHS = ["/app", "/ops", "/onboarding", "/api", "/p/s/"] as const;

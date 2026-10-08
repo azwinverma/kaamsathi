@@ -65,3 +65,39 @@ class OpsInsightsExportView(APIView):
             f'attachment; filename="kaamsathi-{report}{"-" + suffix if suffix else ""}.csv"'
         )
         return resp
+
+
+class OpsHeatmapView(APIView):
+    permission_classes = [IsAuthenticated, IsOpsStaff]
+
+    def get(self, request):
+        from .intelligence import HEATMAP_METRICS, heatmap
+
+        metric = request.query_params.get("metric", "demand")
+        if metric not in HEATMAP_METRICS:
+            raise APIError("validation_error", fields={"metric": [f"One of: {', '.join(HEATMAP_METRICS)}."]})
+        return Response(heatmap(metric, request.query_params.get("trade") or None))
+
+
+class OpsKPIView(APIView):
+    permission_classes = [IsAuthenticated, IsOpsStaff]
+
+    def get(self, request):
+        from .intelligence import KPI_PERIODS, kpis
+
+        try:
+            days = int(request.query_params.get("days", 30))
+        except ValueError:
+            days = -1
+        if days not in KPI_PERIODS:
+            raise APIError("validation_error", fields={"days": ["One of: 30, 90, 365."]})
+        return Response(kpis(days))
+
+
+class MeCareerView(APIView):
+    def get(self, request):
+        from apps.workers.me_views import current_worker
+
+        from .intelligence import career
+
+        return Response(career(current_worker(request)))

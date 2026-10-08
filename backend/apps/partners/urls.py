@@ -26,6 +26,11 @@ urlpatterns = [
         views.PartnerWorkerEarningsView,
         "partner-worker-earnings",
     ),
+    p(
+        rf"partner/workers/(?P<worker_id>{UUID})/mobility",
+        views.PartnerWorkerMobilityView,
+        "partner-worker-mobility",
+    ),
     p("partner/grants", views.PartnerGrantsView, "partner-grants"),
     p("partner/referrals", views.PartnerReferralsView, "partner-referrals"),
     p(

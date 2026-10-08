@@ -26,6 +26,9 @@ import { HiringGate } from "./gate";
 import { JobActions } from "./job-actions";
 import { FillProgress, JobBenefits, JobWage } from "./job-bits";
 import { CLOSED_STAGES, PIPELINE_STAGES, TRANSITIONS, daysSince } from "./lib";
+import { ApplicationGrowthBadges } from "@/components/experience/badges";
+import { OfferControls } from "@/components/experience/offer-dialog";
+import type { ApplicationOfferField, ApplicationWithGrowth } from "@/lib/api/types-experience";
 import { useStageMove } from "./move-stage";
 
 export function JobDetailPage({ id }: { id: string }) {
@@ -311,6 +314,11 @@ function CandidateCard({
       >
         <WorkerCardView worker={app.worker} />
       </button>
+      <ApplicationGrowthBadges
+        application={app as ApplicationWithGrowth}
+        className="mt-2 flex flex-wrap gap-1"
+      />
+      <OfferControls app={app as Application & ApplicationOfferField} />
       {app.stage === "interview" && app.interview_at ? (
         <p className="bg-warning-subtle text-warning tabular mt-2 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium">
           <CalendarClock className="size-3.5" aria-hidden />

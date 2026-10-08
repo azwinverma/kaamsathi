@@ -111,6 +111,10 @@ From an off-site copy: `aws s3 cp s3://<bucket>/kaamsathi/<file> .` then
 | S3 keys / backup keys | Create new key, update env, deploy, then delete old key | None |
 | Partner API keys | Ops console → Partners → revoke + issue | Partner must update |
 | `BACKUP_PASSPHRASE` | New backups use the new one — keep the old one until all old backups expire (14 days local, bucket lifecycle) | None |
+| `FIELD_ENCRYPTION_KEYS` | Generate `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`, put it **first** (`new,old`), `make deploy-up`, then `docker compose ... exec backend python manage.py rotate_field_keys`; remove the old key only after the command reports 0 failures **and** every backup encrypted with the old key has expired | None (both keys decrypt during rotation). Losing every key = citizenship/NID/bank/PAN numbers and staff MFA secrets are unrecoverable |
+| `FIELD_HASH_KEY` | Do **not** rotate routinely — every `*_hash` blind index (`citizenship_no_hash`, `nid_no_hash`, `pan_hash`, travel-document hashes) must be recomputed with the new key in a maintenance window (`manage.py maintenance read_only`) by a one-off re-index script; only on confirmed compromise | Duplicate-identity detection and identifier lookups are wrong until re-indexed |
+| `METRICS_TOKEN` | Set new value in env + Prometheus `bearer_token`, `make deploy-up` | Scrape gap of one interval |
+| Staff MFA (lost phone / staff exit) | Ops console → Staff → **Reset MFA** (superadmin; revokes all their sessions), or deactivate the account | Staff member re-enrols on next login |
 
 Rotate immediately on suspicion of leak, staff departure with server access, or yearly.
 
@@ -167,3 +171,156 @@ Defined in `config/settings/base.py` (`CELERY_BEAT_SCHEDULE`, Asia/Kathmandu). C
 `make deploy-logs S=celery-beat` after deploys. Notable: `apps.privacy.tasks.process_requests`
 (03:00) purges expired data exports, deletes OTP rows older than 30 days and SMS logs older than
 180 days, and re-queues stuck exports.
+
+## 11. Security & platform operations (docs/CONTRACT-EXTENSIONS.md §1)
+
+**Staff access.** `/ops` needs `is_staff` **and** a role (`verifier`, `support`, `finance_ops`,
+`partner_manager`, `risk_analyst`, `superadmin`) — the URL-prefix map lives in
+`backend/apps/accounts/staff_roles.py` (unlisted `/ops/*` routes are superadmin-only). Manage staff in
+**Ops → Staff** (`/ops/staff`): add by phone, edit roles, deactivate (signs out every session), reset MFA.
+In production a staff user without a `StaffProfile` has **no** roles; create the first superadmin with
+`python manage.py shell -c "from apps.accounts.models import *; u=User.objects.get(phone='98…'); u.is_staff=True; u.save(); StaffProfile.objects.update_or_create(user=u, defaults={'roles':['superadmin']})"`.
+
+**MFA.** `STAFF_MFA_REQUIRED=true` (prod default): staff get tokens but every `/ops` call returns 403
+`mfa_required` until they enrol a TOTP app in **/ops/account** (QR + 10 single-use recovery codes, shown
+once). Login then asks for the 6-digit code (or a recovery code) after the SMS OTP; 5 wrong codes lock
+the MFA step for 15 minutes. Lost device → another superadmin uses **Reset MFA**.
+
+**Sessions.** Every login creates a session (`/app/account`, `/ops/account`, mobile "Login & security");
+users can revoke one device or all others. Revocation blacklists the refresh token and rejects the
+session's access tokens immediately (revoked-session ids are cached for the access-token lifetime — a
+Redis flush shortens that to "until the access token expires", max 30 min).
+
+**Request IDs.** Every response carries `X-Request-ID` (also in `error.request_id`, JSON logs and the
+Sentry tag `request_id`). Support asks the user for the id shown on the error screen and searches:
+`make deploy-logs S=backend | grep <id>`.
+
+**Idempotency.** Clients may send `Idempotency-Key` on payroll-run create, payouts create/submit, ops
+shortlist, finance offer apply, member invite, employment create, privacy requests, partner referral
+status and enterprise attendance bulk. Records live 24 h (`IDEMPOTENCY_TTL_HOURS`) and are purged nightly
+(`apps.core.tasks.purge_idempotency_records`, 03:30).
+
+**Uploads + ClamAV.** All uploads go through `apps/core/uploads.validate_upload` (magic bytes,
+extension/content-type agreement, EXIF/GPS stripped, PDF scripts rejected). Optional virus scan: set
+`COMPOSE_PROFILES=clamav` and `CLAMAV_HOST=clamav` in the env file, `make deploy-up` (first start
+downloads signatures, ~5 min, ~1.5 GB RAM). Unreachable scanner = logged error and upload accepted unless
+`CLAMAV_REQUIRED=true`. Test: upload the EICAR test string as `eicar.pdf` → "rejected by the virus scanner".
+
+**Failed tasks.** Celery tasks retry 5× with exponential backoff + jitter; final failures appear in
+**Ops → System** (`/ops/system`) with redacted arguments. *Retry* re-queues with the stored arguments
+(disabled when arguments were redacted — re-run from the source screen); *Dismiss* after fixing the cause.
+System health on the same page: DB, Redis, queue length, workers seen, beat heartbeat (stale after 15 min
+→ `make deploy-logs S=celery-beat`), failed tasks and failed SMS in the last 24 h.
+
+**Audit trail.** `audit_auditlog` is append-only (a Postgres trigger rejects UPDATE/DELETE) and
+hash-chained. **Ops → Audit** (`/ops/audit`, superadmin) filters by actor/org/action/object/date;
+*Verify chain* (`GET /api/v1/ops/audit/verify`) must return `ok: true` — anything else is a SEV1 integrity
+incident (§12.2). Run it after every restore and monthly. Rolling back `audit.0002` drops the trigger.
+
+**Maintenance mode.** `docker compose ... exec backend python manage.py maintenance read_only` (writes
+return 503 `maintenance`, logins still work) · `full` (whole API 503 except health/readiness/metrics) ·
+`off` · no argument shows the state. Takes effect on all workers at once (shared Redis), is audited, and
+can be pinned across restarts with `MAINTENANCE_MODE` in the env file.
+
+**Metrics + alerts.** `GET https://<API_DOMAIN>/api/v1/metrics` with `Authorization: Bearer <METRICS_TOKEN>`
+(404 when unset). Prometheus scrape config:
+
+```yaml
+scrape_configs:
+  - job_name: kaamsathi
+    scheme: https
+    metrics_path: /api/v1/metrics
+    bearer_token: "<METRICS_TOKEN>"     # or bearer_token_file
+    scrape_interval: 30s
+    static_configs:
+      - targets: ["<API_DOMAIN>"]
+rule_files: ["alerts.yml"]              # deploy/monitoring/alerts.yml
+```
+
+Counters are kept in Redis (shared by gunicorn workers and Celery), so they reset only when Redis data
+is lost. Families: `http_requests_total`, `http_request_duration_seconds` (histogram per route group),
+`celery_tasks_total`, `otp_requests_total`, `sms_messages_total`. Alerts in
+`deploy/monitoring/alerts.yml`: API down, 5xx > 2 %, p95 > 2.5 s, OTP failures, Celery failures, beat
+heartbeat missing, SMS failures > 20 %.
+
+**Load smoke test.** `deploy/load/k6-smoke.js` ([k6](https://k6.io)): `k6 run deploy/load/k6-smoke.js`
+(local) or `BASE_URL=https://<staging API>/api/v1 ACCESS_TOKEN=<test employer JWT> ORG_ID=<uuid> VUS=20
+DURATION=5m k6 run deploy/load/k6-smoke.js`. GET-only; thresholds: < 1 % errors, p95 < 800 ms. Run it on
+staging before each release that touches hot paths (attendance, payroll, ops lists); never with a real
+user's token against production.
+
+**Legal acceptance.** Current terms/privacy (and employer agreement for org owners) are versioned in
+Admin → Accounts → Legal documents. Publishing a new version: add a row with the new `version`, untick
+`is_current` on the old row and tick it on the new one (one current row per kind); every user is asked
+to accept again on next use. Acceptances (user, version, time, IP, channel) are kept and audited.
+
+## 12. Incident playbooks
+
+Start every incident with §8 (triage, severity, comms). Note the time of every action in the incident log;
+keep the request ids of affected calls.
+
+### 12.1 Account takeover (worker, employer or staff)
+1. **Contain:** in Django admin or ops, deactivate the user (`is_active=False`) — staff via **Ops →
+   Staff** (deactivating revokes all their sessions). For a non-staff user:
+   `manage.py shell -c "from apps.accounts.models import User; from apps.accounts import sessions; u=User.objects.get(phone='98…'); sessions.revoke_all(u)"`.
+2. **Staff account:** **Reset MFA** as well; check whether the attacker changed roles or other staff
+   (`/ops/audit?actor=<phone>` and `?action=staff.`).
+3. **Scope:** `/ops/audit?actor=<phone>&from=<date>` for everything the account did (exports,
+   verifications, payroll approvals, `worker.id_document.view`, `payroll.export.*`, `privacy.export.*`).
+   Check `accounts_sessiondevice` for unknown IPs/devices and `accounts_phoneotp` for OTP bursts (SIM swap?).
+4. **Repair:** revert changes through the normal endpoints (audit rows are never edited). If payroll or
+   bank details changed, hold payouts (12.5).
+5. **Recover:** confirm identity by phone/in person, re-activate, user logs in again (new OTP; staff re-enrol MFA).
+6. Personal data accessed by the attacker → breach process (SECURITY.md §6).
+
+### 12.2 Data leak / integrity incident
+1. **Contain:** `manage.py maintenance read_only` (or `full`) if data is actively leaking through the API;
+   revoke the leaking credential: partner key (**Ops → Partners → Keys → Revoke**), org API key (org
+   settings → API keys → Revoke), staff account (12.1), bucket made private.
+2. **Preserve evidence before rotating:** `docker compose ... logs > incident/`, `pg_dump -t audit_auditlog
+   -t partners_partneraccesslog -t trust_profileview -t accounts_sessiondevice`, Caddy JSON logs.
+3. **Integrity:** run **Verify chain** (`/ops/audit/verify`); `first_broken_id` ≠ null means the audit table
+   was modified by someone with database-owner rights — treat the DB host as compromised, restore to a
+   clean host from backup and compare.
+4. **Rotate:** `DJANGO_SECRET_KEY` **without** fallback (kills every signed file link),
+   `JWT_SIGNING_KEY` (logs everyone out), `FIELD_ENCRYPTION_KEYS` + `rotate_field_keys` if the DB or a
+   backup leaked together with the env file, DB/Redis passwords, `METRICS_TOKEN` (§6).
+5. **Assess + notify:** SECURITY.md §6 (72-hour notifications). Use the audit/access logs to list the
+   affected workers and orgs.
+6. `manage.py maintenance off` once contained and patched.
+
+### 12.3 Service outage
+1. `make deploy-ps`, `/api/v1/readiness`, **Ops → System** (DB, Redis, queue length, workers seen, beat).
+2. API up but tasks stuck: queue length growing + workers 0 → `docker compose ... restart celery-worker`;
+   beat heartbeat stale → `restart celery-beat`. Afterwards check **Failed tasks** and retry.
+3. DB/Redis down or disk full (`df -h`): free space (old images `docker image prune`, old backups),
+   restart the service; if data is damaged restore (§5).
+4. Bad release: roll back (§3). During a long fix put the API in `maintenance read_only` so attendance
+   isn't half-written; tell employers to note hajiri on paper and enter it later (bulk endpoint is
+   idempotent per `client_uuid`).
+5. SMS down = nobody can log in → §7.
+
+### 12.4 Fraud campaign (fake workers, buddy punching, referral or offer abuse)
+1. **Risk queue** (`/ops/risk`): filter by kind (`duplicate_identity`, `shared_bank_account`,
+   `document_reuse`, `attendance_anomaly`, `velocity`) — confirm or dismiss with notes.
+2. **Stop the flow:** deactivate the offending users/workers; revoke partner keys or org API keys involved;
+   void pending referrals (**Ops → Finance → Referrals → Void**); pause shortlisting from an employer by
+   rejecting its KYB in **Ops → Employers** (`POST /ops/employers/{id}/verify {status: rejected, note}`;
+   shortlists require a verified employer).
+3. **Scope:** `/ops/audit?actor=…` and `?organization=…`, the partner access log, attendance check-ins
+   from the same coordinates.
+4. Hold payouts for affected payroll runs (12.5). Rejected identities stay flagged — never delete rows.
+5. If staff were involved: deactivate, reset MFA, review every `ops.*.verify` they did.
+
+### 12.5 Payment / billing incident (wrong wages, duplicate or failed payouts, wrong invoice)
+1. **Stop money moving:** cancel open payout batches (**Payroll → Payouts → Cancel**,
+   `POST /org/payouts/{id}/cancel`); for provider batches already submitted, call the provider
+   (eSewa/Khalti/bank) to stop the transfer; `maintenance read_only` if the bug is systemic.
+2. **Duplicates:** creates/submits are idempotent per `Idempotency-Key` — check `core_idempotencyrecord`
+   and `/ops/audit?action=payout.` for two `payout.submit` rows; reconcile with the bank result file
+   (`/org/payouts/{id}/reconcile`).
+3. **Wrong amounts:** payroll runs that are approved are locked; fix inputs (attendance, salary), create a
+   correction in the next run or a manual payslip adjustment, and re-issue payslips (workers get SMS).
+4. **Billing:** void/re-issue the charge in Admin → Billing; employers are informed by phone.
+5. Note every manual money movement with the provider reference in the incident log and the audit trail
+   (actions through the API are audited automatically).

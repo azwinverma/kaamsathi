@@ -59,8 +59,14 @@ def test_public_passport_only_when_public(api, client, worker, views):
     assert res.status_code == 404
     unknown = api.get("/api/v1/public/passport/zzzzzzzzzz")
     malformed = api.get("/api/v1/public/passport/NOT-A-CODE")
-    # 404s look identical whether the code exists or not.
-    assert res.json() == unknown.json() == malformed.json()
+
+    # 404s look identical whether the code exists or not (request_id differs per request, §1).
+    def body(r):
+        data = r.json()
+        data["error"].pop("request_id", None)
+        return data
+
+    assert body(res) == body(unknown) == body(malformed)
     assert views == []
 
     client.patch("/api/v1/me/passport", {"is_public": True}, format="json")

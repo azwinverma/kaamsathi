@@ -1,0 +1,36 @@
+{
+  "name": "Human-Crafted UI Guardrails",
+  "version": "1.0",
+  "mandatory": true,
+  "principles": [
+    "Product-specific over generic SaaS",
+    "Human-reviewed over prompt-to-production",
+    "Nepal-authentic over stereotypical",
+    "Clarity over visual novelty",
+    "Controlled vibrancy over constant gradients",
+    "Real data states over perfect demo states",
+    "Meaningful delight over gamification",
+    "Original proprietary components over interchangeable template cards"
+  ],
+  "forbidden_patterns": [
+    "fake testimonials or fabricated metrics",
+    "generic purple-blue SaaS gradient everywhere",
+    "oversized pills for ordinary UI",
+    "every section wrapped in a card",
+    "decorative sparkle/star icons without meaning",
+    "random 3D blobs or clay characters",
+    "generic stock corporate handshake/high-five photography",
+    "vague AI-style marketing phrases",
+    "repetitive hero-logo-cloud-three-cards-CTA page formula",
+    "inventing brand colors or component styles per screen"
+  ],
+  "required_review_questions": [
+    "Could this screen belong to any random SaaS product?",
+    "Is there at least one product-specific design idea?",
+    "Does this reflect a real Nepal workforce scenario?",
+    "Would a worker understand it quickly?",
+    "Would an employer trust it?",
+    "Does it handle messy real-world data?",
+    "Has a human design review occurred before production?"
+  ]
+}

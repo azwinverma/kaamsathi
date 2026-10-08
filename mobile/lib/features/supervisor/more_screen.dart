@@ -11,6 +11,7 @@ import '../../core/theme/tokens.dart';
 import '../../core/widgets/common.dart';
 import '../../core/widgets/language_toggle.dart';
 import '../common/account_actions.dart';
+import '../common/inbox/inbox_screen.dart';
 import 'hajiri/hajiri_providers.dart';
 import 'hajiri/ui/site_picker.dart';
 
@@ -28,7 +29,7 @@ class MoreScreen extends ConsumerWidget {
     final multiOrg = (me?.supervisorMemberships.length ?? 0) > 1;
     final canPickSite = mem != null && (mem.allSites || mem.siteIds.length > 1);
     return Scaffold(
-      appBar: AppBar(title: Text(l.moreTitle)),
+      appBar: AppBar(title: Text(l.moreTitle), actions: const [InboxBell()]),
       body: ListView(
         padding: const EdgeInsets.all(KsSpace.page),
         children: [
@@ -73,6 +74,19 @@ class MoreScreen extends ConsumerWidget {
               onTap: () => context.push(Routes.supRoster),
             ),
           ),
+          const SizedBox(height: KsSpace.s4),
+          Card(
+            child: ListTile(
+              key: const Key('more_timesheets'),
+              leading: const Icon(LucideIcons.clock),
+              title: Text(l.tsTitle),
+              subtitle: Text(l.tsSupMenuSubtitle),
+              trailing: const Icon(LucideIcons.chevronRight),
+              onTap: () => context.push(Routes.supTimesheets),
+            ),
+          ),
+          const SizedBox(height: KsSpace.s4),
+          const Card(child: AccountHelpTiles()),
           const SizedBox(height: KsSpace.s4),
           const Card(child: Padding(padding: EdgeInsets.all(KsSpace.s4), child: LanguageSelector())),
           const SizedBox(height: KsSpace.s4),

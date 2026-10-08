@@ -10,6 +10,9 @@ import '../../../../core/router/router.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/eco.dart';
+import '../../../common/inbox/inbox_screen.dart';
+import '../../career/career_data.dart';
+import '../../career/ui/career_screen.dart';
 import '../../checkin/data/check_in_service.dart';
 import '../../data/worker_models.dart';
 import '../../data/worker_repository.dart';
@@ -35,13 +38,14 @@ class WorkerHomeScreen extends ConsumerWidget {
       ref.invalidate(myAttendanceProvider);
       ref.invalidate(payslipsProvider);
       ref.invalidate(trustProvider);
+      ref.invalidate(careerProvider);
       try {
         await ref.read(currentMonthAttendanceProvider.future);
       } catch (_) {}
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text(l.appName)),
+      appBar: AppBar(title: Text(l.appName), actions: const [InboxBell()]),
       body: RefreshIndicator(
         onRefresh: refresh,
         child: ListView(
@@ -53,10 +57,7 @@ class WorkerHomeScreen extends ConsumerWidget {
               '${weekdayName(today, lang)}, ${formatBsDate(BsDate.fromAd(today), lang)}',
               style: t.bodyLarge?.copyWith(color: context.statusColors.textSecondary),
             ),
-            Text(
-              formatAdDate(today, lang),
-              style: t.bodySmall,
-            ),
+            Text(formatAdDate(today, lang), style: t.bodySmall),
             const SizedBox(height: KsSpace.s4),
             const _TodayCard(),
             const SizedBox(height: KsSpace.s4),
@@ -64,6 +65,17 @@ class WorkerHomeScreen extends ConsumerWidget {
             const SizedBox(height: KsSpace.s4),
             const TrustCard(),
             const SizedBox(height: KsSpace.s4),
+            Card(
+              key: const Key('home_jobs_for_you'),
+              child: MenuTile(
+                icon: LucideIcons.briefcaseBusiness,
+                title: l.jobsTitle,
+                subtitle: l.jobsMenuSubtitle,
+                onTap: () => context.push(Routes.workerJobs),
+              ),
+            ),
+            const SizedBox(height: KsSpace.s4),
+            const CareerCard(),
             const _LatestPayslip(),
             const SizedBox(height: KsSpace.s2),
             Card(
@@ -123,21 +135,22 @@ class _TodayCardState extends ConsumerState<_TodayCard> {
     final l = context.l10n;
     return showDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        icon: Icon(LucideIcons.circleAlert, color: Theme.of(ctx).colorScheme.error),
-        content: Text(msg, style: Theme.of(ctx).textTheme.bodyLarge),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.commonClose)),
-          if (onSettings != null)
-            FilledButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-                onSettings();
-              },
-              child: Text(l.openSettings),
-            ),
-        ],
-      ),
+      builder:
+          (ctx) => AlertDialog(
+            icon: Icon(LucideIcons.circleAlert, color: Theme.of(ctx).colorScheme.error),
+            content: Text(msg, style: Theme.of(ctx).textTheme.bodyLarge),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.commonClose)),
+              if (onSettings != null)
+                FilledButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    onSettings();
+                  },
+                  child: Text(l.openSettings),
+                ),
+            ],
+          ),
     );
   }
 
@@ -164,13 +177,14 @@ class _TodayCardState extends ConsumerState<_TodayCard> {
 
     return SectionCard(
       title: l.homeTodayHajiri,
-      trailing: todayStatus == null
-          ? null
-          : Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(999)),
-              child: Text(attendanceLabel(l, todayStatus), style: t.labelSmall?.copyWith(color: fg)),
-            ),
+      trailing:
+          todayStatus == null
+              ? null
+              : Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(999)),
+                child: Text(attendanceLabel(l, todayStatus), style: t.labelSmall?.copyWith(color: fg)),
+              ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -180,15 +194,12 @@ class _TodayCardState extends ConsumerState<_TodayCard> {
             height: 56,
             child: FilledButton.icon(
               key: const Key('check_in_button'),
-              style: checkOut
-                  ? FilledButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                    )
-                  : null,
+              style: checkOut ? FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.secondary) : null,
               onPressed: _busy ? null : () => _go(checkOut),
-              icon: _busy
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : Icon(checkOut ? LucideIcons.logOut : LucideIcons.scanQrCode),
+              icon:
+                  _busy
+                      ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                      : Icon(checkOut ? LucideIcons.logOut : LucideIcons.scanQrCode),
               label: Text(
                 _busy
                     ? l.gettingLocation
@@ -256,9 +267,9 @@ class _LatestPayslip extends ConsumerWidget {
                   Text(p.monthLabel(lang), style: Theme.of(context).textTheme.bodyLarge),
                   Text(
                     formatMoney(p.netPay, lang: lang),
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontFeatures: const [FontFeature.tabularFigures()],
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.headlineMedium?.copyWith(fontFeatures: const [FontFeature.tabularFigures()]),
                   ),
                 ],
               ),

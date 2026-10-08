@@ -1804,7 +1804,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get offerApply => 'Apply';
 
   @override
-  String get offersEmpty => 'No offers right now.';
+  String get offersEmpty => 'No job offers yet.';
 
   @override
   String offerApplied(String partner) {
@@ -2099,4 +2099,891 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rosterOffShort => 'Off';
+
+  @override
+  String get inboxTitle => 'Notifications';
+
+  @override
+  String get inboxEmpty => 'No notifications yet.';
+
+  @override
+  String get inboxMarkAllRead => 'Mark all as read';
+
+  @override
+  String inboxUnread(String count) {
+    return '$count unread';
+  }
+
+  @override
+  String get securityTitle => 'Login & security';
+
+  @override
+  String get securityMenuSubtitle => 'Phones and browsers where you are logged in';
+
+  @override
+  String get securityIntro => 'These devices are logged in to your KaamSathi account. If you don\'t recognise one, log it out.';
+
+  @override
+  String get securityThisDevice => 'This phone';
+
+  @override
+  String securityLastSeen(String date) {
+    return 'Last used $date';
+  }
+
+  @override
+  String securitySignedIn(String date) {
+    return 'Logged in $date';
+  }
+
+  @override
+  String get securityRevoke => 'Log out';
+
+  @override
+  String get securityRevokeConfirm => 'Log out this device?';
+
+  @override
+  String get securityRevoked => 'Device logged out.';
+
+  @override
+  String get securityRevokeOthers => 'Log out all other devices';
+
+  @override
+  String get securityRevokeOthersConfirm => 'Log out every device except this phone?';
+
+  @override
+  String get securityRevokedOthers => 'Other devices logged out.';
+
+  @override
+  String get securityPlatformAndroid => 'Android phone';
+
+  @override
+  String get securityPlatformIos => 'iPhone';
+
+  @override
+  String get securityPlatformWeb => 'Web browser';
+
+  @override
+  String get securityPlatformOther => 'Other device';
+
+  @override
+  String get workHistTitle => 'Past work (outside KaamSathi)';
+
+  @override
+  String get workHistMenuSubtitle => 'Add jobs you did before, with a reference';
+
+  @override
+  String get workHistIntro => 'Add work you did before KaamSathi. When our team confirms it with your reference, it shows as verified on your Skill Passport.';
+
+  @override
+  String get workHistEmpty => 'No past work added yet.';
+
+  @override
+  String get workHistAdd => 'Add past work';
+
+  @override
+  String get workHistEdit => 'Edit past work';
+
+  @override
+  String get workHistEmployer => 'Employer / company name';
+
+  @override
+  String get workHistRole => 'Your role';
+
+  @override
+  String get workHistTrade => 'Trade';
+
+  @override
+  String get workHistStart => 'Started';
+
+  @override
+  String get workHistEnd => 'Ended';
+
+  @override
+  String get workHistStillThere => 'I still work here';
+
+  @override
+  String get workHistDescription => 'What did you do there?';
+
+  @override
+  String get workHistReference => 'Reference (someone who can confirm)';
+
+  @override
+  String get workHistRefName => 'Reference name';
+
+  @override
+  String get workHistRefPhone => 'Reference phone';
+
+  @override
+  String get workHistRefHint => 'Our team may call this person to confirm your work. Tell them first.';
+
+  @override
+  String get workHistRefBoth => 'Fill in both the name and the phone of your reference.';
+
+  @override
+  String get workHistDocument => 'Photo of a letter or work ID';
+
+  @override
+  String get workHistSaved => 'Saved. We will check it.';
+
+  @override
+  String get workHistDeleteConfirm => 'Remove this past work?';
+
+  @override
+  String get workHistDeleted => 'Removed.';
+
+  @override
+  String get workHistStatusSelf => 'Self-reported';
+
+  @override
+  String get workHistStatusRefPending => 'Checking with reference';
+
+  @override
+  String get workHistStatusUnverifiable => 'Could not confirm';
+
+  @override
+  String get workHistStatusRejected => 'Not accepted';
+
+  @override
+  String get workHistByReference => 'Confirmed by reference';
+
+  @override
+  String get workHistByEmployer => 'Confirmed by employer';
+
+  @override
+  String get workHistByDocument => 'Confirmed by document';
+
+  @override
+  String get workHistEndBeforeStart => 'The end date must be after the start date.';
+
+  @override
+  String get workHistLocked => 'Verified work can\'t be changed.';
+
+  @override
+  String get jobsTitle => 'Jobs for you';
+
+  @override
+  String get jobsMenuSubtitle => 'Jobs that match your skills and areas';
+
+  @override
+  String get jobsTabForYou => 'For you';
+
+  @override
+  String get jobsTabApplications => 'My applications';
+
+  @override
+  String get jobsReviewNote => 'KaamSathi\'s team reviews your interest before the employer sees you.';
+
+  @override
+  String get jobsEmpty => 'No matching jobs right now. Add your skills and preferred areas to see more.';
+
+  @override
+  String get jobsUpdatePrefs => 'Update my areas';
+
+  @override
+  String get jobsInterested => 'I\'m interested';
+
+  @override
+  String get jobsInterestConfirmTitle => 'Show interest in this job?';
+
+  @override
+  String get jobsInterestSent => 'Interest sent. We will let you know.';
+
+  @override
+  String get jobsInterestSentBadge => 'Interest sent';
+
+  @override
+  String get jobsFood => 'Food provided';
+
+  @override
+  String get jobsStay => 'Stay provided';
+
+  @override
+  String jobsStarts(String date) {
+    return 'Starts $date';
+  }
+
+  @override
+  String jobsOpenings(String count) {
+    return '$count openings';
+  }
+
+  @override
+  String get employerVerified => 'Verified employer';
+
+  @override
+  String get appsEmpty => 'You have not applied to any job yet.';
+
+  @override
+  String get appsConfirmPrompt => 'You were shortlisted. Are you still interested?';
+
+  @override
+  String get appsConfirm => 'Yes, interested';
+
+  @override
+  String get appsDecline => 'No, decline';
+
+  @override
+  String get appsDeclineConfirmTitle => 'Decline this job?';
+
+  @override
+  String get appsDeclineConfirmBody => 'We will tell the employer you are not interested. This can\'t be undone.';
+
+  @override
+  String get appsDeclineReason => 'Reason';
+
+  @override
+  String get appsConfirmed => 'Thank you. We have told the employer.';
+
+  @override
+  String get appsDeclined => 'Declined.';
+
+  @override
+  String get appsResponseInterested => 'You confirmed interest';
+
+  @override
+  String get appsResponseDeclined => 'You declined';
+
+  @override
+  String appsInterview(String date) {
+    return 'Interview: $date';
+  }
+
+  @override
+  String get appsUnderReview => 'KaamSathi is reviewing';
+
+  @override
+  String get availTitle => 'Availability & areas';
+
+  @override
+  String get availMenuSubtitle => 'Where and when you can work, expected pay';
+
+  @override
+  String get availAreas => 'Preferred districts';
+
+  @override
+  String get availAreasHint => 'Pick the districts where you are happy to work.';
+
+  @override
+  String get availAreasNone => 'No districts chosen yet';
+
+  @override
+  String get availPickDistricts => 'Choose districts';
+
+  @override
+  String get availSearchDistrict => 'Search district';
+
+  @override
+  String availSelectedCount(String count) {
+    return '$count selected';
+  }
+
+  @override
+  String get availRadius => 'How far can you travel for work?';
+
+  @override
+  String availRadiusKm(String km) {
+    return '$km km';
+  }
+
+  @override
+  String get availRadiusAny => 'Anywhere';
+
+  @override
+  String get availWage => 'Expected monthly salary (Rs.)';
+
+  @override
+  String get availFrom => 'Available from';
+
+  @override
+  String get availDone => 'Done';
+
+  @override
+  String get availNumberInvalid => 'Enter a number.';
+
+  @override
+  String get supportTitle => 'Help & support';
+
+  @override
+  String get supportMenuSubtitle => 'Ask our team for help';
+
+  @override
+  String get supportEmpty => 'No help requests yet.';
+
+  @override
+  String get supportNew => 'Ask for help';
+
+  @override
+  String get supportCategory => 'What is it about?';
+
+  @override
+  String get supportCatAccount => 'Account / login';
+
+  @override
+  String get supportCatPayment => 'Salary / payment';
+
+  @override
+  String get supportCatAttendance => 'Hajiri (attendance)';
+
+  @override
+  String get supportCatJob => 'Jobs';
+
+  @override
+  String get supportCatPrivacy => 'Privacy';
+
+  @override
+  String get supportCatTechnical => 'Problem with the app';
+
+  @override
+  String get supportCatOther => 'Other';
+
+  @override
+  String get supportSubject => 'Short title';
+
+  @override
+  String get supportDescription => 'Tell us what happened';
+
+  @override
+  String get supportSent => 'Sent. Our team will reply here.';
+
+  @override
+  String get supportStatusOpen => 'Open';
+
+  @override
+  String get supportStatusPendingUser => 'Waiting for your reply';
+
+  @override
+  String get supportStatusResolved => 'Resolved';
+
+  @override
+  String get supportStatusClosed => 'Closed';
+
+  @override
+  String get supportReplyHint => 'Write a message';
+
+  @override
+  String get supportSend => 'Send';
+
+  @override
+  String get supportYou => 'You';
+
+  @override
+  String get supportTeam => 'KaamSathi team';
+
+  @override
+  String get supportNoMessages => 'No replies yet. We usually answer within a day.';
+
+  @override
+  String get supportClosedNote => 'This request is closed. Ask again if you still need help.';
+
+  @override
+  String get mobTitle => 'Working abroad documents';
+
+  @override
+  String get mobMenuSubtitle => 'Passport, permits and clearances — shared only when you choose';
+
+  @override
+  String get mobIntro => 'Keep your documents safe in one place and share them with a licensed agency you choose. KaamSathi does not find jobs abroad.';
+
+  @override
+  String get mobSafetyTitle => 'Stay safe';
+
+  @override
+  String get mobSafety1 => 'Use only agencies licensed by the Department of Foreign Employment (DoFE).';
+
+  @override
+  String get mobSafety2 => 'Check the agency\'s licence yourself on the official DoFE website (dofe.gov.np) before you pay or sign anything.';
+
+  @override
+  String get mobSafety3 => 'Get a receipt for every payment. Never pay more than the government-approved fee.';
+
+  @override
+  String get mobSafety4 => 'Never hand over your original passport without a receipt.';
+
+  @override
+  String get mobTabDocuments => 'My documents';
+
+  @override
+  String get mobTabAgencies => 'Agencies & sharing';
+
+  @override
+  String get mobTravel => 'Travel documents';
+
+  @override
+  String get mobClearance => 'Clearances & certificates';
+
+  @override
+  String get mobEmpty => 'No documents added yet.';
+
+  @override
+  String get mobAdd => 'Add document';
+
+  @override
+  String get mobKind => 'Document type';
+
+  @override
+  String get mobKindPassport => 'Passport';
+
+  @override
+  String get mobKindLabourPermit => 'Labour permit';
+
+  @override
+  String get mobKindVisa => 'Visa';
+
+  @override
+  String get mobKindPolice => 'Police clearance';
+
+  @override
+  String get mobKindMedical => 'Medical fitness';
+
+  @override
+  String get mobKindOrientation => 'Pre-departure orientation';
+
+  @override
+  String get mobKindInsurance => 'Insurance';
+
+  @override
+  String get mobKindLanguage => 'Language test';
+
+  @override
+  String get mobNumber => 'Document number';
+
+  @override
+  String get mobCountry => 'Issuing country';
+
+  @override
+  String get mobTitleField => 'Name of the document';
+
+  @override
+  String get mobIssuer => 'Issued by';
+
+  @override
+  String get mobScore => 'Score or level';
+
+  @override
+  String get mobSaved => 'Saved. Our team will check it.';
+
+  @override
+  String get mobDeleteConfirm => 'Remove this document?';
+
+  @override
+  String get mobExpired => 'Expired';
+
+  @override
+  String mobExpiresInDays(String days) {
+    return 'Expires in $days days';
+  }
+
+  @override
+  String get mobAgenciesIntro => 'Only agencies with a valid DoFE licence that KaamSathi has checked are listed.';
+
+  @override
+  String get mobAgenciesEmpty => 'No checked agencies yet.';
+
+  @override
+  String mobLicence(String number) {
+    return 'Licence no. $number';
+  }
+
+  @override
+  String mobLicenceValid(String date) {
+    return 'Licence valid until $date';
+  }
+
+  @override
+  String get mobShare => 'Share my documents';
+
+  @override
+  String mobShareTitle(String agency) {
+    return 'Share with $agency?';
+  }
+
+  @override
+  String get mobShareBody => 'The agency will see which documents you have, whether they are verified and when they expire. It will not see photos or full numbers. You can stop sharing at any time.';
+
+  @override
+  String get mobShareDays => 'Share for';
+
+  @override
+  String get mobShared => 'Shared. You can stop it at any time.';
+
+  @override
+  String get mobSharesTitle => 'Who can see my documents';
+
+  @override
+  String get mobSharesEmpty => 'You are not sharing with any agency.';
+
+  @override
+  String get careerTitle => 'Grow your earnings';
+
+  @override
+  String get careerMenuSubtitle => 'Certificates, courses and skills that pay more';
+
+  @override
+  String get careerEmpty => 'No suggestions right now. Check again later.';
+
+  @override
+  String careerUplift(String pct) {
+    return 'Up to $pct% more pay';
+  }
+
+  @override
+  String get careerSeeAll => 'See all';
+
+  @override
+  String get careerKindCredential => 'Certificate';
+
+  @override
+  String get careerKindCourse => 'Course';
+
+  @override
+  String get careerKindSkill => 'Skill';
+
+  @override
+  String get careerKindProfile => 'Profile';
+
+  @override
+  String get careerYourTrades => 'Your trades';
+
+  @override
+  String get careerEstimateNote => 'Pay estimates come from wages on KaamSathi. They are not a promise.';
+
+  @override
+  String get tsTitle => 'Timesheets';
+
+  @override
+  String get tsMenuSubtitle => 'Hours and overtime each week';
+
+  @override
+  String get tsSupMenuSubtitle => 'Check and submit weekly hours';
+
+  @override
+  String get tsEmpty => 'No timesheet for this week yet.';
+
+  @override
+  String get tsSupEmpty => 'No timesheets for this week. Prepare them from hajiri.';
+
+  @override
+  String get tsRegular => 'Regular hours';
+
+  @override
+  String get tsOtClaimed => 'OT claimed';
+
+  @override
+  String get tsOtApproved => 'OT approved';
+
+  @override
+  String tsHours(String hours) {
+    return '$hours h';
+  }
+
+  @override
+  String tsOtShort(String hours) {
+    return 'OT $hours h';
+  }
+
+  @override
+  String get tsStatusSubmitted => 'Submitted';
+
+  @override
+  String get tsStatusRejected => 'Returned';
+
+  @override
+  String get tsOverCap => 'Overtime is above the weekly limit of 24 hours.';
+
+  @override
+  String get tsNote => 'Note';
+
+  @override
+  String get tsSubmitConfirm => 'Submit this timesheet for approval?';
+
+  @override
+  String get tsSubmitted => 'Submitted for approval.';
+
+  @override
+  String tsSubmitAll(String count) {
+    return 'Submit all drafts ($count)';
+  }
+
+  @override
+  String get tsSubmitAllConfirm => 'Submit every draft timesheet for this week?';
+
+  @override
+  String get tsGenerate => 'Prepare from hajiri';
+
+  @override
+  String get tsGenerated => 'Timesheets prepared.';
+
+  @override
+  String get ecoGroupAbroad => 'Working abroad';
+
+  @override
+  String get ecoGroupAccount => 'Account & help';
+
+  @override
+  String availMaxDistricts(String count) {
+    return 'You can choose up to $count districts.';
+  }
+
+  @override
+  String get offersTab => 'Offers';
+
+  @override
+  String get offerContractType => 'Contract type';
+
+  @override
+  String get offerContractPermanent => 'Permanent';
+
+  @override
+  String get offerContractFixedTerm => 'Fixed term';
+
+  @override
+  String get offerContractDaily => 'Daily wage';
+
+  @override
+  String get offerContractPartTime => 'Part time';
+
+  @override
+  String get offerContractProbation => 'Probation';
+
+  @override
+  String get offerContractSeasonal => 'Seasonal';
+
+  @override
+  String offerExpiresInDays(String days) {
+    return 'Answer within $days days';
+  }
+
+  @override
+  String offerExpiresInHours(String hours) {
+    return 'Answer within $hours hours';
+  }
+
+  @override
+  String get offerExpired => 'Offer expired';
+
+  @override
+  String get offerStatusPending => 'Waiting for your answer';
+
+  @override
+  String get offerStatusAccepted => 'Accepted';
+
+  @override
+  String get offerStatusDeclined => 'Declined';
+
+  @override
+  String get offerStatusWithdrawn => 'Withdrawn by employer';
+
+  @override
+  String get offerReview => 'Review and accept';
+
+  @override
+  String get offerDecline => 'Decline';
+
+  @override
+  String get offerDeclineTitle => 'Decline this offer?';
+
+  @override
+  String get offerDeclineBody => 'We will tell the employer you said no. This can\'t be undone.';
+
+  @override
+  String get offerSummaryTitle => 'Before you accept';
+
+  @override
+  String get offerSummaryIntro => 'Please check these details. This is what the employer is offering you.';
+
+  @override
+  String get offerNoFee => 'KaamSathi never charges workers. Do not pay anyone to get this job.';
+
+  @override
+  String get offerAgree => 'I have read these details and I want this job.';
+
+  @override
+  String get offerAccept => 'Accept offer';
+
+  @override
+  String get offerAccepted => 'Offer accepted. The employer will contact you.';
+
+  @override
+  String offerAnswerBy(String date) {
+    return 'Answer by $date';
+  }
+
+  @override
+  String get alertsTitle => 'Job alerts';
+
+  @override
+  String get alertsMenuSubtitle => 'Get told when a matching job opens';
+
+  @override
+  String get alertsEmpty => 'No job alerts yet.';
+
+  @override
+  String get alertsAdd => 'New alert';
+
+  @override
+  String get alertsEdit => 'Edit alert';
+
+  @override
+  String get alertsAnyTrade => 'Any trade';
+
+  @override
+  String get alertsAnyDistrict => 'Any district';
+
+  @override
+  String get alertsMinWage => 'Minimum monthly wage (Rs.)';
+
+  @override
+  String alertsFrom(String amount) {
+    return 'From $amount';
+  }
+
+  @override
+  String get alertsFrequency => 'How often?';
+
+  @override
+  String get freqInstant => 'Right away';
+
+  @override
+  String get freqDaily => 'Once a day';
+
+  @override
+  String get freqWeekly => 'Once a week';
+
+  @override
+  String get alertsDeleteConfirm => 'Delete this alert?';
+
+  @override
+  String get alertsSaved => 'Alert saved.';
+
+  @override
+  String get legalTitle => 'Please review and accept';
+
+  @override
+  String get legalIntro => 'We have updated our terms. Please read them before you continue using KaamSathi.';
+
+  @override
+  String get legalKindTerms => 'Terms of use';
+
+  @override
+  String get legalKindPrivacy => 'Privacy policy';
+
+  @override
+  String get legalKindOther => 'Document';
+
+  @override
+  String legalVersion(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get legalOpenHint => 'Open this link in your phone\'s browser to read it:';
+
+  @override
+  String get legalAgree => 'I have read and accept these documents.';
+
+  @override
+  String get legalAccept => 'Accept and continue';
+
+  @override
+  String get notifPrefsTitle => 'Notification settings';
+
+  @override
+  String get notifPrefsAlways => 'Payslip, security and safety messages always come, whatever you choose here.';
+
+  @override
+  String get notifSms => 'SMS messages';
+
+  @override
+  String get notifPush => 'App notifications';
+
+  @override
+  String get notifEmail => 'Email';
+
+  @override
+  String get notifMarketing => 'News and offers from KaamSathi';
+
+  @override
+  String get notifJobAlertFreq => 'Job alerts';
+
+  @override
+  String get notifQuietHours => 'Quiet hours (no SMS at night)';
+
+  @override
+  String get notifQuietFrom => 'From';
+
+  @override
+  String get notifQuietTo => 'To';
+
+  @override
+  String get notifQuietOff => 'Off';
+
+  @override
+  String get helpCenterTitle => 'Help articles';
+
+  @override
+  String get helpCenterSubtitle => 'Quick answers to common questions';
+
+  @override
+  String get helpSearch => 'Search help';
+
+  @override
+  String get helpEmpty => 'No articles found.';
+
+  @override
+  String get helpStillNeed => 'Still need help? Ask our team.';
+
+  @override
+  String get safetyTitle => 'Report a safety problem';
+
+  @override
+  String get safetyMenuSubtitle => 'Unsafe work, harassment or wages withheld — in confidence';
+
+  @override
+  String get safetyDanger => 'If you are in danger now, call 100 (Police).';
+
+  @override
+  String get safetyConfidential => 'This report is confidential. Your employer will not see it. Only KaamSathi\'s safety team reads it.';
+
+  @override
+  String get safetyKind => 'What happened?';
+
+  @override
+  String get safetyKindUnsafe => 'Unsafe workplace';
+
+  @override
+  String get safetyKindHarassment => 'Harassment or abuse';
+
+  @override
+  String get safetyKindWages => 'Wages withheld';
+
+  @override
+  String get safetyKindOther => 'Other safety concern';
+
+  @override
+  String get safetyDescription => 'Tell us what happened, where and when';
+
+  @override
+  String get safetyEmergency => 'This is an emergency — call me now';
+
+  @override
+  String get safetyEmergencyHint => 'Our team will call you as soon as possible.';
+
+  @override
+  String get safetyAnonymous => 'Hide my name if this is ever shared';
+
+  @override
+  String get safetySent => 'Report sent. Our safety team will contact you.';
+
+  @override
+  String get supportCatSafety => 'Safety';
+
+  @override
+  String get offerEmployer => 'Employer';
+
+  @override
+  String get offerStart => 'Start date';
+
+  @override
+  String get offerAnswerByLabel => 'Answer by';
 }

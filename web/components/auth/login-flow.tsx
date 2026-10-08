@@ -2,15 +2,21 @@
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { ArrowLeft, Briefcase, KeyRound, ShieldCheck, Smartphone } from "lucide-react";
-import { useRequestOtp, useVerifyOtp } from "@/lib/api/hooks/auth";
+import { ArrowLeft, Briefcase, KeyRound, LockKeyhole, ShieldCheck, Smartphone } from "lucide-react";
+import { useLogout, useRequestOtp, useVerifyOtp } from "@/lib/api/hooks/auth";
+import { useVerifyMfa } from "@/lib/api/hooks/security";
 import { isApiError } from "@/lib/api/errors";
 import type { Me } from "@/lib/api/types";
+import { isMfaChallenge } from "@/lib/api/types-security";
 import { isValidPhone } from "@/lib/format";
 import { useFormat } from "@/lib/use-format";
+import { track } from "@/lib/telemetry";
 import { Button } from "@/components/ui/button";
 import { Field, FormError } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
+import { LegalAccept } from "@/components/security/legal-accept";
+import { needsLegalAcceptance } from "@/components/security/helpers";
 import { OtpInput } from "./otp-input";
 
 const RESEND_SECONDS = 30;
@@ -41,8 +47,10 @@ export function LoginFlow() {
   const params = useSearchParams();
   const requestOtp = useRequestOtp();
   const verifyOtp = useVerifyOtp();
+  const verifyMfa = useVerifyMfa();
+  const logout = useLogout();
 
-  const [step, setStep] = React.useState<"phone" | "otp" | "choose">("phone");
+  const [step, setStep] = React.useState<"phone" | "otp" | "mfa" | "legal" | "choose">("phone");
   const [phone, setPhone] = React.useState("");
   const [phoneError, setPhoneError] = React.useState<string | null>(null);
   const [code, setCode] = React.useState("");
@@ -50,6 +58,10 @@ export function LoginFlow() {
   const [error, setError] = React.useState<string | null>(null);
   const [cooldown, setCooldown] = React.useState(0);
   const [user, setUser] = React.useState<Me | null>(null);
+  const [mfaToken, setMfaToken] = React.useState<string | null>(null);
+  const [mfaCode, setMfaCode] = React.useState("");
+  const [useRecovery, setUseRecovery] = React.useState(false);
+  const [recoveryCode, setRecoveryCode] = React.useState("");
   const headingRef = React.useRef<HTMLHeadingElement>(null);
 
   React.useEffect(() => {
@@ -92,6 +104,23 @@ export function LoginFlow() {
     });
   };
 
+  const finishLogin = (me: Me) => {
+    track("login_success", { method: "otp", role: me.is_staff ? "staff" : "user" });
+    // Unaccepted current terms/privacy (etc.): accept first, then continue as usual.
+    if (needsLegalAcceptance(me)) {
+      setUser(me);
+      setStep("legal");
+      return;
+    }
+    const dest = routeAfterLogin(me, params.get("next"));
+    if (dest === "choose") {
+      setUser(me);
+      setStep("choose");
+    } else {
+      router.replace(dest);
+    }
+  };
+
   const verify = (value = code) => {
     const clean = value.replace(/\s/g, "");
     setError(null);
@@ -102,14 +131,16 @@ export function LoginFlow() {
     verifyOtp.mutate(
       { phone, code: clean },
       {
-        onSuccess: ({ user: me }) => {
-          const dest = routeAfterLogin(me, params.get("next"));
-          if (dest === "choose") {
-            setUser(me);
-            setStep("choose");
-          } else {
-            router.replace(dest);
+        onSuccess: (res: unknown) => {
+          if (isMfaChallenge(res)) {
+            setMfaToken(res.mfa_token);
+            setMfaCode("");
+            setRecoveryCode("");
+            setUseRecovery(false);
+            setStep("mfa");
+            return;
           }
+          finishLogin((res as { user: Me }).user);
         },
         onError: (err) => {
           setError(apiMessage(err));
@@ -117,6 +148,46 @@ export function LoginFlow() {
         },
       },
     );
+  };
+
+  const verifySecondFactor = (value = mfaCode) => {
+    setError(null);
+    if (!mfaToken) return;
+    let input: { mfa_token: string; code?: string; recovery_code?: string };
+    if (useRecovery) {
+      const rc = recoveryCode.trim();
+      if (!rc) {
+        setError(t("security.login.enter_recovery_code"));
+        return;
+      }
+      input = { mfa_token: mfaToken, recovery_code: rc };
+    } else {
+      const clean = value.replace(/\s/g, "");
+      if (clean.length !== 6) {
+        setError(t("auth.enter_full_code"));
+        return;
+      }
+      input = { mfa_token: mfaToken, code: clean };
+    }
+    verifyMfa.mutate(input, {
+      onSuccess: ({ user: me }) => finishLogin(me),
+      onError: (err) => {
+        if (isApiError(err) && err.code === "mfa_token_invalid") {
+          // Challenge expired (5 min) or was already used: start over from the phone number.
+          setMfaToken(null);
+          setCode("");
+          setStep("phone");
+          setError(t("security.login.token_expired"));
+          return;
+        }
+        if (isApiError(err) && err.code === "mfa_invalid") {
+          setError(useRecovery ? t("security.login.invalid_recovery") : t("security.login.invalid_code"));
+        } else {
+          setError(apiMessage(err));
+        }
+        setMfaCode("");
+      },
+    });
   };
 
   if (step === "choose" && user) {
@@ -142,6 +213,115 @@ export function LoginFlow() {
             onClick={() => router.replace("/ops")}
           />
         </div>
+      </div>
+    );
+  }
+
+  if (step === "legal" && user) {
+    return (
+      <LegalAccept
+        pending={user.pending_legal ?? []}
+        onAccepted={(stillPending) => finishLogin({ ...user, pending_legal: stillPending })}
+        onLogout={() =>
+          logout.mutate(undefined, {
+            onSettled: () => {
+              setUser(null);
+              setCode("");
+              setError(null);
+              setStep("phone");
+            },
+          })
+        }
+      />
+    );
+  }
+
+  if (step === "mfa" && mfaToken) {
+    return (
+      <div className="space-y-6">
+        <button
+          type="button"
+          onClick={() => {
+            setStep("phone");
+            setMfaToken(null);
+            setError(null);
+          }}
+          className="inline-flex items-center gap-1 text-sm text-fg-muted hover:text-fg"
+        >
+          <ArrowLeft className="size-4" aria-hidden />
+          {t("security.login.start_over")}
+        </button>
+        <div className="space-y-1.5">
+          <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-brand-subtle text-brand">
+            <LockKeyhole className="size-5" aria-hidden />
+          </div>
+          <h1 ref={headingRef} tabIndex={-1} id="mfa-heading" className="text-2xl font-semibold focus:outline-none">
+            {t("security.login.title")}
+          </h1>
+          <p className="text-sm text-fg-muted" id="mfa-desc">
+            {useRecovery ? t("security.login.recovery_body") : t("security.login.body")}
+          </p>
+        </div>
+        <form
+          className="space-y-5"
+          onSubmit={(e) => {
+            e.preventDefault();
+            verifySecondFactor();
+          }}
+          noValidate
+        >
+          {useRecovery ? (
+            <Field id="recovery-code" label={t("security.login.recovery_label")}>
+              <Input
+                value={recoveryCode}
+                onChange={(e) => {
+                  setRecoveryCode(e.target.value);
+                  if (error) setError(null);
+                }}
+                autoComplete="one-time-code"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                autoFocus
+                className="font-mono tracking-wider"
+                disabled={verifyMfa.isPending}
+              />
+            </Field>
+          ) : (
+            <OtpInput
+              value={mfaCode}
+              onChange={(v) => {
+                setMfaCode(v);
+                if (error) setError(null);
+              }}
+              onComplete={(v) => verifySecondFactor(v)}
+              invalid={!!error}
+              disabled={verifyMfa.isPending}
+              labelledBy="mfa-heading"
+              describedBy="mfa-desc"
+              boxLabel={(i) => t("auth.otp_digit", { n: i })}
+            />
+          )}
+          <FormError message={error} />
+          <Button type="submit" size="lg" className="w-full" loading={verifyMfa.isPending}>
+            {t("auth.verify")}
+          </Button>
+        </form>
+        <p className="text-center text-sm">
+          <button
+            type="button"
+            className="font-medium text-brand hover:underline"
+            aria-pressed={useRecovery}
+            onClick={() => {
+              setUseRecovery((v) => !v);
+              setError(null);
+              setMfaCode("");
+              setRecoveryCode("");
+            }}
+          >
+            {useRecovery ? t("security.login.use_app") : t("security.login.use_recovery")}
+          </button>
+        </p>
       </div>
     );
   }

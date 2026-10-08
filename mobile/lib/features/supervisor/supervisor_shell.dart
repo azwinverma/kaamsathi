@@ -5,6 +5,8 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../core/format.dart';
 import '../../core/l10n/l10n.dart';
+import '../common/inbox/inbox_data.dart';
+import '../common/inbox/inbox_screen.dart';
 import 'hajiri/hajiri_providers.dart';
 
 class SupervisorShell extends ConsumerWidget {
@@ -15,24 +17,29 @@ class SupervisorShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final pending = ref.watch(syncControllerProvider.select((s) => s.records.length));
-    return Scaffold(
-      body: shell,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: shell.currentIndex,
-        onDestinationSelected: (i) => shell.goBranch(i, initialLocation: i == shell.currentIndex),
-        destinations: [
-          NavigationDestination(
-            icon: Badge(
-              isLabelVisible: pending > 0,
-              label: Text(localizeDigits('$pending', context.lang)),
-              child: const Icon(LucideIcons.clipboardCheck),
+    return UnreadPoller(
+      child: Scaffold(
+        body: shell,
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: shell.currentIndex,
+          onDestinationSelected: (i) {
+            ref.read(unreadCountProvider.notifier).refresh();
+            shell.goBranch(i, initialLocation: i == shell.currentIndex);
+          },
+          destinations: [
+            NavigationDestination(
+              icon: Badge(
+                isLabelVisible: pending > 0,
+                label: Text(localizeDigits('$pending', context.lang)),
+                child: const Icon(LucideIcons.clipboardCheck),
+              ),
+              label: l.navAttendance,
             ),
-            label: l.navAttendance,
-          ),
-          NavigationDestination(icon: const Icon(LucideIcons.calendarDays), label: l.hajiriRegister),
-          NavigationDestination(icon: const Icon(LucideIcons.calendarOff), label: l.navLeave),
-          NavigationDestination(icon: const Icon(LucideIcons.ellipsis), label: l.moreTitle),
-        ],
+            NavigationDestination(icon: const Icon(LucideIcons.calendarDays), label: l.hajiriRegister),
+            NavigationDestination(icon: const Icon(LucideIcons.calendarOff), label: l.navLeave),
+            NavigationDestination(icon: const Icon(LucideIcons.ellipsis), label: l.moreTitle),
+          ],
+        ),
       ),
     );
   }

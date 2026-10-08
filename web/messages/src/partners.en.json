@@ -30,6 +30,7 @@
       "profile_read": "Read a consenting worker's verified profile",
       "earnings_read": "Read a consenting worker's verified earnings",
       "passport_read": "Read a consenting worker's Skill Passport",
+      "mobility_read": "Licensed recruitment agencies only: verification status of a consenting worker's foreign-employment documents",
       "referrals_write": "Update the status of referrals sent to this partner"
     },
     "stats": {

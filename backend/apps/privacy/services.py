@@ -8,8 +8,6 @@ from __future__ import annotations
 
 import datetime as dt
 import decimal
-import hashlib
-import hmac
 import io
 import json
 import logging
@@ -547,8 +545,13 @@ def generate_export(req: PrivacyRequest) -> PrivacyRequest:
 
 # --------------------------------------------------------------------------- deletion
 def pseudonymous_phone(phone: str, prefix: str = "D") -> str:
-    """Stable 10-char placeholder (keeps the unique constraint, not reversible without the key)."""
-    digest = hmac.new(settings.SECRET_KEY.encode(), (phone or "").encode(), hashlib.sha256).hexdigest()
+    """Stable 10-char placeholder (keeps the unique constraint, not reversible without the key).
+
+    Keyed with FIELD_HASH_KEY (via blind_index) so rotating SECRET_KEY doesn't change the mapping.
+    """
+    from apps.core.crypto import blind_index
+
+    digest = blind_index(phone or "-", "deleted-phone")
     return (prefix + digest)[:10]
 
 

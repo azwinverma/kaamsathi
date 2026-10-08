@@ -8,6 +8,7 @@ import '../../../../core/l10n/l10n.dart';
 import '../../../../core/router/router.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
+import '../../../common/inbox/inbox_screen.dart';
 import '../../data/worker_models.dart';
 import '../../data/worker_repository.dart';
 
@@ -27,6 +28,7 @@ class TalabScreen extends ConsumerWidget {
             icon: const Icon(LucideIcons.handCoins, size: 18),
             label: Text(l.moneyTitle),
           ),
+          const InboxBell(),
         ],
       ),
       body: RefreshIndicator(
@@ -39,14 +41,16 @@ class TalabScreen extends ConsumerWidget {
         child: AsyncBody<List<Payslip>>(
           value: value,
           onRetry: () => ref.invalidate(payslipsProvider),
-          data: (slips) => slips.isEmpty
-              ? ListView(children: [EmptyState(icon: LucideIcons.wallet, message: l.talabEmpty)])
-              : ListView.separated(
-                  padding: const EdgeInsets.all(KsSpace.page),
-                  itemCount: slips.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: KsSpace.s3),
-                  itemBuilder: (_, i) => PayslipTile(slip: slips[i]),
-                ),
+          data:
+              (slips) =>
+                  slips.isEmpty
+                      ? ListView(children: [EmptyState(icon: LucideIcons.wallet, message: l.talabEmpty)])
+                      : ListView.separated(
+                        padding: const EdgeInsets.all(KsSpace.page),
+                        itemCount: slips.length,
+                        separatorBuilder: (_, _) => const SizedBox(height: KsSpace.s3),
+                        itemBuilder: (_, i) => PayslipTile(slip: slips[i]),
+                      ),
         ),
       ),
     );
@@ -75,8 +79,7 @@ class PayslipTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(slip.monthLabel(lang), style: t.titleSmall),
-                    if (slip.organizationName != null)
-                      Text(slip.organizationName!, style: t.bodySmall),
+                    if (slip.organizationName != null) Text(slip.organizationName!, style: t.bodySmall),
                     const SizedBox(height: KsSpace.s2),
                     Text(
                       formatMoney(slip.netPay, lang: lang),

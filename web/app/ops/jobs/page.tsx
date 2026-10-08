@@ -19,6 +19,7 @@ import { useOpsJobs } from "@/lib/api/hooks/ops";
 import { listResults } from "@/lib/api/client";
 import type { OpsJob } from "@/lib/api/types";
 import { useFormat } from "@/lib/use-format";
+import { VerifiedEmployerBadge } from "@/components/kyb/kyb-badges";
 
 type Scope = "all" | "overdue" | "no_shortlist";
 
@@ -153,7 +154,11 @@ export default function OpsJobsPage() {
                         className="hover:underline"
                       >
                         {j.organization?.name}
-                      </Link>
+                      </Link>{" "}
+                      <VerifiedEmployerBadge
+                        compact
+                        status={(j as { employer_verified?: boolean }).employer_verified ? "verified" : null}
+                      />
                     </Td>
                     <Td>
                       <HoursOpenBadge hours={j.hours_open} />

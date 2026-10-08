@@ -5,6 +5,7 @@ picked from ``Accept-Language`` by Django's LocaleMiddleware.
 """
 
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
 
 JOB_STATUS = {
     "draft": _("Draft"),
@@ -98,6 +99,16 @@ ERROR_MESSAGES = {
     "duplicate": _("This already exists."),
     "throttled": _("Too many requests. Please slow down."),
     "server_error": _("Something went wrong. Please try again."),
+    # Security & platform (docs/CONTRACT-EXTENSIONS.md §1)
+    "mfa_required": pgettext_lazy("security", "Set up two-step login before using the ops console."),
+    "mfa_invalid": pgettext_lazy("security", "The authenticator code is incorrect."),
+    "mfa_token_invalid": pgettext_lazy("security", "Your login step expired. Please log in again."),
+    "mfa_locked": pgettext_lazy("security", "Too many wrong codes. Please try again in 15 minutes."),
+    "idempotency_conflict": pgettext_lazy("security", "This request was already submitted."),
+    "upload_rejected": pgettext_lazy("security", "This file was not accepted."),
+    "maintenance": pgettext_lazy(
+        "security", "KaamSathi is under maintenance. Please try again in a few minutes."
+    ),
 }
 
 

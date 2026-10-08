@@ -100,7 +100,9 @@ class CredentialSerializer(BSModelSerializer):
             raise serializers.ValidationError(_("Upload a PDF or a photo (JPG, PNG)."))
         if value.size and value.size > MAX_DOC_BYTES:
             raise serializers.ValidationError(_("File is too large (maximum 10 MB)."))
-        return value
+        from apps.core.uploads import validate_upload  # magic bytes, EXIF strip, PDF scripts, ClamAV
+
+        return validate_upload(value, kinds={"image", "pdf"}, max_mb=10)
 
     def validate(self, attrs):
         issued = attrs.get("issued_on", getattr(self.instance, "issued_on", None))

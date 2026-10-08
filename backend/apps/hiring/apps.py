@@ -5,3 +5,6 @@ class HiringConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "apps.hiring"
     label = "hiring"
+
+    def ready(self):
+        from . import signals  # noqa: F401

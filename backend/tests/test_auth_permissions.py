@@ -34,7 +34,7 @@ def assert_error(res, status, code):
     assert res.status_code == status, res.content
     body = res.json()
     assert set(body) == {"error"}
-    assert set(body["error"]) == {"code", "message", "fields"}
+    assert set(body["error"]) - {"request_id"} == {"code", "message", "fields"}  # + request_id (§1)
     assert body["error"]["code"] == code
     assert isinstance(body["error"]["message"], str) and body["error"]["message"]
     return body["error"]
@@ -294,13 +294,42 @@ def test_ops_unauthenticated(api):
 
 
 def test_ops_verify_worker(staff_client):
-    w = f.WorkerFactory(verification_status="pending")
+    from django.core.files.base import ContentFile
+
+    w = f.WorkerFactory(verification_status="pending", citizenship_no="12-34-56")
+    w.id_front.save("front.jpg", ContentFile(b"img"), save=True)
     res = staff_client.post(
         f"/api/v1/ops/workers/{w.id}/verify", {"status": "verified", "note": "ok"}, format="json"
     )
     assert res.status_code == 200
     w.refresh_from_db()
     assert w.verification_status == "verified" and w.verified_at is not None
+
+
+def test_ops_verify_requires_id_number_and_document(staff_client):
+    w = f.WorkerFactory(verification_status="pending")
+    res = staff_client.post(f"/api/v1/ops/workers/{w.id}/verify", {"status": "verified"}, format="json")
+    assert res.status_code == 400
+    assert {"citizenship_no", "id_front"} <= set(res.json()["error"]["fields"])
+    # Rejecting needs no documents.
+    res = staff_client.post(
+        f"/api/v1/ops/workers/{w.id}/verify", {"status": "rejected", "note": "no ID"}, format="json"
+    )
+    assert res.status_code == 200
+
+
+def test_ops_verify_blocked_by_open_duplicate_identity_flag(staff_client):
+    from django.core.files.base import ContentFile
+
+    from apps.risk.models import FraudFlag
+
+    w = f.WorkerFactory(verification_status="pending", citizenship_no="77-1")
+    w.id_front.save("front.jpg", ContentFile(b"img"), save=True)
+    FraudFlag.objects.create(
+        subject_type="worker", subject_id=str(w.pk), kind="duplicate_identity", severity="high", status="open"
+    )
+    res = staff_client.post(f"/api/v1/ops/workers/{w.id}/verify", {"status": "verified"}, format="json")
+    assert res.status_code == 400 and res.json()["error"]["code"] == "invalid_state"
 
 
 # --- envelope -------------------------------------------------------------------------------------

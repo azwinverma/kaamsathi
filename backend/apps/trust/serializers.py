@@ -77,6 +77,9 @@ class DisputeSerializer(serializers.ModelSerializer):
                 else None
             ),
             "resolved_at": _dt(d.resolved_at),
+            "sla_due_at": _dt(d.sla_due_at),
+            "overdue": bool(d.sla_due_at and d.sla_due_at < timezone.now()),
+            "escalated": d.escalated,
         }
 
 

@@ -36,6 +36,8 @@ import {
   toMoneyString,
 } from "./lib";
 import { useWageCheck } from "./wage";
+import { JoinOfferNudge, offerDefaults } from "@/components/experience/offer-dialog";
+import type { ApplicationOfferField } from "@/lib/api/types-experience";
 
 type MovableApp = Pick<Application | ApplicationDetail, "id" | "stage" | "job" | "interview_at"> & {
   worker: { full_name: string };
@@ -145,6 +147,8 @@ export function MoveStageDialog({
   const { data: job } = useJob(stage === "joined" ? app?.job.id : undefined);
   const [formError, setFormError] = React.useState<string | null>(null);
   const open = !!app && !!stage;
+  const offer = (app as ApplicationOfferField | null)?.offer;
+  const acceptedOffer = offer?.status === "accepted" ? offer : null;
 
   const form = useForm<FormValues>({
     defaultValues: {
@@ -195,6 +199,7 @@ export function MoveStageDialog({
       dearness_allowance: split ? String(split.da) : "",
       daily_wage: wt === "daily" && amount ? String(amount) : "",
       ssf_enrolled: false,
+      ...offerDefaults(acceptedOffer),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, app?.id, stage, jobReady]);
@@ -366,6 +371,7 @@ export function MoveStageDialog({
 
             {stage === "joined" ? (
               <>
+                <JoinOfferNudge offer={offer} />
                 <Fieldset legend={tm("employment_heading")} description={tm("employment_hint")}>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Field

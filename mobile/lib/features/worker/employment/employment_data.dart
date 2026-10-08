@@ -61,6 +61,7 @@ class MyEmployment {
     this.ssfEnrolled = false,
     this.contract,
     this.ratedByMe = false,
+    this.employerVerified = false,
   });
 
   final String id;
@@ -87,6 +88,9 @@ class MyEmployment {
   final bool ssfEnrolled;
   final ContractInfo? contract;
   final bool ratedByMe;
+
+  /// The employer passed KaamSathi's business verification (KYB).
+  final bool employerVerified;
 
   bool get isActive => status == 'active';
 
@@ -141,6 +145,11 @@ class MyEmployment {
       ssfEnrolled: boolOf(j['ssf_enrolled']),
       contract: ContractInfo.fromJson(j['contract']),
       ratedByMe: rating != null && rating != false,
+      employerVerified: boolOf(
+        j['employer_verified'] ??
+            org?['employer_verified'] ??
+            (org?['verification_status'] == null ? null : org!['verification_status'] == 'verified'),
+      ),
     );
   }
 }

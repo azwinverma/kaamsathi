@@ -1,0 +1,69 @@
+# Example Prometheus alert rules for KaamSathi (metrics from GET /api/v1/metrics, apps/core/metrics.py).
+# Load with `rule_files: [alerts.yml]` in prometheus.yml — scrape config in docs/RUNBOOK.md §11.
+groups:
+  - name: kaamsathi-api
+    rules:
+      - alert: KaamSathiApiDown
+        expr: up{job="kaamsathi"} == 0
+        for: 3m
+        labels: { severity: critical }
+        annotations:
+          summary: "KaamSathi /metrics is not reachable"
+          description: "Prometheus could not scrape the API for 3 minutes (backend down, Caddy or token issue)."
+
+      - alert: KaamSathiHigh5xxRate
+        expr: |
+          sum(rate(http_requests_total{job="kaamsathi",status_class="5xx"}[5m]))
+            / clamp_min(sum(rate(http_requests_total{job="kaamsathi"}[5m])), 1e-9) > 0.02
+        for: 10m
+        labels: { severity: critical }
+        annotations:
+          summary: "More than 2% of API requests fail with 5xx"
+          description: "Check Sentry (filter by request_id) and `make deploy-logs S=backend`."
+
+      - alert: KaamSathiSlowRequests
+        expr: |
+          histogram_quantile(0.95,
+            sum by (le, group) (rate(http_request_duration_seconds_bucket{job="kaamsathi"}[10m]))) > 2.5
+        for: 15m
+        labels: { severity: warning }
+        annotations:
+          summary: "p95 latency above 2.5 s for {{ $labels.group }}"
+
+      - alert: KaamSathiOtpFailures
+        expr: |
+          sum(rate(otp_requests_total{job="kaamsathi",result=~"otp_invalid|otp_expired"}[15m]))
+            > 3 * clamp_min(sum(rate(otp_requests_total{job="kaamsathi",result="verified"}[15m])), 0.01)
+        for: 15m
+        labels: { severity: warning }
+        annotations:
+          summary: "Failed OTP verifications far exceed successful logins"
+          description: "Possible SMS delivery problem or credential-stuffing; check SMS gateway and throttles."
+
+  - name: kaamsathi-workers
+    rules:
+      - alert: KaamSathiCeleryFailures
+        expr: sum(increase(celery_tasks_total{job="kaamsathi",state="failure"}[30m])) > 5
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: "Celery tasks are failing after all retries"
+          description: "Open /ops/system → Failed tasks to inspect, retry or dismiss."
+
+      - alert: KaamSathiNoCeleryActivity
+        expr: sum(increase(celery_tasks_total{job="kaamsathi",task="apps.core.tasks.beat_heartbeat"}[20m])) == 0
+        for: 10m
+        labels: { severity: critical }
+        annotations:
+          summary: "Beat heartbeat not executed for 20 minutes"
+          description: "celery-beat or celery-worker is down (RUNBOOK §11). SMS, reminders and payroll tasks are not running."
+
+      - alert: KaamSathiSmsFailures
+        expr: |
+          sum(increase(sms_messages_total{job="kaamsathi",status="failed"}[30m]))
+            > 0.2 * clamp_min(sum(increase(sms_messages_total{job="kaamsathi"}[30m])), 1)
+        for: 10m
+        labels: { severity: critical }
+        annotations:
+          summary: "More than 20% of SMS sends are failing"
+          description: "OTP logins depend on SMS. Check gateway balance/token (SPARROW_SMS_TOKEN / AAKASH_SMS_TOKEN)."

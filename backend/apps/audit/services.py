@@ -131,3 +131,23 @@ class AuditedViewSetMixin:
             changes={"before": before},
             ip=client_ip(self.request),
         )
+
+
+def verify_chain(batch: int = 5000) -> dict:
+    """Walk the chain in ``seq`` order: ``{ok, checked, first_broken_id}``.
+
+    A row is broken when its stored hash doesn't match its content, its ``prev_hash`` doesn't match
+    the previous row's hash, or a ``seq`` is missing (deleted row).
+    """
+    from .models import GENESIS, compute_hash
+
+    prev_hash = GENESIS
+    expected_seq = 1
+    checked = 0
+    for row in AuditLog.objects.order_by("seq").iterator(chunk_size=batch):
+        checked += 1
+        if row.seq != expected_seq or row.prev_hash != prev_hash or compute_hash(row) != row.hash:
+            return {"ok": False, "checked": checked, "first_broken_id": str(row.id)}
+        prev_hash = row.hash
+        expected_seq += 1
+    return {"ok": True, "checked": checked, "first_broken_id": None}
