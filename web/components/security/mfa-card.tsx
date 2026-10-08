@@ -158,7 +158,7 @@ function Enrol({
       <ol className="grid gap-5 md:grid-cols-[auto_1fr]">
         <li className="flex flex-col items-center gap-2">
           <p className="self-start text-sm font-medium text-fg">{t("step_scan")}</p>
-          <div className="flex size-48 items-center justify-center rounded-lg border border-border bg-white p-2">
+          <div className="flex size-48 items-center justify-center rounded-dense border border-border bg-white p-2">
             {qrFailed ? (
               <p className="px-3 text-center text-xs text-hero">{t("qr_failed")}</p>
             ) : (
@@ -229,7 +229,7 @@ function RecoveryCodes({ codes, account, onDone }: { codes: string[]; account: s
         {t("codes_body")}
       </Notice>
       <ul
-        className="grid grid-cols-2 gap-2 rounded-lg border border-border bg-surface-muted p-3 font-mono text-sm sm:grid-cols-5"
+        className="grid grid-cols-2 gap-2 rounded-dense border border-border bg-surface-muted p-3 font-mono text-sm sm:grid-cols-5"
         aria-label={t("codes_title")}
       >
         {codes.map((c) => (

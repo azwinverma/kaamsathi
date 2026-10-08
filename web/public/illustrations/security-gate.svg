@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" role="img" aria-labelledby="t">
+  <title id="t">Woman security guard at a compound gate, writing in the visitor register</title>
+  <defs>
+    <pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.4" fill="#0F172A" fill-opacity=".09"/></pattern>
+  </defs>
+  <rect width="400" height="500" fill="#F1F5F9"/>
+  <circle cx="110" cy="120" r="96" fill="#DBEAFE"/>
+  <rect y="0" width="400" height="200" fill="url(#dots)"/>
+
+  <g transform="translate(-36 -70) scale(1.22)">
+    <!-- compound wall + sliding gate (object: outlined) -->
+    <g stroke="#0F172A" stroke-width="3" stroke-linejoin="round">
+      <rect x="0" y="250" width="70" height="200" fill="#CBD5E1"/>
+      <rect x="214" y="180" width="200" height="262" fill="none"/>
+      <path d="M214 180h200M214 200h200M214 420h200" stroke-width="5"/>
+      <path d="M232 180v262M252 180v262M272 180v262M292 180v262M312 180v262M332 180v262M352 180v262M372 180v262M392 180v262" stroke="#334155" stroke-width="5"/>
+      <rect x="196" y="160" width="20" height="290" fill="#334155"/>
+      <circle cx="240" cy="450" r="8" fill="#5A6679"/>
+      <circle cx="370" cy="450" r="8" fill="#5A6679"/>
+    </g>
+    <rect x="0" y="456" width="420" height="44" fill="#CBD5E1"/>
+    <path d="M0 456h420" stroke="#0F172A" stroke-width="3"/>
+
+    <!-- guard -->
+    <path d="M118 340l-4 108M154 340l6 108" stroke="#0F172A" stroke-width="34" stroke-linecap="round"/>
+    <rect x="88" y="440" width="46" height="18" rx="9" fill="#0F172A"/>
+    <rect x="140" y="440" width="46" height="18" rx="9" fill="#0F172A"/>
+    <rect x="86" y="208" width="100" height="142" rx="26" fill="#1D4ED8"/>
+    <rect x="86" y="318" width="100" height="10" fill="#0F172A"/>
+    <rect x="148" y="314" width="16" height="18" rx="2" fill="#FBBF24"/>
+    <path d="M96 216h22M154 216h22" stroke="#0F172A" stroke-width="6" stroke-linecap="round"/>
+    <!-- whistle lanyard -->
+    <path d="M126 210c4 24 12 40 32 48" stroke="#FF6B6B" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <rect x="125" y="190" width="22" height="24" fill="#6B4430"/>
+    <!-- bun -->
+    <circle cx="112" cy="176" r="14" fill="#0F172A"/>
+    <circle cx="136" cy="166" r="34" fill="#6B4430"/>
+    <path d="M103 168a33 33 0 0 1 64-6c-20-4-44 0-64 6z" fill="#0F172A"/>
+    <!-- peaked cap (uniform: outlined) -->
+    <path d="M102 150c0-20 16-30 34-30s34 10 34 30z" fill="#0F172A" stroke="#0F172A" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M128 150h50a4 4 0 0 1 0 8h-50z" fill="#334155" stroke="#0F172A" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="140" cy="136" r="6" fill="#FBBF24"/>
+
+    <!-- arms holding the register -->
+    <path d="M96 230c-8 30 0 52 40 58" stroke="#2563EB" stroke-width="26" stroke-linecap="round" fill="none"/>
+    <path d="M178 230c10 24 14 40 12 52" stroke="#2563EB" stroke-width="26" stroke-linecap="round" fill="none"/>
+    <!-- visitor register + pen (object: outlined) -->
+    <g stroke="#0F172A" stroke-width="3" stroke-linejoin="round">
+      <path d="M118 278l46 6 46-6v40l-46 6-46-6z" fill="#FFFFFF"/>
+      <path d="M164 284v40"/>
+      <path d="M126 292h28M126 302h28M172 292h28M172 302h20" stroke="#5A6679" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M188 280l14-22" stroke-width="5" stroke-linecap="round"/>
+    </g>
+    <circle cx="136" cy="292" r="13" fill="#6B4430"/>
+    <circle cx="190" cy="282" r="13" fill="#6B4430"/>
+  </g>
+  <circle cx="352" cy="58" r="7" fill="#2563EB"/>
+  <circle cx="368" cy="44" r="4" fill="#2563EB"/>
+</svg>

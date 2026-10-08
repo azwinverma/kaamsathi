@@ -63,7 +63,7 @@ export function SwitchField({
   disabled?: boolean;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 rounded-lg border border-border bg-surface p-3.5">
+    <div className="flex items-start justify-between gap-4 rounded-dense border border-border bg-surface p-3.5">
       <div className="space-y-0.5">
         <label htmlFor={id} className="text-sm font-medium text-fg">
           {label}

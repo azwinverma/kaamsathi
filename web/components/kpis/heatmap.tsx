@@ -86,7 +86,7 @@ export function HeatmapView() {
       </Toolbar>
 
       {query.isLoading ? (
-        <Skeleton className="h-[480px] rounded-lg" />
+        <Skeleton className="h-[480px] rounded-dense" />
       ) : query.isError ? (
         <ErrorState error={query.error} onRetry={() => query.refetch()} />
       ) : data ? (

@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/format.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/router/router.dart';
 import '../../../../core/theme/tokens.dart';
-import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/motion.dart';
 import '../../data/worker_models.dart';
 import '../../data/worker_repository.dart';
@@ -82,29 +80,40 @@ class CompletenessView extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     final c = completeness;
     final todo = c.todo.take(maxItems).toList();
-    return SectionCard(
+    final ks = context.ks;
+    // Tinted tile (worker surface): teal = growth (brand v2 §4).
+    return Container(
       key: const Key('profile_completeness'),
-      title: l.complTitle,
-      trailing: Text(
-        l.complPercent(formatPercent(c.percent / 100, lang)),
-        style: t.labelLarge?.copyWith(color: Theme.of(context).colorScheme.primary),
-      ),
+      padding: const EdgeInsets.fromLTRB(KsSpace.s4, KsSpace.s4, KsSpace.s4, KsSpace.s2),
+      decoration: BoxDecoration(color: ks.tealSubtle, borderRadius: BorderRadius.circular(KsRadius.card)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Row(
+            children: [
+              Expanded(child: Text(l.complTitle, style: t.titleSmall)),
+              Text(
+                l.complPercent(formatPercent(c.percent / 100, lang)),
+                style: t.labelLarge?.copyWith(color: ks.tealText, fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+          const SizedBox(height: KsSpace.s3),
           ClipRRect(
             borderRadius: BorderRadius.circular(KsRadius.pill),
             child: KsAnimatedFraction(
               value: c.percent / 100,
-              builder: (context, v) => LinearProgressIndicator(
-                value: v,
-                minHeight: 8,
-                backgroundColor: context.ks.neutralSoft,
-              ),
+              builder:
+                  (context, v) => LinearProgressIndicator(
+                    value: v,
+                    minHeight: 8,
+                    color: ks.tealText,
+                    backgroundColor: ks.verifiedSoft,
+                  ),
             ),
           ),
           const SizedBox(height: KsSpace.s2),
-          Text(l.complHint, style: t.bodySmall),
+          Text(l.complHint, style: t.bodyMedium?.copyWith(color: ks.textSecondary)),
           for (final i in todo)
             ListTile(
               key: Key('compl_${i.key}'),
@@ -115,12 +124,7 @@ class CompletenessView extends StatelessWidget {
               trailing: const Icon(LucideIcons.chevronRight),
               onTap: () {
                 if (onItem?.call(i.key) ?? false) return;
-                final route = completenessRoute(i.key);
-                if (route == Routes.workerProfile) {
-                  context.go(route);
-                } else {
-                  context.push(route);
-                }
+                openRoute(context, completenessRoute(i.key));
               },
             ),
         ],

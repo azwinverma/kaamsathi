@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-labelledby="t">
+  <title id="t">Site supervisor in a white hard hat and hi-vis vest marking hajiri on a phone at a building site</title>
+  <defs>
+    <pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.4" fill="#0F172A" fill-opacity=".09"/></pattern>
+    <pattern id="brick" width="32" height="16" patternUnits="userSpaceOnUse">
+      <path d="M0 15.5h32M16 0v8M0 8h32M32 8v8M0 8v8" stroke="#C2410C" stroke-opacity=".35" stroke-width="2" fill="none"/>
+    </pattern>
+  </defs>
+  <rect width="480" height="360" fill="#F0FDFA"/>
+  <rect x="0" y="0" width="480" height="150" fill="url(#dots)"/>
+  <!-- building under construction with steel scaffold -->
+  <rect x="250" y="60" width="210" height="260" fill="#FFF1F1"/>
+  <rect x="250" y="60" width="210" height="260" fill="url(#brick)"/>
+  <rect x="300" y="110" width="40" height="50" fill="#334155"/>
+  <rect x="380" y="110" width="40" height="50" fill="#334155"/>
+  <g stroke="#0F172A" stroke-width="4" stroke-linecap="round">
+    <path d="M240 40v290M310 40v290M380 40v290M450 40v290"/>
+    <path d="M236 100h220M236 180h220M236 260h220"/>
+    <path d="M240 100l70 80M310 180l70 80M380 100l70 80" stroke-width="3"/>
+  </g>
+  <rect x="236" y="174" width="220" height="12" fill="#FBBF24" stroke="#0F172A" stroke-width="3"/>
+  <rect y="320" width="480" height="40" fill="#CBD5E1"/>
+  <path d="M0 320h480" stroke="#0F172A" stroke-width="3"/>
+  <!-- wheelbarrow -->
+  <g stroke="#0F172A" stroke-width="3" stroke-linejoin="round">
+    <path d="M330 290h90l-12 26h-66z" fill="#14B8A6"/>
+    <circle cx="410" cy="322" r="12" fill="#334155"/>
+    <path d="M330 290l-26-8" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <!-- supervisor -->
+  <rect x="96" y="160" width="104" height="180" rx="28" fill="#334155"/>
+  <!-- hi-vis vest -->
+  <path d="M100 196c0-20 14-34 32-34h8l-6 178h-34zM194 196c0-20-14-34-32-34h-8l6 178h34z" fill="#FBBF24"/>
+  <path d="M104 262h32M160 262h32" stroke="#FFFFFF" stroke-width="7"/>
+  <rect x="137" y="140" width="22" height="26" fill="#8D5A3B"/>
+  <circle cx="148" cy="114" r="34" fill="#8D5A3B"/>
+  <!-- greying hair -->
+  <path d="M115 116a33 33 0 0 1 8-26c4 10 4 20-8 26zM181 116a33 33 0 0 0-8-26c-4 10-4 20 8 26z" fill="#CBD5E1"/>
+  <!-- white hard hat (supervisor) -->
+  <path d="M112 104a36 34 0 0 1 72 0z" fill="#FFFFFF" stroke="#0F172A" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="106" y="100" width="84" height="11" rx="5.5" fill="#FFFFFF" stroke="#0F172A" stroke-width="3"/>
+  <path d="M148 70v16" stroke="#0F172A" stroke-width="3" stroke-linecap="round"/>
+  <!-- arms: one holds the phone up, the other taps -->
+  <path d="M190 186c20 16 18 40 6 56" stroke="#334155" stroke-width="26" stroke-linecap="round" fill="none"/>
+  <path d="M104 186c-14 40 20 64 74 66" stroke="#334155" stroke-width="26" stroke-linecap="round" fill="none"/>
+
+  <!-- phone with the hajiri list (object: outlined) -->
+  <g stroke="#0F172A" stroke-width="3" stroke-linejoin="round">
+    <rect x="166" y="180" width="62" height="104" rx="10" fill="#0F172A"/>
+    <rect x="172" y="190" width="50" height="84" rx="4" fill="#FFFFFF"/>
+  </g>
+  <rect x="172" y="190" width="50" height="14" fill="#2563EB"/>
+  <g>
+    <circle cx="182" cy="216" r="5" fill="#14B8A6"/>
+    <rect x="191" y="213" width="24" height="6" rx="3" fill="#CBD5E1"/>
+    <circle cx="182" cy="234" r="5" fill="#14B8A6"/>
+    <rect x="191" y="231" width="20" height="6" rx="3" fill="#CBD5E1"/>
+    <circle cx="182" cy="252" r="5" fill="none" stroke="#5A6679" stroke-width="2" stroke-dasharray="3 2"/>
+    <rect x="191" y="249" width="22" height="6" rx="3" fill="#CBD5E1"/>
+  </g>
+  <circle cx="198" cy="248" r="13" fill="#8D5A3B"/>
+  <circle cx="180" cy="256" r="13" fill="#8D5A3B"/>
+  <circle cx="54" cy="56" r="7" fill="#14B8A6"/>
+  <circle cx="70" cy="42" r="4" fill="#14B8A6"/>
+</svg>

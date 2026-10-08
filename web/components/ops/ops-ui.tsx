@@ -77,7 +77,7 @@ export function DocImage({
   const tc = useTranslations("common");
   const [open, setOpen] = React.useState(false);
   const box = cn(
-    "relative flex w-full items-center justify-center overflow-hidden rounded-lg border border-border bg-surface-muted",
+    "relative flex w-full items-center justify-center overflow-hidden rounded-dense border border-border bg-surface-muted",
     tall ? "aspect-[3/4]" : "aspect-[4/3]",
   );
   return (

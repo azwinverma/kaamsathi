@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function PartnerDocsPage() {
   return (
-    <PublicFrame>
+    <PublicFrame accent="api">
       <PartnerApiDocs />
     </PublicFrame>
   );

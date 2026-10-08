@@ -1,7 +1,17 @@
 "use client";
 import * as React from "react";
 import Link from "next/link";
-import { CalendarCheck, HandCoins, Pencil, Star, UserX } from "lucide-react";
+import { CalendarCheck, HandCoins, Pencil, ShieldCheck, Star, UserX } from "lucide-react";
+import {
+  CredentialCard,
+  EmploymentTimeline,
+  VerificationLadder,
+  useWorkerLadder,
+  type TimelineEntry,
+} from "@/components/ledger";
+import { CREDENTIAL_TONE } from "@/components/credentials/shared";
+import { useExpiringCredentials } from "@/lib/api/hooks/credentials";
+import type { WorkerTrustFields } from "@/lib/api/types-trust";
 import { useTranslations } from "next-intl";
 import { useSession } from "@/components/providers/session";
 import { StatusBadge, VerificationBadge } from "@/components/shared/status-badge";
@@ -109,8 +119,11 @@ export function EmploymentDetail({ id }: { id: string }) {
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-1">
           <WorkerCardPanel emp={emp} />
+          <LadderPanel emp={emp} />
+          {canManage ? <CredentialsPanel emp={emp} /> : null}
         </div>
         <div className="space-y-6 lg:col-span-2">
+          <TimelinePanel emp={emp} />
           <EmploymentPanel emp={emp} />
           {canManage ? (
             <WagePanel emp={emp} onEdit={active ? () => setDialog("edit") : undefined} />
@@ -149,28 +162,11 @@ function WorkerCardPanel({ emp }: { emp: Employment }) {
   const td = useTranslations("workforce.detail");
   const f = useFormat();
   const w = emp.worker;
-  const verificationText =
-    w.verification_status === "verified"
-      ? td("verified_body")
-      : w.verification_status === "pending"
-        ? td("pending_body")
-        : w.verification_status === "rejected"
-          ? td("rejected_body")
-          : td("unverified_body");
   return (
     <Card>
       <CardHeader title={td("worker_card")} />
       <CardBody className="space-y-4">
         <WorkerIdentity worker={w} size="lg" />
-        <div
-          className={
-            w.verification_status === "verified"
-              ? "bg-success-subtle text-success rounded-md px-3 py-2 text-xs"
-              : "bg-surface-muted text-fg-muted rounded-md px-3 py-2 text-xs"
-          }
-        >
-          {verificationText}
-        </div>
         <SkillChips skills={w.skills} max={5} />
         <DescriptionList
           columns={2}
@@ -184,6 +180,155 @@ function WorkerCardPanel({ emp }: { emp: Employment }) {
             { label: t("term.phone"), value: <span className="tabular">{w.phone_masked}</span> },
           ]}
         />
+      </CardBody>
+    </Card>
+  );
+}
+
+function verificationText(status: string, td: ReturnType<typeof useTranslations>): string {
+  return status === "verified"
+    ? td("verified_body")
+    : status === "pending"
+      ? td("pending_body")
+      : status === "rejected"
+        ? td("rejected_body")
+        : td("unverified_body");
+}
+
+/** Verification ladder for this worker (trust level 0–5). */
+function LadderPanel({ emp }: { emp: Employment }) {
+  const td = useTranslations("workforce.detail");
+  const tl = useTranslations("ledger.ladder");
+  const w = emp.worker as Employment["worker"] & WorkerTrustFields;
+  const level = w.verification_level ?? (w.verification_status === "verified" ? 1 : 0);
+  const rungs = useWorkerLadder(level, { rejected: w.verification_status === "rejected" });
+  return (
+    <Card>
+      <CardHeader
+        title={
+          <span className="inline-flex items-center gap-2">
+            <ShieldCheck className="size-4 text-verified" aria-hidden />
+            {tl("label")}
+          </span>
+        }
+        description={verificationText(w.verification_status, td)}
+      />
+      <CardBody>
+        <VerificationLadder rungs={rungs} label={tl("worker_title", { name: w.full_name })} />
+      </CardBody>
+    </Card>
+  );
+}
+
+/** Certificates with an expiry on file (from the org's expiring-credentials feed, 365 days). */
+function CredentialsPanel({ emp }: { emp: Employment }) {
+  const tc = useTranslations("ledger.credential");
+  const tr = useTranslations("credentials.review");
+  const f = useFormat();
+  const q = useExpiringCredentials(365);
+  const mine = listResults(q.data).filter((c) => c.worker.id === emp.worker.id);
+  return (
+    <Card>
+      <CardHeader title={tc("title")} />
+      <CardBody>
+        {q.isLoading ? (
+          <Skeleton className="h-16" />
+        ) : q.isError ? (
+          <ErrorState error={q.error} onRetry={() => q.refetch()} className="py-6" />
+        ) : mine.length === 0 ? (
+          <p className="text-sm text-fg-muted">{tc("empty")}</p>
+        ) : (
+          <ul className="space-y-2">
+            {mine.map((c) => (
+              <CredentialCard
+                key={c.id}
+                as="li"
+                title={c.title}
+                issuer={c.level ? tc("issuer_level", { issuer: c.issuer, level: c.level }) : c.issuer}
+                status={{ tone: c.status === "verified" ? "verified" : CREDENTIAL_TONE[c.status], label: c.status_label }}
+                expiry={
+                  <span className={c.days_to_expiry < 0 ? "font-medium text-danger" : c.days_to_expiry <= 30 ? "font-medium text-warning" : "text-fg-muted"}>
+                    {c.days_to_expiry < 0
+                      ? tr("expired_ago", { days: Math.abs(c.days_to_expiry) })
+                      : tc("expires", { date: c.expires_on_bs ? f.bs(c.expires_on_bs) : f.ad(c.expires_on) })}
+                  </span>
+                }
+              />
+            ))}
+          </ul>
+        )}
+      </CardBody>
+    </Card>
+  );
+}
+
+/** Employment timeline: joined → replacement window → this month / left. */
+function TimelinePanel({ emp }: { emp: Employment }) {
+  const t = useTranslations();
+  const tt = useTranslations("ledger.timeline");
+  const f = useFormat();
+  const now = React.useMemo(() => todayBs(), []);
+  const today = todayIso();
+  const register = useAttendanceRegister(now.year, now.month, emp.site?.id);
+  const row = register.data?.rows.find((r) => r.employment_id === emp.id);
+  const when = (ad: string | null | undefined, bs?: string | null) => {
+    const d = f.date(ad, bs);
+    return (
+      <>
+        <span className="block font-medium text-fg-body">{d.bs}</span>
+        <span className="block">{d.ad}</span>
+      </>
+    );
+  };
+  const entries: TimelineEntry[] = [
+    {
+      id: "joined",
+      when: when(emp.start_date, emp.start_date_bs),
+      title: emp.site ? tt("joined", { site: emp.site.name }) : tt("joined_no_site"),
+      detail: emp.designation ? tt("as", { designation: emp.designation }) : undefined,
+      state: "done",
+    },
+  ];
+  const rep = emp.replacement_eligible_until;
+  const repEntry: TimelineEntry | null = rep
+    ? {
+        id: "replacement",
+        when: when(rep),
+        title: tt("replacement"),
+        detail: tt("replacement_hint", { name: emp.worker.full_name.split(/\s+/)[0] }),
+        state: rep >= today ? "upcoming" : "done",
+      }
+    : null;
+  if (repEntry && repEntry.state === "done") entries.push(repEntry);
+  if (emp.status === "active") {
+    entries.push({
+      id: "now",
+      when: <span className="block font-medium text-fg-body">{tt("today")}</span>,
+      title: tt("still_working"),
+      detail: row
+        ? `${f.bsMonth(now.year, now.month)} · ${tt("this_month_hint", {
+            present: f.digits(row.totals.present),
+            absent: f.digits(row.totals.absent),
+            leave: f.digits(row.totals.leave),
+          })}`
+        : undefined,
+      state: "current",
+    });
+    if (repEntry && repEntry.state === "upcoming") entries.push(repEntry);
+  } else if (emp.end_date) {
+    entries.push({
+      id: "ended",
+      when: when(emp.end_date, emp.end_date_bs),
+      title: tt("ended"),
+      detail: emp.end_reason ? tt("ended_hint", { reason: t(`end_reason.${emp.end_reason}`) }) : undefined,
+      state: "ended",
+    });
+  }
+  return (
+    <Card>
+      <CardHeader title={tt("label")} />
+      <CardBody>
+        <EmploymentTimeline entries={entries} />
       </CardBody>
     </Card>
   );

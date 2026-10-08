@@ -14,7 +14,7 @@ import {
   Users,
 } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
-import { StatCard } from "@/components/ui/stat-card";
+import { DenseStatRow } from "@/components/ledger";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EmptyState, ErrorState, Skeleton } from "@/components/ui/feedback";
@@ -27,6 +27,7 @@ import { useFormat } from "@/lib/use-format";
 
 export default function OpsDashboardPage() {
   const t = useTranslations("ops.dashboard");
+  const tl = useTranslations("ledger.ops");
   const f = useFormat();
   const dash = useOpsDashboard();
   const d = dash.data;
@@ -42,65 +43,47 @@ export default function OpsDashboardPage() {
       {dash.isError ? (
         <ErrorState error={dash.error} onRetry={() => dash.refetch()} className="mb-6" />
       ) : (
-        <div className="mb-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-          <StatCard
-            label={t("pending_verification")}
-            value={f.number(d?.pending_verification)}
-            icon={ShieldCheck}
-            tone={d?.pending_verification ? "warning" : "success"}
+        <div className="mb-6 space-y-3">
+          <DenseStatRow
+            label={tl("queues_title")}
             loading={dash.isLoading}
-            href="/ops/verification"
-            hint={t("pending_hint")}
-          />
-          <StatCard
-            label={t("open_jobs")}
-            value={f.number(d?.open_jobs)}
-            icon={Briefcase}
-            tone="brand"
-            loading={dash.isLoading}
-            href="/ops/jobs"
-          />
-          <StatCard
-            label={t("avg_to_shortlist")}
-            value={avg === null ? "—" : f.hours(avg)}
-            icon={Timer}
-            tone={avgTone}
-            loading={dash.isLoading}
-            hint={t("sla_target", { hours: f.digits(SHORTLIST_SLA_HOURS) })}
-          />
-          <StatCard
-            label={t("hires_30d")}
-            value={f.number(d?.hires_30d)}
-            icon={Handshake}
-            tone="success"
-            loading={dash.isLoading}
-          />
-          <StatCard
-            label={t("workers")}
-            value={f.number(d?.workers)}
-            icon={Users}
-            loading={dash.isLoading}
-            href="/ops/workers"
-          />
-          <StatCard
-            label={t("verified_workers")}
-            value={f.number(d?.verified_workers)}
-            icon={BadgeCheck}
-            tone="success"
-            loading={dash.isLoading}
-            hint={verifiedPct !== null ? t("verified_pct", { pct: f.digits(verifiedPct) }) : undefined}
-          />
-          <StatCard
-            label={t("organizations")}
-            value={f.number(d?.organizations)}
-            icon={Building2}
-            loading={dash.isLoading}
-            href="/ops/organizations"
+            items={[
+              {
+                key: "pending",
+                label: t("pending_verification"),
+                value: f.number(d?.pending_verification),
+                icon: d?.pending_verification ? Clock : BadgeCheck,
+                tone: d?.pending_verification ? "warning" : "success",
+                href: "/ops/verification",
+                hint: t("pending_hint"),
+                focal: true,
+              },
+              {
+                key: "avg",
+                label: t("avg_to_shortlist"),
+                value: avg === null ? "—" : f.hours(avg),
+                icon: Timer,
+                tone: avgTone === "neutral" ? "neutral" : avgTone,
+                hint: t("sla_target", { hours: f.digits(SHORTLIST_SLA_HOURS) }),
+              },
+              { key: "open", label: t("open_jobs"), value: f.number(d?.open_jobs), icon: Briefcase, href: "/ops/jobs" },
+              { key: "hires", label: t("hires_30d"), value: f.number(d?.hires_30d), icon: Handshake, tone: "success" },
+              { key: "workers", label: t("workers"), value: f.number(d?.workers), icon: Users, href: "/ops/workers" },
+              {
+                key: "verified",
+                label: t("verified_workers"),
+                value: f.number(d?.verified_workers),
+                icon: ShieldCheck,
+                tone: "verified",
+                hint: verifiedPct !== null ? t("verified_pct", { pct: f.digits(verifiedPct) }) : undefined,
+              },
+              { key: "orgs", label: t("organizations"), value: f.number(d?.organizations), icon: Building2, href: "/ops/organizations" },
+            ]}
           />
         </div>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
         <OpenJobsCard />
         <PendingQueueCard />
       </div>
@@ -120,7 +103,7 @@ function OpenJobsCard() {
   const overdue = listResults(q.data).filter((j) => (j.hours_open ?? 0) > SHORTLIST_SLA_HOURS).length;
 
   return (
-    <Card>
+    <Card className="min-w-0">
       <CardHeader
         title={t("jobs_waiting")}
         description={overdue ? t("overdue_count", { count: overdue }) : t("jobs_waiting_hint")}
@@ -180,7 +163,7 @@ function PendingQueueCard() {
   const rows = q.data?.results ?? [];
 
   return (
-    <Card>
+    <Card className="min-w-0">
       <CardHeader
         title={t("verification_queue")}
         description={q.data ? t("pending_count", { count: q.data.count }) : undefined}

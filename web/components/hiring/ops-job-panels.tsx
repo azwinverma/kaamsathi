@@ -138,7 +138,7 @@ export function MatchRunsPanel({ jobId }: { jobId: string }) {
           <EmptyState icon={History} title={to("runs_empty")} />
         ) : (
           <>
-            <ul className="divide-border border-border divide-y rounded-lg border">
+            <ul className="divide-border border-border divide-y rounded-dense border">
               {rows.map((r) => (
                 <RunRow
                   key={r.id}

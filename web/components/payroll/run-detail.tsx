@@ -29,7 +29,7 @@ import {
 import { ErrorState, Skeleton } from "@/components/ui/feedback";
 import { PageHeader, Toolbar } from "@/components/ui/page-header";
 import { SearchInput } from "@/components/ui/search-input";
-import { StatCard } from "@/components/ui/stat-card";
+import { DenseStatRow } from "@/components/ledger";
 import { StatusBadge } from "@/components/shared/status-badge";
 import {
   useApprovePayroll,
@@ -199,42 +199,49 @@ function RunView({ run }: { run: PayrollRun }) {
 
       <Card className="mb-6 p-5">
         <StatusStepper run={run} />
-        <p className="mt-5 flex items-start gap-2 rounded-md bg-surface-muted px-3 py-2.5 text-sm text-fg-body">
+        <p className="mt-5 flex items-start gap-2 rounded-dense bg-surface-muted px-3 py-2.5 text-sm text-fg-body">
           <Info className="mt-0.5 size-4 shrink-0 text-fg-muted" aria-hidden />
           {note}
         </p>
       </Card>
 
-      <div className="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <StatCard label={t("detail.stat_workers")} value={f.number(totals.workers)} icon={Users} />
-        <StatCard label={t("detail.stat_gross")} value={f.money(totals.gross)} icon={Banknote} />
-        <StatCard
-          label={t("detail.stat_deductions")}
-          value={f.money(totalDeductions(totals))}
-          tone="warning"
-          icon={Landmark}
-          hint={t("detail.stat_deductions_hint", {
-            ssf: f.money(totals.ssf_employee),
-            tds: f.money(totals.tds),
-            advance: f.money(totals.advance_recovery),
-            other: f.money(totals.other_deductions),
-          })}
-        />
-        <StatCard
-          label={t("detail.stat_net")}
-          value={f.money(totals.net)}
-          tone="success"
-          icon={Wallet}
-          hint={t("detail.stat_net_hint")}
-        />
-        <StatCard
-          label={t("detail.stat_employer_cost")}
-          value={f.money(run.employer_cost)}
-          tone="brand"
-          icon={ShieldCheck}
-          hint={t("detail.stat_employer_cost_hint", { ssf: f.money(totals.ssf_employer) })}
-        />
-      </div>
+      <DenseStatRow
+        className="mb-8"
+        label={t("sheet.title")}
+        items={[
+          {
+            key: "net",
+            label: t("detail.stat_net"),
+            value: f.money(totals.net),
+            icon: Wallet,
+            tone: "success",
+            hint: t("detail.stat_net_hint"),
+            focal: true,
+          },
+          { key: "workers", label: t("detail.stat_workers"), value: f.number(totals.workers), icon: Users },
+          { key: "gross", label: t("detail.stat_gross"), value: f.money(totals.gross), icon: Banknote },
+          {
+            key: "deductions",
+            label: t("detail.stat_deductions"),
+            value: f.money(totalDeductions(totals)),
+            icon: Landmark,
+            tone: "warning",
+            hint: t("detail.stat_deductions_hint", {
+              ssf: f.money(totals.ssf_employee),
+              tds: f.money(totals.tds),
+              advance: f.money(totals.advance_recovery),
+              other: f.money(totals.other_deductions),
+            }),
+          },
+          {
+            key: "employer",
+            label: t("detail.stat_employer_cost"),
+            value: f.money(run.employer_cost),
+            icon: ShieldCheck,
+            hint: t("detail.stat_employer_cost_hint", { ssf: f.money(totals.ssf_employer) }),
+          },
+        ]}
+      />
 
       <PayoutPanel run={run} />
 
@@ -283,13 +290,9 @@ function DetailSkeleton() {
         <Skeleton className="h-8 w-72" />
         <Skeleton className="h-4 w-48" />
       </div>
-      <Skeleton className="h-28 w-full rounded-lg" />
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-24 rounded-lg" />
-        ))}
-      </div>
-      <Skeleton className="h-80 w-full rounded-lg" />
+      <Skeleton className="h-28 w-full rounded-dense" />
+      <Skeleton className="h-24 w-full rounded-dense" />
+      <Skeleton className="h-80 w-full rounded-dense" />
     </div>
   );
 }

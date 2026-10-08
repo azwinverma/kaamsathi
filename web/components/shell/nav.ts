@@ -31,6 +31,7 @@ import {
   Landmark,
   LineChart,
   Lock,
+  MapPin,
   UsersRound,
   Briefcase,
   Building2,
@@ -72,49 +73,69 @@ const SUPPORT: StaffRole[] = ["support"];
 const VERIFIER_OR_SUPPORT: StaffRole[] = ["verifier", "support"];
 const SUPERADMIN: StaffRole[] = ["superadmin"];
 
+/**
+ * Employer IA — brand v2 §18: Dashboard · Recruitment · Workforce · Sites · Attendance · Payroll ·
+ * Training · Reports · Billing · Settings. Single-item groups render as a top-level link (no heading).
+ * Every route and role rule is unchanged from the earlier Hire/Manage/Pay/Grow/Account grouping.
+ */
 export const APP_NAV: NavGroup[] = [
   { items: [{ href: "/app", label: "nav.dashboard", icon: LayoutDashboard, exact: true }] },
   {
-    label: "nav.hire",
+    label: "ledger.nav.recruitment",
     items: [
       { href: "/app/jobs", label: "nav.jobs", icon: Briefcase, roles: FULL },
       { href: "/app/candidates", label: "nav.candidates", icon: UserSearch, roles: FULL },
     ],
   },
   {
-    label: "nav.manage",
+    label: "ledger.nav.workforce",
     items: [
       { href: "/app/workers", label: "nav.workers", icon: Users },
-      { href: "/app/attendance", label: "nav.attendance", icon: CalendarCheck },
-      { href: "/app/attendance/corrections", label: "nav.corrections", icon: ListChecks },
+      { href: "/app/contractors", label: "nav.contractors", icon: HardHat, roles: FULL },
       { href: "/app/leave", label: "nav.leave", icon: CalendarOff },
       { href: "/app/advances", label: "nav.advance", icon: HandCoins, roles: FULL },
-      { href: "/app/roster", label: "nav.roster", icon: CalendarClock },
-      { href: "/app/timesheets", label: "nav.timesheets", icon: FileClock },
-      { href: "/app/contractors", label: "nav.contractors", icon: HardHat, roles: FULL },
       { href: "/app/disputes", label: "nav.disputes", icon: FileWarning, roles: FULL },
       { href: "/app/ratings", label: "nav.ratings", icon: Star, roles: FULL },
     ],
   },
   {
-    label: "nav.pay",
+    label: "ledger.nav.sites",
+    items: [
+      { href: "/app/roster", label: "nav.roster", icon: CalendarClock },
+      { href: "/app/settings?tab=sites", label: "ledger.nav.work_sites", icon: MapPin, roles: FULL },
+    ],
+  },
+  {
+    label: "ledger.nav.attendance",
+    items: [
+      { href: "/app/attendance", label: "nav.attendance", icon: CalendarCheck },
+      { href: "/app/attendance/corrections", label: "nav.corrections", icon: ListChecks },
+      { href: "/app/timesheets", label: "nav.timesheets", icon: FileClock },
+    ],
+  },
+  {
+    label: "ledger.nav.payroll",
     items: [
       { href: "/app/payroll", label: "nav.payroll", icon: Banknote, roles: FULL },
       { href: "/app/compliance", label: "nav.compliance", icon: ClipboardCheck, roles: FULL },
     ],
   },
   {
-    label: "nav.grow",
-    items: [
-      { href: "/app/analytics", label: "nav.analytics", icon: BarChart3, roles: FULL },
-      { href: "/app/training", label: "nav.training", icon: GraduationCap, roles: FULL },
-    ],
+    label: "ledger.nav.training",
+    items: [{ href: "/app/training", label: "nav.training", icon: GraduationCap, roles: FULL }],
   },
   {
-    label: "nav.account",
+    label: "ledger.nav.reports",
+    items: [{ href: "/app/analytics", label: "nav.analytics", icon: BarChart3, roles: FULL }],
+  },
+  {
+    label: "ledger.nav.billing",
+    items: [{ href: "/app/billing", label: "nav.billing", icon: CreditCard, roles: ADMIN }],
+  },
+  {
+    label: "ledger.nav.settings",
     items: [
       { href: "/app/settings", label: "nav.settings", icon: Settings, roles: FULL },
-      { href: "/app/billing", label: "nav.billing", icon: CreditCard, roles: ADMIN },
       { href: "/app/verification", label: "nav.org_verification", icon: Building, roles: ADMIN },
       { href: "/app/integrations", label: "nav.integrations", icon: Webhook, roles: ADMIN },
       { href: "/app/support", label: "nav.support", icon: LifeBuoy },
@@ -126,7 +147,7 @@ export const APP_NAV: NavGroup[] = [
 export const OPS_NAV: NavGroup[] = [
   { items: [{ href: "/ops", label: "nav.ops_dashboard", icon: LayoutDashboard, exact: true }] },
   {
-    label: "nav.ops",
+    label: "ledger.nav.ops_queues",
     items: [
       { href: "/ops/workers", label: "nav.ops_workers", icon: Users, staffRoles: VERIFIER },
       { href: "/ops/verification", label: "nav.ops_verification", icon: ShieldCheck, staffRoles: VERIFIER },
@@ -135,7 +156,7 @@ export const OPS_NAV: NavGroup[] = [
     ],
   },
   {
-    label: "nav.ops_trust",
+    label: "ledger.nav.ops_trust",
     items: [
       { href: "/ops/credentials", label: "nav.ops_credentials", icon: BadgeCheck, staffRoles: VERIFIER },
       { href: "/ops/disputes", label: "nav.ops_disputes", icon: FileWarning, staffRoles: SUPPORT },
@@ -149,7 +170,7 @@ export const OPS_NAV: NavGroup[] = [
     ],
   },
   {
-    label: "nav.ops_ecosystem",
+    label: "ledger.nav.ops_ecosystem",
     items: [
       { href: "/ops/training", label: "nav.ops_training", icon: GraduationCap, staffRoles: VERIFIER_OR_SUPPORT },
       { href: "/ops/partners", label: "nav.ops_partners", icon: Handshake, staffRoles: ["partner_manager"] },
@@ -162,7 +183,7 @@ export const OPS_NAV: NavGroup[] = [
     ],
   },
   {
-    label: "nav.ops_admin",
+    label: "ledger.nav.ops_admin",
     items: [
       { href: "/ops/audit", label: "nav.ops_audit", icon: ScrollText, staffRoles: SUPERADMIN },
       { href: "/ops/staff", label: "nav.ops_staff", icon: ClipboardList, staffRoles: SUPERADMIN },
@@ -196,7 +217,41 @@ export function filterNavForStaff(
     .filter((g) => g.items.length > 0);
 }
 
-export function isActive(pathname: string, item: NavItem): boolean {
-  if (item.exact) return pathname === item.href;
-  return pathname === item.href || pathname.startsWith(item.href + "/");
+function splitHref(href: string): { path: string; query: URLSearchParams | null } {
+  const i = href.indexOf("?");
+  return i < 0 ? { path: href, query: null } : { path: href.slice(0, i), query: new URLSearchParams(href.slice(i + 1)) };
+}
+
+/**
+ * Does the current location match this item? Items may carry a query (`/app/settings?tab=sites`):
+ * they match only when every listed param matches. Without `search`, query items never match.
+ */
+export function isActive(pathname: string, item: NavItem, search?: URLSearchParams | null): boolean {
+  const { path, query } = splitHref(item.href);
+  if (query) {
+    if (pathname !== path || !search) return false;
+    for (const [k, v] of query) if (search.get(k) !== v) return false;
+    return true;
+  }
+  if (item.exact) return pathname === path;
+  return pathname === path || pathname.startsWith(path + "/");
+}
+
+/**
+ * The single nav item to highlight: the most specific match, so `/app/attendance/corrections`
+ * highlights Corrections (not Hajiri too) and `/app/settings?tab=sites` highlights Work sites.
+ */
+export function activeHref(
+  items: readonly NavItem[],
+  pathname: string,
+  search?: URLSearchParams | null,
+): string | null {
+  let best: { href: string; score: number } | null = null;
+  for (const item of items) {
+    if (!isActive(pathname, item, search)) continue;
+    const { path, query } = splitHref(item.href);
+    const score = path.length * 10 + (query ? 5 : 0);
+    if (!best || score > best.score) best = { href: item.href, score };
+  }
+  return best?.href ?? null;
 }

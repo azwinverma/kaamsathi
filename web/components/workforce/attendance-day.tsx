@@ -232,7 +232,7 @@ export function AttendanceDay({ onLocked }: { onLocked?: () => void }) {
       ) : (
         <ul
           className={cn(
-            "divide-y divide-border overflow-hidden rounded-lg border border-border bg-surface shadow-sm",
+            "divide-y divide-border overflow-hidden rounded-dense border border-border bg-surface",
             isFetching && "opacity-70 transition-opacity",
           )}
           aria-label={ta("list_label", { date: dateLabel.bs })}
@@ -317,7 +317,7 @@ export function AttendanceDay({ onLocked }: { onLocked?: () => void }) {
       )}
 
       {dirtyIds.length ? (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-surface/95 px-4 py-3 shadow-lg backdrop-blur md:left-auto md:right-6 md:bottom-6 md:rounded-lg md:border">
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-surface/95 px-4 py-3 shadow-lg backdrop-blur md:left-auto md:right-6 md:bottom-6 md:rounded-dense md:border">
           <div className="flex items-center justify-between gap-3">
             <p className="text-sm font-medium text-fg" aria-live="polite">
               {ta("unsaved", { count: dirtyIds.length, n: f.digits(dirtyIds.length) })}

@@ -217,7 +217,7 @@ function QrDialog({ site, onClose }: { site: Site; onClose: () => void }) {
         <DialogContent size="sm" closeLabel={t("common.close")}>
           <DialogHeader title={t("settings.qr_title", { name: site.name })} description={t("settings.qr_hint")} />
           <DialogBody className="flex flex-col items-center gap-3">
-            <div className="flex size-60 items-center justify-center rounded-lg border border-border bg-white p-2">
+            <div className="flex size-60 items-center justify-center rounded-dense border border-border bg-white p-2">
               {imgError ? (
                 <p className="px-4 text-center text-sm text-hero">{t("settings.qr_error")}</p>
               ) : (
@@ -384,7 +384,7 @@ function SiteDialog({ site, onClose }: { site: Site | null; onClose: () => void 
                 render={({ field }) => <DistrictSelect value={field.value} onChange={field.onChange} />}
               />
             </Field>
-            <fieldset className="space-y-3 rounded-lg border border-border p-4">
+            <fieldset className="space-y-3 rounded-dense border border-border p-4">
               <legend className="px-1 text-sm font-semibold text-fg">{t("settings.geofence")}</legend>
               <p className="text-xs text-fg-muted">{t("settings.geofence_hint")}</p>
               <div className="grid gap-4 sm:grid-cols-2">

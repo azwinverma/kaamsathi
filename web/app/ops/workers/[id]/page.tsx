@@ -39,8 +39,8 @@ export default function OpsWorkerDetailPage() {
       <>
         <PageHeader title={<Skeleton className="h-8 w-56" />} back={back} />
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <Skeleton className="h-96 rounded-lg" />
-          <Skeleton className="h-72 rounded-lg" />
+          <Skeleton className="h-96 rounded-dense" />
+          <Skeleton className="h-72 rounded-dense" />
         </div>
       </>
     );

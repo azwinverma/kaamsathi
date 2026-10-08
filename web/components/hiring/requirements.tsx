@@ -51,7 +51,7 @@ export function RequirementsEditor({
               <li
                 key={row.key}
                 className={cn(
-                  "border-border bg-surface-muted/40 space-y-3 rounded-lg border p-3",
+                  "border-border bg-surface-muted/40 space-y-3 rounded-dense border p-3",
                   err && "border-danger/50",
                 )}
                 aria-label={t("row_label", { n: i + 1 })}

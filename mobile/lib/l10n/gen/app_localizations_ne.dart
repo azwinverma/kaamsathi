@@ -600,10 +600,10 @@ class AppLocalizationsNe extends AppLocalizations {
   String get homeLatestPayslip => 'पछिल्लो तलब विवरण';
 
   @override
-  String get checkInSuccess => 'हाजिर भयो। कामको दिन शुभ रहोस्!';
+  String get checkInSuccess => 'हाजिर भयो। कामको दिन शुभ रहोस्।';
 
   @override
-  String get checkOutSuccess => 'फर्कनुभयो। भोलि भेटौँला!';
+  String get checkOutSuccess => 'फर्कनुभयो। भोलि भेटौँला।';
 
   @override
   String get scanTitle => 'कार्यस्थलको QR स्क्यान';
@@ -3484,4 +3484,144 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get commonEdit => 'सम्पादन';
+
+  @override
+  String get navHome => 'गृह';
+
+  @override
+  String get navJobsTab => 'काम';
+
+  @override
+  String get navWork => 'हाजिरी';
+
+  @override
+  String get navLearn => 'सिक्नुहोस्';
+
+  @override
+  String get workTitle => 'हाजिरी र तलब';
+
+  @override
+  String get workHajiri => 'हाजिरी';
+
+  @override
+  String get workPayslips => 'तलब';
+
+  @override
+  String get learnTitle => 'सिकाइ';
+
+  @override
+  String get learnHeadline => 'आफ्नो सीप बढाउनुहोस्';
+
+  @override
+  String get learnIntro => 'नजिकका तालिम, तपाईंका प्रमाणपत्र र आफ्नो पेसामा अर्को कदम।';
+
+  @override
+  String get learnMenuSubtitle => 'तालिम, प्रमाणपत्र, अर्को कदम';
+
+  @override
+  String get slotLearnWorkshopAlt => 'कार्यशालामा तालिम';
+
+  @override
+  String get slotCareerStepAlt => 'पेसामा माथिल्लो तहमा पुगेका कामदार';
+
+  @override
+  String get homeHello => 'नमस्ते,';
+
+  @override
+  String homeLadderChip(String level) {
+    return 'सीपको सीढी: तह $level';
+  }
+
+  @override
+  String get homeDaysWorked => 'दिन काम';
+
+  @override
+  String get homeOutOf100 => '१०० मध्ये';
+
+  @override
+  String get homeScoreSoon => 'पहिलो कामपछि';
+
+  @override
+  String get homeSeeAll => 'सबै';
+
+  @override
+  String get homeNoJobs => 'अहिले मिल्ने काम छैन। काम गर्ने ठाउँ थप्दा धेरै काम देखिन्छ।';
+
+  @override
+  String get jobsMatchSkillArea => 'तपाईंको सीप र ठाउँ मिल्छ';
+
+  @override
+  String jobsMatchTradeArea(String trade) {
+    return 'तपाईंको सीप ($trade) र ठाउँ मिल्छ';
+  }
+
+  @override
+  String get ladderTitle => 'सीपको सीढी';
+
+  @override
+  String get ladderRungPhone => 'फोन';
+
+  @override
+  String get ladderRungIdentity => 'पहिचान';
+
+  @override
+  String get ladderRungWork => 'काम';
+
+  @override
+  String get ladderRungCertificate => 'प्रमाणपत्र';
+
+  @override
+  String get ladderRungTrusted => 'अति भरपर्दो';
+
+  @override
+  String ladderSummary(String done, String total) {
+    return 'सीपको सीढी: $total मध्ये $done चरण';
+  }
+
+  @override
+  String ladderStepDone(String step) {
+    return '$step: पूरा';
+  }
+
+  @override
+  String ladderStepOpen(String step) {
+    return '$step: बाँकी';
+  }
+
+  @override
+  String ladderNext(String step) {
+    return 'अर्को चरण: $step';
+  }
+
+  @override
+  String ladderChipShort(String done, String total) {
+    return 'सीढी $done/$total';
+  }
+
+  @override
+  String get passportShare => 'सेयर';
+
+  @override
+  String get passportPrivacyNote => 'परिचयपत्र नम्बर कहिल्यै देखाइँदैन। कसले हेर्ने तपाईं आफैं रोज्नुहुन्छ।';
+
+  @override
+  String get passportPhotoMissing => 'फोटो छैन';
+
+  @override
+  String get ppTimeline => 'प्रमाणित सीप र प्रमाणपत्र';
+
+  @override
+  String get ppTimelineEmpty => 'अहिलेसम्म केही प्रमाणित भएको छैन। सिकाइबाट प्रमाणपत्र थप्नुहोस्।';
+
+  @override
+  String get celebrateCredential => 'तपाईंको पहिलो प्रमाणपत्र प्रमाणित भयो।';
+
+  @override
+  String get celebratePlacement => 'नयाँ काममा जोडिनुभयो। शुभकामना।';
+
+  @override
+  String get celebrateProfile => 'तपाईंको प्रोफाइल पूरा भयो।';
+
+  @override
+  String get celebrateTraining => 'तालिम पूरा भयो। स्याबास।';
 }

@@ -22,7 +22,7 @@ export function Spinner({ className, label }: { className?: string; label?: stri
 /** Table-shaped skeleton. */
 export function TableSkeleton({ rows = 6, cols = 5 }: { rows?: number; cols?: number }) {
   return (
-    <div className="overflow-hidden rounded-dense border border-border bg-surface shadow-sm" aria-busy>
+    <div className="overflow-hidden rounded-dense border border-border bg-surface" aria-busy>
       <div className="flex h-10 items-center gap-4 border-b border-border bg-surface-muted px-4">
         {Array.from({ length: cols }).map((_, i) => (
           <Skeleton key={i} className="h-3 flex-1" />
@@ -45,8 +45,11 @@ export function EmptyState({
   description,
   action,
   className,
+  illustration,
 }: {
   icon?: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+  /** Optional decorative illustration (aria-hidden) replacing the line icon. */
+  illustration?: React.ReactNode;
   title: React.ReactNode;
   description?: React.ReactNode;
   action?: React.ReactNode;
@@ -55,15 +58,13 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-surface px-6 py-12 text-center",
+        "flex flex-col items-center justify-center gap-3 rounded-dense border border-dashed border-border-strong bg-surface px-6 py-10 text-center",
         className,
       )}
     >
-      <div className="flex size-11 items-center justify-center rounded-full bg-surface-muted text-fg-muted">
-        <Icon className="size-5" aria-hidden />
-      </div>
+      {illustration ?? <Icon className="size-6 stroke-[1.5] text-fg-muted" aria-hidden />}
       <div className="max-w-sm space-y-1">
-        <p className="text-sm font-semibold text-fg">{title}</p>
+        <p className="text-[15px] font-semibold text-fg">{title}</p>
         {description ? <p className="text-sm text-fg-muted">{description}</p> : null}
       </div>
       {action ? <div className="mt-1">{action}</div> : null}
@@ -89,13 +90,11 @@ export function ErrorState({
     <div
       role="alert"
       className={cn(
-        "flex flex-col items-center justify-center gap-3 rounded-lg border border-border bg-surface px-6 py-10 text-center",
+        "flex flex-col items-center justify-center gap-3 rounded-dense border border-border bg-surface px-6 py-10 text-center",
         className,
       )}
     >
-      <div className="flex size-11 items-center justify-center rounded-full bg-danger-subtle text-danger">
-        <AlertTriangle className="size-5" aria-hidden />
-      </div>
+      <AlertTriangle className="size-6 stroke-[1.5] text-danger" aria-hidden />
       <div className="max-w-md space-y-1">
         <p className="text-sm font-semibold text-fg">{title ?? t("common.error_loading")}</p>
         <p className="text-sm text-fg-muted">{message}</p>

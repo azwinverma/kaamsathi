@@ -22,7 +22,9 @@ import {
 import { EmptyState, ErrorState, Skeleton } from "@/components/ui/feedback";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
-import { WorkerCardView } from "@/components/shared/worker-summary";
+import { SkillChips, WorkerIdentity } from "@/components/shared/worker-summary";
+import { MatchReasonCard } from "@/components/ledger";
+import { useCandidateReasons } from "./match-reasons";
 import { isApiError } from "@/lib/api/errors";
 import { useApplications, useJob } from "@/lib/api/hooks/hiring";
 import type { Application, Job, Stage } from "@/lib/api/types";
@@ -34,7 +36,7 @@ import { JobActions } from "./job-actions";
 import { FillProgress, JobBenefits, JobStatusBadge, JobWage } from "./job-bits";
 import { RequirementChips } from "./requirements";
 import { InviteWorkerButton } from "./invite-dialog";
-import { MatchScoreBadge, TagsAndAssignee } from "./application-pipeline";
+import { TagsAndAssignee } from "./application-pipeline";
 import { CLOSED_STAGES, PIPELINE_STAGES, TRANSITIONS, daysSince } from "./lib";
 import { ApplicationGrowthBadges } from "@/components/experience/badges";
 import { OfferControls } from "@/components/experience/offer-dialog";
@@ -94,7 +96,7 @@ function JobDetailInner({ id }: { id: string }) {
       {job.status === "paused" ? (
         <div
           role="status"
-          className="border-warning/30 bg-warning-subtle text-fg-body mb-4 flex items-start gap-2 rounded-lg border p-3 text-sm"
+          className="border-warning/30 bg-warning-subtle text-fg-body mb-4 flex items-start gap-2 rounded-dense border p-3 text-sm"
         >
           <PauseCircle className="text-warning mt-0.5 size-4 shrink-0" aria-hidden />
           <span>
@@ -240,7 +242,7 @@ function Pipeline({ job }: { job: Job }) {
               return (
                 <div
                   key={s}
-                  className="border-border bg-surface-muted/60 flex w-[78vw] max-w-[280px] min-w-[240px] shrink-0 snap-start flex-col rounded-lg border sm:w-auto sm:flex-1"
+                  className="border-border bg-surface-muted/60 flex w-[78vw] max-w-[300px] min-w-[250px] shrink-0 snap-start flex-col rounded-dense border sm:w-auto sm:flex-1"
                 >
                   <div className="border-border flex items-center justify-between gap-2 border-b px-3 py-2.5">
                     <StatusBadge status={s} ns="stage" />
@@ -254,6 +256,7 @@ function Pipeline({ job }: { job: Job }) {
                         <li key={a.id}>
                           <CandidateCard
                             app={a}
+                            job={job}
                             onOpen={() => setOpenId(a.id)}
                             onMove={(to) => mover.request(a, to)}
                             pending={mover.pendingId === a.id}
@@ -261,7 +264,7 @@ function Pipeline({ job }: { job: Job }) {
                         </li>
                       ))
                     ) : (
-                      <li className="text-fg-subtle px-2 py-6 text-center text-xs">
+                      <li className="text-fg-muted px-2 py-6 text-center text-xs">
                         {td("column_empty")}
                       </li>
                     )}
@@ -272,7 +275,7 @@ function Pipeline({ job }: { job: Job }) {
           </div>
 
           {closed.length ? (
-            <div className="border-border bg-surface rounded-lg border">
+            <div className="border-border bg-surface rounded-dense border">
               <button
                 type="button"
                 onClick={() => setShowClosed((v) => !v)}
@@ -289,7 +292,7 @@ function Pipeline({ job }: { job: Job }) {
                 <ul className="border-border grid gap-2 border-t p-3 sm:grid-cols-2 lg:grid-cols-3">
                   {closed.map((a) => (
                     <li key={a.id}>
-                      <CandidateCard app={a} onOpen={() => setOpenId(a.id)} />
+                      <CandidateCard app={a} job={job} onOpen={() => setOpenId(a.id)} />
                     </li>
                   ))}
                 </ul>
@@ -321,11 +324,13 @@ function JobActionsPublishHint() {
 
 function CandidateCard({
   app,
+  job,
   onOpen,
   onMove,
   pending,
 }: {
   app: Application;
+  job: Job;
   onOpen: () => void;
   onMove?: (to: Stage) => void;
   pending?: boolean;
@@ -333,68 +338,71 @@ function CandidateCard({
   const t = useTranslations();
   const td = useTranslations("hiring.detail");
   const f = useFormat();
+  const reasonsFor = useCandidateReasons();
   const next = TRANSITIONS[app.stage] ?? [];
   const days = daysSince(app.stage_changed_at);
   return (
-    <div
-      className={cn(
-        "border-border bg-surface hover:border-border-strong rounded-lg border p-3 shadow-sm transition-colors",
-        pending && "opacity-60",
-      )}
+    <MatchReasonCard
+      compact
+      className={cn(pending && "opacity-60")}
+      score={app.match_score ?? null}
+      scoreLabel={app.match_score !== null && app.match_score !== undefined ? f.digits(app.match_score) : undefined}
+      reasons={reasonsFor(app.worker, job)}
+      identity={
+        <button
+          type="button"
+          onClick={onOpen}
+          className="focus-visible:outline-ring block w-full rounded-md text-left focus-visible:outline-2 focus-visible:outline-offset-2"
+          aria-label={td("open_candidate", { name: app.worker.full_name })}
+        >
+          <WorkerIdentity worker={app.worker} size="sm" showTrust={false} hideVerified wrap />
+        </button>
+      }
+      footer={
+        <>
+          <ApplicationGrowthBadges application={app as ApplicationWithGrowth} className="flex flex-wrap gap-1 empty:hidden" />
+          <OfferControls app={app as Application & ApplicationOfferField} />
+          <TagsAndAssignee app={app} className="mt-2" />
+          {app.stage === "interview" && app.interview_at ? (
+            <p className="bg-warning-subtle text-warning tabular mt-2 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium">
+              <CalendarClock className="size-3.5" aria-hidden />
+              {f.dateTime(app.interview_at)}
+            </p>
+          ) : null}
+          {app.stage === "rejected" && app.rejection_reason ? (
+            <p className="text-fg-muted mt-2 line-clamp-2 text-xs">{app.rejection_reason}</p>
+          ) : null}
+          <div className="mt-2 flex items-center justify-between gap-2">
+            <span className="text-fg-muted text-[11px]">
+              {days !== null ? td("in_stage_for", { count: days }) : null}
+            </span>
+            {onMove && next.length ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="sm" variant="ghost" className="h-7 px-2" disabled={pending}>
+                    {td("move")}
+                    <MoreHorizontal aria-hidden />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>{td("move_to")}</DropdownMenuLabel>
+                  {next.map((s) => (
+                    <DropdownMenuItem
+                      key={s}
+                      danger={s === "rejected" || s === "dropped"}
+                      onSelect={() => onMove(s)}
+                    >
+                      {t(`stage.${s}`)}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : null}
+          </div>
+        </>
+      }
     >
-      <button
-        type="button"
-        onClick={onOpen}
-        className="focus-visible:outline-ring block w-full rounded-md text-left focus-visible:outline-2 focus-visible:outline-offset-2"
-        aria-label={td("open_candidate", { name: app.worker.full_name })}
-      >
-        <WorkerCardView worker={app.worker} />
-      </button>
-      <ApplicationGrowthBadges
-        application={app as ApplicationWithGrowth}
-        className="mt-2 flex flex-wrap gap-1"
-      />
-      <OfferControls app={app as Application & ApplicationOfferField} />
-      <span className="mt-2 flex flex-wrap gap-1 empty:hidden">
-        <MatchScoreBadge app={app} />
-      </span>
-      <TagsAndAssignee app={app} className="mt-2" />
-      {app.stage === "interview" && app.interview_at ? (
-        <p className="bg-warning-subtle text-warning tabular mt-2 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium">
-          <CalendarClock className="size-3.5" aria-hidden />
-          {f.dateTime(app.interview_at)}
-        </p>
-      ) : null}
-      {app.stage === "rejected" && app.rejection_reason ? (
-        <p className="text-fg-muted mt-2 line-clamp-2 text-xs">{app.rejection_reason}</p>
-      ) : null}
-      <div className="mt-2 flex items-center justify-between gap-2">
-        <span className="text-fg-subtle text-[11px]">
-          {days !== null ? td("in_stage_for", { count: days }) : null}
-        </span>
-        {onMove && next.length ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="sm" variant="ghost" className="h-7 px-2" disabled={pending}>
-                {td("move")}
-                <MoreHorizontal aria-hidden />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>{td("move_to")}</DropdownMenuLabel>
-              {next.map((s) => (
-                <DropdownMenuItem
-                  key={s}
-                  danger={s === "rejected" || s === "dropped"}
-                  onSelect={() => onMove(s)}
-                >
-                  {t(`stage.${s}`)}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : null}
-      </div>
-    </div>
+      <SkillChips skills={app.worker.skills} max={2} />
+    </MatchReasonCard>
   );
 }

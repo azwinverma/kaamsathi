@@ -57,6 +57,8 @@ export function WorkerIdentity({
   size = "md",
   showPhone = true,
   showTrust = true,
+  hideVerified,
+  wrap,
   className,
 }: {
   worker: Pick<WorkerCard, "full_name" | "photo" | "verification_status" | "district" | "phone_masked"> &
@@ -65,6 +67,10 @@ export function WorkerIdentity({
   showPhone?: boolean;
   /** Verification level + reliability score badges (apps.trust). */
   showTrust?: boolean;
+  /** Hide the inline Verified chip (when a parent already states verification). */
+  hideVerified?: boolean;
+  /** Let long names wrap instead of truncating (narrow cards). */
+  wrap?: boolean;
   className?: string;
 }) {
   const f = useFormat();
@@ -73,10 +79,10 @@ export function WorkerIdentity({
       <Avatar name={worker.full_name} src={worker.photo} size={size === "lg" ? "lg" : size === "sm" ? "sm" : "md"} />
       <div className="min-w-0">
         <div className="flex items-center gap-2">
-          <span className={cn("truncate font-medium text-fg", size === "lg" && "text-lg font-semibold")}>
+          <span className={cn(wrap ? "break-words" : "truncate", "font-medium text-fg", size === "lg" && "text-lg font-semibold")}>
             {worker.full_name}
           </span>
-          {worker.verification_status === "verified" ? (
+          {worker.verification_status === "verified" && !hideVerified ? (
             <VerificationBadge status="verified" className="max-sm:hidden" />
           ) : null}
         </div>

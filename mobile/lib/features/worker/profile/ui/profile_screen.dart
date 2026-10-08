@@ -12,10 +12,12 @@ import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/eco.dart';
 import '../../../../core/widgets/language_toggle.dart';
+import '../../../../core/widgets/signature/signature.dart';
 import '../../../common/account_actions.dart';
 import '../../../common/inbox/inbox_screen.dart';
 import '../../data/worker_models.dart';
 import '../../data/worker_repository.dart';
+import '../../trust/ui/trust_card.dart';
 import 'completeness_card.dart';
 import 'languages_screen.dart';
 import 'payment_sheet.dart';
@@ -46,8 +48,10 @@ class ProfileScreen extends ConsumerWidget {
               _ => const Padding(padding: EdgeInsets.all(48), child: Center(child: CircularProgressIndicator())),
             },
             const SizedBox(height: KsSpace.s4),
-            const Card(child: Padding(padding: EdgeInsets.all(KsSpace.s4), child: LanguageSelector())),
+            const TrustCard(),
             const _ProfileMenu(),
+            GroupLabel(l.navSettings),
+            const Card(child: Padding(padding: EdgeInsets.all(KsSpace.s4), child: LanguageSelector())),
             const SizedBox(height: KsSpace.s4),
             const Card(child: ModeSwitchTile()),
             const SizedBox(height: KsSpace.s6),
@@ -123,7 +127,11 @@ class _ProfileBodyState extends ConsumerState<_ProfileBody> {
             padding: const EdgeInsets.all(KsSpace.s4),
             child: Row(
               children: [
-                WorkerAvatar(name: p.fullName, photo: p.photo, size: 64),
+                CutPaperFrame(
+                  width: 64,
+                  tapeColor: context.ks.teal,
+                  child: WorkerPhoto(name: p.fullName, url: p.photo, missingLabel: l.passportPhotoMissing),
+                ),
                 const SizedBox(width: KsSpace.s4),
                 Expanded(
                   child: Column(
@@ -194,7 +202,8 @@ class _ProfileBodyState extends ConsumerState<_ProfileBody> {
           trailing: TextButton.icon(
             onPressed: () => showPaymentSheet(context, p),
             icon: const Icon(LucideIcons.pencil, size: 16),
-            label: Text(l.profileEditPayment),
+            // Short label: the card title already says what is edited.
+            label: Text(l.commonEdit, semanticsLabel: l.profileEditPayment),
           ),
           child: _PaymentSummary(profile: p),
         ),
@@ -318,8 +327,10 @@ class _ConsentsCardState extends ConsumerState<_ConsentsCard> {
   }
 }
 
-/// Grouped entries for the worker's ecosystem features. Kept here (not in the
-/// bottom nav) so the nav stays at four tabs on small phones.
+/// Grouped entries for the worker's own records, money, privacy and account
+/// (brand v2 §18: secondary features live in Profile). Jobs, hajiri, shifts,
+/// timesheets, payslips, training, credentials and career have their own
+/// bottom-nav tabs (Jobs · Work · Learn).
 class _ProfileMenu extends ConsumerWidget {
   const _ProfileMenu();
 
@@ -327,7 +338,6 @@ class _ProfileMenu extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final ratings = ref.watch(flagOnProvider(FlagKeys.ratings));
-    final corrections = ref.watch(flagOnProvider(FlagKeys.attendanceCorrections));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -348,12 +358,6 @@ class _ProfileMenu extends ConsumerWidget {
                 onTap: () => context.push(Routes.workerWorkHistory),
               ),
               MenuTile(
-                icon: LucideIcons.briefcaseBusiness,
-                title: l.jobsTitle,
-                subtitle: l.jobsTabApplications,
-                onTap: () => context.push(Routes.workerJobs),
-              ),
-              MenuTile(
                 icon: LucideIcons.bellPlus,
                 title: l.alertsTitle,
                 subtitle: l.alertsMenuSubtitle,
@@ -364,17 +368,6 @@ class _ProfileMenu extends ConsumerWidget {
                 title: l.availTitle,
                 subtitle: l.availMenuSubtitle,
                 onTap: () => context.push(Routes.workerAvailability),
-              ),
-              MenuTile(
-                icon: LucideIcons.calendarRange,
-                title: l.shiftsTitle,
-                onTap: () => context.push(Routes.workerShifts),
-              ),
-              MenuTile(
-                icon: LucideIcons.clock,
-                title: l.tsTitle,
-                subtitle: l.tsMenuSubtitle,
-                onTap: () => context.push(Routes.workerTimesheets),
               ),
               MenuTile(
                 icon: LucideIcons.users,
@@ -395,14 +388,6 @@ class _ProfileMenu extends ConsumerWidget {
                   subtitle: l.ratingsMenuSubtitle,
                   onTap: () => context.push(Routes.workerRatings),
                 ),
-              if (corrections)
-                MenuTile(
-                  key: const Key('menu_corrections'),
-                  icon: LucideIcons.calendarCog,
-                  title: l.corrTitle,
-                  subtitle: l.corrMenuSubtitle,
-                  onTap: () => context.push(Routes.workerCorrections),
-                ),
             ],
           ),
         ),
@@ -411,28 +396,18 @@ class _ProfileMenu extends ConsumerWidget {
           child: Column(
             children: [
               MenuTile(
+                key: const Key('menu_passport'),
                 icon: LucideIcons.idCard,
                 title: l.passportTitle,
                 subtitle: l.passportMenuSubtitle,
                 onTap: () => context.push(Routes.workerPassport),
               ),
               MenuTile(
-                icon: LucideIcons.award,
-                title: l.credTitle,
-                subtitle: l.credMenuSubtitle,
-                onTap: () => context.push(Routes.workerCredentials),
-              ),
-              MenuTile(
+                key: const Key('menu_learn'),
                 icon: LucideIcons.graduationCap,
-                title: l.trainTitle,
-                subtitle: l.trainMenuSubtitle,
-                onTap: () => context.push(Routes.workerTraining),
-              ),
-              MenuTile(
-                icon: LucideIcons.trendingUp,
-                title: l.careerTitle,
-                subtitle: l.careerMenuSubtitle,
-                onTap: () => context.push(Routes.workerCareer),
+                title: l.learnTitle,
+                subtitle: l.learnMenuSubtitle,
+                onTap: () => context.go(Routes.workerLearn),
               ),
             ],
           ),

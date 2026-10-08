@@ -14,7 +14,7 @@ const STEPS = [
 export function HowPayrollWorks({ className }: { className?: string }) {
   const t = useTranslations("payroll_page.how");
   return (
-    <section aria-labelledby="how-payroll-title" className={cn("rounded-lg border border-border bg-surface p-5 shadow-sm", className)}>
+    <section aria-labelledby="how-payroll-title" className={cn("rounded-dense border border-border bg-surface p-5 shadow-sm", className)}>
       <h2 id="how-payroll-title" className="text-sm font-semibold text-fg">
         {t("title")}
       </h2>

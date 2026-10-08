@@ -11,6 +11,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/eco.dart';
+import '../../../../core/widgets/signature/signature.dart';
 import '../jobs_data.dart';
 import 'offers.dart';
 
@@ -35,6 +36,41 @@ String jobWageText(AppLocalizations l, JobSummary j, String lang) {
   if (j.wage == null) return '';
   final m = formatMoney(j.wage, lang: lang);
   return j.wageType == 'daily' ? l.empWageDaily(m) : l.empWageMonthly(m);
+}
+
+/// Why this job was suggested: the server's reasons when sent, otherwise
+/// what every recommended job matches by definition (trade + area).
+String jobMatchReason(AppLocalizations l, JobSummary j, String lang) {
+  if (j.matchReasons.isNotEmpty) return j.matchReasons.join(' · ');
+  final trade = j.trade?.name(lang);
+  return trade == null || trade.isEmpty ? l.jobsMatchSkillArea : l.jobsMatchTradeArea(trade);
+}
+
+/// Job card frame: white card with a coral accent strip on the left, as in
+/// the approved worker home (brand v2 §19 "thin accent strip").
+class JobCardFrame extends StatelessWidget {
+  const JobCardFrame({super.key, required this.child, this.onTap});
+  final Widget child;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(width: 8, color: context.ks.coral),
+              Expanded(child: Padding(padding: const EdgeInsets.fromLTRB(14, 12, 14, 14), child: child)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 /// Jobs for you · Offers · My applications (`?tab=offers|applications`).
@@ -69,8 +105,11 @@ class JobsScreen extends StatelessWidget {
 
 /// Facts row shared by job and application cards.
 class JobFacts extends StatelessWidget {
-  const JobFacts({super.key, required this.job});
+  const JobFacts({super.key, required this.job, this.showMatchReason = false});
   final JobSummary job;
+
+  /// Recommended jobs explain why they were suggested.
+  final bool showMatchReason;
 
   @override
   Widget build(BuildContext context) {
@@ -86,11 +125,35 @@ class JobFacts extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(job.title, style: t.titleSmall),
-        if (where.isNotEmpty) Text(where, style: t.bodyMedium),
+        if (where.isNotEmpty) Text(where, style: t.bodyMedium?.copyWith(color: context.ks.textMuted)),
         if (job.employerVerified) ...[const SizedBox(height: KsSpace.s1), const EmployerVerifiedBadge()],
         if (wage.isNotEmpty) ...[
           const SizedBox(height: KsSpace.s1),
-          Text(wage, style: t.titleMedium?.copyWith(fontFeatures: const [FontFeature.tabularFigures()])),
+          Text(
+            wage,
+            style: t.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.ks.textPrimary,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+        ],
+        if (showMatchReason) ...[
+          const SizedBox(height: KsSpace.s1),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(LucideIcons.circleCheck, size: 16, color: context.ks.tealText),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  jobMatchReason(l, job, lang),
+                  key: Key('match_reason_${job.id}'),
+                  style: t.bodyMedium?.copyWith(color: context.ks.textSecondary),
+                ),
+              ),
+            ],
+          ),
         ],
         const SizedBox(height: KsSpace.s1),
         Wrap(
@@ -176,44 +239,43 @@ class _RecommendedJobsTabState extends ConsumerState<RecommendedJobsTab> {
                       label: Text(l.jobsUpdatePrefs),
                     ),
                   ),
-                for (final j in jobs)
-                  Card(
+                for (final j in jobs) ...[
+                  JobCardFrame(
                     key: Key('job_${j.id}'),
-                    child: Padding(
-                      padding: const EdgeInsets.all(KsSpace.s4),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          JobFacts(job: j),
-                          const SizedBox(height: KsSpace.s3),
-                          if (_sent.contains(j.id))
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: StatusBadge(
-                                key: Key('interest_sent_${j.id}'),
-                                label: l.jobsInterestSentBadge,
-                                tone: Tone.success,
-                                icon: LucideIcons.check,
-                              ),
-                            )
-                          else
-                            FilledButton.icon(
-                              key: Key('interest_${j.id}'),
-                              onPressed: _busy == null ? () => _interest(j) : null,
-                              icon:
-                                  _busy == j.id
-                                      ? const SizedBox(
-                                        width: 18,
-                                        height: 18,
-                                        child: CircularProgressIndicator(strokeWidth: 2),
-                                      )
-                                      : const Icon(LucideIcons.thumbsUp),
-                              label: Text(l.jobsInterested),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        JobFacts(job: j, showMatchReason: true),
+                        const SizedBox(height: KsSpace.s3),
+                        if (_sent.contains(j.id))
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: StatusBadge(
+                              key: Key('interest_sent_${j.id}'),
+                              label: l.jobsInterestSentBadge,
+                              tone: Tone.success,
+                              icon: LucideIcons.check,
                             ),
-                        ],
-                      ),
+                          )
+                        else
+                          FilledButton.icon(
+                            key: Key('interest_${j.id}'),
+                            onPressed: _busy == null ? () => _interest(j) : null,
+                            icon:
+                                _busy == j.id
+                                    ? const SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                    )
+                                    : const Icon(LucideIcons.thumbsUp),
+                            label: Text(l.jobsInterested),
+                          ),
+                      ],
                     ),
                   ),
+                  const SizedBox(height: KsSpace.s3),
+                ],
               ],
             ),
       ),
@@ -268,106 +330,117 @@ class _MyApplicationsTabState extends ConsumerState<MyApplicationsTab> {
           await ref.read(myApplicationsProvider.future);
         } catch (_) {}
       },
-      child: FeatureAsyncBody<Cached<List<MyApplication>>>(
-        value: value,
-        onRetry: () => ref.invalidate(myApplicationsProvider),
-        data: (cached) {
-          final apps = cached.data;
-          return ListView(
-            padding: const EdgeInsets.all(KsSpace.page),
-            children: [
-              if (cached.fromCache) const CachedNotice(),
-              if (apps.isEmpty) EmptyState(icon: LucideIcons.fileText, message: l.appsEmpty),
-              for (final a in apps)
-                Builder(
-                  builder: (_) {
-                    final answered = _answered[a.id];
-                    final response = answered ?? a.workerResponse;
-                    final ask = answered == null && a.needsResponse;
-                    return Card(
-                      key: Key('application_${a.id}'),
-                      child: Padding(
-                        padding: const EdgeInsets.all(KsSpace.s4),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            JobFacts(job: a.job),
-                            const SizedBox(height: KsSpace.s2),
-                            Wrap(
-                              spacing: KsSpace.s2,
-                              runSpacing: KsSpace.s1,
-                              children: [
-                                if (a.isEmployerInvite)
-                                  StatusBadge(
-                                    key: Key('invited_${a.id}'),
-                                    label: l.appsInvited,
-                                    tone: Tone.info,
-                                    icon: LucideIcons.mailOpen,
-                                  ),
-                                if (a.underReview)
-                                  StatusBadge(label: l.appsUnderReview, tone: Tone.warning, icon: LucideIcons.hourglass)
-                                else
-                                  StatusBadge(label: stageLabel(l, a.stage), tone: stageTone(a.stage)),
-                                if (response == 'interested')
-                                  StatusBadge(
-                                    label: l.appsResponseInterested,
-                                    tone: Tone.success,
-                                    icon: LucideIcons.check,
-                                  ),
-                                if (response == 'declined')
-                                  StatusBadge(label: l.appsResponseDeclined, tone: Tone.neutral, icon: LucideIcons.x),
-                              ],
-                            ),
-                            if (a.isEmployerInvite) ...[
+      child: MilestoneWatch(
+        milestone: Milestone.firstPlacement,
+        reached: switch (value) {
+          AsyncData(:final value) when !value.fromCache => value.data.any((a) => a.stage == 'joined'),
+          _ => null,
+        },
+        child: FeatureAsyncBody<Cached<List<MyApplication>>>(
+          value: value,
+          onRetry: () => ref.invalidate(myApplicationsProvider),
+          data: (cached) {
+            final apps = cached.data;
+            return ListView(
+              padding: const EdgeInsets.all(KsSpace.page),
+              children: [
+                if (cached.fromCache) const CachedNotice(),
+                if (apps.isEmpty) EmptyState(icon: LucideIcons.fileText, message: l.appsEmpty),
+                for (final a in apps)
+                  Builder(
+                    builder: (_) {
+                      final answered = _answered[a.id];
+                      final response = answered ?? a.workerResponse;
+                      final ask = answered == null && a.needsResponse;
+                      return Card(
+                        key: Key('application_${a.id}'),
+                        child: Padding(
+                          padding: const EdgeInsets.all(KsSpace.s4),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              JobFacts(job: a.job),
                               const SizedBox(height: KsSpace.s2),
-                              InfoNote(text: l.appsInvitedHint, icon: LucideIcons.mailOpen),
-                            ],
-                            if (a.interviews.isNotEmpty) ...[
-                              const SizedBox(height: KsSpace.s3),
-                              Text(l.ivTitle, style: t.titleSmall),
-                              for (final iv in a.interviews) InterviewTile(interview: iv),
-                            ] else if (a.interviewAt != null) ...[
-                              const SizedBox(height: KsSpace.s2),
-                              Text(
-                                l.appsInterview(
-                                  '${formatBsDateTime(a.interviewAt, lang)} · ${formatTime(a.interviewAt!.toLocal(), lang)}',
-                                ),
-                                style: t.bodyMedium,
-                              ),
-                            ],
-                            if (ask) ...[
-                              const SizedBox(height: KsSpace.s3),
-                              Text(l.appsConfirmPrompt, style: t.titleSmall),
-                              const SizedBox(height: KsSpace.s2),
-                              Row(
+                              Wrap(
+                                spacing: KsSpace.s2,
+                                runSpacing: KsSpace.s1,
                                 children: [
-                                  Expanded(
-                                    child: OutlinedButton(
-                                      key: Key('decline_${a.id}'),
-                                      onPressed: _busy == null ? () => _respond(a, interested: false) : null,
-                                      child: Text(l.appsDecline, textAlign: TextAlign.center),
+                                  if (a.isEmployerInvite)
+                                    StatusBadge(
+                                      key: Key('invited_${a.id}'),
+                                      label: l.appsInvited,
+                                      tone: Tone.info,
+                                      icon: LucideIcons.mailOpen,
                                     ),
-                                  ),
-                                  const SizedBox(width: KsSpace.s2),
-                                  Expanded(
-                                    child: FilledButton(
-                                      key: Key('confirm_${a.id}'),
-                                      onPressed: _busy == null ? () => _respond(a, interested: true) : null,
-                                      child: Text(l.appsConfirm, textAlign: TextAlign.center),
+                                  if (a.underReview)
+                                    StatusBadge(
+                                      label: l.appsUnderReview,
+                                      tone: Tone.warning,
+                                      icon: LucideIcons.hourglass,
+                                    )
+                                  else
+                                    StatusBadge(label: stageLabel(l, a.stage), tone: stageTone(a.stage)),
+                                  if (response == 'interested')
+                                    StatusBadge(
+                                      label: l.appsResponseInterested,
+                                      tone: Tone.success,
+                                      icon: LucideIcons.check,
                                     ),
-                                  ),
+                                  if (response == 'declined')
+                                    StatusBadge(label: l.appsResponseDeclined, tone: Tone.neutral, icon: LucideIcons.x),
                                 ],
                               ),
+                              if (a.isEmployerInvite) ...[
+                                const SizedBox(height: KsSpace.s2),
+                                InfoNote(text: l.appsInvitedHint, icon: LucideIcons.mailOpen),
+                              ],
+                              if (a.interviews.isNotEmpty) ...[
+                                const SizedBox(height: KsSpace.s3),
+                                Text(l.ivTitle, style: t.titleSmall),
+                                for (final iv in a.interviews) InterviewTile(interview: iv),
+                              ] else if (a.interviewAt != null) ...[
+                                const SizedBox(height: KsSpace.s2),
+                                Text(
+                                  l.appsInterview(
+                                    '${formatBsDateTime(a.interviewAt, lang)} · ${formatTime(a.interviewAt!.toLocal(), lang)}',
+                                  ),
+                                  style: t.bodyMedium,
+                                ),
+                              ],
+                              if (ask) ...[
+                                const SizedBox(height: KsSpace.s3),
+                                Text(l.appsConfirmPrompt, style: t.titleSmall),
+                                const SizedBox(height: KsSpace.s2),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: OutlinedButton(
+                                        key: Key('decline_${a.id}'),
+                                        onPressed: _busy == null ? () => _respond(a, interested: false) : null,
+                                        child: Text(l.appsDecline, textAlign: TextAlign.center),
+                                      ),
+                                    ),
+                                    const SizedBox(width: KsSpace.s2),
+                                    Expanded(
+                                      child: FilledButton(
+                                        key: Key('confirm_${a.id}'),
+                                        onPressed: _busy == null ? () => _respond(a, interested: true) : null,
+                                        child: Text(l.appsConfirm, textAlign: TextAlign.center),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-            ],
-          );
-        },
+                      );
+                    },
+                  ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

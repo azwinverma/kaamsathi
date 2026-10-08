@@ -13,6 +13,7 @@ import '../../../../core/widgets/month_switcher.dart';
 import '../../../common/inbox/inbox_screen.dart';
 import '../../data/worker_models.dart';
 import '../../data/worker_repository.dart';
+import '../../work/work_switcher.dart';
 import 'corrections_screen.dart';
 
 /// Worker's own hajiri: BS month calendar with coloured days + totals.
@@ -34,7 +35,7 @@ class _MyHajiriScreenState extends ConsumerState<MyHajiriScreen> {
     final current = BsDate.fromAd(nepalToday()).firstOfMonth;
     final corrections = ref.watch(flagOnProvider(FlagKeys.attendanceCorrections));
     return Scaffold(
-      appBar: AppBar(title: Text(l.navAttendance), actions: const [InboxBell()]),
+      appBar: AppBar(title: Text(l.workTitle), actions: const [InboxBell()]),
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(myAttendanceProvider(key));
@@ -45,6 +46,7 @@ class _MyHajiriScreenState extends ConsumerState<MyHajiriScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(KsSpace.page, 0, KsSpace.page, KsSpace.s8),
           children: [
+            const WorkSwitcher(current: WorkSection.hajiri),
             MonthSwitcher(
               month: _month,
               canGoNext: _month.compareTo(current) < 0,

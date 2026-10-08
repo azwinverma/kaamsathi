@@ -94,7 +94,7 @@ export async function HelpIndex({
       </header>
 
       {articles.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border px-4 py-10 text-center text-fg-muted">
+        <p className="rounded-dense border border-dashed border-border px-4 py-10 text-center text-fg-muted">
           {q ? t("no_results", { q }) : t("empty")}
         </p>
       ) : (
@@ -108,7 +108,7 @@ export async function HelpIndex({
                 <li key={a.slug}>
                   <Link
                     href={`/help/${a.slug}`}
-                    className="block h-full rounded-lg border border-border bg-surface p-4 shadow-sm transition-colors hover:border-border-strong focus-visible:outline-2 focus-visible:outline-ring"
+                    className="block h-full rounded-dense border border-border bg-surface p-4 shadow-sm transition-colors hover:border-border-strong focus-visible:outline-2 focus-visible:outline-ring"
                   >
                     <span className="font-medium text-fg">{a.title}</span>
                     <span className="mt-1 block text-xs text-fg-muted">{a.audience_label}</span>
@@ -149,7 +149,7 @@ export async function HelpArticleView({ article }: { article: HelpArticle }) {
 async function ContactBox() {
   const t = await getTranslations("support.help");
   return (
-    <aside className="grid gap-3 rounded-lg border border-border bg-surface-muted p-5 sm:grid-cols-2">
+    <aside className="grid gap-3 rounded-dense border border-border bg-surface-muted p-5 sm:grid-cols-2">
       <div className="flex gap-3">
         <LifeBuoy className="mt-0.5 size-5 shrink-0 text-brand-text" aria-hidden />
         <div>

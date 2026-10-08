@@ -93,7 +93,7 @@ function Code({ children, label }: { children: string; label: string }) {
     <pre
       aria-label={label}
       tabIndex={0}
-      className="scrollbar-thin overflow-x-auto rounded-lg border border-border bg-surface-muted p-4 font-mono text-xs leading-relaxed text-fg"
+      className="scrollbar-thin overflow-x-auto rounded-dense border border-border bg-surface-muted p-4 font-mono text-xs leading-relaxed text-fg"
     >
       <code>{children}</code>
     </pre>
@@ -128,15 +128,15 @@ export async function PartnerApiDocs() {
         <h1 className="text-3xl font-semibold text-fg">{t("title")}</h1>
         <p className="max-w-3xl text-base text-fg-body">{t("intro")}</p>
         <ul className="grid gap-2 pt-2 text-sm text-fg-body sm:grid-cols-3">
-          <li className="flex items-start gap-2 rounded-lg border border-border bg-surface p-3">
+          <li className="flex items-start gap-2 rounded-dense border border-border bg-surface p-3">
             <ShieldCheck className="mt-0.5 size-4 shrink-0 text-success" aria-hidden />
             {t("rule_consent")}
           </li>
-          <li className="flex items-start gap-2 rounded-lg border border-border bg-surface p-3">
+          <li className="flex items-start gap-2 rounded-dense border border-border bg-surface p-3">
             <Lock className="mt-0.5 size-4 shrink-0 text-brand-text" aria-hidden />
             {t("rule_funds")}
           </li>
-          <li className="flex items-start gap-2 rounded-lg border border-border bg-surface p-3">
+          <li className="flex items-start gap-2 rounded-dense border border-border bg-surface p-3">
             <KeyRound className="mt-0.5 size-4 shrink-0 text-warning" aria-hidden />
             {t("rule_logged")}
           </li>
@@ -184,7 +184,7 @@ export async function PartnerApiDocs() {
           </Section>
 
           <Section id="scopes" title={t("toc_scopes")}>
-            <div className="overflow-x-auto rounded-lg border border-border">
+            <div className="overflow-x-auto rounded-dense border border-border">
               <table className="w-full text-left text-sm">
                 <thead className="bg-surface-muted text-xs text-fg-muted">
                   <tr>
@@ -214,7 +214,7 @@ export async function PartnerApiDocs() {
           <Section id="endpoints" title={t("toc_endpoints")}>
             <ul className="space-y-3">
               {ENDPOINTS.map((e) => (
-                <li key={e.method + e.path} className="rounded-lg border border-border bg-surface p-4">
+                <li key={e.method + e.path} className="rounded-dense border border-border bg-surface p-4">
                   <p className="flex flex-wrap items-center gap-2 font-mono text-xs">
                     <span className="rounded bg-brand-subtle px-1.5 py-0.5 font-semibold text-brand-subtle-fg">{e.method}</span>
                     <span className="break-all text-fg">{e.path}</span>
@@ -256,7 +256,7 @@ export async function PartnerApiDocs() {
             <Code label="Node.js signature verification">{NODE_VERIFY}</Code>
           </Section>
 
-          <p className="rounded-lg border border-border bg-surface-muted p-4 text-xs text-fg-muted">{t("footer_note")}</p>
+          <p className="rounded-dense border border-border bg-surface-muted p-4 text-xs text-fg-muted">{t("footer_note")}</p>
         </div>
       </div>
     </div>

@@ -446,9 +446,7 @@ abstract final class KsShadow {
     BoxShadow(color: Color(0x0F0F172A), offset: Offset(0, 1), blurRadius: 2),
     BoxShadow(color: Color(0x0F0F172A), offset: Offset(0, 6), blurRadius: 18),
   ];
-  static const floating = [
-    BoxShadow(color: Color(0x1F0F172A), offset: Offset(0, 12), blurRadius: 32),
-  ];
+  static const floating = [BoxShadow(color: Color(0x1F0F172A), offset: Offset(0, 12), blurRadius: 32)];
 }
 
 /// Sizes that are accessibility floors, not style.
@@ -478,10 +476,76 @@ abstract final class KsMotion {
   static const easing = Cubic(0.2, 0.0, 0.0, 1.0);
 
   /// True when the platform asks for reduced motion.
-  static bool reduced(BuildContext context) =>
-      MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+  static bool reduced(BuildContext context) => MediaQuery.maybeDisableAnimationsOf(context) ?? false;
 
   /// [d], or [Duration.zero] when the user has asked for reduced motion.
-  static Duration of(BuildContext context, Duration d) =>
-      reduced(context) ? Duration.zero : d;
+  static Duration of(BuildContext context, Duration d) => reduced(context) ? Duration.zero : d;
+}
+
+/// Street-mural palette (DIRECTION.md, worker surfaces only). The mural is a
+/// painted surface, so it keeps the same light-mode hues in dark mode; the
+/// foreground on it is always [onGround] (white), AA-checked in
+/// test/core/theme_tokens_test.dart.
+abstract final class KsMural {
+  /// Blue wall the mural is painted on (action.primary, 5.17:1 with white).
+  static const ground = KsPalette.actionPrimary;
+
+  /// Text and icons on [ground] and on [passportGradient].
+  static const onGround = KsPalette.textInverse;
+
+  /// Spray-paint grain over [ground].
+  static const dot = Color(0x24FFFFFF);
+
+  /// Brush strokes and spray dots.
+  static const strokeYellow = KsPalette.accentYellow;
+  static const strokeTeal = KsPalette.accentTeal;
+  static const strokeCoral = KsPalette.accentCoral;
+
+  /// Hand-lettered words and their offset shadow.
+  static const lettering = KsPalette.accentYellow;
+  static const letteringShadow = KsPalette.accentCoral;
+
+  /// Skill gradient for the Passport card. tokens.json `gradient.skill` runs
+  /// teal → blue; we use the AA `*.text` steps of the same hues so white text
+  /// on any point of the card clears 4.5:1.
+  static const passportGradient = [KsPalette.accentTealText, KsPalette.actionPrimaryHover];
+
+  /// Paper white for cut-paper frames (same in both modes — it is paper).
+  static const paper = KsPalette.surfaceDefault;
+
+  /// Skill-ladder rung fills, lowest to highest (DIRECTION.md: canvas →
+  /// teal-subtle → teal → blue → yellow). Rung 1 sits on white, so it uses
+  /// the muted surface with a strong border to stay visible.
+  static const rungs = [
+    KsPalette.surfaceMuted,
+    KsPalette.verifiedSoft,
+    KsPalette.accentTeal,
+    KsPalette.actionPrimary,
+    KsPalette.accentYellow,
+  ];
+}
+
+/// How expressive the current surface is allowed to be. Worker mode is the
+/// "street mural" (illustrated empty states, mural headers); supervisor mode
+/// is the calm "documentary ledger" (plain icons, dense cards, no murals).
+@immutable
+class KsSurfaceStyle extends ThemeExtension<KsSurfaceStyle> {
+  const KsSurfaceStyle({required this.expressive});
+
+  final bool expressive;
+
+  static const mural = KsSurfaceStyle(expressive: true);
+  static const ledger = KsSurfaceStyle(expressive: false);
+
+  @override
+  KsSurfaceStyle copyWith({bool? expressive}) => KsSurfaceStyle(expressive: expressive ?? this.expressive);
+
+  @override
+  KsSurfaceStyle lerp(ThemeExtension<KsSurfaceStyle>? other, double t) =>
+      other is KsSurfaceStyle && t >= 0.5 ? other : this;
+}
+
+extension KsSurfaceStyleX on BuildContext {
+  /// True on worker (street mural) surfaces.
+  bool get expressive => (Theme.of(this).extension<KsSurfaceStyle>() ?? KsSurfaceStyle.mural).expressive;
 }

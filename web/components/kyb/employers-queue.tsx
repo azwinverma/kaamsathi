@@ -16,12 +16,12 @@ import { Pagination } from "@/components/ui/pagination";
 import { SearchInput } from "@/components/ui/search-input";
 import { Segmented } from "@/components/ui/segmented";
 import { RowHeader, TBody, THead, Table, TableContainer, Td, Th, Tr } from "@/components/ui/table";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { isApiError } from "@/lib/api/errors";
 import { useOpsEmployer, useOpsEmployers, useVerifyEmployer } from "@/lib/api/hooks/risk";
 import type { KybStatus, OpsEmployer } from "@/lib/api/types-risk";
 import { useFormat } from "@/lib/use-format";
 import { KybStatusBadge } from "./kyb-badges";
+import { VerificationLadder, useKybLadder } from "@/components/ledger";
 import { KybDocument } from "./kyb-documents";
 
 const PAGE_SIZE = 25;
@@ -54,15 +54,13 @@ export function EmployersQueue() {
     <div>
       <PageHeader title={tn("ops_employers")} description={t("description")} />
       <Toolbar className="sm:justify-between">
-        <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)}>
-          <TabsList className="max-w-full overflow-x-auto">
-            {TABS.map((s) => (
-              <TabsTrigger key={s} value={s}>
-                {t(`tab_${s}`)}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+        <Segmented
+          label={tn("ops_employers")}
+          value={tab}
+          onChange={(v) => setTab(v)}
+          className="max-w-full overflow-x-auto"
+          options={TABS.map((s) => ({ value: s, label: t(`tab_${s}`) }))}
+        />
         <SearchInput value={q} onChange={setQ} placeholder={t("search_placeholder")} className="sm:w-72" />
       </Toolbar>
 
@@ -163,8 +161,8 @@ function ReviewDialog({ id, onClose }: { id: string | null; onClose: () => void 
               <ErrorState error={query.error} onRetry={() => query.refetch()} />
             ) : (
               <>
-                <Skeleton className="h-24 rounded-lg" />
-                <Skeleton className="h-56 rounded-lg" />
+                <Skeleton className="h-24 rounded-dense" />
+                <Skeleton className="h-56 rounded-dense" />
               </>
             )}
           </DialogBody>
@@ -193,6 +191,8 @@ function ReviewBody({ org: o, onClose }: { org: OpsEmployer; onClose: () => void
   const [note, setNote] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
   const decided = o.verification_status === "verified" || o.verification_status === "rejected";
+  const tl = useTranslations("ledger.ops");
+  const ladder = useKybLadder(o.verification_status, !!(o.registration_doc_url || o.pan_doc_url)).map((r) => ({ ...r, hint: undefined }));
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,8 +216,9 @@ function ReviewBody({ org: o, onClose }: { org: OpsEmployer; onClose: () => void
   return (
     <form onSubmit={submit} className="flex min-h-0 flex-col" noValidate>
       <DialogBody className="space-y-6">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_220px]">
         <DescriptionList
-          columns={3}
+          columns={2}
           items={[
             { label: tk("registration_no"), value: <span className="tabular">{o.registration_no || "—"}</span> },
             { label: tk("pan_no"), value: <span className="tabular">{o.pan_no || "—"}</span> },
@@ -246,6 +247,11 @@ function ReviewBody({ org: o, onClose }: { org: OpsEmployer; onClose: () => void
             },
           ]}
         />
+          <section className="lg:border-l lg:border-border lg:pl-6">
+            <h3 className="mb-2 text-sm font-semibold text-fg">{tl("kyb_ladder")}</h3>
+            <VerificationLadder rungs={ladder} dense label={tl("kyb_ladder")} />
+          </section>
+        </div>
         <section aria-labelledby="kyb-docs-title" className="space-y-3">
           <h3 id="kyb-docs-title" className="text-sm font-semibold text-fg">
             {t("documents")}

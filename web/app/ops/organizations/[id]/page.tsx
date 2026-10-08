@@ -35,10 +35,10 @@ export default function OpsOrganizationDetailPage() {
         <PageHeader title={<Skeleton className="h-8 w-64" />} back={back} />
         <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-24 rounded-lg" />
+            <Skeleton key={i} className="h-24 rounded-dense" />
           ))}
         </div>
-        <Skeleton className="h-72 rounded-lg" />
+        <Skeleton className="h-72 rounded-dense" />
       </>
     );
   }

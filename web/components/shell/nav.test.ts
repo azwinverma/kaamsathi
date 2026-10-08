@@ -1,4 +1,4 @@
-import { OPS_NAV, canSeeStaffItem, filterNavForStaff, type NavItem } from "./nav";
+import { APP_NAV, OPS_NAV, activeHref, canSeeStaffItem, filterNavForStaff, isActive, type NavItem } from "./nav";
 import type { StaffRole } from "@/lib/api/types-security";
 
 const hrefs = (roles: StaffRole[] | undefined) =>
@@ -83,5 +83,80 @@ describe("filterNavForStaff on OPS_NAV", () => {
     const admin = ["/ops/audit", "/ops/staff", "/ops/taxonomy", "/ops/system"];
     const nonSuper: StaffRole[] = ["verifier", "support", "finance_ops", "partner_manager", "risk_analyst"];
     for (const h of admin) expect(hrefs(nonSuper)).not.toContain(h);
+  });
+});
+
+describe("APP_NAV (brand v2 §18 grouping)", () => {
+  const items = APP_NAV.flatMap((g) => g.items);
+  const byHref = new Map(items.map((i) => [i.href, i]));
+
+  it("keeps every employer route and its role rule", () => {
+    const FULL = ["owner", "admin", "hr"];
+    const ADMIN = ["owner", "admin"];
+    const expected: [string, string[] | undefined][] = [
+      ["/app", undefined],
+      ["/app/jobs", FULL],
+      ["/app/candidates", FULL],
+      ["/app/workers", undefined],
+      ["/app/attendance", undefined],
+      ["/app/attendance/corrections", undefined],
+      ["/app/leave", undefined],
+      ["/app/advances", FULL],
+      ["/app/roster", undefined],
+      ["/app/timesheets", undefined],
+      ["/app/contractors", FULL],
+      ["/app/disputes", FULL],
+      ["/app/ratings", FULL],
+      ["/app/payroll", FULL],
+      ["/app/compliance", FULL],
+      ["/app/analytics", FULL],
+      ["/app/training", FULL],
+      ["/app/settings", FULL],
+      ["/app/billing", ADMIN],
+      ["/app/verification", ADMIN],
+      ["/app/integrations", ADMIN],
+      ["/app/support", undefined],
+      ["/app/account", undefined],
+    ];
+    for (const [href, roles] of expected) {
+      expect(byHref.has(href), href).toBe(true);
+      expect(byHref.get(href)!.roles, href).toEqual(roles);
+    }
+  });
+
+  it("is grouped Dashboard · Recruitment · Workforce · Sites · Attendance · Payroll · Training · Reports · Billing · Settings", () => {
+    expect(APP_NAV.map((g) => g.label ?? "dashboard")).toEqual([
+      "dashboard",
+      "ledger.nav.recruitment",
+      "ledger.nav.workforce",
+      "ledger.nav.sites",
+      "ledger.nav.attendance",
+      "ledger.nav.payroll",
+      "ledger.nav.training",
+      "ledger.nav.reports",
+      "ledger.nav.billing",
+      "ledger.nav.settings",
+    ]);
+  });
+
+  it("has unique hrefs", () => {
+    expect(new Set(items.map((i) => i.href)).size).toBe(items.length);
+  });
+});
+
+describe("active item", () => {
+  const items = APP_NAV.flatMap((g) => g.items);
+  it("prefers the most specific match", () => {
+    expect(activeHref(items, "/app/attendance/corrections")).toBe("/app/attendance/corrections");
+    expect(activeHref(items, "/app/attendance")).toBe("/app/attendance");
+    expect(activeHref(items, "/app")).toBe("/app");
+    expect(activeHref(items, "/app/workers/123")).toBe("/app/workers");
+  });
+  it("matches query items only when the query matches", () => {
+    expect(activeHref(items, "/app/settings", new URLSearchParams("tab=sites"))).toBe("/app/settings?tab=sites");
+    expect(activeHref(items, "/app/settings", new URLSearchParams("tab=shifts"))).toBe("/app/settings");
+    expect(activeHref(items, "/app/settings")).toBe("/app/settings");
+    const sites = items.find((i) => i.href.includes("?"))!;
+    expect(isActive("/app/settings", sites)).toBe(false);
   });
 });

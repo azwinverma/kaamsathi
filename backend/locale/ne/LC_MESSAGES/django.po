@@ -668,20 +668,26 @@ msgid "No certificates expire in the next 30 days."
 msgstr "आउँदो ३० दिनमा कुनै प्रमाणपत्रको म्याद सकिँदैन।"
 
 #, python-format
-msgid "%(count)s SSF-enrolled workers have no SSF ID."
-msgstr "सामाजिक सुरक्षा कोषमा सूचीकृत %(count)s जना कामदारको परिचय नम्बर छैन।"
+msgid "%(count)s SSF-enrolled worker has no SSF ID."
+msgid_plural "%(count)s SSF-enrolled workers have no SSF ID."
+msgstr[0] "सामाजिक सुरक्षा कोषमा सूचीकृत %(count)s जना कामदारको परिचय नम्बर छैन।"
+msgstr[1] "सामाजिक सुरक्षा कोषमा सूचीकृत %(count)s जना कामदारको परिचय नम्बर छैन।"
 
 #, python-format
 msgid "%(count)s workers are paid below the minimum wage."
 msgstr "%(count)s जना कामदारलाई न्यूनतम पारिश्रमिकभन्दा कम दिइएको छ।"
 
 #, python-format
-msgid "%(count)s workers have no written contract."
-msgstr "%(count)s जना कामदारको लिखित सम्झौता छैन।"
+msgid "%(count)s worker has no written contract."
+msgid_plural "%(count)s workers have no written contract."
+msgstr[0] "%(count)s जना कामदारको लिखित सम्झौता छैन।"
+msgstr[1] "%(count)s जना कामदारको लिखित सम्झौता छैन।"
 
 #, python-format
-msgid "%(count)s contracts are waiting for the worker's acceptance."
-msgstr "%(count)s वटा सम्झौता कामदारको स्वीकृतिको पर्खाइमा छन्।"
+msgid "%(count)s contract is waiting for the worker's acceptance."
+msgid_plural "%(count)s contracts are waiting for the worker's acceptance."
+msgstr[0] "%(count)s वटा सम्झौता कामदारको स्वीकृतिको पर्खाइमा छन्।"
+msgstr[1] "%(count)s वटा सम्झौता कामदारको स्वीकृतिको पर्खाइमा छन्।"
 
 #, python-format
 msgid "%(count)s worker-days of hajiri are not marked in the last 7 days."

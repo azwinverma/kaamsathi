@@ -107,7 +107,7 @@ export function RiskPage() {
       </div>
       <div className="mb-6 grid gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         {summary.isLoading ? (
-          <Skeleton className="h-64 rounded-lg" />
+          <Skeleton className="h-64 rounded-dense" />
         ) : s ? (
           <RiskTrendBars trend={s.trend} />
         ) : summary.isError ? (

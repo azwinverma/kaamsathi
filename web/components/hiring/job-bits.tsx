@@ -125,6 +125,7 @@ export function FillProgress({ job }: { job: Pick<Job, "counts" | "openings_coun
         aria-valuemin={0}
         aria-valuemax={job.openings_count}
         aria-valuenow={joined}
+        aria-label={t("filled_of", { joined: f.digits(joined), total: f.digits(job.openings_count) })}
       >
         <div className="bg-success h-full rounded-full" style={{ width: `${pct}%` }} />
       </div>

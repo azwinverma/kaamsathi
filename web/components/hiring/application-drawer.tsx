@@ -230,7 +230,7 @@ function InterviewBanner({ iso }: { iso: string }) {
   const ta = useTranslations("hiring.application");
   const f = useFormat();
   return (
-    <div className="border-warning/30 bg-warning-subtle flex items-center gap-3 rounded-lg border p-3 text-sm">
+    <div className="border-warning/30 bg-warning-subtle flex items-center gap-3 rounded-dense border p-3 text-sm">
       <CalendarClock className="text-warning size-5 shrink-0" aria-hidden />
       <div>
         <p className="text-fg font-semibold">{ta("interview")}</p>
@@ -293,7 +293,7 @@ function HistoryRow({ item }: { item: WorkHistoryItem }) {
     ? tradeOf({ trade: item.trade, years_experience: 0, nstb_level: "none" })
     : null;
   return (
-    <li className="border-border rounded-lg border p-3">
+    <li className="border-border rounded-dense border p-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-fg truncate font-medium">{item.organization_name}</p>

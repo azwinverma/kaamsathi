@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" role="img" aria-labelledby="t">
+  <title id="t">HVAC technician reading a manifold gauge set at an outdoor condenser unit</title>
+  <defs>
+    <pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.4" fill="#0F172A" fill-opacity=".09"/></pattern>
+  </defs>
+  <!-- ground -->
+  <rect width="400" height="500" fill="#CCFBF1"/>
+  <circle cx="300" cy="138" r="118" fill="#FFFFFF" fill-opacity=".7"/>
+  <rect y="300" width="400" height="200" fill="url(#dots)"/>
+  <g transform="translate(-48 -96) scale(1.42)">
+  <rect x="0" y="452" width="420" height="48" fill="#14B8A6"/>
+  <path d="M0 452h420" stroke="#0F172A" stroke-width="3"/>
+
+  <!-- condenser unit (object: outlined) -->
+  <g stroke="#0F172A" stroke-width="3" stroke-linejoin="round">
+    <rect x="236" y="300" width="150" height="140" rx="8" fill="#F8FAFC"/>
+    <circle cx="300" cy="370" r="50" fill="#E2E8F0"/>
+    <circle cx="300" cy="370" r="8" fill="#0F172A"/>
+    <path d="M300 362c-4-18 6-34 22-38M308 372c18 2 30 16 28 32M294 376c-12 14-30 18-44 10" fill="none" stroke-linecap="round"/>
+    <path d="M362 318v104M372 318v104" stroke-linecap="round"/>
+    <rect x="250" y="440" width="22" height="12" fill="#334155"/>
+    <rect x="350" y="440" width="22" height="12" fill="#334155"/>
+    <rect x="240" y="404" width="12" height="20" rx="3" fill="#FBBF24"/>
+  </g>
+
+  <!-- technician: legs, boots -->
+  <g stroke-linecap="round" fill="none">
+    <path d="M128 336l-4 108M164 336l6 108" stroke="#1D4ED8" stroke-width="34"/>
+  </g>
+  <rect x="100" y="438" width="46" height="18" rx="9" fill="#0F172A"/>
+  <rect x="152" y="438" width="46" height="18" rx="9" fill="#0F172A"/>
+  <!-- torso (coverall) -->
+  <rect x="96" y="206" width="100" height="144" rx="26" fill="#2563EB"/>
+  <rect x="96" y="318" width="100" height="10" fill="#1D4ED8"/>
+  <rect x="162" y="226" width="20" height="8" rx="2" fill="#FBBF24"/>
+  <rect x="135" y="190" width="22" height="24" fill="#8D5A3B"/>
+  <!-- head: featureless, hair + cap + safety glasses (PPE outlined) -->
+  <circle cx="146" cy="164" r="34" fill="#8D5A3B"/>
+  <path d="M113 160a33 33 0 0 1 66 0z" fill="#0F172A"/>
+  <path d="M110 154a36 30 0 0 1 72 0h22a4 4 0 0 1 0 8H110z" fill="#1D4ED8" stroke="#0F172A" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="118" y="166" width="58" height="12" rx="6" fill="#334155" stroke="#0F172A" stroke-width="3"/>
+
+  <!-- hoses from manifold to service ports -->
+  <g fill="none" stroke-linecap="round" stroke-width="6">
+    <path d="M180 286c0 60 30 110 64 124" stroke="#2563EB"/>
+    <path d="M232 286c4 44 4 80 10 106" stroke="#FF6B6B"/>
+    <path d="M206 286c0 70-30 120-6 160" stroke="#FBBF24"/>
+  </g>
+  <!-- arms (behind manifold) -->
+  <g fill="none" stroke="#1D4ED8" stroke-width="26" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M110 226c-6 30 10 52 54 52"/>
+    <path d="M184 226c14 20 34 38 64 46"/>
+  </g>
+  <!-- manifold gauge set (tool: outlined) -->
+  <g stroke="#0F172A" stroke-width="3" stroke-linejoin="round">
+    <rect x="160" y="264" width="96" height="22" rx="6" fill="#CBD5E1"/>
+    <circle cx="184" cy="244" r="23" fill="#FFFFFF"/>
+    <circle cx="184" cy="244" r="16" fill="none" stroke="#2563EB" stroke-width="5"/>
+    <path d="M184 244l9-10" stroke-linecap="round"/>
+    <circle cx="232" cy="244" r="23" fill="#FFFFFF"/>
+    <circle cx="232" cy="244" r="16" fill="none" stroke="#FF6B6B" stroke-width="5"/>
+    <path d="M232 244l-6-12" stroke-linecap="round"/>
+    <rect x="200" y="252" width="16" height="12" fill="#334155"/>
+  </g>
+  <!-- gloved hands (PPE: outlined) -->
+  <g fill="#334155" stroke="#0F172A" stroke-width="3">
+    <circle cx="164" cy="278" r="14"/>
+    <circle cx="250" cy="274" r="14"/>
+  </g>
+  </g>
+  <!-- spray dots -->
+  <circle cx="58" cy="96" r="7" fill="#14B8A6"/>
+  <circle cx="76" cy="80" r="4" fill="#14B8A6"/>
+</svg>

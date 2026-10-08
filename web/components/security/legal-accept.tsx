@@ -96,7 +96,7 @@ export function LegalAccept({
             const id = `legal-${d.id}`;
             const kind = t.has(`kind.${d.kind}`) ? t(`kind.${d.kind}`) : d.kind;
             return (
-              <li key={d.id} className="rounded-lg border border-border bg-surface p-4">
+              <li key={d.id} className="rounded-dense border border-border bg-surface p-4">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                   <h2 className="text-base font-semibold text-fg">{kind}</h2>
                   <span className="text-xs text-fg-muted tabular">

@@ -11,6 +11,7 @@ import '../../../../core/widgets/common.dart';
 import '../../../common/inbox/inbox_screen.dart';
 import '../../data/worker_models.dart';
 import '../../data/worker_repository.dart';
+import '../../work/work_switcher.dart';
 
 class TalabScreen extends ConsumerWidget {
   const TalabScreen({super.key});
@@ -21,7 +22,7 @@ class TalabScreen extends ConsumerWidget {
     final value = ref.watch(payslipsProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text(l.talabTitle),
+        title: Text(l.workTitle),
         actions: [
           TextButton.icon(
             onPressed: () => context.push(Routes.workerMoney),
@@ -42,15 +43,17 @@ class TalabScreen extends ConsumerWidget {
           value: value,
           onRetry: () => ref.invalidate(payslipsProvider),
           data:
-              (slips) =>
-                  slips.isEmpty
-                      ? ListView(children: [EmptyState(icon: LucideIcons.wallet, message: l.talabEmpty)])
-                      : ListView.separated(
-                        padding: const EdgeInsets.all(KsSpace.page),
-                        itemCount: slips.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: KsSpace.s3),
-                        itemBuilder: (_, i) => PayslipTile(slip: slips[i]),
-                      ),
+              (slips) => ListView(
+                padding: const EdgeInsets.fromLTRB(KsSpace.page, 0, KsSpace.page, KsSpace.page),
+                children: [
+                  const WorkSwitcher(current: WorkSection.payslips),
+                  if (slips.isEmpty) EmptyState(icon: LucideIcons.wallet, message: l.talabEmpty),
+                  for (var i = 0; i < slips.length; i++) ...[
+                    if (i > 0) const SizedBox(height: KsSpace.s3),
+                    PayslipTile(slip: slips[i]),
+                  ],
+                ],
+              ),
         ),
       ),
     );

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-labelledby="t">
+  <title id="t">Instructor showing a trainee how to wire a switch on a practice board in a training lab</title>
+  <defs>
+    <pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.4" fill="#0F172A" fill-opacity=".09"/></pattern>
+  </defs>
+  <rect width="480" height="360" fill="#EFF6FF"/>
+  <rect x="0" y="0" width="480" height="120" fill="url(#dots)"/>
+  <rect y="316" width="480" height="44" fill="#CBD5E1"/>
+  <path d="M0 316h480" stroke="#0F172A" stroke-width="3"/>
+
+  <!-- practice wiring board (object: outlined) -->
+  <g stroke="#0F172A" stroke-width="3" stroke-linejoin="round">
+    <rect x="160" y="40" width="170" height="210" rx="4" fill="#FEF9E7"/>
+    <path d="M190 80h110M190 80v120M300 80v60M190 200h60" fill="none" stroke="#5A6679" stroke-width="6" stroke-linecap="round"/>
+    <rect x="178" y="66" width="26" height="26" rx="3" fill="#FFFFFF"/>
+    <rect x="288" y="66" width="26" height="26" rx="3" fill="#FFFFFF"/>
+    <rect x="178" y="188" width="26" height="26" rx="3" fill="#FFFFFF"/>
+    <rect x="186" y="196" width="10" height="10" rx="1" fill="#2563EB"/>
+    <rect x="286" y="128" width="30" height="30" rx="4" fill="#FFFFFF"/>
+    <circle cx="301" cy="170" r="12" fill="#FBBF24"/>
+    <rect x="296" y="156" width="10" height="6" fill="#334155"/>
+    <path d="M250 200c10 0 14-6 14-14" fill="none" stroke="#FF6B6B" stroke-width="4" stroke-linecap="round"/>
+    <rect x="150" y="250" width="190" height="14" fill="#334155"/>
+    <path d="M170 264v52M320 264v52" stroke-width="7" stroke-linecap="round"/>
+  </g>
+
+  <!-- instructor (left, pointing) -->
+  <rect x="44" y="160" width="100" height="170" rx="26" fill="#4F46E5"/>
+  <rect x="83" y="140" width="22" height="26" fill="#6B4430"/>
+  <circle cx="94" cy="116" r="32" fill="#6B4430"/>
+  <path d="M60 124c-6-30 10-46 34-46s40 14 36 40c-10-14-20-20-30-20-16 0-28 10-40 26z" fill="#0F172A"/>
+  <path d="M60 120c-4 14-2 30 6 40" stroke="#0F172A" stroke-width="10" stroke-linecap="round" fill="none"/>
+  <!-- glasses (abstract band, no face) -->
+  <rect x="78" y="112" width="44" height="10" rx="5" fill="none" stroke="#0F172A" stroke-width="3"/>
+  <path d="M136 182c20 4 40-30 56-56" stroke="#4F46E5" stroke-width="24" stroke-linecap="round" fill="none"/>
+  <path d="M54 182c-10 40-6 80 6 110" stroke="#4F46E5" stroke-width="24" stroke-linecap="round" fill="none"/>
+  <circle cx="194" cy="122" r="12" fill="#6B4430"/>
+  <circle cx="60" cy="296" r="12" fill="#6B4430"/>
+
+  <!-- trainee (right, screwdriver) -->
+  <rect x="344" y="168" width="100" height="160" rx="26" fill="#14B8A6"/>
+  <rect x="383" y="148" width="22" height="26" fill="#B07A52"/>
+  <circle cx="394" cy="124" r="32" fill="#B07A52"/>
+  <path d="M362 120a32 32 0 0 1 64 0c-12-8-30-12-44-6-8 3-14 6-20 6z" fill="#0F172A"/>
+  <!-- safety glasses (PPE: outlined) -->
+  <rect x="362" y="122" width="44" height="11" rx="5.5" fill="#334155" stroke="#0F172A" stroke-width="3"/>
+  <path d="M352 190c-24 0-34-10-46-20" stroke="#0F766E" stroke-width="24" stroke-linecap="round" fill="none"/>
+  <path d="M436 190c6 40 0 80-10 106" stroke="#0F766E" stroke-width="24" stroke-linecap="round" fill="none"/>
+  <g stroke="#0F172A" stroke-width="3" stroke-linecap="round">
+    <path d="M300 166l-14-6" stroke-width="10"/>
+    <path d="M300 166l-14-6" stroke="#FBBF24" stroke-width="5"/>
+  </g>
+  <circle cx="304" cy="168" r="12" fill="#B07A52"/>
+  <circle cx="426" cy="298" r="12" fill="#B07A52"/>
+  <circle cx="420" cy="56" r="7" fill="#4F46E5"/>
+  <circle cx="436" cy="42" r="4" fill="#4F46E5"/>
+</svg>

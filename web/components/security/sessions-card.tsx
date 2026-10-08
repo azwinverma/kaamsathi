@@ -60,7 +60,7 @@ export function SessionsCard() {
         ) : sessions.length === 0 ? (
           <p className="text-sm text-fg-muted">{t("empty")}</p>
         ) : (
-          <ul className="divide-y divide-border rounded-lg border border-border">
+          <ul className="divide-y divide-border rounded-dense border border-border">
             {sessions.map((s) => (
               <SessionRow key={s.id} session={s} onRevoke={() => setTarget(s)} />
             ))}

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" role="img" aria-labelledby="t">
+  <title id="t">Solar installer in a harness, clipped to a roof anchor, fixing a panel on a tin roof</title>
+  <defs>
+    <pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.4" fill="#0F172A" fill-opacity=".09"/></pattern>
+  </defs>
+  <rect width="400" height="500" fill="#EFF6FF"/>
+  <circle cx="300" cy="110" r="64" fill="#FBBF24"/>
+  <rect y="0" width="400" height="240" fill="url(#dots)"/>
+
+  <g transform="translate(-46 -64) scale(1.18)">
+  <!-- corrugated tin roof -->
+  <path d="M0 330L420 246V520H0z" fill="#CBD5E1"/>
+  <g stroke="#5A6679" stroke-opacity=".5" stroke-width="3">
+    <path d="M40 330l40-8M30 380l120-24M20 430l200-40M10 480l280-56"/>
+  </g>
+  <path d="M0 330L420 246" stroke="#0F172A" stroke-width="6"/>
+  <!-- roof anchor + lanyard (PPE: outlined) -->
+  <circle cx="90" cy="312" r="9" fill="none" stroke="#0F172A" stroke-width="5"/>
+  <path d="M90 320c30 30 50 30 76 18" fill="none" stroke="#0F172A" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 0"/>
+
+  <!-- panel lying on the roof rails (object: outlined) -->
+  <g stroke="#0F172A" stroke-width="3" stroke-linejoin="round">
+    <path d="M232 318l150-30 14 64-150 30z" fill="#2563EB"/>
+    <path d="M282 308l14 64M332 298l14 64M239 350l150-30" stroke="#DBEAFE" stroke-width="2"/>
+  </g>
+
+  <!-- installer, kneeling -->
+  <g>
+    <!-- shin + thigh -->
+    <path d="M150 410l60-8M150 410l-10 60" stroke="#334155" stroke-width="34" stroke-linecap="round" fill="none"/>
+    <path d="M196 396l18 64" stroke="#334155" stroke-width="34" stroke-linecap="round" fill="none"/>
+    <rect x="200" y="452" width="46" height="18" rx="9" fill="#0F172A"/>
+    <!-- torso leaning forward -->
+    <rect x="118" y="268" width="96" height="140" rx="26" transform="rotate(14 166 338)" fill="#14B8A6"/>
+    <!-- harness straps (PPE) -->
+    <g stroke="#FF6B6B" stroke-width="7" stroke-linecap="round" fill="none">
+      <path d="M150 280l-6 124M186 288l-24 112M130 360l76 18"/>
+    </g>
+    <circle cx="166" cy="340" r="6" fill="#0F172A"/>
+    <rect x="160" y="254" width="22" height="24" transform="rotate(14 171 266)" fill="#8D5A3B"/>
+    <circle cx="180" cy="232" r="34" fill="#8D5A3B"/>
+    <path d="M148 236a33 33 0 0 1 34-36c-10 12-20 24-34 36z" fill="#0F172A"/>
+    <!-- helmet + chin strap (PPE: outlined) -->
+    <path d="M146 224a36 34 0 0 1 70 8z" fill="#FFFFFF" stroke="#0F172A" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M140 222l84 14" stroke="#0F172A" stroke-width="10" stroke-linecap="round"/>
+    <path d="M140 222l84 14" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+    <path d="M160 236c2 18 12 28 26 28" stroke="#0F172A" stroke-width="3" fill="none"/>
+    <!-- arms to the panel edge -->
+    <path d="M196 290c20 10 34 20 44 32" stroke="#0F766E" stroke-width="26" stroke-linecap="round" fill="none"/>
+    <path d="M150 296c10 34 40 52 84 54" stroke="#0F766E" stroke-width="26" stroke-linecap="round" fill="none"/>
+    <!-- gloves + hex driver -->
+    <g stroke="#0F172A" stroke-width="3">
+      <path d="M244 326l22-6" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="240" cy="324" r="14" fill="#FBBF24"/>
+      <circle cx="236" cy="350" r="14" fill="#FBBF24"/>
+    </g>
+  </g>
+  </g>
+  <circle cx="52" cy="70" r="7" fill="#FF6B6B"/>
+  <circle cx="68" cy="56" r="4" fill="#FF6B6B"/>
+</svg>

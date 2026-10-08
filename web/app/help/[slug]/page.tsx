@@ -20,7 +20,7 @@ export default async function HelpArticlePage({ params }: Props) {
   const article = await fetchHelpArticle(await getLocale(), slug);
   if (!article) notFound();
   return (
-    <PublicFrame>
+    <PublicFrame accent="help">
       <HelpArticleView article={article} />
     </PublicFrame>
   );

@@ -331,7 +331,7 @@ function CredentialReview({
         <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           <CredentialDocument credential={c} />
           <div className="space-y-4">
-            <div className="border-border rounded-lg border p-3">
+            <div className="border-border rounded-dense border p-3">
               <p className="text-fg-muted text-xs font-medium">{t("worker")}</p>
               <p className="text-fg mt-0.5 font-medium">{c.worker.full_name}</p>
               <div className="mt-1 flex flex-wrap items-center gap-2">
@@ -382,7 +382,7 @@ function CredentialReview({
         </div>
 
         {decided && !editing ? (
-          <div className="border-border bg-surface-muted/50 space-y-3 rounded-lg border p-4">
+          <div className="border-border bg-surface-muted/50 space-y-3 rounded-dense border p-4">
             <p className="text-fg text-sm font-semibold">{t("decision")}</p>
             <div className="flex flex-wrap items-center gap-2 text-sm">
               <CredentialStatusBadge credential={c} />
@@ -404,7 +404,7 @@ function CredentialReview({
             </Button>
           </div>
         ) : (
-          <div className="border-border bg-surface-muted/50 rounded-lg border p-4">
+          <div className="border-border bg-surface-muted/50 rounded-dense border p-4">
             <DecisionForm credential={c} onDone={onDecided} />
           </div>
         )}
@@ -559,8 +559,8 @@ function PreviousRejection({ previous }: { previous: NonNullable<OpsCredential["
 function QueueSkeleton() {
   return (
     <div className="grid gap-6 lg:grid-cols-[340px_minmax(0,1fr)]" aria-busy>
-      <Skeleton className="h-[420px] rounded-lg" />
-      <Skeleton className="h-[520px] rounded-lg max-lg:hidden" />
+      <Skeleton className="h-[420px] rounded-dense" />
+      <Skeleton className="h-[520px] rounded-dense max-lg:hidden" />
     </div>
   );
 }

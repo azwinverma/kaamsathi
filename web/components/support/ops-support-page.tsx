@@ -239,7 +239,7 @@ function CaseSheet({ id, onClose }: { id: string | null; onClose: () => void }) 
           <div className="space-y-4 p-6">
             <DialogTitle className="sr-only">{t("case")}</DialogTitle>
             <DialogDescription className="sr-only">{t("case")}</DialogDescription>
-            {query.isError ? <ErrorState error={query.error} onRetry={() => query.refetch()} /> : <Skeleton className="h-64 rounded-lg" />}
+            {query.isError ? <ErrorState error={query.error} onRetry={() => query.refetch()} /> : <Skeleton className="h-64 rounded-dense" />}
           </div>
         )}
       </SheetContent>
@@ -308,7 +308,7 @@ function CaseDetail({ c }: { c: SupportCase }) {
           </div>
         </dl>
 
-        <section aria-label={t("actions")} className="grid gap-3 rounded-lg border border-border bg-surface-muted/60 p-4 sm:grid-cols-3">
+        <section aria-label={t("actions")} className="grid gap-3 rounded-dense border border-border bg-surface-muted/60 p-4 sm:grid-cols-3">
           <Field id="case-status" label={tAll("common.status")}>
             <NativeSelect
               value={c.status}
@@ -449,7 +449,7 @@ function IdentityPanel({ c }: { c: SupportCase }) {
   };
 
   return (
-    <section aria-labelledby={`identity-${c.id}`} className="space-y-3 rounded-lg border border-border p-4">
+    <section aria-labelledby={`identity-${c.id}`} className="space-y-3 rounded-dense border border-border p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 id={`identity-${c.id}`} className="flex items-center gap-2 text-sm font-semibold text-fg">
           <ShieldCheck className="size-4 text-brand-text" aria-hidden />
@@ -528,7 +528,7 @@ function CallerLookup() {
   return (
     <div className="space-y-4">
       <form
-        className="flex flex-col gap-2 rounded-lg border border-border bg-surface p-4 shadow-sm sm:flex-row sm:items-end"
+        className="flex flex-col gap-2 rounded-dense border border-border bg-surface p-4 shadow-sm sm:flex-row sm:items-end"
         onSubmit={(e) => {
           e.preventDefault();
           if (value.trim()) setSubmitted({ [by]: value.trim() });
@@ -559,7 +559,7 @@ function CallerLookup() {
           <EmptyState icon={Search} title={t("no_match")} />
         ) : (
           <div className="grid gap-4 lg:grid-cols-2">
-            <section className="space-y-2 rounded-lg border border-border bg-surface p-4">
+            <section className="space-y-2 rounded-dense border border-border bg-surface p-4">
               <h3 className="text-sm font-semibold text-fg">{t("people")}</h3>
               <ul className="divide-y divide-border text-sm">
                 {data.workers.map((w) => (
@@ -594,7 +594,7 @@ function CallerLookup() {
                 ))}
               </ul>
             </section>
-            <section className="space-y-2 rounded-lg border border-border bg-surface p-4">
+            <section className="space-y-2 rounded-dense border border-border bg-surface p-4">
               <h3 className="text-sm font-semibold text-fg">{t("open_cases")}</h3>
               {data.open_cases.length === 0 ? (
                 <p className="text-sm text-fg-muted">{t("no_cases")}</p>

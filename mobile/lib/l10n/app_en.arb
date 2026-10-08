@@ -292,8 +292,8 @@
   "homeScanHint": "Scan the QR code at your work site.",
   "homeThisMonth": "This month",
   "homeLatestPayslip": "Latest payslip",
-  "checkInSuccess": "Checked in. Have a good day at work!",
-  "checkOutSuccess": "Checked out. See you tomorrow!",
+  "checkInSuccess": "Checked in. Have a good day at work.",
+  "checkOutSuccess": "Checked out. See you tomorrow.",
   "scanTitle": "Scan site QR",
   "scanInstructions": "Point the camera at the QR code at your site.",
   "scanTorch": "Flashlight",
@@ -1802,5 +1802,102 @@
   "rosterWarnWeeklyOff": "Weekly day off",
   "rosterWarnConflict": "Rostered at another workplace",
   "rosterWarnLegend": "! = check this day",
-  "commonEdit": "Edit"
+  "commonEdit": "Edit",
+  "navHome": "Home",
+  "navJobsTab": "Jobs",
+  "navWork": "Work",
+  "navLearn": "Learn",
+  "workTitle": "Work",
+  "workHajiri": "Hajiri",
+  "workPayslips": "Payslips",
+  "learnTitle": "Learn",
+  "learnHeadline": "Get better at your trade",
+  "learnIntro": "Courses near you, your certificates and the next step in your trade.",
+  "learnMenuSubtitle": "Training, certificates, next steps",
+  "slotLearnWorkshopAlt": "Training at a workshop bench",
+  "slotCareerStepAlt": "A worker moving up a trade level",
+  "homeHello": "Namaste,",
+  "homeLadderChip": "Skill ladder: level {level}",
+  "@homeLadderChip": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "homeDaysWorked": "days worked",
+  "homeOutOf100": "out of 100",
+  "homeScoreSoon": "after your first job",
+  "homeSeeAll": "See all",
+  "homeNoJobs": "No matching jobs right now. Adding more work areas shows more jobs.",
+  "jobsMatchSkillArea": "Matches your skills and area",
+  "jobsMatchTradeArea": "Matches your skill ({trade}) and area",
+  "@jobsMatchTradeArea": {
+    "placeholders": {
+      "trade": {
+        "type": "String"
+      }
+    }
+  },
+  "ladderTitle": "Skill ladder",
+  "ladderRungPhone": "Phone",
+  "ladderRungIdentity": "Identity",
+  "ladderRungWork": "Work",
+  "ladderRungCertificate": "Certificate",
+  "ladderRungTrusted": "Highly trusted",
+  "ladderSummary": "Skill ladder: {done} of {total} steps",
+  "@ladderSummary": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "ladderStepDone": "{step}: done",
+  "@ladderStepDone": {
+    "placeholders": {
+      "step": {
+        "type": "String"
+      }
+    }
+  },
+  "ladderStepOpen": "{step}: not yet",
+  "@ladderStepOpen": {
+    "placeholders": {
+      "step": {
+        "type": "String"
+      }
+    }
+  },
+  "ladderNext": "Next step: {step}",
+  "@ladderNext": {
+    "placeholders": {
+      "step": {
+        "type": "String"
+      }
+    }
+  },
+  "ladderChipShort": "Ladder {done}/{total}",
+  "@ladderChipShort": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "passportShare": "Share",
+  "passportPrivacyNote": "ID numbers are never shown. You choose who sees this.",
+  "passportPhotoMissing": "No photo yet",
+  "ppTimeline": "Verified skills and certificates",
+  "ppTimelineEmpty": "Nothing verified yet. Add a certificate from Learn.",
+  "celebrateCredential": "Your first certificate is verified.",
+  "celebratePlacement": "You have joined your new job. All the best.",
+  "celebrateProfile": "Your profile is complete.",
+  "celebrateTraining": "Training completed. Well done."
 }

@@ -112,7 +112,7 @@ export function ImportDialog({ open, onOpenChange }: { open: boolean; onOpenChan
                   </label>
                   <label
                     htmlFor="import-file"
-                    className="flex cursor-pointer flex-col items-center gap-2 rounded-lg border border-dashed border-border-strong bg-surface-muted px-4 py-6 text-center hover:border-brand has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ring"
+                    className="flex cursor-pointer flex-col items-center gap-2 rounded-dense border border-dashed border-border-strong bg-surface-muted px-4 py-6 text-center hover:border-brand has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-ring"
                   >
                     <FileSpreadsheet className="size-6 text-fg-muted" aria-hidden />
                     <span className="text-sm text-fg">{file ? file.name : ti("drop_hint")}</span>
@@ -139,7 +139,7 @@ export function ImportDialog({ open, onOpenChange }: { open: boolean; onOpenChan
             {upload.isError ? <FormError message={errorMessage(upload.error, t)} /> : null}
 
             {result ? (
-              <section aria-live="polite" className="space-y-3 rounded-lg border border-border p-4">
+              <section aria-live="polite" className="space-y-3 rounded-dense border border-border p-4">
                 <p className="flex items-center gap-2 font-medium text-fg">
                   <CheckCircle2 className="size-4 text-success" aria-hidden />
                   {ti("done")}

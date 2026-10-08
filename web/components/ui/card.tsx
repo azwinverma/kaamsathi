@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("rounded-card border border-border bg-surface shadow-card", className)}
+      className={cn("rounded-dense border border-border bg-surface", className)}
       {...props}
     />
   );
@@ -24,7 +24,7 @@ export function CardHeader({
   as?: "h2" | "h3";
 }) {
   return (
-    <div className={cn("flex items-start justify-between gap-4 px-5 pt-5 pb-3", className)}>
+    <div className={cn("flex items-start justify-between gap-4 px-5 pt-4 pb-3", className)}>
       <div className="min-w-0 space-y-0.5">
         <As className="text-base font-semibold text-fg">{title}</As>
         {description ? <p className="text-sm text-fg-muted">{description}</p> : null}
@@ -42,7 +42,7 @@ export function CardFooter({ className, ...props }: React.HTMLAttributes<HTMLDiv
   return (
     <div
       className={cn(
-        "flex items-center justify-end gap-2 rounded-b-card border-t border-border bg-surface-muted/60 px-5 py-3",
+        "flex items-center justify-end gap-2 rounded-b-dense border-t border-border bg-surface-muted/60 px-5 py-3",
         className,
       )}
       {...props}
@@ -71,7 +71,7 @@ export function DescriptionList({
     >
       {items.map((it, i) => (
         <div key={i} className={cn("min-w-0", it.full && "sm:col-span-full")}>
-          <dt className="text-xs font-medium text-fg-muted">{it.label}</dt>
+          <dt className="text-xs text-fg-muted">{it.label}</dt>
           <dd className="mt-1 text-sm break-words text-fg">{it.value ?? "—"}</dd>
         </div>
       ))}

@@ -109,7 +109,7 @@ function Overview({ partner }: { partner: OpsPartner }) {
             ["referrals", s.referrals],
           ] as const
         ).map(([k, v]) => (
-          <div key={k} className="rounded-lg border border-border p-3">
+          <div key={k} className="rounded-dense border border-border p-3">
             <p className="text-xs text-fg-muted">{t(`stats.${k}`)}</p>
             <p className="text-xl font-semibold text-fg tabular">{f.number(v ?? 0)}</p>
           </div>
@@ -188,7 +188,7 @@ function Keys({ partner }: { partner: OpsPartner }) {
       ) : (
         <ul className="space-y-2">
           {keys.map((k) => (
-            <li key={k.id} className="flex flex-col gap-2 rounded-lg border border-border p-3 sm:flex-row sm:items-center">
+            <li key={k.id} className="flex flex-col gap-2 rounded-dense border border-border p-3 sm:flex-row sm:items-center">
               <div className="min-w-0 flex-1 space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <code className="font-mono text-sm text-fg">{k.masked}</code>

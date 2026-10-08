@@ -127,7 +127,7 @@ function BrowseCourses() {
       {query.isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-64 rounded-lg" />
+            <Skeleton key={i} className="h-64 rounded-dense" />
           ))}
         </div>
       ) : query.isError ? (
@@ -308,7 +308,7 @@ function SponsorDialog({ course, onClose }: { course: Course | null; onClose: ()
           ) : rows.length === 0 ? (
             <p className="text-fg-muted py-6 text-center text-sm">{t("no_workers")}</p>
           ) : (
-            <ul className="divide-border border-border max-h-[45dvh] divide-y overflow-y-auto rounded-lg border">
+            <ul className="divide-border border-border max-h-[45dvh] divide-y overflow-y-auto rounded-dense border">
               {rows.map((e) => {
                 const id = `sp-${e.worker.id}`;
                 const match = course && e.trade?.code === course.trade.code;

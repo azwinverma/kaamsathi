@@ -511,7 +511,7 @@ export function MoveStageDialog({
                     )}
                   />
                 </Fieldset>
-                <div className="border-success/30 bg-success-subtle flex gap-3 rounded-lg border p-3.5 text-sm">
+                <div className="border-success/30 bg-success-subtle flex gap-3 rounded-dense border p-3.5 text-sm">
                   <RefreshCcw className="text-success mt-0.5 size-4 shrink-0" aria-hidden />
                   <div className="space-y-1">
                     <p className="text-fg font-semibold">{tm("replacement_title")}</p>

@@ -43,8 +43,7 @@ class Prefs {
     }
   }
 
-  Future<void> setCachedMe(Json? me) =>
-      _set(_kMe, me == null ? null : jsonEncode(me));
+  Future<void> setCachedMe(Json? me) => _set(_kMe, me == null ? null : jsonEncode(me));
 
   /// Worker self check-in state for today: `{"date": "2026-10-07", "in": iso, "out": iso?}`.
   Json? get checkInState {
@@ -57,8 +56,16 @@ class Prefs {
     }
   }
 
-  Future<void> setCheckInState(Json? v) =>
-      _set(_kCheckIn, v == null ? null : jsonEncode(v));
+  Future<void> setCheckInState(Json? v) => _set(_kCheckIn, v == null ? null : jsonEncode(v));
+
+  static const _kMilestonePrefix = 'milestone:';
+
+  /// Last observed state of a worker milestone (`null` = never observed).
+  /// Kept across sign-out so a celebration never repeats for the same user.
+  bool? milestone(String userId, String kind) => _p.getBool('$_kMilestonePrefix$userId:$kind');
+
+  Future<void> setMilestone(String userId, String kind, bool reached) =>
+      _p.setBool('$_kMilestonePrefix$userId:$kind', reached);
 
   static const _kCachePrefix = 'cache:';
 
@@ -74,8 +81,7 @@ class Prefs {
     }
   }
 
-  Future<void> setCachedJson(String key, Json value) =>
-      _p.setString('$_kCachePrefix$key', jsonEncode(value));
+  Future<void> setCachedJson(String key, Json value) => _p.setString('$_kCachePrefix$key', jsonEncode(value));
 
   /// Clears everything tied to the signed-in user (keeps language).
   Future<void> clearSession() async {

@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { AlertTriangle, Mail, MapPin, Phone, UserRound } from "lucide-react";
-import { Logo } from "@/components/brand";
-import { LanguageToggle, ThemeToggle } from "@/components/providers/preferences";
+import { SiteFooter } from "@/components/marketing/site-footer";
+import { SiteHeader } from "@/components/marketing/site-header";
+import { BrushStroke } from "@/components/signature/brush-stroke";
+import { DotTexture } from "@/components/signature/dot-texture";
+import { MuralLettering } from "@/components/signature/mural-lettering";
 
 export type LegalDoc = "privacy" | "terms";
 
@@ -13,8 +16,19 @@ interface LegalSection {
   items?: string[];
 }
 
-/** Shared header/footer frame for public, unauthenticated pages (legal, errors). */
-export async function PublicFrame({ children }: { children: React.ReactNode }) {
+/**
+ * Shared frame for public content pages (help, developers, partner docs, legal, 404): the website
+ * header and footer, plus one calm mural accent strip under the header. Content stays on solid
+ * surfaces (B · street mural, content variant — docs/design/DIRECTION.md).
+ */
+export async function PublicFrame({
+  children,
+  accent = "default",
+}: {
+  children: React.ReactNode;
+  /** Which Devanagari word the accent strip paints. */
+  accent?: "default" | "help" | "legal" | "api";
+}) {
   const t = await getTranslations();
   return (
     <div className="bg-bg flex min-h-dvh flex-col">
@@ -24,31 +38,20 @@ export async function PublicFrame({ children }: { children: React.ReactNode }) {
       >
         {t("common.skip_to_content")}
       </a>
-      <header className="border-border bg-surface/85 sticky top-0 z-30 border-b backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-5xl items-center gap-3 px-4 sm:px-6">
-          <Logo name={t("app.name")} />
-          <div className="ml-auto flex items-center gap-1.5">
-            <LanguageToggle compact />
-            <ThemeToggle />
-          </div>
+      <SiteHeader />
+      <div aria-hidden className="bg-hero relative isolate h-14 overflow-hidden sm:h-16 print:hidden">
+        <span className="bg-hero-gradient absolute inset-0 -z-10 opacity-90" />
+        <DotTexture className="-z-10" />
+        <div className="mx-auto flex h-full max-w-[1240px] items-center gap-3 px-4 sm:px-8">
+          <MuralLettering word={t(`marketing.frame.accent_${accent}`)} size="sm" rotate={-4} className="translate-y-1" />
+          <BrushStroke variant="underline" tone="teal" className="mt-3 h-4 w-28 sm:w-40" />
+          <BrushStroke variant="zigzag" tone="coral" className="ml-auto hidden h-6 w-24 sm:block" />
         </div>
-      </header>
+      </div>
       <main id="main" className="flex-1">
         {children}
       </main>
-      <footer className="border-border border-t">
-        <div className="text-fg-subtle mx-auto flex max-w-5xl flex-col gap-2 px-4 py-6 text-xs sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <span>© {t("legal.footer_note")}</span>
-          <nav className="flex gap-4" aria-label={t("legal.contents")}>
-            <Link href="/privacy" className="hover:text-fg">
-              {t("legal.privacy_link")}
-            </Link>
-            <Link href="/terms" className="hover:text-fg">
-              {t("legal.terms_link")}
-            </Link>
-          </nav>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
@@ -63,7 +66,7 @@ export async function DraftBanner() {
       <AlertTriangle className="mt-0.5 size-5 shrink-0" aria-hidden />
       <div className="space-y-0.5">
         <p className="text-sm font-semibold">{t("draft_title")}</p>
-        <p className="text-sm opacity-90">{t("draft_body")}</p>
+        <p className="text-sm">{t("draft_body")}</p>
       </div>
     </div>
   );
@@ -143,7 +146,7 @@ export async function LegalDocument({ doc }: { doc: LegalDoc }) {
   const other: LegalDoc = doc === "privacy" ? "terms" : "privacy";
 
   return (
-    <PublicFrame>
+    <PublicFrame accent="legal">
       <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
         <DraftBanner />
         <div className="mt-8 grid gap-10 lg:grid-cols-[220px_minmax(0,1fr)]">

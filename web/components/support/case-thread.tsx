@@ -47,7 +47,7 @@ export function CaseThread({ scope, c }: { scope: SupportScope; c: SupportCase }
         </li>
         {query.isLoading ? (
           <li>
-            <Skeleton className="h-16 rounded-lg" />
+            <Skeleton className="h-16 rounded-dense" />
           </li>
         ) : query.isError ? (
           <li>
@@ -114,7 +114,7 @@ function Bubble({
     <article className={cn("flex", mine ? "justify-end" : "justify-start")}>
       <div
         className={cn(
-          "max-w-[min(36rem,92%)] rounded-lg border px-3 py-2",
+          "max-w-[min(36rem,92%)] rounded-dense border px-3 py-2",
           tone === "internal" && "border-dashed border-warning/50 bg-warning-subtle",
           tone === "staff" && "border-brand/20 bg-brand-subtle/60",
           tone === "requester" && "border-border bg-surface",
@@ -157,7 +157,7 @@ function Composer({ scope, c }: { scope: SupportScope; c: SupportCase }) {
     );
   };
   return (
-    <form onSubmit={submit} className="space-y-2 rounded-lg border border-border bg-surface p-3" noValidate>
+    <form onSubmit={submit} className="space-y-2 rounded-dense border border-border bg-surface p-3" noValidate>
       {staff ? (
         <Segmented
           size="sm"

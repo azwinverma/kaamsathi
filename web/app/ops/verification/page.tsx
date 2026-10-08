@@ -17,6 +17,8 @@ import { DocImage, InfoRow } from "@/components/ops/ops-ui";
 import { VerifyActions } from "@/components/ops/verify-actions";
 import { hoursSince, useDistrictLabel } from "@/components/ops/helpers";
 import { useOpsWorker, useOpsWorkers } from "@/lib/api/hooks/ops";
+import { VerificationLadder, useWorkerLadder } from "@/components/ledger";
+import type { WorkerTrustFields } from "@/lib/api/types-trust";
 import type { OpsWorker } from "@/lib/api/types";
 import { useFormat } from "@/lib/use-format";
 import { cn } from "@/lib/utils";
@@ -205,7 +207,7 @@ function VerificationQueue() {
                 onDecided={onDecided}
               />
             ) : single.isLoading ? (
-              <Skeleton className="h-[480px] rounded-lg" />
+              <Skeleton className="h-[480px] rounded-dense" />
             ) : single.isError ? (
               <ErrorState error={single.error} onRetry={() => single.refetch()} />
             ) : (
@@ -239,6 +241,11 @@ function ReviewPanel({
   const district = useDistrictLabel();
   const age = ageFrom(w.date_of_birth);
   const missing = !w.id_front || !w.id_back || !w.photo;
+  const tl = useTranslations("ledger.ladder");
+  const ladder = useWorkerLadder((w as OpsWorker & WorkerTrustFields).verification_level ?? (w.verification_status === "verified" ? 1 : 0), {
+    rejected: w.verification_status === "rejected",
+    dense: true,
+  });
   const noIdNumber = !w.citizenship_no && !w.nid_no;
 
   return (
@@ -282,7 +289,10 @@ function ReviewPanel({
           </div>
         ) : null}
 
-        <section aria-label={tv("documents")}>
+        <section aria-labelledby="evidence-heading">
+          <h3 id="evidence-heading" className="mb-2 text-sm font-semibold text-fg">
+            {tv("documents")}
+          </h3>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-[1fr_1fr_0.75fr]">
             <DocImage src={w.id_front} label={t("ops.docs.id_front")} />
             <DocImage src={w.id_back} label={t("ops.docs.id_back")} />
@@ -290,7 +300,11 @@ function ReviewPanel({
           </div>
         </section>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-[1fr_1fr_220px]">
+          <section className="xl:order-3 xl:border-l xl:border-border xl:pl-6">
+            <h3 className="mb-2 text-sm font-semibold text-fg">{tl("label")}</h3>
+            <VerificationLadder rungs={ladder} dense label={tl("worker_title", { name: w.full_name })} />
+          </section>
           <section>
             <h3 className="mb-1 text-sm font-semibold text-fg">{tv("id_numbers")}</h3>
             <dl>
@@ -325,7 +339,7 @@ function ReviewPanel({
         <section>
           <h3 className="mb-2 text-sm font-semibold text-fg">{tv("skills")}</h3>
           {w.skills?.length ? (
-            <ul className="divide-y divide-border rounded-lg border border-border">
+            <ul className="divide-y divide-border rounded-dense border border-border">
               {w.skills.map((s, i) => (
                 <li key={i} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-sm">
                   <span className="font-medium text-fg">{f.name(tradeOf(s))}</span>
@@ -365,7 +379,7 @@ function ReviewPanel({
           </section>
         ) : null}
 
-        <div className="rounded-lg border border-border bg-surface-muted/50 p-4">
+        <div className="rounded-dense border border-border bg-surface-muted/50 p-4">
           <VerifyActions worker={w} onDone={onDecided} shortcuts />
         </div>
 
@@ -395,8 +409,8 @@ function ageFrom(dob: string | null | undefined): number | null {
 function QueueSkeleton() {
   return (
     <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]" aria-busy>
-      <Skeleton className="h-[420px] rounded-lg" />
-      <Skeleton className="h-[520px] rounded-lg max-lg:hidden" />
+      <Skeleton className="h-[420px] rounded-dense" />
+      <Skeleton className="h-[520px] rounded-dense max-lg:hidden" />
     </div>
   );
 }

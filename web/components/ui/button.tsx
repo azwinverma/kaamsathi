@@ -12,6 +12,9 @@ export const buttonVariants = cva(
         primary: "bg-brand text-brand-fg shadow-sm hover:bg-brand-hover",
         secondary:
           "border border-border bg-surface text-fg shadow-sm hover:bg-surface-hover hover:border-border-strong",
+        /** Brand v2 §19 secondary: white, blue border, blue text — page-level secondary CTA. */
+        outline:
+          "border-[1.5px] border-brand bg-surface text-brand-text hover:bg-brand-subtle",
         ghost: "text-fg-body hover:bg-surface-hover hover:text-fg",
         danger: "bg-danger text-fg-inverse shadow-sm hover:opacity-90",
         "danger-outline":

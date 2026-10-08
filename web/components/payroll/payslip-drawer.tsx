@@ -128,7 +128,7 @@ export function PayslipDrawer({
                 />
               </Section>
 
-              <div className="border-success/30 bg-success-subtle flex items-center justify-between rounded-lg border px-4 py-3">
+              <div className="border-success/30 bg-success-subtle flex items-center justify-between rounded-dense border px-4 py-3">
                 <span className="text-success text-sm font-semibold">{t("net")}</span>
                 <Money value={payslip.net_pay} className="text-fg text-xl font-semibold" />
               </div>
@@ -340,7 +340,7 @@ function EditPayslipForm({ runId, payslip }: { runId: string; payslip: Payslip }
   });
 
   return (
-    <form onSubmit={onSubmit} className="border-border space-y-4 rounded-lg border p-4" noValidate>
+    <form onSubmit={onSubmit} className="border-border space-y-4 rounded-dense border p-4" noValidate>
       <div className="space-y-0.5">
         <h3 className="text-fg text-sm font-semibold">{t("edit_title")}</h3>
         <p className="text-fg-muted text-xs">{t("edit_hint")}</p>

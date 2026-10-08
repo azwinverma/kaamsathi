@@ -354,7 +354,7 @@ export function WorkerForm({
           </Button>
         </div>
         {skills.fields.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-border px-4 py-6 text-center text-sm text-fg-muted">
+          <p className="rounded-dense border border-dashed border-border px-4 py-6 text-center text-sm text-fg-muted">
             {tf("no_skills")}
           </p>
         ) : (
@@ -362,7 +362,7 @@ export function WorkerForm({
             {skills.fields.map((row, i) => {
               const e = errors.skills?.[i];
               return (
-                <li key={row.id} className="rounded-lg border border-border bg-surface-muted/40 p-3.5">
+                <li key={row.id} className="rounded-dense border border-border bg-surface-muted/40 p-3.5">
                   <div className="grid gap-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1.3fr)_minmax(0,1.5fr)_auto] sm:items-start">
                     <Field id={`skills.${i}.trade`} label={t("term.trade")} error={e?.trade?.message}>
                       <Controller
@@ -429,7 +429,7 @@ export function WorkerForm({
           </p>
         ) : null}
         {languages.fields.length === 0 ? (
-          <p className="flex items-center justify-center gap-2 rounded-lg border border-dashed border-border px-4 py-6 text-center text-sm text-fg-muted">
+          <p className="flex items-center justify-center gap-2 rounded-dense border border-dashed border-border px-4 py-6 text-center text-sm text-fg-muted">
             <Languages className="size-4" aria-hidden />
             {tl("empty")}
           </p>
@@ -438,7 +438,7 @@ export function WorkerForm({
             {languages.fields.map((row, i) => {
               const e = errors.languages?.[i];
               return (
-                <li key={row.id} className="rounded-lg border border-border bg-surface-muted/40 p-3.5">
+                <li key={row.id} className="rounded-dense border border-border bg-surface-muted/40 p-3.5">
                   <div className="grid gap-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,1.5fr)_auto] sm:items-start">
                     <Field id={`languages.${i}.language`} label={tl("language")} error={e?.language?.message}>
                       <NativeSelect

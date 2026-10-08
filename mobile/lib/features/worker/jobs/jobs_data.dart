@@ -25,6 +25,7 @@ class JobSummary {
     this.organizationName = '',
     this.employerVerified = false,
     this.openings,
+    this.matchReasons = const [],
   });
 
   final String id;
@@ -42,6 +43,12 @@ class JobSummary {
   final String organizationName;
   final bool employerVerified;
   final int? openings;
+
+  /// Server-sent reasons ("Trade match", "Same district"), when present.
+  /// Recommended jobs always match the worker's trade and area (CONTRACT-
+  /// EXTENSIONS: `/me/jobs/recommended`), so the UI can explain that much
+  /// without them.
+  final List<String> matchReasons;
 
   factory JobSummary.fromJson(Json j) {
     final org = j['organization'];
@@ -63,6 +70,7 @@ class JobSummary {
             (org is Map ? (org['employer_verified'] ?? org['verification_status'] == 'verified') : null),
       ),
       openings: intOf(j['openings_count'] ?? j['openings']),
+      matchReasons: strList(j['match_reasons'] ?? j['reasons']),
     );
   }
 }

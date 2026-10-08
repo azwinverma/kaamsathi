@@ -9,6 +9,7 @@ import '../../../../core/l10n/l10n.dart';
 import '../../../../core/router/router.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/eco.dart';
+import '../../../../core/widgets/signature/skill_ladder.dart';
 import '../trust_data.dart';
 
 /// Local label for verification level 0–5 (used when the server sends none).
@@ -127,6 +128,10 @@ class TrustCardView extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: KsSpace.s4),
+            Text(l.ladderTitle, style: t.labelLarge),
+            const SizedBox(height: KsSpace.s2),
+            SkillLadder(earned: ladderRungsForLevel(level), height: 64),
             if (s.breakdown.isNotEmpty) ...[
               const SizedBox(height: KsSpace.s2),
               Theme(
@@ -209,21 +214,6 @@ class _LevelBadge extends StatelessWidget {
                   style: t.labelMedium?.copyWith(color: strong ? c.successText : c.infoText),
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Row(
-            children: [
-              for (var i = 1; i <= 5; i++)
-                Container(
-                  width: 18,
-                  height: 6,
-                  margin: const EdgeInsets.only(right: 4),
-                  decoration: BoxDecoration(
-                    color: i <= level ? (strong ? c.successText : c.infoText) : c.neutralSoft,
-                    borderRadius: BorderRadius.circular(KsRadius.pill),
-                  ),
-                ),
             ],
           ),
         ],

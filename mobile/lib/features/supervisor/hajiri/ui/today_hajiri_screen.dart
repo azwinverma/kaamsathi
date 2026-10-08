@@ -7,6 +7,7 @@ import '../../../../core/format.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
+import '../../../../core/widgets/signature/brand_mark.dart';
 import '../../../common/inbox/inbox_screen.dart';
 import '../data/attendance_models.dart';
 import '../data/attendance_queue.dart';
@@ -50,7 +51,18 @@ class TodayHajiriScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text(l.navAttendance), actions: const [SitePickerButton(), InboxBell()]),
+      // Documentary ledger (DIRECTION.md A): neutral surfaces; the small
+      // brand mark is the only brand element.
+      appBar: AppBar(
+        title: Row(
+          children: [
+            const KsBrandMark(),
+            const SizedBox(width: KsSpace.s2),
+            Flexible(child: Text(l.navAttendance, overflow: TextOverflow.ellipsis)),
+          ],
+        ),
+        actions: const [SitePickerButton(), InboxBell()],
+      ),
       body: RefreshIndicator(
         onRefresh: refresh,
         child: AsyncBody<DayRoster>(
@@ -253,13 +265,7 @@ class _DateStrip extends ConsumerWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      top,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: sel ? scheme.onPrimary : context.ks.textMuted,
-                      ),
-                    ),
+                    Text(top, style: TextStyle(fontSize: 12, color: sel ? scheme.onPrimary : context.ks.textMuted)),
                     Text(
                       localizeDigits('${BsDate.fromAd(d).day}', lang),
                       style: TextStyle(
@@ -288,9 +294,7 @@ class _CountChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final (bg, fg) =
-        status == null
-            ? (context.ks.neutralSoft, context.ks.neutralText)
-            : attendanceColors(context, status);
+        status == null ? (context.ks.neutralSoft, context.ks.neutralText) : attendanceColors(context, status);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(KsRadius.pill)),

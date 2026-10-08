@@ -16,7 +16,10 @@ import 'inbox_data.dart';
 
 /// Bell with the unread badge, for app bars. Opens the inbox.
 class InboxBell extends ConsumerWidget {
-  const InboxBell({super.key});
+  const InboxBell({super.key, this.onMural = false});
+
+  /// White bell on a translucent tile, for the blue worker mural header.
+  final bool onMural;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,6 +27,14 @@ class InboxBell extends ConsumerWidget {
     final l = context.l10n;
     return IconButton(
       key: const Key('inbox_bell'),
+      style:
+          onMural
+              ? IconButton.styleFrom(
+                foregroundColor: KsMural.onGround,
+                backgroundColor: KsMural.onGround.withValues(alpha: 0.16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(KsRadius.control)),
+              )
+              : null,
       tooltip: count > 0 ? '${l.inboxTitle} · ${l.inboxUnread(localizeDigits('$count', context.lang))}' : l.inboxTitle,
       onPressed: () => context.push(Routes.inbox),
       icon: Badge(
@@ -123,7 +134,12 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
     }
     if (!mounted) return;
     final route = routeForNotification(n, ref.read(sessionProvider).mode);
-    if (route != null) await context.push(route);
+    if (route == null) return;
+    if (isWorkerTabLocation(route)) {
+      context.go(route); // switch bottom-nav tab
+    } else {
+      await context.push(route);
+    }
   }
 
   Future<void> _markAll() async {

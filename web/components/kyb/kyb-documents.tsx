@@ -40,7 +40,7 @@ export function KybDocument({
   const src = mediaSrc(url);
   return (
     <figure className={cn("min-w-0 space-y-1.5", className)}>
-      <div className="flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-lg border border-border bg-surface-muted">
+      <div className="flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-dense border border-border bg-surface-muted">
         {!src ? (
           <span className="px-3 text-center text-xs text-fg-muted">{t("no_document")}</span>
         ) : isPdfName(name) ? (

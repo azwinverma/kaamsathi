@@ -600,10 +600,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeLatestPayslip => 'Latest payslip';
 
   @override
-  String get checkInSuccess => 'Checked in. Have a good day at work!';
+  String get checkInSuccess => 'Checked in. Have a good day at work.';
 
   @override
-  String get checkOutSuccess => 'Checked out. See you tomorrow!';
+  String get checkOutSuccess => 'Checked out. See you tomorrow.';
 
   @override
   String get scanTitle => 'Scan site QR';
@@ -3476,4 +3476,144 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonEdit => 'Edit';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navJobsTab => 'Jobs';
+
+  @override
+  String get navWork => 'Work';
+
+  @override
+  String get navLearn => 'Learn';
+
+  @override
+  String get workTitle => 'Work';
+
+  @override
+  String get workHajiri => 'Hajiri';
+
+  @override
+  String get workPayslips => 'Payslips';
+
+  @override
+  String get learnTitle => 'Learn';
+
+  @override
+  String get learnHeadline => 'Get better at your trade';
+
+  @override
+  String get learnIntro => 'Courses near you, your certificates and the next step in your trade.';
+
+  @override
+  String get learnMenuSubtitle => 'Training, certificates, next steps';
+
+  @override
+  String get slotLearnWorkshopAlt => 'Training at a workshop bench';
+
+  @override
+  String get slotCareerStepAlt => 'A worker moving up a trade level';
+
+  @override
+  String get homeHello => 'Namaste,';
+
+  @override
+  String homeLadderChip(String level) {
+    return 'Skill ladder: level $level';
+  }
+
+  @override
+  String get homeDaysWorked => 'days worked';
+
+  @override
+  String get homeOutOf100 => 'out of 100';
+
+  @override
+  String get homeScoreSoon => 'after your first job';
+
+  @override
+  String get homeSeeAll => 'See all';
+
+  @override
+  String get homeNoJobs => 'No matching jobs right now. Adding more work areas shows more jobs.';
+
+  @override
+  String get jobsMatchSkillArea => 'Matches your skills and area';
+
+  @override
+  String jobsMatchTradeArea(String trade) {
+    return 'Matches your skill ($trade) and area';
+  }
+
+  @override
+  String get ladderTitle => 'Skill ladder';
+
+  @override
+  String get ladderRungPhone => 'Phone';
+
+  @override
+  String get ladderRungIdentity => 'Identity';
+
+  @override
+  String get ladderRungWork => 'Work';
+
+  @override
+  String get ladderRungCertificate => 'Certificate';
+
+  @override
+  String get ladderRungTrusted => 'Highly trusted';
+
+  @override
+  String ladderSummary(String done, String total) {
+    return 'Skill ladder: $done of $total steps';
+  }
+
+  @override
+  String ladderStepDone(String step) {
+    return '$step: done';
+  }
+
+  @override
+  String ladderStepOpen(String step) {
+    return '$step: not yet';
+  }
+
+  @override
+  String ladderNext(String step) {
+    return 'Next step: $step';
+  }
+
+  @override
+  String ladderChipShort(String done, String total) {
+    return 'Ladder $done/$total';
+  }
+
+  @override
+  String get passportShare => 'Share';
+
+  @override
+  String get passportPrivacyNote => 'ID numbers are never shown. You choose who sees this.';
+
+  @override
+  String get passportPhotoMissing => 'No photo yet';
+
+  @override
+  String get ppTimeline => 'Verified skills and certificates';
+
+  @override
+  String get ppTimelineEmpty => 'Nothing verified yet. Add a certificate from Learn.';
+
+  @override
+  String get celebrateCredential => 'Your first certificate is verified.';
+
+  @override
+  String get celebratePlacement => 'You have joined your new job. All the best.';
+
+  @override
+  String get celebrateProfile => 'Your profile is complete.';
+
+  @override
+  String get celebrateTraining => 'Training completed. Well done.';
 }

@@ -517,3 +517,94 @@ html[lang="ne"] {
     animation: none !important;
   }
 }
+
+/* ───────────────────────────────────────────────────────────────────────────────────────────────
+ * Street-mural signature (public website, Skill Passport, auth panel) — see docs/design/DIRECTION.md
+ * and components/signature/. Utilities only: colours come from the tokens above.
+ * ─────────────────────────────────────────────────────────────────────────────────────────────── */
+
+/* Fine spray-paint dot grain. Light dots for blue/gradient grounds, ink dots for pale grounds. */
+@utility ks-dots-light {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1.2px, transparent 1.4px);
+  background-size: 14px 14px;
+}
+@utility ks-dots-ink {
+  background-image: radial-gradient(rgba(15, 23, 42, 0.07) 1.2px, transparent 1.4px);
+  background-size: 14px 14px;
+}
+
+/* Mural lettering: yellow Devanagari with an offset coral + ink shadow. Decorative only. */
+@utility ks-mural {
+  display: inline-block;
+  font-family: var(--font-devanagari);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--ks-yellow);
+  text-shadow:
+    0.05em 0.05em 0 var(--ks-coral),
+    0.1em 0.1em 0 rgba(15, 23, 42, 0.55);
+  user-select: none;
+  white-space: nowrap;
+}
+@utility ks-mural-ink {
+  text-shadow:
+    0.05em 0.05em 0 var(--ks-coral),
+    0.1em 0.1em 0 #0f172a;
+}
+
+/* Cut-paper frame shadow (photo prints taped onto a wall). */
+@utility ks-paper-shadow {
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.18),
+    0 12px 32px rgba(15, 23, 42, 0.22);
+}
+
+/* Reveal on scroll (components/signature/reveal.tsx): armed only by JS, so content is visible
+   without JS; collapses to instant under reduced motion (the global rule above). */
+[data-reveal="armed"] {
+  opacity: 0;
+  transform: translateY(16px);
+}
+[data-reveal="shown"] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--ks-motion-content) var(--ks-ease),
+    transform var(--ks-motion-content) var(--ks-ease);
+}
+
+/* Skill ladder: rungs grow in once (horizontal staircase on phones, rising bars from sm up). */
+.ks-ladder[data-reveal="armed"] {
+  opacity: 1;
+  transform: none;
+}
+.ks-ladder[data-reveal="armed"] .ks-rung {
+  transform: scaleX(0.1);
+  transform-origin: left center;
+}
+.ks-ladder[data-reveal="shown"] .ks-rung {
+  transition: transform var(--ks-motion-content) var(--ks-ease);
+  transition-delay: calc(var(--ks-i, 0) * 70ms);
+}
+@media (width >= 640px) {
+  .ks-ladder[data-reveal="armed"] .ks-rung {
+    transform: scaleY(0.1);
+    transform-origin: center bottom;
+  }
+}
+.ks-ladder-bars[data-reveal="armed"] .ks-rung {
+  transform: scaleY(0.1);
+  transform-origin: center bottom;
+}
+
+/* Print: the mural pieces print as flat colour, never animated or hidden. */
+@media print {
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .ks-ladder .ks-rung {
+    transform: none !important;
+  }
+}

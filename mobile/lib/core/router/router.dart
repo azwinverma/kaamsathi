@@ -34,6 +34,7 @@ import '../../features/worker/experience/ui/work_history_screen.dart';
 import '../../features/worker/home/ui/worker_home_screen.dart';
 import '../../features/worker/jobs/ui/job_alerts_screen.dart';
 import '../../features/worker/jobs/ui/jobs_screen.dart';
+import '../../features/worker/learn/learn_screen.dart';
 import '../../features/worker/mobility/ui/mobility_screen.dart';
 import '../../features/worker/money/ui/consent_screen.dart';
 import '../../features/worker/money/ui/money_screen.dart';
@@ -124,10 +125,44 @@ abstract final class Routes {
 
   // Checklist completion: languages, ratings, dispute detail, corrections.
   static const workerLanguages = '/w/languages';
+
+  // Worker bottom-nav hub for training, credentials and career.
+  static const workerLearn = '/w/learn';
   static const workerRatings = '/w/ratings';
   static String workerDispute(String id) => '$workerDisputes/$id';
   static const workerCorrections = '/w/corrections';
   static const supCorrections = '/s/corrections';
+}
+
+/// Worker bottom navigation (brand v2 §18: Home · Jobs · Work · Learn ·
+/// Profile). Each entry is the branch root; Work also owns the payslip list
+/// ([Routes.workerTalab]) and Profile the employment history.
+const workerTabRoots = [
+  Routes.workerHome,
+  Routes.workerJobs,
+  Routes.workerHajiri,
+  Routes.workerLearn,
+  Routes.workerProfile,
+];
+
+/// Worker locations that live inside a bottom-nav branch (switch tabs with
+/// `go`); everything else is a full-screen page pushed over the tabs.
+bool isWorkerTabLocation(String location) {
+  final path = Uri.parse(location).path;
+  return workerTabRoots.contains(path) ||
+      path == Routes.workerTalab ||
+      path.startsWith('${Routes.workerTalab}/') ||
+      path.startsWith('${Routes.workerProfile}/');
+}
+
+/// Opens [location] the right way: tab destinations are switched to, other
+/// pages are pushed so Back returns here.
+void openRoute(BuildContext context, String location) {
+  if (isWorkerTabLocation(location)) {
+    context.go(location);
+  } else {
+    context.push(location);
+  }
 }
 
 /// Bridges Riverpod state changes to go_router's refreshListenable.
@@ -248,17 +283,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [GoRoute(path: ':id', builder: (_, state) => SupportThreadScreen(id: state.pathParameters['id']!))],
       ),
       // Worker growth, mobility, timesheets.
-      GoRoute(
-        path: Routes.workerJobs,
-        builder:
-            (_, state) => JobsScreen(
-              initialTab: switch (state.uri.queryParameters['tab']) {
-                'offers' => 1,
-                'applications' => 2,
-                _ => 0,
-              },
-            ),
-      ),
       GoRoute(path: Routes.workerJobAlerts, builder: (_, _) => const JobAlertsScreen()),
       GoRoute(path: Routes.workerWorkHistory, builder: (_, _) => const WorkHistoryScreen()),
       GoRoute(path: Routes.workerAvailability, builder: (_, _) => const AvailabilityScreen()),
@@ -281,10 +305,30 @@ final routerProvider = Provider<GoRouter>((ref) {
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => WorkerShell(shell: shell),
         branches: [
+          // Home
           StatefulShellBranch(routes: [GoRoute(path: Routes.workerHome, builder: (_, _) => const WorkerHomeScreen())]),
-          StatefulShellBranch(routes: [GoRoute(path: Routes.workerHajiri, builder: (_, _) => const MyHajiriScreen())]),
+          // Jobs (`?tab=offers|applications`)
           StatefulShellBranch(
             routes: [
+              GoRoute(
+                path: Routes.workerJobs,
+                builder:
+                    (_, state) => JobsScreen(
+                      key: ValueKey(state.uri.queryParameters['tab']),
+                      initialTab: switch (state.uri.queryParameters['tab']) {
+                        'offers' => 1,
+                        'applications' => 2,
+                        _ => 0,
+                      },
+                    ),
+              ),
+            ],
+          ),
+          // Work: hajiri (root) and payslips; shifts, timesheets and
+          // corrections open from there.
+          StatefulShellBranch(
+            routes: [
+              GoRoute(path: Routes.workerHajiri, builder: (_, _) => const MyHajiriScreen()),
               GoRoute(
                 path: Routes.workerTalab,
                 builder: (_, _) => const TalabScreen(),
@@ -294,6 +338,8 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
+          // Learn: training, credentials, career.
+          StatefulShellBranch(routes: [GoRoute(path: Routes.workerLearn, builder: (_, _) => const LearnScreen())]),
           StatefulShellBranch(
             routes: [
               GoRoute(

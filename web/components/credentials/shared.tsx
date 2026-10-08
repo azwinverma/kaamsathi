@@ -65,7 +65,7 @@ export function CredentialDocument({
     return (
       <div
         className={cn(
-          "border-border bg-surface-muted text-fg-subtle flex aspect-[4/3] w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed px-6 text-center",
+          "border-border bg-surface-muted text-fg-subtle flex aspect-[4/3] w-full flex-col items-center justify-center gap-2 rounded-dense border border-dashed px-6 text-center",
           className,
         )}
       >
@@ -81,11 +81,11 @@ export function CredentialDocument({
         target="_blank"
         rel="noreferrer"
         className={cn(
-          "group border-border bg-surface-muted hover:bg-surface-hover focus-visible:outline-ring flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-lg border px-6 text-center transition-colors focus-visible:outline-2",
+          "group border-border bg-surface-muted hover:bg-surface-hover focus-visible:outline-ring flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-dense border px-6 text-center transition-colors focus-visible:outline-2",
           className,
         )}
       >
-        <span className="bg-danger-subtle text-danger flex size-12 items-center justify-center rounded-lg">
+        <span className="bg-danger-subtle text-danger flex size-12 items-center justify-center rounded-dense">
           <FileText className="size-6" aria-hidden />
         </span>
         <span className="text-fg text-sm font-medium">{t("pdf_document")}</span>

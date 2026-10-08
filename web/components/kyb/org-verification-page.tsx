@@ -16,6 +16,7 @@ import type { KybStatus, OrgVerification } from "@/lib/api/types-risk";
 import { useFormat } from "@/lib/use-format";
 import { cn } from "@/lib/utils";
 import { KybStatusBadge } from "./kyb-badges";
+import { VerificationLadder, useKybLadder } from "@/components/ledger";
 import { KybDocument, KybFileInput, kybFileProblem } from "./kyb-documents";
 
 const STATUS_ICON: Record<KybStatus, React.ComponentType<{ className?: string }>> = {
@@ -45,6 +46,7 @@ export function OrgVerificationPage() {
 function VerificationContent() {
   const t = useTranslations("risk.kyb");
   const tn = useTranslations("nav");
+  const tl = useTranslations("ledger.ops");
   const query = useOrgVerification();
   const [editing, setEditing] = React.useState(false);
 
@@ -52,8 +54,8 @@ function VerificationContent() {
     return (
       <div className="space-y-4" aria-busy>
         <Skeleton className="h-10 w-64" />
-        <Skeleton className="h-32 rounded-lg" />
-        <Skeleton className="h-72 rounded-lg" />
+        <Skeleton className="h-32 rounded-dense" />
+        <Skeleton className="h-72 rounded-dense" />
       </div>
     );
   }
@@ -100,7 +102,14 @@ function VerificationContent() {
             </Card>
           )}
         </div>
-        <aside className="space-y-3 rounded-lg border border-border bg-surface p-4 text-sm shadow-sm">
+        <aside className="space-y-6">
+          <section aria-labelledby="kyb-ladder-title" className="rounded-dense border border-border bg-surface p-4">
+            <h2 id="kyb-ladder-title" className="mb-3 text-sm font-semibold text-fg">
+              {tl("kyb_ladder")}
+            </h2>
+            <KybLadder status={v.verification_status} hasDocs={v.has_registration_doc || v.has_pan_doc} />
+          </section>
+          <div className="space-y-3 rounded-dense border border-border bg-surface p-4 text-sm">
           <h2 className="flex items-center gap-2 font-semibold text-fg">
             <Info className="size-4 text-brand-text" aria-hidden />
             {t("why_title")}
@@ -111,10 +120,17 @@ function VerificationContent() {
             <li>{t("why_trust")}</li>
           </ul>
           <p className="text-xs text-fg-muted">{t("privacy_note")}</p>
+          </div>
         </aside>
       </div>
     </div>
   );
+}
+
+function KybLadder({ status, hasDocs }: { status: OrgVerification["verification_status"]; hasDocs: boolean }) {
+  const tl = useTranslations("ledger.ops");
+  const rungs = useKybLadder(status, hasDocs);
+  return <VerificationLadder rungs={rungs} label={tl("kyb_ladder")} />;
 }
 
 function StatusPanel({ v }: { v: OrgVerification }) {
@@ -124,7 +140,7 @@ function StatusPanel({ v }: { v: OrgVerification }) {
   return (
     <section
       aria-labelledby="kyb-status-title"
-      className={cn("flex gap-4 rounded-lg border p-4 sm:p-5", STATUS_PANEL[v.verification_status])}
+      className={cn("flex gap-4 rounded-dense border p-4 sm:p-5", STATUS_PANEL[v.verification_status])}
     >
       <Icon className="mt-0.5 size-6 shrink-0 text-fg-body" aria-hidden />
       <div className="min-w-0 space-y-1.5">

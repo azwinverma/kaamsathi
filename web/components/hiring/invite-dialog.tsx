@@ -173,7 +173,7 @@ export function InviteWorkerDialog({
               />
             ) : (
               <>
-                <ul className="divide-border border-border divide-y rounded-lg border">
+                <ul className="divide-border border-border divide-y rounded-dense border">
                   {rows.map((w) => (
                     <li key={w.id} className="flex flex-wrap items-start justify-between gap-3 p-3">
                       <WorkerCardView worker={w} className="min-w-0 flex-1" />

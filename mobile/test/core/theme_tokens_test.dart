@@ -116,4 +116,32 @@ void main() {
     final text = tester.widget<Text>(find.text('Verified'));
     expect(text.style!.color, KsColors.light.verifiedText);
   });
+
+  group('street mural tokens (worker surfaces)', () {
+    test('white text on the mural ground and the whole passport gradient meets 4.5:1', () {
+      expect(contrast(KsMural.onGround, KsMural.ground), greaterThanOrEqualTo(4.5));
+      for (final stop in KsMural.passportGradient) {
+        expect(contrast(KsMural.onGround, stop), greaterThanOrEqualTo(4.5), reason: '$stop');
+      }
+    });
+
+    test('ink text on yellow chips and paper meets 4.5:1', () {
+      expect(contrast(KsPalette.accentOnFill, KsMural.strokeYellow), greaterThanOrEqualTo(4.5));
+      expect(contrast(KsPalette.accentOnFill, KsMural.paper), greaterThanOrEqualTo(4.5));
+    });
+
+    test('ladder has five rungs; the palest earned rung has a visible edge on white', () {
+      expect(KsMural.rungs, hasLength(5));
+      expect(contrast(KsPalette.borderStrong, KsPalette.surfaceDefault), greaterThan(1.4));
+    });
+
+    test('supervisor ledger theme: dense cards, not expressive', () {
+      final ledger = buildTheme(Brightness.light, useGoogleFonts: false, ledger: true);
+      final mural = buildTheme(Brightness.light, useGoogleFonts: false);
+      expect(ledger.extension<KsSurfaceStyle>()!.expressive, isFalse);
+      expect(mural.extension<KsSurfaceStyle>()!.expressive, isTrue);
+      final shape = ledger.cardTheme.shape! as RoundedRectangleBorder;
+      expect(shape.borderRadius, BorderRadius.circular(KsRadius.dense));
+    });
+  });
 }

@@ -11,7 +11,7 @@ from django.core.files.base import ContentFile
 from django.db import transaction
 from django.db.models import Count, Q
 from django.utils import timezone
-from django.utils.translation import get_language
+from django.utils.translation import get_language, ngettext
 from django.utils.translation import gettext as _
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill
@@ -435,7 +435,12 @@ def compliance_status(org) -> dict:
             "workers_missing_ssf_id",
             "warning" if n else "ok",
             n,
-            _("%(count)s SSF-enrolled workers have no SSF ID.") % {"count": n}
+            ngettext(
+                "%(count)s SSF-enrolled worker has no SSF ID.",
+                "%(count)s SSF-enrolled workers have no SSF ID.",
+                n,
+            )
+            % {"count": n}
             if n
             else _("Every SSF-enrolled worker has an SSF ID."),
             "/app/workers",
@@ -485,7 +490,12 @@ def compliance_status(org) -> dict:
             "contracts_missing",
             "action" if n else "ok",
             n,
-            _("%(count)s workers have no written contract.") % {"count": n}
+            ngettext(
+                "%(count)s worker has no written contract.",
+                "%(count)s workers have no written contract.",
+                n,
+            )
+            % {"count": n}
             if n
             else _("Every worker has a written contract."),
             "/app/workers",
@@ -502,7 +512,12 @@ def compliance_status(org) -> dict:
             "contracts_unaccepted",
             "warning" if n else "ok",
             n,
-            _("%(count)s contracts are waiting for the worker's acceptance.") % {"count": n}
+            ngettext(
+                "%(count)s contract is waiting for the worker's acceptance.",
+                "%(count)s contracts are waiting for the worker's acceptance.",
+                n,
+            )
+            % {"count": n}
             if n
             else _("All contracts are accepted."),
             "/app/workers",

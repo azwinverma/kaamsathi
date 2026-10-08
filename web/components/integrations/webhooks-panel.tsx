@@ -93,7 +93,7 @@ export function WebhooksPanel() {
       ) : (
         <ul className="space-y-3">
           {endpoints.map((e) => (
-            <li key={e.id} className="rounded-lg border border-border bg-surface p-4 shadow-sm">
+            <li key={e.id} className="rounded-dense border border-border bg-surface p-4 shadow-sm">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                 <div className="min-w-0 space-y-1.5">
                   <p className="flex flex-wrap items-center gap-2">

@@ -20,7 +20,7 @@ export default async function HelpPage({ searchParams }: Props) {
   const locale = await getLocale();
   const articles = await fetchHelpArticles(locale, { audience, q });
   return (
-    <PublicFrame>
+    <PublicFrame accent="help">
       <HelpIndex articles={articles} audience={audience} q={q} />
     </PublicFrame>
   );

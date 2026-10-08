@@ -53,7 +53,7 @@ function ContractorDetail({ id }: { id: string }) {
   const [editOpen, setEditOpen] = React.useState(false);
   const back = { href: "/app/contractors", label: t("title") };
 
-  if (isLoading) return <Skeleton className="h-64 rounded-lg" />;
+  if (isLoading) return <Skeleton className="h-64 rounded-dense" />;
   if (error || !c) {
     const notFound = isApiError(error) && error.status === 404;
     return (
@@ -148,7 +148,7 @@ function SummarySection({ contractorId }: { contractorId: string }) {
       {isLoading ? (
         <div className="grid gap-4 sm:grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-24 rounded-lg" />
+            <Skeleton key={i} className="h-24 rounded-dense" />
           ))}
         </div>
       ) : error || !data ? (

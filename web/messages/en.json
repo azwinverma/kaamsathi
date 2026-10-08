@@ -1650,6 +1650,183 @@
     "verify_1": "Compare in constant time and reject timestamps older than five minutes.",
     "footer_note": "Payroll and hajiri data are personal data of your workers. Keep keys secret, give each system its own key, and revoke keys you no longer use. Questions: support@kaamsathi.com.np."
   },
+  "ledger": {
+    "nav": {
+      "recruitment": "Recruitment",
+      "workforce": "Workforce",
+      "sites": "Sites",
+      "attendance": "Attendance",
+      "payroll": "Payroll",
+      "training": "Training",
+      "reports": "Reports",
+      "billing": "Billing",
+      "settings": "Settings",
+      "work_sites": "Work sites",
+      "ops_queues": "Queues",
+      "ops_trust": "Trust & safety",
+      "ops_ecosystem": "Ecosystem",
+      "ops_admin": "Administration",
+      "waiting_count": "{count} waiting",
+      "staff_console": "Staff console"
+    },
+    "shell": {
+      "verified_employer": "Verified employer",
+      "kyb_pending": "Verification in review",
+      "kyb_unverified": "Not verified yet",
+      "kyb_rejected": "Verification needs attention"
+    },
+    "today": {
+      "region": "Today",
+      "marked": "Hajiri marked",
+      "of_workers": "of {total} workers",
+      "all_marked": "Everyone is marked for today",
+      "mark_rest": "Mark the remaining {count}",
+      "progress_label": "Hajiri marked today: {pct}%"
+    },
+    "dashboard": {
+      "today_at": "Today at {org}",
+      "open_jobs": "Open jobs",
+      "all_jobs": "All jobs",
+      "col_role": "Role",
+      "col_shortlisted": "Shortlisted",
+      "col_interview": "Interview",
+      "col_filled": "Filled",
+      "col_status": "Status",
+      "openings": "{count, plural, one {# opening} other {# openings}}",
+      "filled_of": "{joined} / {total}",
+      "status_waiting": "Waiting for shortlist",
+      "status_interviews": "Interviews",
+      "status_almost": "Almost filled",
+      "status_filled": "Filled",
+      "status_selecting": "Selecting",
+      "status_paused": "Paused",
+      "no_open_jobs": "No open jobs. Post one and our team shortlists verified workers within 48 hours.",
+      "attention": "Needs your attention",
+      "attention_clear": "Nothing waiting on you right now.",
+      "attention_loading": "Checking what needs attention",
+      "attendance_14d": "Attendance, last 14 days",
+      "weekly_off": "Weekly off on {day}",
+      "last_payroll": "Last payroll",
+      "wage_bill": "Wage bill (estimate)",
+      "hires_30d": "Joined in 30 days",
+      "left_30d": "Left in 30 days",
+      "in_pipeline": "In pipeline",
+      "quick_actions": "Quick actions",
+      "supervisor_sites": "Hajiri for your assigned sites",
+      "month_strip": "This month",
+      "qa_add_worker": "Add a worker",
+      "qa_leave": "Decide leave",
+      "qa_ssf": "SSF and compliance"
+    },
+    "attention": {
+      "corrections": "{count, plural, one {# hajiri correction waiting} other {# hajiri corrections waiting}}",
+      "corrections_hint": "Requested by workers",
+      "leave": "{count, plural, one {# leave request to decide} other {# leave requests to decide}}",
+      "leave_hint": "Approve or decline before payroll",
+      "expiring": "{title} expiring",
+      "expiring_hint": "{name} · {when}",
+      "expiring_more": "{count, plural, one {# more certificate expiring} other {# more certificates expiring}}",
+      "kyb_unverified": "Verify your business",
+      "kyb_unverified_hint": "Upload company registration and PAN to show the Verified employer mark",
+      "kyb_pending": "Business verification in review",
+      "kyb_pending_hint": "KaamSathi staff usually review within 2 working days",
+      "kyb_rejected": "Business verification was not accepted",
+      "kyb_rejected_hint": "Read the note and upload the documents again",
+      "webhooks": "{count, plural, one {# webhook delivery failed} other {# webhook deliveries failed}}",
+      "webhooks_hint": "Last 7 days · {url}",
+      "disputes": "{count, plural, one {# dispute waiting for your reply} other {# disputes waiting for your reply}}",
+      "disputes_hint": "Workers raised these about hajiri or wages",
+      "compliance_hint": "Compliance check"
+    },
+    "ladder": {
+      "label": "Verification ladder",
+      "reached": "Done",
+      "next": "Next step",
+      "not_yet": "Not yet",
+      "rung_0": "Phone confirmed",
+      "rung_0_hint": "OTP on first login",
+      "rung_1": "Identity checked",
+      "rung_1_hint": "Citizenship or NID reviewed by KaamSathi staff",
+      "rung_2": "Work confirmed",
+      "rung_2_hint": "An employer confirmed months worked",
+      "rung_3": "Skill assessed",
+      "rung_3_hint": "Practical assessment recorded",
+      "rung_4": "Certificate verified",
+      "rung_4_hint": "NSTB / CTEVT record checked",
+      "rung_5": "Highly trusted",
+      "rung_5_hint": "12 months of steady, rated work",
+      "kyb_0": "Account created",
+      "kyb_0_hint": "Owner phone confirmed",
+      "kyb_1": "Documents uploaded",
+      "kyb_1_hint": "Company registration and PAN",
+      "kyb_2": "Staff review",
+      "kyb_2_hint": "Registration number checked against the documents",
+      "kyb_3": "Verified employer",
+      "kyb_3_hint": "Mark shown to workers on every job",
+      "worker_title": "How far {name} is verified",
+      "rejected": "Rejected — needs new documents"
+    },
+    "roster": {
+      "label": "Site roster, {site}",
+      "this_week": "This week",
+      "all_sites": "All sites",
+      "worker": "Worker",
+      "off": "off",
+      "empty": "No hajiri in this period yet.",
+      "legend": "Legend",
+      "more_rows": "{count, plural, one {# more worker in the register} other {# more workers in the register}}",
+      "open_register": "Open full register"
+    },
+    "timeline": {
+      "label": "Employment timeline",
+      "joined": "Joined {site}",
+      "joined_no_site": "Joined",
+      "as": "as {designation}",
+      "replacement": "Replacement guarantee ends",
+      "replacement_hint": "If {name} leaves before this date, we find a replacement at no cost",
+      "this_month": "This month so far",
+      "this_month_hint": "{present} present · {absent} absent · {leave} on leave",
+      "today": "Today",
+      "still_working": "Still working here",
+      "ended": "Left",
+      "ended_hint": "Reason: {reason}"
+    },
+    "credential": {
+      "title": "Certificates",
+      "empty": "No certificates with an expiry date on file for this worker.",
+      "expires": "Expires {date}",
+      "no_expiry": "No expiry",
+      "issuer_level": "{issuer} · {level}",
+      "declared": "Declared by worker",
+      "nstb": "NSTB skill test"
+    },
+    "match": {
+      "why": "Why this match",
+      "score": "Match {score}",
+      "verified": "Identity verified",
+      "experience": "{years, plural, one {# year} other {# years}} experience",
+      "experience_short": "Needs {need} years, has {years}",
+      "nstb": "NSTB {level}",
+      "rated": "Rated {rating} by employers",
+      "placements": "{count, plural, one {# earlier placement} other {# earlier placements}}",
+      "district": "Lives in {district}",
+      "no_reasons": "No match details recorded",
+      "score_caption": "match score"
+    },
+    "page": {
+      "showing": "Showing {count}",
+      "evidence": "Evidence",
+      "decision": "Decision"
+    },
+    "ops": {
+      "queues_title": "Queues",
+      "queue_verification": "Worker verification",
+      "queue_jobs_overdue": "Jobs past 48 h SLA",
+      "queue_jobs_open": "Open jobs",
+      "platform": "Platform",
+      "kyb_ladder": "KYB progress"
+    }
+  },
   "legal": {
     "draft_title": "Draft — pending legal review",
     "draft_body": "This document is a working draft. It has not yet been reviewed by a lawyer and may change before launch.",
@@ -1949,6 +2126,448 @@
       "retry": "Try again",
       "go_home": "Go to home",
       "reference": "Reference: {digest}"
+    }
+  },
+  "marketing": {
+    "meta": {
+      "title": "KaamSathi — verified skills, hiring and pay for Nepal's workers",
+      "description": "A verified record of every job, certificate and payslip — owned by the worker, trusted by the employer. Hire, run hajiri and pay correctly, in Nepali or English."
+    },
+    "nav": {
+      "label": "Main",
+      "employers": "Employers",
+      "workers": "Workers",
+      "passport": "Skill Passport",
+      "help": "Help",
+      "login": "Log in",
+      "cta": "Hire verified workers",
+      "menu": "Menu"
+    },
+    "hero": {
+      "kicker": "Kathmandu Valley · Pilot 2083",
+      "title": "Skills have value. Work should open doors.",
+      "body": "A verified record of every job, certificate and payslip — owned by the worker, trusted by the employer.",
+      "cta_employer": "Post your first job",
+      "cta_worker": "Get my Worker Passport",
+      "sticker": "Verified by KaamSathi, owned by you"
+    },
+    "illustration": "Illustration",
+    "slots": {
+      "hero-hvac-biratnagar": {
+        "alt": "An HVAC technician reads a manifold gauge set beside an outdoor condenser unit.",
+        "caption": "HVAC technician · Biratnagar"
+      },
+      "hero-electrician-bhaktapur": {
+        "alt": "A woman electrician in a hard hat and insulated gloves tests a breaker in a distribution board.",
+        "caption": "Electrician · Bhaktapur"
+      },
+      "passport-hands-phone": {
+        "alt": "Hands holding a phone that shows a KaamSathi Skill Passport with its skill ladder.",
+        "caption": "The Passport lives on the worker's phone"
+      },
+      "mural-wall-patan": {
+        "alt": "A street mural on a brick wall: a painted hand holding a wrench next to a rising five-rung ladder.",
+        "caption": "Mural wall · Patan (commission planned)"
+      },
+      "career-welder-visor": {
+        "alt": "A woman welder in a training booth lifts her welding helmet after a test weld.",
+        "caption": "Test weld, training lab"
+      },
+      "employer-supervisor-hajiri": {
+        "alt": "A site supervisor in a white hard hat and hi-vis vest marks attendance on a phone at a building site.",
+        "caption": "Hajiri at the site gate"
+      },
+      "worker-cook-kitchen": {
+        "alt": "A cook in a hair cover and apron stirs a karahi in a hotel kitchen.",
+        "caption": "Cook · Thamel"
+      },
+      "worker-guard-gate": {
+        "alt": "A woman security guard at a compound gate writes in the visitor register.",
+        "caption": "Security guard · Kathmandu"
+      },
+      "partners-training-lab": {
+        "alt": "An instructor shows a trainee how to wire a switch on a practice board.",
+        "caption": "Training institute"
+      },
+      "auth-solar-roof": {
+        "alt": "A solar installer in a harness, clipped to a roof anchor, fixes a panel on a tin roof.",
+        "caption": "Solar technician · Pokhara"
+      },
+      "notfound-plumber": {
+        "alt": "A plumber tightens a pipe joint with a pipe wrench under a rooftop water tank.",
+        "caption": "Plumber"
+      }
+    },
+    "problem": {
+      "kicker": "How hiring works today",
+      "title": "A site manager calls a naike. The naike calls three people. Nobody can see who has done this work before — or whether they were paid properly.",
+      "steps": [
+        {
+          "day": "Day 1",
+          "title": "The opening goes into a Viber group",
+          "body": "No skills check, no ID, no wage floor."
+        },
+        {
+          "day": "Day 6",
+          "title": "Someone starts — hajiri goes in a notebook",
+          "body": "Pay is worked out by hand at the end of the month."
+        },
+        {
+          "day": "Day 40",
+          "title": "They leave before Dashain",
+          "body": "No record follows the worker. The search starts again."
+        }
+      ],
+      "scenario": "An electrician with eight years of work deserves more than a phone number in a notebook."
+    },
+    "demo": {
+      "kicker": "What it looks like",
+      "title": "One record the worker carries. One roster the site runs on.",
+      "body": "These are KaamSathi screens with sample data from our demo: Ram Bahadur Thapa is a cook at Hotel Annapurna View in Thamel.",
+      "sample": "Sample record from demo data",
+      "callouts": [
+        "Checked by people and issuers — not self-reported.",
+        "The worker decides who sees it, and can turn it off.",
+        "Hajiri from the supervisor's phone, even without internet."
+      ],
+      "card": {
+        "brand": "KAAM ID",
+        "code": "KS-7Q4M-2083",
+        "name": "Ram Bahadur Thapa",
+        "alt_name": "राम बहादुर थापा",
+        "trade": "Cook · Kathmandu",
+        "chip_identity": "Identity verified",
+        "chip_nstb": "NSTB Level 2",
+        "chip_ladder": "Ladder 4/5"
+      },
+      "roster": {
+        "title": "Hotel Annapurna View · Thamel",
+        "week": "Week of 19 Ashwin",
+        "worker": "Worker",
+        "days": [
+          "Sun",
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat"
+        ],
+        "rows": [
+          {
+            "name": "Ram B. Thapa",
+            "role": "Cook",
+            "cells": [
+              "P",
+              "P",
+              "H",
+              "P",
+              "L",
+              "P",
+              "O"
+            ]
+          },
+          {
+            "name": "Sita K. Rai",
+            "role": "Housekeeping",
+            "cells": [
+              "P",
+              "A",
+              "P",
+              "P",
+              "P",
+              "P",
+              "O"
+            ]
+          },
+          {
+            "name": "Bishnu Tamang",
+            "role": "Security guard",
+            "cells": [
+              "P",
+              "P",
+              "P",
+              "P",
+              "P",
+              "H",
+              "O"
+            ]
+          }
+        ],
+        "codes": {
+          "P": "P",
+          "A": "A",
+          "H": "½",
+          "L": "L",
+          "O": "–"
+        },
+        "legend": {
+          "P": "Present",
+          "A": "Absent",
+          "H": "Half day",
+          "L": "Leave",
+          "O": "Weekly off"
+        },
+        "offline": "Saved offline · syncs when the phone is back online"
+      }
+    },
+    "ladder": {
+      "deco": "सीपको सीढी",
+      "title": "The skill ladder",
+      "body": "Each rung is earned with proof, and every rung shows employers a little more. A rung you haven't reached yet is just the next step — never a failure.",
+      "list_label": "Skill ladder: {earned} of 5 rungs earned",
+      "earned": "Earned",
+      "next": "Next",
+      "not_yet": "Not yet",
+      "rungs": {
+        "phone": {
+          "label": "Phone",
+          "hint": "OTP confirmed"
+        },
+        "identity": {
+          "label": "Identity",
+          "hint": "Citizenship checked"
+        },
+        "work": {
+          "label": "Work",
+          "hint": "Employer-confirmed"
+        },
+        "certificate": {
+          "label": "Certificate",
+          "hint": "NSTB / CTEVT"
+        },
+        "trusted": {
+          "label": "Highly trusted",
+          "hint": "12 months rated"
+        }
+      },
+      "example": "In the demo, Ram is on rung 4. Rung 5 needs 12 months of rated work.",
+      "points": [
+        "Shared by link or QR, and turned off any time",
+        "Shows the worker who viewed it, and when",
+        "Never shows citizenship or ID numbers"
+      ]
+    },
+    "workforce": {
+      "kicker": "For the site",
+      "title": "Run the site without the notebook.",
+      "body": "Supervisors mark hajiri on a cheap phone. It works offline and syncs later, and the wage sheet already knows the law.",
+      "items": [
+        {
+          "title": "Hajiri on any phone",
+          "body": "QR at the gate or the supervisor's list. Works without internet."
+        },
+        {
+          "title": "A wage sheet that knows the law",
+          "body": "Minimum wage, SSF 11% + 20%, overtime at 1.5×, Dashain allowance."
+        },
+        {
+          "title": "Payslips in the pocket",
+          "body": "Every worker gets a payslip on their phone, even when pay is in cash."
+        }
+      ]
+    },
+    "career": {
+      "kicker": "Career progression",
+      "title": "Helper to certified technician, one verified step at a time.",
+      "body": "We will show workers which certificate is worth getting next — using pay data from real KaamSathi payslips, not guesses.",
+      "steps": [
+        {
+          "title": "Helper",
+          "body": "First jobs on record"
+        },
+        {
+          "title": "Assistant",
+          "body": "Verified work history"
+        },
+        {
+          "title": "NSTB Level 1",
+          "body": "Skill test passed"
+        },
+        {
+          "title": "NSTB Level 2",
+          "body": "[PLACEHOLDER: median pay change from pilot payslips]"
+        }
+      ]
+    },
+    "trust": {
+      "kicker": "Trust and verification",
+      "title": "Who checks what",
+      "body": "A verified badge only means something if you know who verified it. Every check on KaamSathi has a named source.",
+      "col_what": "What",
+      "col_how": "How it is checked",
+      "col_who": "Who checks",
+      "rows": [
+        {
+          "what": "Phone",
+          "how": "One-time code on first login",
+          "who": "Automatic"
+        },
+        {
+          "what": "Identity",
+          "how": "Citizenship document reviewed by KaamSathi staff; the number is encrypted and never shown publicly",
+          "who": "KaamSathi verification team"
+        },
+        {
+          "what": "Work",
+          "how": "Months worked, confirmed by the employer who paid",
+          "who": "Employer"
+        },
+        {
+          "what": "Certificate",
+          "how": "Certificate checked by KaamSathi staff; confirmed with the issuer where a registry check is available",
+          "who": "KaamSathi, with the issuing body"
+        },
+        {
+          "what": "Disagreements",
+          "how": "Workers can dispute a rating or a hajiri entry, add evidence and appeal the decision",
+          "who": "Worker and ops"
+        }
+      ]
+    },
+    "trades": {
+      "title": "Trades we start with",
+      "body": "More trades join as the pilot grows. Names are shown in both languages because that is how sites talk.",
+      "list": [
+        {
+          "en": "Electrician",
+          "ne": "इलेक्ट्रिसियन"
+        },
+        {
+          "en": "HVAC technician",
+          "ne": "एचभीएसी प्राविधिक"
+        },
+        {
+          "en": "Plumber",
+          "ne": "प्लम्बर"
+        },
+        {
+          "en": "Welder",
+          "ne": "वेल्डर"
+        },
+        {
+          "en": "Maintenance technician",
+          "ne": "मर्मत प्राविधिक"
+        },
+        {
+          "en": "Solar technician",
+          "ne": "सोलार प्राविधिक"
+        },
+        {
+          "en": "Cook",
+          "ne": "भान्से"
+        },
+        {
+          "en": "Security guard",
+          "ne": "सुरक्षा गार्ड"
+        },
+        {
+          "en": "Housekeeping",
+          "ne": "हाउसकिपिङ"
+        },
+        {
+          "en": "Mason",
+          "ne": "डकर्मी"
+        }
+      ]
+    },
+    "employers": {
+      "kicker": "For employers",
+      "title": "Hire verified workers in days, not weeks.",
+      "body": "Post an opening. Our ops team shortlists verified, available workers matched on trade, district and experience — then you run hajiri and payroll in the same place.",
+      "points": [
+        "Citizenship and NSTB checks before anyone reaches you",
+        "Shortlisted → interview → selected → joined, in one pipeline",
+        "Ratings and work history from past employers"
+      ],
+      "cta": "Post your first job"
+    },
+    "workers": {
+      "kicker": "For workers",
+      "title": "Workers never pay. Not to sign up, not to get hired.",
+      "body": "Get verified once. Your Passport, hajiri and payslips stay on your phone — in Nepali or English — and go with you to the next job.",
+      "points": [
+        "Log in with your mobile number. No email needed.",
+        "See every day of hajiri and every payslip",
+        "Turn your Passport off any time"
+      ],
+      "cta": "How it works for workers"
+    },
+    "proof": {
+      "outcomes_title": "What the pilot will measure",
+      "outcomes_body": "We will publish these once the Kathmandu Valley pilot has real numbers. Until then, no invented figures.",
+      "placeholder": "[PLACEHOLDER]",
+      "metrics": [
+        "Days to fill an opening",
+        "Workers with a verified Passport",
+        "Payslips issued on time"
+      ],
+      "partners_title": "Who we work with",
+      "partners_body": "Partner names appear here only after an agreement is signed.",
+      "partners": [
+        {
+          "title": "Training institutes",
+          "body": "CTEVT-affiliated courses that feed the skill ladder"
+        },
+        {
+          "title": "Skill testing",
+          "body": "NSTB certificates checked against official records"
+        },
+        {
+          "title": "Banks and wallets",
+          "body": "Salary payouts and bank transfer files"
+        },
+        {
+          "title": "Social Security Fund",
+          "body": "Contribution-ready wage sheets"
+        }
+      ],
+      "developers": "Enterprise API",
+      "partner_api": "Partner API"
+    },
+    "pricing": {
+      "title": "Workers never pay. Employers pay per hire and per active worker.",
+      "body": "Pilot pricing: [PRICE PER HIRE] per hire · [PRICE PER ACTIVE WORKER] per active worker a month. Free replacement within 30 days. Prices are confirmed after the pilot.",
+      "cta": "Start as an employer",
+      "secondary": "Talk to our team"
+    },
+    "footer": {
+      "place": "Kathmandu, Nepal",
+      "product": "Product",
+      "support": "Support",
+      "legal": "Legal",
+      "help": "Help centre",
+      "developers": "Developers",
+      "partner_api": "Partner API",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "note": "Built in Nepal for the people who keep its buildings, kitchens and sites running."
+    },
+    "frame": {
+      "accent_default": "साथी",
+      "accent_help": "सहयोग",
+      "accent_legal": "नियम",
+      "accent_api": "जोड"
+    },
+    "passport": {
+      "card_label": "Skill Passport card",
+      "photo_label": "Verified photo",
+      "ladder_title": "Skill ladder",
+      "next_rung": "Next rung: {rung} — {hint}.",
+      "top_rung": "All five rungs earned.",
+      "timeline_title": "Verified record",
+      "timeline_hint": "Certificates and skill tests, newest first.",
+      "timeline_empty": "No dated records yet.",
+      "timeline_issued": "Certificate issued",
+      "timeline_tested": "Skill test passed",
+      "privacy_note": "ID numbers are never shown. The worker chooses who sees this, and every view is shown to them.",
+      "chip_ladder": "Ladder {n}/5"
+    },
+    "auth": {
+      "kicker": "Made for Nepal's sites, kitchens and workshops"
+    },
+    "notfound": {
+      "kicker": "Page not found"
     }
   },
   "mobility": {

@@ -80,7 +80,7 @@ export function OrgSupportPage() {
       {query.isLoading ? (
         <div className="space-y-3" aria-busy>
           {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-20 rounded-lg" />
+            <Skeleton key={i} className="h-20 rounded-dense" />
           ))}
         </div>
       ) : query.isError ? (
@@ -129,7 +129,7 @@ function CaseRow({ c }: { c: SupportCase }) {
     <Card className="transition-colors hover:border-border-strong">
       <Link
         href={`/app/support/${c.id}`}
-        className="flex flex-col gap-2 rounded-lg p-4 focus-visible:outline-2 focus-visible:outline-ring sm:flex-row sm:items-center sm:justify-between"
+        className="flex flex-col gap-2 rounded-dense p-4 focus-visible:outline-2 focus-visible:outline-ring sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="min-w-0 space-y-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -161,7 +161,7 @@ export function OrgCasePage({ id }: { id: string }) {
     return (
       <div className="max-w-3xl space-y-4" aria-busy>
         <Skeleton className="h-10 w-72" />
-        <Skeleton className="h-40 rounded-lg" />
+        <Skeleton className="h-40 rounded-dense" />
       </div>
     );
   }
@@ -181,7 +181,7 @@ export function OrgCasePage({ id }: { id: string }) {
           </>
         }
       />
-      <dl className="mb-6 grid gap-4 rounded-lg border border-border bg-surface p-4 text-sm shadow-sm sm:grid-cols-3">
+      <dl className="mb-6 grid gap-4 rounded-dense border border-border bg-surface p-4 text-sm shadow-sm sm:grid-cols-3">
         <div>
           <dt className="text-xs text-fg-muted">{t("category")}</dt>
           <dd className="mt-0.5 text-fg">{c.safety_kind_label ?? c.category_label}</dd>

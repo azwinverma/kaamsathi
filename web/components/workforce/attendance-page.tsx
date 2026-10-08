@@ -1,6 +1,7 @@
 "use client";
 import * as React from "react";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CalendarDays, ClipboardCheck, Grid3x3 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,7 @@ import { useFormat } from "@/lib/use-format";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AttendanceDay } from "./attendance-day";
 import { AttendanceRegisterView } from "./attendance-register";
+import { AttendanceWeek } from "./attendance-week";
 
 export function AttendancePage() {
   const t = useTranslations();
@@ -18,7 +20,17 @@ export function AttendancePage() {
   const tcr = useTranslations("corrections");
   const f = useFormat();
   const pendingCorrections = usePendingCorrectionsCount();
-  const [tab, setTab] = React.useState("day");
+  const params = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const tab = params.get("tab") === "register" ? "register" : "day";
+  const setTab = (v: string) => {
+    const sp = new URLSearchParams(params.toString());
+    if (v === "register") sp.set("tab", "register");
+    else sp.delete("tab");
+    const q = sp.toString();
+    router.replace(q ? `${pathname}?${q}` : pathname, { scroll: false });
+  };
   return (
     <div>
       <PageHeader
@@ -56,8 +68,9 @@ export function AttendancePage() {
             {ta("tab_register")}
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="day">
+        <TabsContent value="day" className="space-y-8">
           <AttendanceDay />
+          <AttendanceWeek moreHref="/app/attendance?tab=register" />
         </TabsContent>
         <TabsContent value="register">
           <AttendanceRegisterView />

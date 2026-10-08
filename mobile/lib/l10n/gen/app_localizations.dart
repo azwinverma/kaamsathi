@@ -1217,13 +1217,13 @@ abstract class AppLocalizations {
   /// No description provided for @checkInSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Checked in. Have a good day at work!'**
+  /// **'Checked in. Have a good day at work.'**
   String get checkInSuccess;
 
   /// No description provided for @checkOutSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Checked out. See you tomorrow!'**
+  /// **'Checked out. See you tomorrow.'**
   String get checkOutSuccess;
 
   /// No description provided for @scanTitle.
@@ -6583,6 +6583,258 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit'**
   String get commonEdit;
+
+  /// No description provided for @navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navJobsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs'**
+  String get navJobsTab;
+
+  /// No description provided for @navWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Work'**
+  String get navWork;
+
+  /// No description provided for @navLearn.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn'**
+  String get navLearn;
+
+  /// No description provided for @workTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Work'**
+  String get workTitle;
+
+  /// No description provided for @workHajiri.
+  ///
+  /// In en, this message translates to:
+  /// **'Hajiri'**
+  String get workHajiri;
+
+  /// No description provided for @workPayslips.
+  ///
+  /// In en, this message translates to:
+  /// **'Payslips'**
+  String get workPayslips;
+
+  /// No description provided for @learnTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn'**
+  String get learnTitle;
+
+  /// No description provided for @learnHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Get better at your trade'**
+  String get learnHeadline;
+
+  /// No description provided for @learnIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Courses near you, your certificates and the next step in your trade.'**
+  String get learnIntro;
+
+  /// No description provided for @learnMenuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Training, certificates, next steps'**
+  String get learnMenuSubtitle;
+
+  /// No description provided for @slotLearnWorkshopAlt.
+  ///
+  /// In en, this message translates to:
+  /// **'Training at a workshop bench'**
+  String get slotLearnWorkshopAlt;
+
+  /// No description provided for @slotCareerStepAlt.
+  ///
+  /// In en, this message translates to:
+  /// **'A worker moving up a trade level'**
+  String get slotCareerStepAlt;
+
+  /// No description provided for @homeHello.
+  ///
+  /// In en, this message translates to:
+  /// **'Namaste,'**
+  String get homeHello;
+
+  /// No description provided for @homeLadderChip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skill ladder: level {level}'**
+  String homeLadderChip(String level);
+
+  /// No description provided for @homeDaysWorked.
+  ///
+  /// In en, this message translates to:
+  /// **'days worked'**
+  String get homeDaysWorked;
+
+  /// No description provided for @homeOutOf100.
+  ///
+  /// In en, this message translates to:
+  /// **'out of 100'**
+  String get homeOutOf100;
+
+  /// No description provided for @homeScoreSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'after your first job'**
+  String get homeScoreSoon;
+
+  /// No description provided for @homeSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get homeSeeAll;
+
+  /// No description provided for @homeNoJobs.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching jobs right now. Adding more work areas shows more jobs.'**
+  String get homeNoJobs;
+
+  /// No description provided for @jobsMatchSkillArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Matches your skills and area'**
+  String get jobsMatchSkillArea;
+
+  /// No description provided for @jobsMatchTradeArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Matches your skill ({trade}) and area'**
+  String jobsMatchTradeArea(String trade);
+
+  /// No description provided for @ladderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Skill ladder'**
+  String get ladderTitle;
+
+  /// No description provided for @ladderRungPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get ladderRungPhone;
+
+  /// No description provided for @ladderRungIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity'**
+  String get ladderRungIdentity;
+
+  /// No description provided for @ladderRungWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Work'**
+  String get ladderRungWork;
+
+  /// No description provided for @ladderRungCertificate.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate'**
+  String get ladderRungCertificate;
+
+  /// No description provided for @ladderRungTrusted.
+  ///
+  /// In en, this message translates to:
+  /// **'Highly trusted'**
+  String get ladderRungTrusted;
+
+  /// No description provided for @ladderSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Skill ladder: {done} of {total} steps'**
+  String ladderSummary(String done, String total);
+
+  /// No description provided for @ladderStepDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{step}: done'**
+  String ladderStepDone(String step);
+
+  /// No description provided for @ladderStepOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'{step}: not yet'**
+  String ladderStepOpen(String step);
+
+  /// No description provided for @ladderNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next step: {step}'**
+  String ladderNext(String step);
+
+  /// No description provided for @ladderChipShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Ladder {done}/{total}'**
+  String ladderChipShort(String done, String total);
+
+  /// No description provided for @passportShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get passportShare;
+
+  /// No description provided for @passportPrivacyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'ID numbers are never shown. You choose who sees this.'**
+  String get passportPrivacyNote;
+
+  /// No description provided for @passportPhotoMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'No photo yet'**
+  String get passportPhotoMissing;
+
+  /// No description provided for @ppTimeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified skills and certificates'**
+  String get ppTimeline;
+
+  /// No description provided for @ppTimelineEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing verified yet. Add a certificate from Learn.'**
+  String get ppTimelineEmpty;
+
+  /// No description provided for @celebrateCredential.
+  ///
+  /// In en, this message translates to:
+  /// **'Your first certificate is verified.'**
+  String get celebrateCredential;
+
+  /// No description provided for @celebratePlacement.
+  ///
+  /// In en, this message translates to:
+  /// **'You have joined your new job. All the best.'**
+  String get celebratePlacement;
+
+  /// No description provided for @celebrateProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile is complete.'**
+  String get celebrateProfile;
+
+  /// No description provided for @celebrateTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'Training completed. Well done.'**
+  String get celebrateTraining;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

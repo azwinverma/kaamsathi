@@ -60,7 +60,7 @@ function OrgRatings() {
       {query.isLoading ? (
         <div className="space-y-3" aria-busy>
           {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-24 rounded-lg" />
+            <Skeleton key={i} className="h-24 rounded-dense" />
           ))}
         </div>
       ) : query.isError ? (

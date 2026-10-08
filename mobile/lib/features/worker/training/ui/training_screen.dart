@@ -7,6 +7,7 @@ import '../../../../core/l10n/l10n.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/eco.dart';
+import '../../../../core/widgets/signature/signature.dart';
 import '../../credentials/ui/credentials_screen.dart';
 import '../training_data.dart';
 
@@ -53,11 +54,18 @@ class TrainingScreen extends ConsumerWidget {
           title: Text(l.trainTitle),
           bottom: TabBar(tabs: [Tab(text: l.trainCourses), Tab(text: l.trainMine)]),
         ),
-        body: TabBarView(
-          children: [
-            RefreshIndicator(onRefresh: refresh, child: const _Courses()),
-            RefreshIndicator(onRefresh: refresh, child: const _Mine()),
-          ],
+        body: MilestoneWatch(
+          milestone: Milestone.trainingCompleted,
+          reached: switch (ref.watch(enrollmentsProvider)) {
+            AsyncData(:final value) => value.any((e) => e.status == 'completed'),
+            _ => null,
+          },
+          child: TabBarView(
+            children: [
+              RefreshIndicator(onRefresh: refresh, child: const _Courses()),
+              RefreshIndicator(onRefresh: refresh, child: const _Mine()),
+            ],
+          ),
         ),
       ),
     );

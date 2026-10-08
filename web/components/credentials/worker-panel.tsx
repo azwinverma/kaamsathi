@@ -66,7 +66,7 @@ export function WorkerCredentialsPanel({
                 ) : null}
               </div>
               {data.credentials.length ? (
-                <ul className="divide-border border-border divide-y rounded-lg border">
+                <ul className="divide-border border-border divide-y rounded-dense border">
                   {data.credentials.map((c) => (
                     <li key={c.id} className="space-y-1 px-3 py-2.5">
                       <div className="flex items-start justify-between gap-2">
@@ -100,7 +100,7 @@ export function WorkerCredentialsPanel({
             <section>
               <h3 className="text-fg mb-2 text-sm font-semibold">{t("assessments")}</h3>
               {data.assessments.length ? (
-                <ul className="divide-border border-border divide-y rounded-lg border">
+                <ul className="divide-border border-border divide-y rounded-dense border">
                   {data.assessments.map((a) => (
                     <li
                       key={a.id}
@@ -127,7 +127,7 @@ export function WorkerCredentialsPanel({
               )}
             </section>
 
-            <section className="border-border bg-surface-muted/50 rounded-lg border p-3">
+            <section className="border-border bg-surface-muted/50 rounded-dense border p-3">
               <div className="flex items-center justify-between gap-2">
                 <h3 className="text-fg text-sm font-semibold">{t("passport")}</h3>
                 {data.passport ? (

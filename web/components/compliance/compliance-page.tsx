@@ -79,7 +79,7 @@ function ScoreCard() {
   const t = useTranslations("compliance.score");
   const f = useFormat();
   const { data, isLoading, error, refetch } = useComplianceStatus();
-  if (isLoading) return <Skeleton className="h-64 rounded-lg" />;
+  if (isLoading) return <Skeleton className="h-64 rounded-dense" />;
   if (error || !data) return <ErrorState error={error} onRetry={() => void refetch()} />;
   const tone = scoreTone(data.score);
   const r = 52;

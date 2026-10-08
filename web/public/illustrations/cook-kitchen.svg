@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" role="img" aria-labelledby="t">
+  <title id="t">Cook in a hotel kitchen stirring a karahi, with a pressure cooker on the next burner</title>
+  <defs>
+    <pattern id="tile" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M0 35.5h36M35.5 0v36" stroke="#FBBF24" stroke-opacity=".45" stroke-width="2" fill="none"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="500" fill="#FEF9E7"/>
+  <rect width="400" height="320" fill="url(#tile)"/>
+
+  <g transform="translate(-30 -70) scale(1.2)">
+    <!-- wall shelf with steel plates -->
+    <g stroke="#0F172A" stroke-width="3" stroke-linejoin="round">
+      <rect x="220" y="96" width="170" height="10" fill="#CBD5E1"/>
+      <circle cx="248" cy="80" r="16" fill="#E2E8F0"/>
+      <circle cx="284" cy="80" r="16" fill="#E2E8F0"/>
+      <rect x="312" y="62" width="30" height="34" rx="4" fill="#E2E8F0"/>
+      <rect x="350" y="70" width="26" height="26" rx="4" fill="#FBBF24"/>
+    </g>
+
+    <!-- cook -->
+    <rect x="90" y="214" width="104" height="146" rx="26" fill="#F8FAFC"/>
+    <path d="M90 240c0-14 12-26 26-26h20v146h-20c-14 0-26-12-26-26z" fill="#E2E8F0"/>
+    <g fill="#0F172A"><circle cx="152" cy="246" r="3.5"/><circle cx="152" cy="268" r="3.5"/><circle cx="172" cy="246" r="3.5"/><circle cx="172" cy="268" r="3.5"/></g>
+    <!-- apron -->
+    <path d="M104 290h76v70h-76z" fill="#2563EB"/>
+    <path d="M104 290l-8-20M180 290l8-20" stroke="#2563EB" stroke-width="5" stroke-linecap="round"/>
+    <rect x="131" y="196" width="22" height="24" fill="#B07A52"/>
+    <circle cx="142" cy="170" r="34" fill="#B07A52"/>
+    <!-- chef's cap / hair cover (hygiene PPE: outlined) -->
+    <path d="M110 160c-12-6-14-34 4-40 4-20 30-24 40-10 14-10 36 0 32 18 14 8 8 28-6 32z" fill="#FFFFFF" stroke="#0F172A" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="108" y="150" width="70" height="16" rx="4" fill="#FFFFFF" stroke="#0F172A" stroke-width="3"/>
+
+    <!-- arms -->
+    <path d="M188 236c18 16 34 36 46 56" stroke="#E2E8F0" stroke-width="26" stroke-linecap="round" fill="none"/>
+    <path d="M98 238c-10 40 30 74 104 82" stroke="#E2E8F0" stroke-width="26" stroke-linecap="round" fill="none"/>
+
+    <!-- counter + burners (objects: outlined) -->
+    <g stroke="#0F172A" stroke-width="3" stroke-linejoin="round">
+      <rect x="40" y="340" width="380" height="22" fill="#CBD5E1"/>
+      <rect x="40" y="362" width="380" height="140" fill="#E2E8F0"/>
+      <path d="M100 362v140M230 362v140M360 362v140"/>
+      <!-- flame -->
+      <path d="M236 340c-4-10 4-14 4-22 6 6 4 12 8 16 2-6 6-8 6-14 6 8 6 16 2 20z" fill="#FF6B6B"/>
+      <!-- karahi -->
+      <path d="M196 312h104c-4 22-26 34-52 34s-48-12-52-34z" fill="#334155"/>
+      <path d="M196 312h-14M300 312h14" stroke-width="6" stroke-linecap="round"/>
+      <!-- palta (spatula) -->
+      <path d="M238 296l20 26" stroke-width="5" stroke-linecap="round"/>
+      <rect x="252" y="318" width="20" height="8" rx="2" transform="rotate(30 262 322)" fill="#CBD5E1"/>
+      <!-- pressure cooker -->
+      <rect x="326" y="282" width="70" height="58" rx="10" fill="#E2E8F0"/>
+      <rect x="320" y="274" width="82" height="12" rx="6" fill="#CBD5E1"/>
+      <path d="M402 280h22" stroke-width="8" stroke-linecap="round"/>
+      <rect x="354" y="258" width="12" height="16" rx="3" fill="#0F172A"/>
+    </g>
+    <!-- cloth in hand + hand -->
+    <g stroke="#0F172A" stroke-width="3">
+      <rect x="186" y="304" width="24" height="18" rx="4" fill="#FF6B6B"/>
+    </g>
+    <circle cx="236" cy="294" r="13" fill="#B07A52"/>
+    <circle cx="200" cy="318" r="13" fill="#B07A52"/>
+    <!-- steam -->
+    <g fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round">
+      <path d="M232 296c-8-14 8-20 0-36"/>
+      <path d="M266 300c-8-14 8-20 0-36"/>
+    </g>
+    <g fill="none" stroke="#CBD5E1" stroke-width="2.5" stroke-linecap="round">
+      <path d="M362 252c-6-10 6-14 0-26"/>
+    </g>
+  </g>
+  <circle cx="344" cy="430" r="7" fill="#FF6B6B"/>
+  <circle cx="360" cy="446" r="4" fill="#FF6B6B"/>
+</svg>

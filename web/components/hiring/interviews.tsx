@@ -144,7 +144,7 @@ function InterviewRow({
   return (
     <li
       className={cn(
-        "border-border rounded-lg border p-3",
+        "border-border rounded-dense border p-3",
         (update.isPending || del.isPending) && "opacity-60",
       )}
     >

@@ -6,6 +6,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../format.dart';
 import '../l10n/l10n.dart';
 import '../theme/tokens.dart';
+import 'signature/illustration.dart';
 
 enum Tone { success, warning, danger, info, verified, neutral }
 
@@ -100,12 +101,53 @@ class WorkerAvatar extends StatelessWidget {
   }
 }
 
+/// Empty / unavailable state. On worker (street mural) surfaces the icon is
+/// drawn as a small illustration ([IllustratedIcon]); supervisor (ledger)
+/// screens and errors keep a plain muted icon.
+/// Square worker photo for cut-paper frames: the worker's own verified
+/// photo, or their initials on plain paper (never a stock face).
+class WorkerPhoto extends StatelessWidget {
+  const WorkerPhoto({super.key, required this.name, this.url, this.missingLabel});
+
+  final String name;
+  final String? url;
+
+  /// Read out when there is no photo (e.g. "No photo yet").
+  final String? missingLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final fallback = Semantics(
+      label: missingLabel,
+      child: Container(
+        color: KsPalette.surfaceMuted,
+        alignment: Alignment.center,
+        child: ExcludeSemantics(
+          child: Text(
+            initials(name),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: KsPalette.textPrimary),
+          ),
+        ),
+      ),
+    );
+    final u = url;
+    if (u == null || u.isEmpty) return fallback;
+    return CachedNetworkImage(
+      imageUrl: u,
+      fit: BoxFit.cover,
+      placeholder: (_, _) => fallback,
+      errorWidget: (_, _, _) => fallback,
+    );
+  }
+}
+
 class EmptyState extends StatelessWidget {
-  const EmptyState({super.key, required this.icon, required this.message, this.action});
+  const EmptyState({super.key, required this.icon, required this.message, this.action, this.illustrated = true});
 
   final IconData icon;
   final String message;
   final Widget? action;
+  final bool illustrated;
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +158,10 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 40, color: c.textMuted),
+            if (illustrated && context.expressive)
+              IllustratedIcon(icon: icon)
+            else
+              Icon(icon, size: 40, color: c.textMuted),
             const SizedBox(height: KsSpace.s3),
             Text(
               message,
@@ -141,6 +186,7 @@ class ErrorView extends StatelessWidget {
   Widget build(BuildContext context) {
     return EmptyState(
       icon: LucideIcons.circleAlert,
+      illustrated: false,
       message: errorText(context, error),
       action:
           onRetry == null

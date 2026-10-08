@@ -10,6 +10,7 @@ import '../../../../core/router/router.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/eco.dart';
+import '../../../../core/widgets/signature/signature.dart';
 import '../career_data.dart';
 
 String careerKindLabel(AppLocalizations l, String kind) => switch (kind) {
@@ -73,11 +74,8 @@ class _RecTile extends StatelessWidget {
     final uplift = rec.expectedUpliftPct;
     return InkWell(
       borderRadius: BorderRadius.circular(KsRadius.control),
-      onTap: () {
-        final route = careerRoute(rec);
-        // Tab roots are switched to, sub-pages are pushed.
-        route == Routes.workerProfile ? context.go(route) : context.push(route);
-      },
+      // Tab roots are switched to, sub-pages are pushed.
+      onTap: () => openRoute(context, careerRoute(rec)),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: KsSpace.s2),
         child: Row(
@@ -119,7 +117,11 @@ class _RecTile extends StatelessWidget {
 /// Home card: top two recommendations. Hidden while the endpoint is off or
 /// when there is nothing to suggest.
 class CareerCard extends ConsumerWidget {
-  const CareerCard({super.key});
+  const CareerCard({super.key, this.showArt = false});
+
+  /// Adds the small cut-paper "career step" photo slot (Home only, so the
+  /// Learn tab keeps a single framed image).
+  final bool showArt;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -133,9 +135,26 @@ class CareerCard extends ConsumerWidget {
         key: const Key('career_card'),
         title: l.careerTitle,
         trailing: TextButton(onPressed: () => context.push(Routes.workerCareer), child: Text(l.careerSeeAll)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [for (final r in recs.take(2)) _RecTile(rec: r)],
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [for (final r in recs.take(2)) _RecTile(rec: r)],
+              ),
+            ),
+            if (showArt) ...[
+              const SizedBox(width: KsSpace.s2),
+              CutPaperFrame(
+                width: 64,
+                aspectRatio: 1,
+                angle: 0.08,
+                tapeColor: context.ks.coral,
+                child: ImageSlot(slot: PhotoSlot.careerStep, semanticLabel: l.slotCareerStepAlt),
+              ),
+            ],
+          ],
         ),
       ),
     );
@@ -176,7 +195,8 @@ class CareerScreen extends ConsumerWidget {
                     spacing: KsSpace.s2,
                     runSpacing: KsSpace.s1,
                     children: [
-                      for (final tr in s.trades) StatusBadge(label: tr.name(lang), icon: LucideIcons.hardHat, tone: Tone.info),
+                      for (final tr in s.trades)
+                        StatusBadge(label: tr.name(lang), icon: LucideIcons.hardHat, tone: Tone.info),
                     ],
                   ),
                   const SizedBox(height: KsSpace.s4),

@@ -1,4 +1,5 @@
 "use client";
+import { MatchReasonCard } from "@/components/ledger";
 import * as React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -54,8 +55,8 @@ export default function OpsJobDetailPage() {
       <>
         <PageHeader title={<Skeleton className="h-8 w-64" />} back={back} />
         <div className="grid gap-6 lg:grid-cols-[340px_minmax(0,1fr)]">
-          <Skeleton className="h-80 rounded-lg" />
-          <Skeleton className="h-[480px] rounded-lg" />
+          <Skeleton className="h-80 rounded-dense" />
+          <Skeleton className="h-[480px] rounded-dense" />
         </div>
       </>
     );
@@ -279,7 +280,7 @@ function MatchesPanel({ jobId, jobOpen }: { jobId: string; jobOpen: boolean }) {
       {matches.isLoading ? (
         <div className="space-y-3 px-5 pb-5" aria-busy>
           {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-20 rounded-lg" />
+            <Skeleton key={i} className="h-20 rounded-dense" />
           ))}
         </div>
       ) : matches.isError ? (
@@ -322,7 +323,7 @@ function MatchesPanel({ jobId, jobOpen }: { jobId: string; jobOpen: boolean }) {
               {version ? ` · ${tp("algorithm", { version })}` : null}
             </span>
           </div>
-          <ul className={cn("divide-y divide-border", matches.isFetching && "opacity-70")}>
+          <ul className={cn("py-2", matches.isFetching && "opacity-70")}>
             {rows.map((m, i) => (
               <MatchRow
                 key={m.worker.id}
@@ -338,7 +339,7 @@ function MatchesPanel({ jobId, jobOpen }: { jobId: string; jobOpen: boolean }) {
       )}
 
       {count > 0 ? (
-        <div className="sticky bottom-0 z-10 flex flex-col gap-2 rounded-b-lg border-t border-border bg-surface/95 px-5 py-3 backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+        <div className="sticky bottom-0 z-10 flex flex-col gap-2 rounded-b-dense border-t border-border bg-surface/95 px-5 py-3 backdrop-blur sm:flex-row sm:items-center sm:justify-between">
           <div className="text-sm">
             <span className="font-semibold text-fg">{t("common.selected_count", { count: f.digits(count) })}</span>
             <span className={cn("ml-2 text-xs", inTarget ? "text-success" : "text-warning")}>
@@ -403,49 +404,51 @@ function MatchRow({
   const id = `match-${m.worker.id}`;
   const negative = (r: string) => /higher wage|above offer/i.test(r);
   return (
-    <li className={cn("flex gap-3 px-5 py-4 transition-colors", checked && "bg-brand-subtle/60")}>
-      <div className="flex flex-col items-center gap-2 pt-1">
-        <Checkbox
-          id={id}
-          checked={checked}
-          onCheckedChange={(v) => onCheckedChange(v === true)}
-          aria-label={m.worker.full_name}
-        />
-        <span className="text-xs text-fg-subtle tabular">#{f.digits(rank)}</span>
-      </div>
-      <div className="min-w-0 flex-1 space-y-2">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <label htmlFor={id} className="min-w-0 cursor-pointer">
-            <WorkerIdentity worker={m.worker} size="sm" />
-          </label>
+    <li className="px-5 py-2">
+      <MatchReasonCard
+        selected={checked}
+        reasons={m.reasons.map((r) => ({ label: reason(r), tone: negative(r) ? "negative" : "positive" }))}
+        identity={
+          <div className="flex items-start gap-3">
+            <div className="flex flex-col items-center gap-1.5 pt-1">
+              <Checkbox
+                id={id}
+                checked={checked}
+                onCheckedChange={(v) => onCheckedChange(v === true)}
+                aria-label={m.worker.full_name}
+              />
+              <span className="text-xs text-fg-muted tabular">#{f.digits(rank)}</span>
+            </div>
+            <label htmlFor={id} className="min-w-0 cursor-pointer">
+              <WorkerIdentity worker={m.worker} size="sm" />
+            </label>
+          </div>
+        }
+        aside={
           <span className="flex items-center gap-2">
             <InterestedBadge match={m} />
             <MatchExplain match={m}>
               <ScoreMeter score={m.score} />
             </MatchExplain>
           </span>
-        </div>
-        <SkillChips skills={m.worker.skills} max={3} />
-        <RequirementChecks checks={m.requirements} />
-        <div className="flex flex-wrap items-center gap-1.5">
-          {m.reasons.map((r, i) => (
-            <Badge key={i} tone={negative(r) ? "warning" : "neutral"}>
-              {reason(r)}
-            </Badge>
-          ))}
-          <span className="ml-auto flex items-center gap-3 text-xs text-fg-muted">
+        }
+        footer={
+          <span className="flex items-center gap-3 text-xs text-fg-muted">
             <RatingStars value={m.worker.rating_avg} />
             {m.worker.placements_count ? (
               <span>
                 {t("term.placements")}: {f.digits(m.worker.placements_count)}
               </span>
             ) : null}
-            <Link href={`/ops/workers/${m.worker.id}`} className="text-brand-text hover:underline">
+            <Link href={`/ops/workers/${m.worker.id}`} className="ml-auto text-brand-text hover:underline">
               {t("common.view")}
             </Link>
           </span>
-        </div>
-      </div>
+        }
+      >
+        <SkillChips skills={m.worker.skills} max={3} />
+        <RequirementChecks checks={m.requirements} />
+      </MatchReasonCard>
     </li>
   );
 }

@@ -15,11 +15,12 @@ const kFontFallback = ['Inter', kDevanagariFamily];
 /// (tokens.json `devanagariLineHeightBoost`) and no negative letter-spacing on
 /// headings. [useGoogleFonts] is disabled in widget tests to avoid font
 /// loading.
-ThemeData buildTheme(
-  Brightness brightness, {
-  String lang = 'en',
-  bool useGoogleFonts = true,
-}) {
+///
+/// [ledger] selects the supervisor "documentary ledger" surface (DIRECTION.md
+/// direction A): dense 10px cards, neutral navigation indicator and no
+/// expressive elements ([KsSurfaceStyle.ledger]). The default is the worker
+/// "street mural" surface (direction B).
+ThemeData buildTheme(Brightness brightness, {String lang = 'en', bool useGoogleFonts = true, bool ledger = false}) {
   final dark = brightness == Brightness.dark;
   final ne = lang == 'ne';
   final ks = dark ? KsColors.dark : KsColors.light;
@@ -63,13 +64,7 @@ ThemeData buildTheme(
   );
 
   final lh = ne ? 1.1 : 1.0;
-  TextStyle s(
-    double size,
-    double lineHeight,
-    FontWeight w, {
-    bool heading = false,
-    Color? color,
-  }) => TextStyle(
+  TextStyle s(double size, double lineHeight, FontWeight w, {bool heading = false, Color? color}) => TextStyle(
     fontSize: size,
     height: lineHeight / size * lh,
     fontWeight: w,
@@ -104,9 +99,7 @@ ThemeData buildTheme(
     textTheme = GoogleFonts.interTextTheme(textTheme).apply(fontFamilyFallback: kFontFallback);
   }
 
-  final controlShape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.circular(KsRadius.control),
-  );
+  final controlShape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(KsRadius.control));
   // ≥44 px touch height (tokens.json touchTargetMin); 48 for primary buttons.
   const buttonSize = Size(64, 48);
   final buttonText = textTheme.labelLarge!.copyWith(color: null);
@@ -131,7 +124,7 @@ ThemeData buildTheme(
     materialTapTargetSize: MaterialTapTargetSize.padded,
     visualDensity: VisualDensity.standard,
     focusColor: ks.focusRing.withValues(alpha: 0.12),
-    extensions: [ks],
+    extensions: [ks, if (ledger) KsSurfaceStyle.ledger else KsSurfaceStyle.mural],
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
         TargetPlatform.android: KsPageTransitionsBuilder(ZoomPageTransitionsBuilder()),
@@ -158,7 +151,7 @@ ThemeData buildTheme(
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(KsRadius.card),
+        borderRadius: BorderRadius.circular(ledger ? KsRadius.dense : KsRadius.card),
         side: BorderSide(color: ks.border),
       ),
     ),
@@ -209,9 +202,7 @@ ThemeData buildTheme(
         animationDuration: duration,
       ),
     ),
-    iconButtonTheme: IconButtonThemeData(
-      style: IconButton.styleFrom(minimumSize: const Size(48, 48)),
-    ),
+    iconButtonTheme: IconButtonThemeData(style: IconButton.styleFrom(minimumSize: const Size(48, 48))),
     segmentedButtonTheme: SegmentedButtonThemeData(
       style: ButtonStyle(
         minimumSize: const WidgetStatePropertyAll(Size(KsSize.touchTarget, KsSize.touchTarget)),
@@ -263,10 +254,30 @@ ThemeData buildTheme(
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: ks.surface,
       surfaceTintColor: Colors.transparent,
-      indicatorColor: ks.actionPrimarySubtle,
+      indicatorColor: ledger ? ks.surfaceMuted : ks.actionPrimarySubtle,
+      indicatorShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(KsRadius.control)),
       elevation: 0,
       height: 68,
-      labelTextStyle: WidgetStatePropertyAll(textTheme.labelSmall),
+      // Selected label: AA blue + bold (mural) / primary text (ledger), so
+      // the state is not carried by the indicator colour alone.
+      labelTextStyle: WidgetStateProperty.resolveWith(
+        (states) =>
+            states.contains(WidgetState.selected)
+                ? textTheme.labelSmall?.copyWith(
+                  color: ledger ? ks.textPrimary : ks.onActionPrimarySubtle,
+                  fontWeight: FontWeight.w700,
+                )
+                : textTheme.labelSmall?.copyWith(color: ks.textMuted),
+      ),
+      iconTheme: WidgetStateProperty.resolveWith(
+        (states) => IconThemeData(
+          size: 24,
+          color:
+              states.contains(WidgetState.selected)
+                  ? (ledger ? ks.textPrimary : ks.onActionPrimarySubtle)
+                  : ks.textMuted,
+        ),
+      ),
     ),
     progressIndicatorTheme: ProgressIndicatorThemeData(
       color: ks.actionPrimary,
@@ -281,18 +292,14 @@ ThemeData buildTheme(
       showDragHandle: true,
       backgroundColor: ks.surface,
       surfaceTintColor: Colors.transparent,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(KsRadius.sheet)),
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(KsRadius.sheet))),
     ),
     dialogTheme: DialogThemeData(
       backgroundColor: ks.surface,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(KsRadius.sheet)),
     ),
-    switchTheme: const SwitchThemeData(
-      materialTapTargetSize: MaterialTapTargetSize.padded,
-    ),
+    switchTheme: const SwitchThemeData(materialTapTargetSize: MaterialTapTargetSize.padded),
   );
 }
 
@@ -303,8 +310,7 @@ ButtonStyle destructiveFilledStyle(BuildContext context) {
 }
 
 /// Text-only destructive action (AA-safe error text colour).
-ButtonStyle destructiveTextStyle(BuildContext context) =>
-    TextButton.styleFrom(foregroundColor: context.ks.errorText);
+ButtonStyle destructiveTextStyle(BuildContext context) => TextButton.styleFrom(foregroundColor: context.ks.errorText);
 
 /// Wraps a platform page transition and drops it when the user has asked for
 /// reduced motion (MediaQuery.disableAnimations).

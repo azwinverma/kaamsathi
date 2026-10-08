@@ -11,6 +11,7 @@ import '../../../../core/l10n/l10n.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/eco.dart';
+import '../../../../core/widgets/signature/signature.dart';
 import '../credentials_data.dart';
 
 String credentialKindLabel(AppLocalizations l, String kind) => switch (kind) {
@@ -80,103 +81,107 @@ class CredentialsScreen extends ConsumerWidget {
             await ref.read(credentialsProvider.future);
           } catch (_) {}
         },
-        child: FeatureAsyncBody<List<Credential>>(
-          value: value,
-          onRetry: () => ref.invalidate(credentialsProvider),
-          data:
-              (items) => ListView(
-                padding: const EdgeInsets.fromLTRB(KsSpace.page, KsSpace.page, KsSpace.page, 96),
-                children: [
-                  if (items.isEmpty) EmptyState(icon: LucideIcons.award, message: l.credEmpty),
-                  for (final c in items)
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(KsSpace.s4),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(LucideIcons.award),
-                            const SizedBox(width: KsSpace.s3),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(c.title, style: t.titleSmall),
-                                  Text(
-                                    [
-                                      credentialKindLabel(l, c.kind),
-                                      if (c.issuer?.isNotEmpty ?? false) c.issuer!,
-                                      if (c.kind == 'nstb')
-                                        nstbLabel(l, c.level, lang)
-                                      else if (c.level != null)
-                                        c.level!,
-                                    ].where((s) => s.isNotEmpty).join(' · '),
-                                    style: t.bodySmall,
-                                  ),
-                                  if (c.expiresOn != null)
+        child: MilestoneWatch(
+          milestone: Milestone.firstVerifiedCredential,
+          reached: value.hasValue ? value.requireValue.any((c) => c.status == 'verified') : null,
+          child: FeatureAsyncBody<List<Credential>>(
+            value: value,
+            onRetry: () => ref.invalidate(credentialsProvider),
+            data:
+                (items) => ListView(
+                  padding: const EdgeInsets.fromLTRB(KsSpace.page, KsSpace.page, KsSpace.page, 96),
+                  children: [
+                    if (items.isEmpty) EmptyState(icon: LucideIcons.award, message: l.credEmpty),
+                    for (final c in items)
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(KsSpace.s4),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(LucideIcons.award),
+                              const SizedBox(width: KsSpace.s3),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(c.title, style: t.titleSmall),
                                     Text(
-                                      l.credExpires(formatBsOrAd(c.expiresOnBs, c.expiresOn, lang)),
+                                      [
+                                        credentialKindLabel(l, c.kind),
+                                        if (c.issuer?.isNotEmpty ?? false) c.issuer!,
+                                        if (c.kind == 'nstb')
+                                          nstbLabel(l, c.level, lang)
+                                        else if (c.level != null)
+                                          c.level!,
+                                      ].where((s) => s.isNotEmpty).join(' · '),
                                       style: t.bodySmall,
                                     ),
-                                  if (c.note?.isNotEmpty ?? false) Text(c.note!, style: t.bodySmall),
-                                  if (c.resubmissionOf case final prev?) ...[
-                                    const SizedBox(height: KsSpace.s1),
-                                    Row(
-                                      key: Key('resubmission_of_${c.id}'),
-                                      children: [
-                                        const Icon(LucideIcons.link, size: 14),
-                                        const SizedBox(width: 4),
-                                        Expanded(child: Text(l.credResubmissionOf, style: t.bodySmall)),
-                                      ],
-                                    ),
-                                    if (prev.note?.isNotEmpty ?? false)
-                                      Text(l.credEarlierNote(prev.note!), style: t.bodySmall),
-                                  ],
-                                  const SizedBox(height: KsSpace.s2),
-                                  Builder(
-                                    builder: (_) {
-                                      final (label, tone, icon) = credentialStatus(l, c.status);
-                                      return StatusBadge(
-                                        label: (c.statusLabel?.isNotEmpty ?? false) ? c.statusLabel! : label,
-                                        tone: tone,
-                                        icon: icon,
-                                      );
-                                    },
-                                  ),
-                                  if (resubmitOn && c.canResubmit) ...[
+                                    if (c.expiresOn != null)
+                                      Text(
+                                        l.credExpires(formatBsOrAd(c.expiresOnBs, c.expiresOn, lang)),
+                                        style: t.bodySmall,
+                                      ),
+                                    if (c.note?.isNotEmpty ?? false) Text(c.note!, style: t.bodySmall),
+                                    if (c.resubmissionOf case final prev?) ...[
+                                      const SizedBox(height: KsSpace.s1),
+                                      Row(
+                                        key: Key('resubmission_of_${c.id}'),
+                                        children: [
+                                          const Icon(LucideIcons.link, size: 14),
+                                          const SizedBox(width: 4),
+                                          Expanded(child: Text(l.credResubmissionOf, style: t.bodySmall)),
+                                        ],
+                                      ),
+                                      if (prev.note?.isNotEmpty ?? false)
+                                        Text(l.credEarlierNote(prev.note!), style: t.bodySmall),
+                                    ],
                                     const SizedBox(height: KsSpace.s2),
-                                    OutlinedButton.icon(
-                                      key: Key('resubmit_${c.id}'),
-                                      onPressed:
-                                          () => Navigator.of(context).push(
-                                            MaterialPageRoute<void>(
-                                              fullscreenDialog: true,
-                                              builder: (_) => AddCredentialScreen(resubmit: c),
-                                            ),
-                                          ),
-                                      icon: const Icon(LucideIcons.rotateCcw, size: 18),
-                                      label: Text(l.credResubmit),
+                                    Builder(
+                                      builder: (_) {
+                                        final (label, tone, icon) = credentialStatus(l, c.status);
+                                        return StatusBadge(
+                                          label: (c.statusLabel?.isNotEmpty ?? false) ? c.statusLabel! : label,
+                                          tone: tone,
+                                          icon: icon,
+                                        );
+                                      },
                                     ),
+                                    if (resubmitOn && c.canResubmit) ...[
+                                      const SizedBox(height: KsSpace.s2),
+                                      OutlinedButton.icon(
+                                        key: Key('resubmit_${c.id}'),
+                                        onPressed:
+                                            () => Navigator.of(context).push(
+                                              MaterialPageRoute<void>(
+                                                fullscreenDialog: true,
+                                                builder: (_) => AddCredentialScreen(resubmit: c),
+                                              ),
+                                            ),
+                                        icon: const Icon(LucideIcons.rotateCcw, size: 18),
+                                        label: Text(l.credResubmit),
+                                      ),
+                                    ],
                                   ],
-                                ],
+                                ),
                               ),
-                            ),
-                            if (c.canDelete)
-                              IconButton(
-                                tooltip: l.ecoRemove,
-                                onPressed: () => _delete(context, ref, c),
-                                icon: const Icon(LucideIcons.trash2),
-                              ),
-                          ],
+                              if (c.canDelete)
+                                IconButton(
+                                  tooltip: l.ecoRemove,
+                                  onPressed: () => _delete(context, ref, c),
+                                  icon: const Icon(LucideIcons.trash2),
+                                ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  if (items.isNotEmpty) ...[
-                    const SizedBox(height: KsSpace.s2),
-                    Text(l.credVerifyNote, style: t.bodySmall),
+                    if (items.isNotEmpty) ...[
+                      const SizedBox(height: KsSpace.s2),
+                      Text(l.credVerifyNote, style: t.bodySmall),
+                    ],
                   ],
-                ],
-              ),
+                ),
+          ),
         ),
       ),
     );

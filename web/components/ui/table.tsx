@@ -13,7 +13,7 @@ export function TableContainer({
   return (
     <div
       className={cn(
-        "scrollbar-thin relative w-full overflow-auto rounded-dense border border-border bg-surface shadow-sm",
+        "scrollbar-thin relative w-full overflow-auto rounded-dense border border-border bg-surface",
         className,
       )}
       style={maxHeight ? { maxHeight } : undefined}
