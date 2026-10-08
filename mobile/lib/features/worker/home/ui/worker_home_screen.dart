@@ -17,6 +17,7 @@ import '../../checkin/data/check_in_service.dart';
 import '../../data/worker_models.dart';
 import '../../data/worker_repository.dart';
 import '../../my_hajiri/ui/my_hajiri_screen.dart';
+import '../../profile/ui/completeness_card.dart';
 import '../../trust/trust_data.dart';
 import '../../trust/ui/trust_card.dart';
 
@@ -61,6 +62,7 @@ class WorkerHomeScreen extends ConsumerWidget {
             const SizedBox(height: KsSpace.s4),
             const _TodayCard(),
             const SizedBox(height: KsSpace.s4),
+            const ProfileCompletenessCard(),
             const _MonthSummary(),
             const SizedBox(height: KsSpace.s4),
             const TrustCard(),

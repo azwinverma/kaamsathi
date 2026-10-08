@@ -1558,5 +1558,249 @@
   "supportCatSafety": "Safety",
   "offerEmployer": "Employer",
   "offerStart": "Start date",
-  "offerAnswerByLabel": "Answer by"
+  "offerAnswerByLabel": "Answer by",
+  "langTitle": "Languages I speak",
+  "langMenuSubtitle": "Employers look for workers who speak their customers' language",
+  "langAdd": "Add a language",
+  "langEmpty": "No languages added yet.",
+  "langPick": "Choose a language",
+  "langProficiency": "How well do you speak it?",
+  "langSaved": "Languages saved.",
+  "langMax": "You can add up to 15 languages.",
+  "profBasic": "Basic",
+  "profConversational": "Conversational",
+  "profFluent": "Fluent",
+  "profNative": "Native (mother tongue)",
+  "langNameNe": "Nepali",
+  "langNameEn": "English",
+  "langNameHi": "Hindi",
+  "langNameMai": "Maithili",
+  "langNameBho": "Bhojpuri",
+  "langNameNew": "Nepal Bhasa (Newari)",
+  "langNameTha": "Tharu",
+  "langNameTam": "Tamang",
+  "langNameMgp": "Magar",
+  "langNameGvr": "Gurung",
+  "langNameLim": "Limbu",
+  "langNameBap": "Rai (Bantawa)",
+  "langNameXsr": "Sherpa",
+  "langNameDty": "Doteli",
+  "langNameAwa": "Awadhi",
+  "langNameUr": "Urdu",
+  "langNameAr": "Arabic",
+  "langNameMs": "Malay",
+  "langNameJa": "Japanese",
+  "langNameKo": "Korean",
+  "langNameZh": "Chinese",
+  "complTitle": "Complete your profile",
+  "complPercent": "{percent} complete",
+  "@complPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "complHint": "A complete profile gets more job offers.",
+  "complPhoto": "Add a profile photo",
+  "complIdentity": "Add your citizenship or national ID",
+  "complSkills": "Add at least one skill",
+  "complLanguages": "Add the languages you speak",
+  "complAvailability": "Set your availability and expected wage",
+  "complVerifiedCredential": "Get a certificate verified",
+  "complWorkHistory": "Add your work history",
+  "complPaymentDetails": "Add bank or wallet details for salary",
+  "appsInvited": "Invited by employer",
+  "appsInvitedHint": "This employer worked with you before and invited you to apply.",
+  "ivTitle": "Interviews",
+  "ivModeInPerson": "In person",
+  "ivModePhone": "Phone call",
+  "ivModeVideo": "Video call",
+  "ivModeTradeTest": "Skill test",
+  "ivOutcomePending": "Upcoming",
+  "ivOutcomePassed": "Passed",
+  "ivOutcomeFailed": "Not selected",
+  "ivOutcomeNoShow": "Missed",
+  "ivWith": "With {name}",
+  "@ivWith": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ivPlace": "Place: {place}",
+  "@ivPlace": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "ratingsTitle": "My ratings",
+  "ratingsMenuSubtitle": "What employers said about you, and what you said",
+  "ratingsReceived": "From employers",
+  "ratingsGiven": "Given by me",
+  "ratingsEmptyReceived": "No employer has rated you yet.",
+  "ratingsEmptyGiven": "You have not rated any employer yet.",
+  "ratingsAverage": "Average {score} · {count} ratings",
+  "@ratingsAverage": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "ratingsReliability": "Reliability",
+  "ratingsSkill": "Skill",
+  "ratingsFlag": "Report this comment",
+  "ratingsFlagTitle": "Report this comment?",
+  "ratingsFlagHint": "Tell us why it is unfair or untrue. KaamSathi's team will review it; your score stays the same until then.",
+  "ratingsFlagReason": "Reason",
+  "ratingsFlagged": "Sent for review.",
+  "ratingsStatusFlagged": "Under review",
+  "ratingsStatusHidden": "Comment hidden by KaamSathi",
+  "ratingsVoided": "Not counted",
+  "disputeStatusAppealed": "Appealed",
+  "disputeStatusAppealResolved": "Appeal decided",
+  "disputeDetailTitle": "Complaint",
+  "evidenceTitle": "Evidence",
+  "evidenceEmpty": "No evidence added yet.",
+  "evidenceHint": "Photos of payslips, receipts or the site help our team decide. Up to 10 files, 10 MB each.",
+  "evidenceAdd": "Add evidence",
+  "evidenceNote": "Note",
+  "evidenceUpload": "Upload",
+  "evidenceUploaded": "Evidence added.",
+  "evidenceTooBig": "This file is too large (max 10 MB).",
+  "evidencePhoto": "Photo",
+  "evidencePdf": "PDF document",
+  "evidenceCount": "{count} files",
+  "@evidenceCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "appealButton": "Appeal this decision",
+  "appealUntil": "You can appeal until {date}.",
+  "@appealUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "appealReason": "Why do you disagree?",
+  "appealHint": "You can appeal only once. A different KaamSathi staff member reviews it within 7 days.",
+  "appealSent": "Appeal sent.",
+  "appealSection": "Appeal",
+  "appealWaiting": "Waiting for review",
+  "appealUpheld": "Decision upheld",
+  "appealOverturned": "Decision overturned",
+  "credResubmit": "Resubmit",
+  "credResubmitTitle": "Resubmit certificate",
+  "credResubmitHint": "Fix what was wrong. Anything you leave unchanged — including the photo — is copied from the rejected one.",
+  "credResubmissionOf": "Resubmitted after a rejection",
+  "credResubmitted": "Sent again for checking.",
+  "credEarlierNote": "Earlier reason: {note}",
+  "@credEarlierNote": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "corrTitle": "Correction requests",
+  "corrMenuSubtitle": "Ask to fix a wrong hajiri day",
+  "corrRequest": "Request a correction",
+  "corrFor": "Hajiri for {date}",
+  "@corrFor": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "corrRecorded": "Recorded: {status}",
+  "@corrRecorded": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "corrShouldBe": "It should be",
+  "corrCheckIn": "Arrival time",
+  "corrCheckOut": "Leaving time",
+  "corrReason": "Reason",
+  "corrReasonHint": "e.g. I was at the site but the QR did not scan",
+  "corrSent": "Request sent to your supervisor.",
+  "corrEmpty": "No correction requests.",
+  "corrStatusPending": "Waiting",
+  "corrStatusApproved": "Approved",
+  "corrStatusRejected": "Rejected",
+  "corrJob": "Job",
+  "corrNoJob": "You need an active job to request a correction.",
+  "corrNote": "Note: {note}",
+  "@corrNote": {
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "corrChange": "{from} → {to}",
+  "@corrChange": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "corrQueueTitle": "Hajiri corrections",
+  "corrQueueSubtitle": "Workers asking to fix their hajiri",
+  "corrTabPending": "Waiting",
+  "corrTabDecided": "Decided",
+  "corrApprove": "Approve",
+  "corrReject": "Reject",
+  "corrApproveTitle": "Approve this correction?",
+  "corrRejectTitle": "Reject this correction?",
+  "corrApproved": "Approved. Hajiri updated.",
+  "corrRejected": "Rejected. The worker has been told.",
+  "corrNoteLabel": "Note",
+  "corrRejectNote": "Tell the worker why",
+  "talabRegularHours": "Regular hours",
+  "talabHourlyWage": "Hourly wage",
+  "empWageHourly": "{amount} per hour",
+  "@empWageHourly": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "empWorkType": "Work type",
+  "empPartTime": "Part-time",
+  "empFullTime": "Full-time",
+  "rosterNotified": "Saved · {count} workers notified",
+  "@rosterNotified": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "rosterWarnOnLeave": "On leave",
+  "rosterWarnHoliday": "Public holiday",
+  "rosterWarnWeeklyOff": "Weekly day off",
+  "rosterWarnConflict": "Rostered at another workplace",
+  "rosterWarnLegend": "! = check this day",
+  "commonEdit": "Edit"
 }

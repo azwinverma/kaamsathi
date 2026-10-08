@@ -11,6 +11,7 @@ import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../data/worker_models.dart';
 import '../../data/worker_repository.dart';
+import '../../employment/employment_data.dart';
 import '../../trust/ui/disputes_screen.dart';
 
 class PayslipDetailScreen extends ConsumerWidget {
@@ -67,6 +68,12 @@ class _DetailState extends ConsumerState<_Detail> {
     String m(String? v) => formatMoney(v ?? '0', lang: lang);
     String n(num? v) => formatNumber(v ?? 0, lang: lang);
     bool nonZero(String? v) => (parsePaisa(v) ?? 0) != 0;
+    // The payslip carries hours; the rate lives on the employment.
+    final hourlyWage =
+        !p.isHourly
+            ? null
+            : p.hourlyWage ??
+                ref.watch(myEmploymentsProvider).value?.where((e) => e.id == p.employmentId).firstOrNull?.hourlyWage;
 
     final c = context.statusColors;
     return ListView(
@@ -122,6 +129,18 @@ class _DetailState extends ConsumerState<_Detail> {
               KeyValueRow(label: l.talabDaysInMonth, value: n(p.daysInMonth)),
               KeyValueRow(label: l.talabPresentDays, value: n(p.presentDays)),
               KeyValueRow(label: l.talabPayableDays, value: n(p.payableDays)),
+              if (p.isHourly && p.regularHours != null)
+                KeyValueRow(
+                  key: const Key('payslip_regular_hours'),
+                  label: l.talabRegularHours,
+                  value: n(p.regularHours),
+                ),
+              if (hourlyWage != null)
+                KeyValueRow(
+                  key: const Key('payslip_hourly_wage'),
+                  label: l.talabHourlyWage,
+                  value: l.empWageHourly(m(hourlyWage)),
+                ),
               if ((p.overtimeHours ?? 0) > 0) KeyValueRow(label: l.talabOtHours, value: n(p.overtimeHours)),
             ],
           ),

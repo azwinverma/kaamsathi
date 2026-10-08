@@ -26,8 +26,22 @@ class RosterCell {
   }
 }
 
+/// Roster cell warning codes (O005); never blocks saving.
+abstract final class RosterWarning {
+  static const onLeave = 'on_leave';
+  static const holiday = 'holiday';
+  static const weeklyOff = 'weekly_off';
+  static const conflictElsewhere = 'conflict_elsewhere';
+}
+
 class RosterWeekRow {
-  const RosterWeekRow({required this.employmentId, required this.workerName, this.designation, this.cells = const {}});
+  const RosterWeekRow({
+    required this.employmentId,
+    required this.workerName,
+    this.designation,
+    this.cells = const {},
+    this.warnings = const {},
+  });
   final String employmentId;
   final String workerName;
   final String? designation;
@@ -35,25 +49,64 @@ class RosterWeekRow {
   /// AD date → cell (null = nothing rostered).
   final Map<String, RosterCell?> cells;
 
+  /// AD date → warning codes (only rostered, not-off cells).
+  final Map<String, List<String>> warnings;
+
   factory RosterWeekRow.fromJson(Json j) {
     final cells = <String, RosterCell?>{};
     asJson(j['cells']).forEach((k, v) => cells[k] = RosterCell.fromJson(v));
+    final warnings = <String, List<String>>{};
+    asJson(j['warnings']).forEach((k, v) {
+      final list = strList(v).where((x) => x.isNotEmpty).toList();
+      if (list.isNotEmpty) warnings[k] = list;
+    });
     return RosterWeekRow(
       employmentId: strOr(j['employment_id']),
       workerName: strOr(j['worker_name'] ?? asJsonOrNull(j['worker'])?['full_name']),
       designation: str(j['designation']),
       cells: cells,
+      warnings: warnings,
+    );
+  }
+}
+
+/// `PUT /org/roster` → `{saved, cleared, warnings: [{employment_id, date, code, message}], notified_workers}`.
+class RosterSaveResult {
+  const RosterSaveResult({this.saved = 0, this.cleared = 0, this.warnings = const [], this.notifiedWorkers = 0});
+  final int saved;
+  final int cleared;
+  final List<({String employmentId, String date, String code, String? message})> warnings;
+  final int notifiedWorkers;
+
+  factory RosterSaveResult.fromJson(Object? v) {
+    final j = asJson(v);
+    return RosterSaveResult(
+      saved: intOf(j['saved']) ?? 0,
+      cleared: intOf(j['cleared']) ?? 0,
+      warnings: [
+        for (final w in asJsonList(j['warnings']))
+          (
+            employmentId: strOr(w['employment_id']),
+            date: strOr(w['date']),
+            code: strOr(w['code']),
+            message: str(w['message']),
+          ),
+      ],
+      notifiedWorkers: intOf(j['notified_workers']) ?? 0,
     );
   }
 }
 
 /// `GET /org/roster?week_start=&site=`.
 class RosterWeek {
-  const RosterWeek({required this.days, required this.rows});
+  const RosterWeek({required this.days, required this.rows, this.warningLabels = const {}});
 
   /// `(date, date_bs)` for the 7 days.
   final List<({String date, String? dateBs})> days;
   final List<RosterWeekRow> rows;
+
+  /// Server-localised `warning_labels: {code: text}`.
+  final Map<String, String> warningLabels;
 
   factory RosterWeek.fromJson(Json j, DateTime weekStart) {
     var days = [
@@ -61,7 +114,11 @@ class RosterWeek {
         if (d is Map) (date: strOr(d['date']), dateBs: str(d['date_bs'])) else (date: '$d', dateBs: null),
     ];
     if (days.isEmpty) days = [for (final d in weekDays(weekStart)) (date: isoDate(d), dateBs: null)];
-    return RosterWeek(days: days, rows: asJsonList(j['rows']).map(RosterWeekRow.fromJson).toList());
+    return RosterWeek(
+      days: days,
+      rows: asJsonList(j['rows']).map(RosterWeekRow.fromJson).toList(),
+      warningLabels: {for (final e in asJson(j['warning_labels']).entries) e.key: '${e.value}'},
+    );
   }
 }
 
@@ -83,25 +140,27 @@ class RosterRepository {
   }
 
   /// Upserts one cell. `shiftId == null && !isOff` clears the shift.
-  Future<void> setCell({
+  Future<RosterSaveResult> setCell({
     required String employmentId,
     required String date,
     String? shiftId,
     String? siteId,
     required bool isOff,
-  }) => _api.put<dynamic>(
-    '/org/roster',
-    data: {
-      'entries': [
-        {
-          'employment_id': employmentId,
-          'date': date,
-          'shift_id': isOff ? null : shiftId,
-          if (siteId != null) 'site_id': siteId,
-          'is_off': isOff,
-        },
-      ],
-    },
+  }) async => RosterSaveResult.fromJson(
+    await _api.put<dynamic>(
+      '/org/roster',
+      data: {
+        'entries': [
+          {
+            'employment_id': employmentId,
+            'date': date,
+            'shift_id': isOff ? null : shiftId,
+            if (siteId != null) 'site_id': siteId,
+            'is_off': isOff,
+          },
+        ],
+      },
+    ),
   );
 }
 

@@ -255,19 +255,26 @@ class MenuTile extends StatelessWidget {
 }
 
 /// Downloads an authenticated PDF (or other file) to the temp dir and opens
-/// it with the system viewer. Shows a friendly snack on failure.
+/// it with the system viewer. Shows a friendly snack on failure. [apiPath]
+/// may also be an absolute (signed) URL; [mimeType] picks the viewer.
 Future<void> downloadAndOpen(
   BuildContext context,
   WidgetRef ref, {
   required String apiPath,
   required String fileName,
+  String mimeType = 'application/pdf',
 }) async {
   final l = context.l10n;
   try {
     final dir = await getTemporaryDirectory();
     final path = '${dir.path}${Platform.pathSeparator}$fileName';
-    await ref.read(apiClientProvider).download(apiPath, path);
-    final r = await OpenFilex.open(path, type: 'application/pdf');
+    final api = ref.read(apiClientProvider);
+    if (mimeType == 'application/pdf') {
+      await api.download(apiPath, path);
+    } else {
+      await api.downloadFile(apiPath, path);
+    }
+    final r = await OpenFilex.open(path, type: mimeType);
     if (r.type != ResultType.done && context.mounted) {
       showSnack(context, l.talabPdfError, error: true);
     }

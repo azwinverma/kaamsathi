@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../core/flags.dart';
 import '../../../../core/format.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/theme/tokens.dart';
@@ -58,6 +59,7 @@ class CredentialsScreen extends ConsumerWidget {
     final lang = context.lang;
     final t = Theme.of(context).textTheme;
     final value = ref.watch(credentialsProvider);
+    final resubmitOn = ref.watch(flagOnProvider(FlagKeys.credentialResubmit));
     return Scaffold(
       appBar: AppBar(title: Text(l.credTitle)),
       floatingActionButton:
@@ -117,6 +119,19 @@ class CredentialsScreen extends ConsumerWidget {
                                       style: t.bodySmall,
                                     ),
                                   if (c.note?.isNotEmpty ?? false) Text(c.note!, style: t.bodySmall),
+                                  if (c.resubmissionOf case final prev?) ...[
+                                    const SizedBox(height: KsSpace.s1),
+                                    Row(
+                                      key: Key('resubmission_of_${c.id}'),
+                                      children: [
+                                        const Icon(LucideIcons.link, size: 14),
+                                        const SizedBox(width: 4),
+                                        Expanded(child: Text(l.credResubmissionOf, style: t.bodySmall)),
+                                      ],
+                                    ),
+                                    if (prev.note?.isNotEmpty ?? false)
+                                      Text(l.credEarlierNote(prev.note!), style: t.bodySmall),
+                                  ],
                                   const SizedBox(height: KsSpace.s2),
                                   Builder(
                                     builder: (_) {
@@ -128,6 +143,21 @@ class CredentialsScreen extends ConsumerWidget {
                                       );
                                     },
                                   ),
+                                  if (resubmitOn && c.canResubmit) ...[
+                                    const SizedBox(height: KsSpace.s2),
+                                    OutlinedButton.icon(
+                                      key: Key('resubmit_${c.id}'),
+                                      onPressed:
+                                          () => Navigator.of(context).push(
+                                            MaterialPageRoute<void>(
+                                              fullscreenDialog: true,
+                                              builder: (_) => AddCredentialScreen(resubmit: c),
+                                            ),
+                                          ),
+                                      icon: const Icon(LucideIcons.rotateCcw, size: 18),
+                                      label: Text(l.credResubmit),
+                                    ),
+                                  ],
                                 ],
                               ),
                             ),
@@ -154,20 +184,24 @@ class CredentialsScreen extends ConsumerWidget {
 }
 
 class AddCredentialScreen extends ConsumerStatefulWidget {
-  const AddCredentialScreen({super.key});
+  const AddCredentialScreen({super.key, this.resubmit});
+
+  /// A rejected credential to resubmit (fields pre-filled, photo optional).
+  final Credential? resubmit;
 
   @override
   ConsumerState<AddCredentialScreen> createState() => _AddCredentialScreenState();
 }
 
 class _AddCredentialScreenState extends ConsumerState<AddCredentialScreen> {
-  String _kind = 'nstb';
-  final _title = TextEditingController();
-  final _issuer = TextEditingController();
-  final _number = TextEditingController();
-  final _level = TextEditingController();
-  DateTime? _issued;
-  DateTime? _expires;
+  late final Credential? _orig = widget.resubmit;
+  late String _kind = CredentialKind.all.contains(_orig?.kind) ? _orig!.kind : 'nstb';
+  late final _title = TextEditingController(text: _orig?.title);
+  late final _issuer = TextEditingController(text: _orig?.issuer);
+  late final _number = TextEditingController(text: _orig?.certificateNo);
+  late final _level = TextEditingController(text: _orig?.level);
+  late DateTime? _issued = parseIsoDate(_orig?.issuedOn);
+  late DateTime? _expires = parseIsoDate(_orig?.expiresOn);
   String? _photo;
   final _form = GlobalKey<FormState>();
   bool _busy = false;
@@ -206,12 +240,36 @@ class _AddCredentialScreenState extends ConsumerState<AddCredentialScreen> {
   Future<void> _save() async {
     final l = context.l10n;
     if (!(_form.currentState?.validate() ?? false)) return;
-    if (_photo == null) {
+    final orig = _orig;
+    if (_photo == null && orig == null) {
       showSnack(context, l.credPhotoNeeded, error: true);
       return;
     }
     setState(() => _busy = true);
     try {
+      if (orig != null) {
+        await ref
+            .read(credentialsRepositoryProvider)
+            .resubmit(
+              orig.id,
+              credentialFields(
+                kind: _kind,
+                title: _title.text,
+                issuer: _issuer.text,
+                certificateNo: _number.text,
+                level: _level.text,
+                issuedOn: _issued == null ? null : isoDate(_issued!),
+                expiresOn: _expires == null ? null : isoDate(_expires!),
+                original: orig,
+              ),
+              documentPath: _photo,
+            );
+        ref.invalidate(credentialsProvider);
+        if (!mounted) return;
+        showSnack(context, l.credResubmitted);
+        Navigator.of(context).pop();
+        return;
+      }
       await ref
           .read(credentialsRepositoryProvider)
           .addCredential(
@@ -242,13 +300,25 @@ class _AddCredentialScreenState extends ConsumerState<AddCredentialScreen> {
     String? req(String? v) => (v?.trim().isEmpty ?? true) ? l.ecoRequired : null;
     String dateLabel(String label, DateTime? d) =>
         d == null ? l.ecoOptional(label) : '$label: ${formatBsDate(BsDate.fromAd(d), lang)}';
+    final orig = _orig;
     return Scaffold(
-      appBar: AppBar(title: Text(l.credAdd)),
+      appBar: AppBar(title: Text(orig == null ? l.credAdd : l.credResubmitTitle)),
       body: Form(
         key: _form,
         child: ListView(
           padding: const EdgeInsets.all(KsSpace.page),
           children: [
+            if (orig != null) ...[
+              InfoNote(
+                key: const Key('resubmit_note'),
+                text: [
+                  l.credResubmitHint,
+                  if (orig.note?.isNotEmpty ?? false) l.credEarlierNote(orig.note!),
+                ].join('\n'),
+                tone: Tone.warning,
+              ),
+              const SizedBox(height: KsSpace.s4),
+            ],
             DropdownButtonFormField<String>(
               value: _kind,
               isExpanded: true,
@@ -279,7 +349,10 @@ class _AddCredentialScreenState extends ConsumerState<AddCredentialScreen> {
               label: Text(dateLabel(l.credExpiresOn, _expires)),
             ),
             const SizedBox(height: KsSpace.s4),
-            Text(l.credPhoto, style: Theme.of(context).textTheme.titleSmall),
+            Text(
+              orig == null ? l.credPhoto : l.ecoOptional(l.credPhoto),
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
             const SizedBox(height: KsSpace.s2),
             if (_photo != null)
               ClipRRect(
@@ -310,6 +383,7 @@ class _AddCredentialScreenState extends ConsumerState<AddCredentialScreen> {
             Text(l.credVerifyNote, style: Theme.of(context).textTheme.bodySmall),
             const SizedBox(height: KsSpace.s6),
             FilledButton(
+              key: const Key('credential_save'),
               onPressed: _busy ? null : _save,
               child:
                   _busy

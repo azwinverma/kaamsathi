@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../core/auth/session.dart';
+import '../../core/flags.dart';
 import '../../core/format.dart';
 import '../../core/l10n/l10n.dart';
 import '../../core/router/router.dart';
@@ -74,6 +75,19 @@ class MoreScreen extends ConsumerWidget {
               onTap: () => context.push(Routes.supRoster),
             ),
           ),
+          if (ref.watch(flagOnProvider(FlagKeys.attendanceCorrections))) ...[
+            const SizedBox(height: KsSpace.s4),
+            Card(
+              child: ListTile(
+                key: const Key('more_corrections'),
+                leading: const Icon(LucideIcons.calendarCog),
+                title: Text(l.corrQueueTitle),
+                subtitle: Text(l.corrQueueSubtitle),
+                trailing: const Icon(LucideIcons.chevronRight),
+                onTap: () => context.push(Routes.supCorrections),
+              ),
+            ),
+          ],
           const SizedBox(height: KsSpace.s4),
           Card(
             child: ListTile(

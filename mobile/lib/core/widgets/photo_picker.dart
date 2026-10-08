@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -8,26 +9,58 @@ import '../l10n/l10n.dart';
 import '../theme/tokens.dart';
 import 'common.dart';
 
+/// Picks a photo and returns its local path (null when cancelled).
+/// Downscaled + compressed so uploads stay small on patchy mobile data.
+typedef PhotoPick = Future<String?> Function(ImageSource source);
+
+/// Overridable in tests (no platform channel there).
+final photoPickProvider = Provider<PhotoPick>(
+  (ref) => (source) async {
+    final f = await ImagePicker().pickImage(source: source, maxWidth: 1600, maxHeight: 1600, imageQuality: 70);
+    return f?.path;
+  },
+);
+
 /// Camera / gallery buttons with a preview of the chosen document photo.
 /// Images are downscaled + compressed so uploads stay small on patchy data.
-class DocumentPhotoPicker extends StatelessWidget {
-  const DocumentPhotoPicker({super.key, required this.label, required this.path, required this.onChanged});
+class DocumentPhotoPicker extends ConsumerWidget {
+  const DocumentPhotoPicker({
+    super.key,
+    required this.label,
+    required this.path,
+    required this.onChanged,
+    this.maxBytes,
+    this.tooBigMessage,
+  });
 
   final String label;
   final String? path;
   final ValueChanged<String?> onChanged;
 
-  Future<void> _pick(BuildContext context, ImageSource source) async {
+  /// Rejects larger files with [tooBigMessage].
+  final int? maxBytes;
+  final String? tooBigMessage;
+
+  Future<void> _pick(BuildContext context, WidgetRef ref, ImageSource source) async {
     try {
-      final f = await ImagePicker().pickImage(source: source, maxWidth: 1600, maxHeight: 1600, imageQuality: 70);
-      if (f != null) onChanged(f.path);
+      final p = await ref.read(photoPickProvider)(source);
+      if (p == null) return;
+      final max = maxBytes;
+      if (max != null) {
+        final f = File(p);
+        if (f.existsSync() && f.lengthSync() > max) {
+          if (context.mounted) showSnack(context, tooBigMessage ?? context.l10n.credPhotoError, error: true);
+          return;
+        }
+      }
+      onChanged(p);
     } catch (_) {
       if (context.mounted) showSnack(context, context.l10n.credPhotoError, error: true);
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -65,7 +98,8 @@ class DocumentPhotoPicker extends StatelessWidget {
           children: [
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: () => _pick(context, ImageSource.camera),
+                key: const Key('photo_camera'),
+                onPressed: () => _pick(context, ref, ImageSource.camera),
                 icon: const Icon(LucideIcons.camera),
                 label: Text(l.credTakePhoto, overflow: TextOverflow.ellipsis),
               ),
@@ -73,7 +107,8 @@ class DocumentPhotoPicker extends StatelessWidget {
             const SizedBox(width: KsSpace.s2),
             Expanded(
               child: OutlinedButton.icon(
-                onPressed: () => _pick(context, ImageSource.gallery),
+                key: const Key('photo_gallery'),
+                onPressed: () => _pick(context, ref, ImageSource.gallery),
                 icon: const Icon(LucideIcons.image),
                 label: Text(l.credChoosePhoto, overflow: TextOverflow.ellipsis),
               ),

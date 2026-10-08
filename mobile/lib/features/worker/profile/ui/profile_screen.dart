@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/auth/session.dart';
+import '../../../../core/flags.dart';
 import '../../../../core/format.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/router/router.dart';
@@ -15,6 +16,8 @@ import '../../../common/account_actions.dart';
 import '../../../common/inbox/inbox_screen.dart';
 import '../../data/worker_models.dart';
 import '../../data/worker_repository.dart';
+import 'completeness_card.dart';
+import 'languages_screen.dart';
 import 'payment_sheet.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -100,9 +103,21 @@ class _ProfileBodyState extends ConsumerState<_ProfileBody> {
     };
     final district = lang == 'ne' ? (p.districtNameNe ?? p.districtName) : p.districtName;
 
+    final showLanguages = ref.watch(flagOnProvider(FlagKeys.spokenLanguages));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (p.completeness case final c? when !c.isComplete) ...[
+          CompletenessView(
+            completeness: c,
+            onItem: (key) {
+              if (key != 'payment_details') return false;
+              showPaymentSheet(context, p);
+              return true;
+            },
+          ),
+          const SizedBox(height: KsSpace.s4),
+        ],
         Card(
           child: Padding(
             padding: const EdgeInsets.all(KsSpace.s4),
@@ -142,6 +157,37 @@ class _ProfileBodyState extends ConsumerState<_ProfileBody> {
             ],
           ),
         ),
+        if (showLanguages) ...[
+          const SizedBox(height: KsSpace.s4),
+          SectionCard(
+            key: const Key('profile_languages'),
+            title: l.langTitle,
+            trailing: TextButton.icon(
+              key: const Key('profile_languages_edit'),
+              onPressed: () => context.push(Routes.workerLanguages),
+              icon: Icon(p.languages.isEmpty ? LucideIcons.plus : LucideIcons.pencil, size: 16),
+              label: Text(p.languages.isEmpty ? l.ecoAdd : l.commonEdit),
+            ),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child:
+                  p.languages.isEmpty
+                      ? Text(l.langEmpty, style: Theme.of(context).textTheme.bodyMedium)
+                      : Wrap(
+                        spacing: KsSpace.s2,
+                        runSpacing: KsSpace.s2,
+                        children: [
+                          for (final x in p.languages)
+                            StatusBadge(
+                              label:
+                                  '${spokenLanguageName(l, x.code, fallback: x.label)} · ${proficiencyLabel(l, x.proficiency)}',
+                              tone: Tone.neutral,
+                            ),
+                        ],
+                      ),
+            ),
+          ),
+        ],
         const SizedBox(height: KsSpace.s4),
         SectionCard(
           title: l.profilePaymentMethod,
@@ -274,12 +320,14 @@ class _ConsentsCardState extends ConsumerState<_ConsentsCard> {
 
 /// Grouped entries for the worker's ecosystem features. Kept here (not in the
 /// bottom nav) so the nav stays at four tabs on small phones.
-class _ProfileMenu extends StatelessWidget {
+class _ProfileMenu extends ConsumerWidget {
   const _ProfileMenu();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
+    final ratings = ref.watch(flagOnProvider(FlagKeys.ratings));
+    final corrections = ref.watch(flagOnProvider(FlagKeys.attendanceCorrections));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -339,6 +387,22 @@ class _ProfileMenu extends StatelessWidget {
                 title: l.disputesTitle,
                 onTap: () => context.push(Routes.workerDisputes),
               ),
+              if (ratings)
+                MenuTile(
+                  key: const Key('menu_ratings'),
+                  icon: LucideIcons.star,
+                  title: l.ratingsTitle,
+                  subtitle: l.ratingsMenuSubtitle,
+                  onTap: () => context.push(Routes.workerRatings),
+                ),
+              if (corrections)
+                MenuTile(
+                  key: const Key('menu_corrections'),
+                  icon: LucideIcons.calendarCog,
+                  title: l.corrTitle,
+                  subtitle: l.corrMenuSubtitle,
+                  onTap: () => context.push(Routes.workerCorrections),
+                ),
             ],
           ),
         ),

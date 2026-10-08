@@ -621,7 +621,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get sendingHajiri => 'हाजिरी सेभ गर्दै…';
 
   @override
-  String get errOutsideGeofence => 'तपाईं कार्यस्थलभन्दा टाढा हुनुहुन्छ जस्तो देखिन्छ। कार्यस्थल नजिक गएर फेरि प्रयास गर्नुहोस्।';
+  String get errOutsideGeofence =>
+      'तपाईं कार्यस्थलभन्दा टाढा हुनुहुन्छ जस्तो देखिन्छ। कार्यस्थल नजिक गएर फेरि प्रयास गर्नुहोस्।';
 
   @override
   String get errLocationDenied => 'हाजिर गर्न स्थान (लोकेसन) अनुमति चाहिन्छ। कृपया अनुमति दिनुहोस्।';
@@ -760,7 +761,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get profileConsents => 'तपाईंको विवरण र गोपनीयता';
 
   @override
-  String get profileConsentsHint => 'तपाईंको विवरण कसले हेर्न पाउने भन्ने तपाईं आफैँ तय गर्नुहुन्छ। जुनसुकै बेला बदल्न सकिन्छ।';
+  String get profileConsentsHint =>
+      'तपाईंको विवरण कसले हेर्न पाउने भन्ने तपाईं आफैँ तय गर्नुहुन्छ। जुनसुकै बेला बदल्न सकिन्छ।';
 
   @override
   String get consentDataProcessing => 'हाजिरी र तलबका लागि मेरो विवरण प्रयोग गर्नुहोस्';
@@ -950,7 +952,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get profileViewsTitle => 'मेरो प्रोफाइल कसले हेर्‍यो';
 
   @override
-  String get profileViewsHint => 'रोजगारदाता, साझेदार वा कामसाथी टोलीले तपाईंको पूरा प्रोफाइल खोल्दा हरेक पटक यहाँ देखिन्छ।';
+  String get profileViewsHint =>
+      'रोजगारदाता, साझेदार वा कामसाथी टोलीले तपाईंको पूरा प्रोफाइल खोल्दा हरेक पटक यहाँ देखिन्छ।';
 
   @override
   String get profileViewsEmpty => 'अहिलेसम्म कसैले तपाईंको पूरा प्रोफाइल खोलेको छैन।';
@@ -980,7 +983,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get disputesTitle => 'उजुरी';
 
   @override
-  String get disputesHint => 'हाजिरी, तलब वा कामको रेकर्डमा केही गलत छ? हामीलाई भन्नुहोस्। रोजगारदातालाई जवाफ दिन भनिनेछ र कामसाथीले जाँच गर्नेछ।';
+  String get disputesHint =>
+      'हाजिरी, तलब वा कामको रेकर्डमा केही गलत छ? हामीलाई भन्नुहोस्। रोजगारदातालाई जवाफ दिन भनिनेछ र कामसाथीले जाँच गर्नेछ।';
 
   @override
   String get disputesEmpty => 'तपाईंले कुनै उजुरी गर्नुभएको छैन।';
@@ -1060,7 +1064,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get rateTitle => 'रोजगारदातालाई मूल्याङ्कन गर्नुहोस्';
 
   @override
-  String get rateHint => 'तपाईंको मूल्याङ्कनले अरू कामदारलाई मद्दत गर्छ। धेरै कामदारको औसत मात्र प्रयोग हुन्छ — तपाईंको नाम रोजगारदातालाई कहिल्यै देखाइँदैन।';
+  String get rateHint =>
+      'तपाईंको मूल्याङ्कनले अरू कामदारलाई मद्दत गर्छ। धेरै कामदारको औसत मात्र प्रयोग हुन्छ — तपाईंको नाम रोजगारदातालाई कहिल्यै देखाइँदैन।';
 
   @override
   String get ratePayOnTime => 'समयमै तलब';
@@ -1202,13 +1207,15 @@ class AppLocalizationsNe extends AppLocalizations {
   String get csOvertime => 'ओभरटाइमको ज्याला घण्टाको दरको १.५ गुणा हुन्छ।';
 
   @override
-  String get csLeave => 'बिदा: २० दिन काम गरेबापत १ दिन घर बिदा, वर्षमा १२ दिन बिरामी बिदा, १३ दिन किरिया बिदा, ९८ दिन प्रसूति वा १५ दिन प्रसूति स्याहार बिदा।';
+  String get csLeave =>
+      'बिदा: २० दिन काम गरेबापत १ दिन घर बिदा, वर्षमा १२ दिन बिरामी बिदा, १३ दिन किरिया बिदा, ९८ दिन प्रसूति वा १५ दिन प्रसूति स्याहार बिदा।';
 
   @override
   String get csFestival => 'चाडपर्व खर्च: हरेक वर्ष एक महिनाको आधारभूत तलब।';
 
   @override
-  String get csSsfYes => 'तपाईं सामाजिक सुरक्षा कोषमा दर्ता हुनुहुन्छ: आधारभूत तलबको ११% कट्टी हुन्छ र रोजगारदाताले २०% थप्नुहुन्छ।';
+  String get csSsfYes =>
+      'तपाईं सामाजिक सुरक्षा कोषमा दर्ता हुनुहुन्छ: आधारभूत तलबको ११% कट्टी हुन्छ र रोजगारदाताले २०% थप्नुहुन्छ।';
 
   @override
   String get csSsfNo => 'तपाईं अझै सामाजिक सुरक्षा कोषमा दर्ता हुनुहुन्न। रोजगारदातासँग सोध्नुहोस्।';
@@ -1217,7 +1224,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get csGrievance => 'केही गलत भएमा तपाईं कुनै पनि बेला कामसाथीमा उजुरी गर्न सक्नुहुन्छ।';
 
   @override
-  String get csPdfNote => 'पूरा सम्झौता (PDF) मा परीक्षणकाल र सूचना अवधिसहित सबै विवरण छ। स्वीकार गर्नुअघि खोलेर पढ्नुहोस्।';
+  String get csPdfNote =>
+      'पूरा सम्झौता (PDF) मा परीक्षणकाल र सूचना अवधिसहित सबै विवरण छ। स्वीकार गर्नुअघि खोलेर पढ्नुहोस्।';
 
   @override
   String get contractAgree => 'मैले मेरो सम्झौता पढें र बुझें।';
@@ -1238,7 +1246,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get crewBecomeTitle => 'नाइके बन्नुहोस्';
 
   @override
-  String get crewBecomeBody => 'आफ्नो टोलीलाई कामसाथीमा ल्याउनुहोस्। तपाईंले थपेको कामदारले काम पाएर टिकेमा कामसाथीले तपाईंलाई रेफरल इनाम दिन्छ। यो कहिल्यै कामदारको तलबबाट काटिँदैन।';
+  String get crewBecomeBody =>
+      'आफ्नो टोलीलाई कामसाथीमा ल्याउनुहोस्। तपाईंले थपेको कामदारले काम पाएर टिकेमा कामसाथीले तपाईंलाई रेफरल इनाम दिन्छ। यो कहिल्यै कामदारको तलबबाट काटिँदैन।';
 
   @override
   String get crewName => 'टोलीको नाम';
@@ -1280,7 +1289,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get crewAdded => 'थपियो। उहाँलाई SMS निमन्त्रणा पठाइयो।';
 
   @override
-  String get crewMemberConsentNote => 'उहाँ पहिलो पटक लगइन गर्दा सहमति माग्नेछौं। त्यसअघि उहाँको विवरण कसैलाई देखाइँदैन।';
+  String get crewMemberConsentNote =>
+      'उहाँ पहिलो पटक लगइन गर्दा सहमति माग्नेछौं। त्यसअघि उहाँको विवरण कसैलाई देखाइँदैन।';
 
   @override
   String crewRemoveConfirm(String name) {
@@ -1337,7 +1347,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get credMenuSubtitle => 'सीप परीक्षण, तालिम प्रमाणपत्र, सवारी चालक अनुमतिपत्र';
 
   @override
-  String get credEmpty => 'आफ्नो सीप परीक्षण प्रमाणपत्र, तालिम प्रमाणपत्र वा लाइसेन्स थप्नुहोस्। प्रमाणित प्रमाणपत्रले भरपर्दो अंक बढाउँछ।';
+  String get credEmpty =>
+      'आफ्नो सीप परीक्षण प्रमाणपत्र, तालिम प्रमाणपत्र वा लाइसेन्स थप्नुहोस्। प्रमाणित प्रमाणपत्रले भरपर्दो अंक बढाउँछ।';
 
   @override
   String get credAdd => 'प्रमाणपत्र थप्नुहोस्';
@@ -1443,7 +1454,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get passportMenuSubtitle => 'रोजगारदातालाई देखाउने तपाईंको प्रमाणित सीप र कामको रेकर्ड';
 
   @override
-  String get passportIntro => 'तपाईंको सीप पासपोर्टमा प्रमाणित जानकारी मात्र देखिन्छ। कसले हेर्ने भन्ने तपाईं आफैं तय गर्नुहुन्छ।';
+  String get passportIntro =>
+      'तपाईंको सीप पासपोर्टमा प्रमाणित जानकारी मात्र देखिन्छ। कसले हेर्ने भन्ने तपाईं आफैं तय गर्नुहुन्छ।';
 
   @override
   String get passportPublic => 'मेरो पासपोर्ट कोड भएका जो कोहीले हेर्न सक्ने';
@@ -1499,7 +1511,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get sharePurposeOther => 'अन्य';
 
   @override
-  String get shareAgencyNote => 'कामसाथीले विदेशमा काम खोज्दैन। इजाजतप्राप्त एजेन्सीलाई तपाईं आफैंले चाहेमा मात्र सेयर गर्नुहोस्।';
+  String get shareAgencyNote =>
+      'कामसाथीले विदेशमा काम खोज्दैन। इजाजतप्राप्त एजेन्सीलाई तपाईं आफैंले चाहेमा मात्र सेयर गर्नुहोस्।';
 
   @override
   String get shareDays => 'लिङ्क चल्ने अवधि';
@@ -1676,7 +1689,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get moneyMenuSubtitle => 'प्रमाणित कमाइ र इजाजतप्राप्त साझेदारका प्रस्ताव';
 
   @override
-  String get moneyNoLend => 'कामसाथीले पैसा ऋण दिँदैन र तपाईंसँग कुनै शुल्क लिँदैन। प्रस्तावहरू इजाजतप्राप्त साझेदारबाट आउँछन्।';
+  String get moneyNoLend =>
+      'कामसाथीले पैसा ऋण दिँदैन र तपाईंसँग कुनै शुल्क लिँदैन। प्रस्तावहरू इजाजतप्राप्त साझेदारबाट आउँछन्।';
 
   @override
   String get moneyTabEarnings => 'कमाइ';
@@ -1885,7 +1899,8 @@ class AppLocalizationsNe extends AppLocalizations {
   }
 
   @override
-  String get consentRevoke => 'तपाईं जुनसुकै बेला पैसा → सेयरिङबाट सेयर रोक्न सक्नुहुन्छ। उहाँहरूले हेर्दा हरेक पटक त्यहाँ देखिन्छ।';
+  String get consentRevoke =>
+      'तपाईं जुनसुकै बेला पैसा → सेयरिङबाट सेयर रोक्न सक्नुहुन्छ। उहाँहरूले हेर्दा हरेक पटक त्यहाँ देखिन्छ।';
 
   @override
   String consentNoLend(String partner) {
@@ -1985,13 +2000,15 @@ class AppLocalizationsNe extends AppLocalizations {
   String get privacyMenuSubtitle => 'प्रति लिनुहोस्, सच्याउनुहोस् वा मेटाउनुहोस्';
 
   @override
-  String get privacyIntro => 'वैयक्तिक गोपनीयता ऐन, २०७५ अनुसार तपाईं आफ्नो विवरणको प्रति लिन, सच्याउन वा मेटाउन अनुरोध गर्न सक्नुहुन्छ।';
+  String get privacyIntro =>
+      'वैयक्तिक गोपनीयता ऐन, २०७५ अनुसार तपाईं आफ्नो विवरणको प्रति लिन, सच्याउन वा मेटाउन अनुरोध गर्न सक्नुहुन्छ।';
 
   @override
   String get privacyExport => 'मेरो विवरणको प्रति लिनुहोस्';
 
   @override
-  String get privacyExportHint => 'हामीसँग भएको तपाईंको सबै विवरणको फाइल तयार गर्छौं। केही समय लाग्न सक्छ। डाउनलोड लिङ्क सीमित समयसम्म मात्र चल्छ।';
+  String get privacyExportHint =>
+      'हामीसँग भएको तपाईंको सबै विवरणको फाइल तयार गर्छौं। केही समय लाग्न सक्छ। डाउनलोड लिङ्क सीमित समयसम्म मात्र चल्छ।';
 
   @override
   String get privacyCorrection => 'मेरो विवरण सच्याउनुहोस्';
@@ -2009,7 +2026,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get privacyDeletionHint => 'कामसाथीबाट तपाईंको प्रोफाइल, फोटो र कागजात हटाउनुहोस्।';
 
   @override
-  String get privacyDeletionWarning => 'अगाडि बढ्नुअघि पढ्नुहोस्: तपाईंको नाम, फोन नम्बर, फोटो र कागजात हटाइनेछ, र सीप पासपोर्ट तथा सबै सेयरिङ बन्द हुनेछ। रोजगारदाताले कानुनअनुसार राख्नुपर्ने हाजिरी र तलबको रेकर्ड भने तपाईंको नामबिना रहनेछ। यो फिर्ता गर्न सकिँदैन।';
+  String get privacyDeletionWarning =>
+      'अगाडि बढ्नुअघि पढ्नुहोस्: तपाईंको नाम, फोन नम्बर, फोटो र कागजात हटाइनेछ, र सीप पासपोर्ट तथा सबै सेयरिङ बन्द हुनेछ। रोजगारदाताले कानुनअनुसार राख्नुपर्ने हाजिरी र तलबको रेकर्ड भने तपाईंको नामबिना रहनेछ। यो फिर्ता गर्न सकिँदैन।';
 
   @override
   String get privacyDeletionConfirm => 'मैले बुझें। मेरो विवरण मेटाउनुहोस्।';
@@ -2121,7 +2139,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get securityMenuSubtitle => 'तपाईं लगइन भएका फोन र ब्राउजरहरू';
 
   @override
-  String get securityIntro => 'तपाईंको कामसाथी खातामा यी उपकरणहरू लगइन छन्। कुनै चिन्नुहुन्न भने त्यसलाई लगआउट गर्नुहोस्।';
+  String get securityIntro =>
+      'तपाईंको कामसाथी खातामा यी उपकरणहरू लगइन छन्। कुनै चिन्नुहुन्न भने त्यसलाई लगआउट गर्नुहोस्।';
 
   @override
   String get securityThisDevice => 'यो फोन';
@@ -2173,7 +2192,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get workHistMenuSubtitle => 'पहिले गरेका काम सन्दर्भ व्यक्तिसहित थप्नुहोस्';
 
   @override
-  String get workHistIntro => 'कामसाथीभन्दा पहिले गरेको काम थप्नुहोस्। हाम्रो टोलीले सन्दर्भ व्यक्तिसँग पुष्टि गरेपछि यो तपाईंको सीप राहदानीमा प्रमाणित देखिन्छ।';
+  String get workHistIntro =>
+      'कामसाथीभन्दा पहिले गरेको काम थप्नुहोस्। हाम्रो टोलीले सन्दर्भ व्यक्तिसँग पुष्टि गरेपछि यो तपाईंको सीप राहदानीमा प्रमाणित देखिन्छ।';
 
   @override
   String get workHistEmpty => 'अहिलेसम्म अघिल्लो काम थपिएको छैन।';
@@ -2215,7 +2235,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get workHistRefPhone => 'सन्दर्भ व्यक्तिको फोन';
 
   @override
-  String get workHistRefHint => 'तपाईंको काम पुष्टि गर्न हाम्रो टोलीले यो व्यक्तिलाई फोन गर्न सक्छ। उहाँलाई पहिल्यै भन्नुहोस्।';
+  String get workHistRefHint =>
+      'तपाईंको काम पुष्टि गर्न हाम्रो टोलीले यो व्यक्तिलाई फोन गर्न सक्छ। उहाँलाई पहिल्यै भन्नुहोस्।';
 
   @override
   String get workHistRefBoth => 'सन्दर्भ व्यक्तिको नाम र फोन दुवै भर्नुहोस्।';
@@ -2327,7 +2348,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get appsDeclineConfirmTitle => 'यो काम अस्वीकार गर्ने?';
 
   @override
-  String get appsDeclineConfirmBody => 'तपाईंलाई चासो छैन भनी हामी रोजगारदातालाई जानकारी दिनेछौं। यो फिर्ता गर्न मिल्दैन।';
+  String get appsDeclineConfirmBody =>
+      'तपाईंलाई चासो छैन भनी हामी रोजगारदातालाई जानकारी दिनेछौं। यो फिर्ता गर्न मिल्दैन।';
 
   @override
   String get appsDeclineReason => 'कारण';
@@ -2483,7 +2505,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get mobMenuSubtitle => 'राहदानी, श्रम स्वीकृति र अन्य कागजात — तपाईंले चाहेमा मात्र सेयर';
 
   @override
-  String get mobIntro => 'आफ्ना कागजात एकै ठाउँमा सुरक्षित राख्नुहोस् र आफूले रोजेको इजाजतपत्रप्राप्त एजेन्सीसँग सेयर गर्नुहोस्। कामसाथीले विदेशमा काम खोजिदिँदैन।';
+  String get mobIntro =>
+      'आफ्ना कागजात एकै ठाउँमा सुरक्षित राख्नुहोस् र आफूले रोजेको इजाजतपत्रप्राप्त एजेन्सीसँग सेयर गर्नुहोस्। कामसाथीले विदेशमा काम खोजिदिँदैन।';
 
   @override
   String get mobSafetyTitle => 'सुरक्षित रहनुहोस्';
@@ -2492,7 +2515,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get mobSafety1 => 'वैदेशिक रोजगार विभागबाट इजाजतपत्र पाएका एजेन्सी मात्र प्रयोग गर्नुहोस्।';
 
   @override
-  String get mobSafety2 => 'पैसा तिर्नु वा कुनै कागजमा सही गर्नुअघि वैदेशिक रोजगार विभागको आधिकारिक वेबसाइट (dofe.gov.np) मा एजेन्सीको इजाजतपत्र आफैं जाँच्नुहोस्।';
+  String get mobSafety2 =>
+      'पैसा तिर्नु वा कुनै कागजमा सही गर्नुअघि वैदेशिक रोजगार विभागको आधिकारिक वेबसाइट (dofe.gov.np) मा एजेन्सीको इजाजतपत्र आफैं जाँच्नुहोस्।';
 
   @override
   String get mobSafety3 => 'हरेक भुक्तानीको रसिद लिनुहोस्। सरकारले तोकेभन्दा बढी शुल्क कहिल्यै नतिर्नुहोस्।';
@@ -2599,7 +2623,8 @@ class AppLocalizationsNe extends AppLocalizations {
   }
 
   @override
-  String get mobShareBody => 'एजेन्सीले तपाईंसँग कुन कागजात छन्, ती प्रमाणित छन् कि छैनन् र कहिले म्याद सकिन्छ भन्ने मात्र देख्नेछ। फोटो वा पूरा नम्बर देख्ने छैन। तपाईं जुनसुकै बेला सेयर रोक्न सक्नुहुन्छ।';
+  String get mobShareBody =>
+      'एजेन्सीले तपाईंसँग कुन कागजात छन्, ती प्रमाणित छन् कि छैनन् र कहिले म्याद सकिन्छ भन्ने मात्र देख्नेछ। फोटो वा पूरा नम्बर देख्ने छैन। तपाईं जुनसुकै बेला सेयर रोक्न सक्नुहुन्छ।';
 
   @override
   String get mobShareDays => 'कति दिनका लागि';
@@ -2784,7 +2809,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get offerDeclineTitle => 'यो प्रस्ताव अस्वीकार गर्ने?';
 
   @override
-  String get offerDeclineBody => 'तपाईंले अस्वीकार गर्नुभएको कुरा हामी रोजगारदातालाई बताउनेछौं। यो फिर्ता गर्न मिल्दैन।';
+  String get offerDeclineBody =>
+      'तपाईंले अस्वीकार गर्नुभएको कुरा हामी रोजगारदातालाई बताउनेछौं। यो फिर्ता गर्न मिल्दैन।';
 
   @override
   String get offerSummaryTitle => 'स्वीकार गर्नुअघि';
@@ -2860,7 +2886,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get legalTitle => 'कृपया पढेर स्वीकार गर्नुहोस्';
 
   @override
-  String get legalIntro => 'हामीले नियम तथा सर्तहरू अद्यावधिक गरेका छौं। कामसाथी प्रयोग गर्न जारी राख्नुअघि कृपया पढ्नुहोस्।';
+  String get legalIntro =>
+      'हामीले नियम तथा सर्तहरू अद्यावधिक गरेका छौं। कामसाथी प्रयोग गर्न जारी राख्नुअघि कृपया पढ्नुहोस्।';
 
   @override
   String get legalKindTerms => 'प्रयोगका सर्तहरू';
@@ -2889,7 +2916,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get notifPrefsTitle => 'सूचना सेटिङ';
 
   @override
-  String get notifPrefsAlways => 'तपाईंले यहाँ जे छाने पनि तलब विवरण, खाता सुरक्षा र सुरक्षासम्बन्धी सन्देश सधैं आउँछन्।';
+  String get notifPrefsAlways =>
+      'तपाईंले यहाँ जे छाने पनि तलब विवरण, खाता सुरक्षा र सुरक्षासम्बन्धी सन्देश सधैं आउँछन्।';
 
   @override
   String get notifSms => 'एसएमएस सन्देश';
@@ -2943,7 +2971,8 @@ class AppLocalizationsNe extends AppLocalizations {
   String get safetyDanger => 'अहिले खतरामा हुनुहुन्छ भने १०० (प्रहरी) मा फोन गर्नुहोस्।';
 
   @override
-  String get safetyConfidential => 'यो रिपोर्ट गोप्य हुन्छ। तपाईंको रोजगारदाताले यो देख्नुहुने छैन। कामसाथीको सुरक्षा टोलीले मात्र पढ्छ।';
+  String get safetyConfidential =>
+      'यो रिपोर्ट गोप्य हुन्छ। तपाईंको रोजगारदाताले यो देख्नुहुने छैन। कामसाथीको सुरक्षा टोलीले मात्र पढ्छ।';
 
   @override
   String get safetyKind => 'के भयो?';
@@ -2986,4 +3015,473 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get offerAnswerByLabel => 'जवाफ दिने अन्तिम मिति';
+
+  @override
+  String get langTitle => 'मैले बोल्ने भाषाहरू';
+
+  @override
+  String get langMenuSubtitle => 'रोजगारदाताले आफ्ना ग्राहकको भाषा बोल्ने कामदार खोज्छन्';
+
+  @override
+  String get langAdd => 'भाषा थप्नुहोस्';
+
+  @override
+  String get langEmpty => 'अहिलेसम्म कुनै भाषा थपिएको छैन।';
+
+  @override
+  String get langPick => 'भाषा छान्नुहोस्';
+
+  @override
+  String get langProficiency => 'कति राम्रोसँग बोल्नुहुन्छ?';
+
+  @override
+  String get langSaved => 'भाषाहरू सेभ भए।';
+
+  @override
+  String get langMax => 'बढीमा १५ भाषा थप्न सक्नुहुन्छ।';
+
+  @override
+  String get profBasic => 'आधारभूत';
+
+  @override
+  String get profConversational => 'कुराकानी गर्न सक्ने';
+
+  @override
+  String get profFluent => 'धाराप्रवाह';
+
+  @override
+  String get profNative => 'मातृभाषा';
+
+  @override
+  String get langNameNe => 'नेपाली';
+
+  @override
+  String get langNameEn => 'अङ्ग्रेजी';
+
+  @override
+  String get langNameHi => 'हिन्दी';
+
+  @override
+  String get langNameMai => 'मैथिली';
+
+  @override
+  String get langNameBho => 'भोजपुरी';
+
+  @override
+  String get langNameNew => 'नेपाल भाषा (नेवारी)';
+
+  @override
+  String get langNameTha => 'थारू';
+
+  @override
+  String get langNameTam => 'तामाङ';
+
+  @override
+  String get langNameMgp => 'मगर';
+
+  @override
+  String get langNameGvr => 'गुरुङ';
+
+  @override
+  String get langNameLim => 'लिम्बू';
+
+  @override
+  String get langNameBap => 'राई (बान्तावा)';
+
+  @override
+  String get langNameXsr => 'शेर्पा';
+
+  @override
+  String get langNameDty => 'डोटेली';
+
+  @override
+  String get langNameAwa => 'अवधी';
+
+  @override
+  String get langNameUr => 'उर्दू';
+
+  @override
+  String get langNameAr => 'अरबी';
+
+  @override
+  String get langNameMs => 'मलय';
+
+  @override
+  String get langNameJa => 'जापानी';
+
+  @override
+  String get langNameKo => 'कोरियाली';
+
+  @override
+  String get langNameZh => 'चिनियाँ';
+
+  @override
+  String get complTitle => 'आफ्नो प्रोफाइल पूरा गर्नुहोस्';
+
+  @override
+  String complPercent(String percent) {
+    return '$percent पूरा';
+  }
+
+  @override
+  String get complHint => 'पूरा प्रोफाइलले धेरै कामको प्रस्ताव पाउँछ।';
+
+  @override
+  String get complPhoto => 'प्रोफाइल फोटो थप्नुहोस्';
+
+  @override
+  String get complIdentity => 'नागरिकता वा राष्ट्रिय परिचयपत्र थप्नुहोस्';
+
+  @override
+  String get complSkills => 'कम्तीमा एउटा सीप थप्नुहोस्';
+
+  @override
+  String get complLanguages => 'आफूले बोल्ने भाषाहरू थप्नुहोस्';
+
+  @override
+  String get complAvailability => 'उपलब्धता र अपेक्षित तलब राख्नुहोस्';
+
+  @override
+  String get complVerifiedCredential => 'एउटा प्रमाणपत्र प्रमाणित गराउनुहोस्';
+
+  @override
+  String get complWorkHistory => 'आफ्नो कामको इतिहास थप्नुहोस्';
+
+  @override
+  String get complPaymentDetails => 'तलबका लागि बैंक वा वालेट विवरण थप्नुहोस्';
+
+  @override
+  String get appsInvited => 'रोजगारदाताले बोलाएको';
+
+  @override
+  String get appsInvitedHint => 'यो रोजगारदाताले पहिले तपाईंसँग काम गरेको थियो र आवेदन दिन बोलाएको छ।';
+
+  @override
+  String get ivTitle => 'अन्तर्वार्ता';
+
+  @override
+  String get ivModeInPerson => 'प्रत्यक्ष भेटमा';
+
+  @override
+  String get ivModePhone => 'फोन कलमा';
+
+  @override
+  String get ivModeVideo => 'भिडियो कलमा';
+
+  @override
+  String get ivModeTradeTest => 'सीप परीक्षण';
+
+  @override
+  String get ivOutcomePending => 'हुन बाँकी';
+
+  @override
+  String get ivOutcomePassed => 'उत्तीर्ण';
+
+  @override
+  String get ivOutcomeFailed => 'छनोट भएन';
+
+  @override
+  String get ivOutcomeNoShow => 'उपस्थित हुनुभएन';
+
+  @override
+  String ivWith(String name) {
+    return '$name सँग';
+  }
+
+  @override
+  String ivPlace(String place) {
+    return 'ठाउँ: $place';
+  }
+
+  @override
+  String get ratingsTitle => 'मेरो रेटिङ';
+
+  @override
+  String get ratingsMenuSubtitle => 'रोजगारदाताले तपाईंबारे र तपाईंले उनीहरूबारे भनेको';
+
+  @override
+  String get ratingsReceived => 'रोजगारदाताबाट';
+
+  @override
+  String get ratingsGiven => 'मैले दिएको';
+
+  @override
+  String get ratingsEmptyReceived => 'अहिलेसम्म कुनै रोजगारदाताले रेटिङ दिएको छैन।';
+
+  @override
+  String get ratingsEmptyGiven => 'तपाईंले अहिलेसम्म कुनै रोजगारदातालाई रेटिङ दिनुभएको छैन।';
+
+  @override
+  String ratingsAverage(String score, String count) {
+    return 'औसत $score · $count रेटिङ';
+  }
+
+  @override
+  String get ratingsReliability => 'भरपर्दोपन';
+
+  @override
+  String get ratingsSkill => 'सीप';
+
+  @override
+  String get ratingsFlag => 'यो टिप्पणी रिपोर्ट गर्नुहोस्';
+
+  @override
+  String get ratingsFlagTitle => 'यो टिप्पणी रिपोर्ट गर्ने?';
+
+  @override
+  String get ratingsFlagHint =>
+      'यो किन अनुचित वा झुटो हो बताउनुहोस्। कामसाथीको टोलीले जाँच गर्नेछ; तबसम्म तपाईंको अंक उस्तै रहन्छ।';
+
+  @override
+  String get ratingsFlagReason => 'कारण';
+
+  @override
+  String get ratingsFlagged => 'जाँचका लागि पठाइयो।';
+
+  @override
+  String get ratingsStatusFlagged => 'जाँच हुँदैछ';
+
+  @override
+  String get ratingsStatusHidden => 'कामसाथीले टिप्पणी लुकाएको';
+
+  @override
+  String get ratingsVoided => 'गणना गरिँदैन';
+
+  @override
+  String get disputeStatusAppealed => 'पुनरावेदन गरिएको';
+
+  @override
+  String get disputeStatusAppealResolved => 'पुनरावेदनको निर्णय भयो';
+
+  @override
+  String get disputeDetailTitle => 'उजुरी';
+
+  @override
+  String get evidenceTitle => 'प्रमाण';
+
+  @override
+  String get evidenceEmpty => 'अहिलेसम्म कुनै प्रमाण थपिएको छैन।';
+
+  @override
+  String get evidenceHint =>
+      'तलब पर्ची, रसिद वा कार्यस्थलका फोटोले हाम्रो टोलीलाई निर्णय गर्न मद्दत गर्छ। बढीमा १० फाइल, प्रत्येक १० MB।';
+
+  @override
+  String get evidenceAdd => 'प्रमाण थप्नुहोस्';
+
+  @override
+  String get evidenceNote => 'टिप्पणी';
+
+  @override
+  String get evidenceUpload => 'अपलोड गर्नुहोस्';
+
+  @override
+  String get evidenceUploaded => 'प्रमाण थपियो।';
+
+  @override
+  String get evidenceTooBig => 'यो फाइल धेरै ठूलो छ (बढीमा १० MB)।';
+
+  @override
+  String get evidencePhoto => 'फोटो';
+
+  @override
+  String get evidencePdf => 'PDF कागजात';
+
+  @override
+  String evidenceCount(String count) {
+    return '$count फाइल';
+  }
+
+  @override
+  String get appealButton => 'यो निर्णयमा पुनरावेदन गर्नुहोस्';
+
+  @override
+  String appealUntil(String date) {
+    return '$date सम्म पुनरावेदन गर्न सक्नुहुन्छ।';
+  }
+
+  @override
+  String get appealReason => 'तपाईं किन असहमत हुनुहुन्छ?';
+
+  @override
+  String get appealHint => 'पुनरावेदन एक पटक मात्र गर्न सकिन्छ। कामसाथीका अर्का कर्मचारीले ७ दिनभित्र हेर्नुहुन्छ।';
+
+  @override
+  String get appealSent => 'पुनरावेदन पठाइयो।';
+
+  @override
+  String get appealSection => 'पुनरावेदन';
+
+  @override
+  String get appealWaiting => 'समीक्षा हुँदैछ';
+
+  @override
+  String get appealUpheld => 'निर्णय कायम रह्यो';
+
+  @override
+  String get appealOverturned => 'निर्णय उल्टियो';
+
+  @override
+  String get credResubmit => 'फेरि पठाउनुहोस्';
+
+  @override
+  String get credResubmitTitle => 'प्रमाणपत्र फेरि पठाउनुहोस्';
+
+  @override
+  String get credResubmitHint => 'गलत भएको कुरा सच्याउनुहोस्। नबदलेका कुरा (फोटो सहित) अस्वीकृत प्रमाणपत्रबाट लिइन्छ।';
+
+  @override
+  String get credResubmissionOf => 'अस्वीकृतपछि फेरि पठाइएको';
+
+  @override
+  String get credResubmitted => 'फेरि जाँचका लागि पठाइयो।';
+
+  @override
+  String credEarlierNote(String note) {
+    return 'पहिलेको कारण: $note';
+  }
+
+  @override
+  String get corrTitle => 'सच्याउने अनुरोधहरू';
+
+  @override
+  String get corrMenuSubtitle => 'गलत हाजिरी सच्याउन अनुरोध गर्नुहोस्';
+
+  @override
+  String get corrRequest => 'सच्याउन अनुरोध गर्नुहोस्';
+
+  @override
+  String corrFor(String date) {
+    return '$date को हाजिरी';
+  }
+
+  @override
+  String corrRecorded(String status) {
+    return 'रेकर्ड गरिएको: $status';
+  }
+
+  @override
+  String get corrShouldBe => 'हुनुपर्ने';
+
+  @override
+  String get corrCheckIn => 'आएको समय';
+
+  @override
+  String get corrCheckOut => 'गएको समय';
+
+  @override
+  String get corrReason => 'कारण';
+
+  @override
+  String get corrReasonHint => 'जस्तै: म कार्यस्थलमै थिएँ तर QR स्क्यान भएन';
+
+  @override
+  String get corrSent => 'अनुरोध सुपरभाइजरलाई पठाइयो।';
+
+  @override
+  String get corrEmpty => 'सच्याउने अनुरोध छैन।';
+
+  @override
+  String get corrStatusPending => 'पर्खँदै';
+
+  @override
+  String get corrStatusApproved => 'स्वीकृत';
+
+  @override
+  String get corrStatusRejected => 'अस्वीकृत';
+
+  @override
+  String get corrJob => 'काम';
+
+  @override
+  String get corrNoJob => 'सच्याउन अनुरोध गर्न सक्रिय काम चाहिन्छ।';
+
+  @override
+  String corrNote(String note) {
+    return 'टिप्पणी: $note';
+  }
+
+  @override
+  String corrChange(String from, String to) {
+    return '$from → $to';
+  }
+
+  @override
+  String get corrQueueTitle => 'हाजिरी सच्याउने अनुरोध';
+
+  @override
+  String get corrQueueSubtitle => 'हाजिरी सच्याउन अनुरोध गर्ने कामदार';
+
+  @override
+  String get corrTabPending => 'पर्खँदै';
+
+  @override
+  String get corrTabDecided => 'निर्णय भएका';
+
+  @override
+  String get corrApprove => 'स्वीकृत गर्नुहोस्';
+
+  @override
+  String get corrReject => 'अस्वीकार गर्नुहोस्';
+
+  @override
+  String get corrApproveTitle => 'यो सच्याइ स्वीकृत गर्ने?';
+
+  @override
+  String get corrRejectTitle => 'यो सच्याइ अस्वीकार गर्ने?';
+
+  @override
+  String get corrApproved => 'स्वीकृत भयो। हाजिरी अद्यावधिक भयो।';
+
+  @override
+  String get corrRejected => 'अस्वीकार गरियो। कामदारलाई जानकारी गइयो।';
+
+  @override
+  String get corrNoteLabel => 'टिप्पणी';
+
+  @override
+  String get corrRejectNote => 'कामदारलाई कारण बताउनुहोस्';
+
+  @override
+  String get talabRegularHours => 'नियमित घण्टा';
+
+  @override
+  String get talabHourlyWage => 'प्रति घण्टा ज्याला';
+
+  @override
+  String empWageHourly(String amount) {
+    return 'प्रति घण्टा $amount';
+  }
+
+  @override
+  String get empWorkType => 'कामको किसिम';
+
+  @override
+  String get empPartTime => 'आंशिक समय';
+
+  @override
+  String get empFullTime => 'पूरा समय';
+
+  @override
+  String rosterNotified(String count) {
+    return 'सेभ भयो · $count कामदारलाई सूचना गइयो';
+  }
+
+  @override
+  String get rosterWarnOnLeave => 'बिदामा';
+
+  @override
+  String get rosterWarnHoliday => 'सार्वजनिक बिदा';
+
+  @override
+  String get rosterWarnWeeklyOff => 'साप्ताहिक बिदा';
+
+  @override
+  String get rosterWarnConflict => 'अर्को कार्यस्थलमा तालिका छ';
+
+  @override
+  String get rosterWarnLegend => '! = यो दिन जाँच्नुहोस्';
+
+  @override
+  String get commonEdit => 'सम्पादन';
 }

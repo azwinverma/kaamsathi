@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/api/json.dart';
 import '../../../core/auth/session.dart';
+import '../../../core/flags.dart';
 import '../../../core/format.dart';
 import '../../../core/l10n/l10n.dart';
 import '../../../core/router/router.dart';
@@ -39,6 +40,16 @@ class InboxBell extends ConsumerWidget {
 String? routeForNotification(AppNotification n, AppMode? mode) {
   final worker = mode != AppMode.supervisor;
   final link = n.link ?? '';
+  final k = n.kind.toLowerCase();
+  // Specific kinds first: they carry ids for a deeper screen than the link.
+  if (worker) {
+    final disputeId = str(n.data['dispute_id']);
+    if (k.contains('dispute') && disputeId != null && disputeId.isNotEmpty) return Routes.workerDispute(disputeId);
+    if (k == 'roster_changed' || k.contains('roster') || k.contains('shift')) return Routes.workerShifts;
+    if (k.contains('attendance_correction') || k.contains('correction')) return Routes.workerHajiri;
+  } else if (k.contains('attendance_correction') || k.contains('correction')) {
+    return Routes.supCorrections;
+  }
   if (link.startsWith('/')) {
     if (worker && link.startsWith('/w/')) return link;
     if (!worker && link.startsWith('/s/')) return link;
@@ -57,13 +68,15 @@ String? routeForNotification(AppNotification n, AppMode? mode) {
         ('/me/disputes', Routes.workerDisputes),
         ('/me/credentials', Routes.workerCredentials),
         ('/me/career', Routes.workerCareer),
+        ('/me/roster', Routes.workerShifts),
+        ('/me/attendance', Routes.workerHajiri),
+        ('/me/ratings', Routes.workerRatings),
       ]) {
         if (link.startsWith(prefix)) return route;
       }
     }
   }
   final caseId = str(n.data['case_id'] ?? n.data['support_case_id']);
-  final k = n.kind.toLowerCase();
   if (caseId != null && caseId.isNotEmpty) return Routes.helpCase(caseId);
   if (k.contains('support')) return Routes.help;
   if (k.contains('timesheet')) return worker ? Routes.workerTimesheets : Routes.supTimesheets;
@@ -79,6 +92,7 @@ String? routeForNotification(AppNotification n, AppMode? mode) {
   }
   if (k.contains('work_history') || k.contains('reference')) return Routes.workerWorkHistory;
   if (k.contains('credential')) return Routes.workerCredentials;
+  if (k.contains('rating')) return Routes.workerRatings;
   if (k.contains('job')) return Routes.workerJobs;
   return null;
 }
@@ -247,13 +261,18 @@ class _UnreadPollerState extends ConsumerState<UnreadPoller> with WidgetsBinding
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) ref.read(unreadCountProvider.notifier).refresh(force: true);
+      if (!mounted) return;
+      ref.read(unreadCountProvider.notifier).refresh(force: true);
+      ref.read(flagsProvider.notifier).refresh(force: true);
     });
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) ref.read(unreadCountProvider.notifier).refresh(force: true);
+    if (state == AppLifecycleState.resumed) {
+      ref.read(unreadCountProvider.notifier).refresh(force: true);
+      ref.read(flagsProvider.notifier).refresh();
+    }
   }
 
   @override

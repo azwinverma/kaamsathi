@@ -950,7 +950,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileViewsTitle => 'Who viewed my profile';
 
   @override
-  String get profileViewsHint => 'Every time an employer, partner or the KaamSathi team opens your full profile, it is listed here.';
+  String get profileViewsHint =>
+      'Every time an employer, partner or the KaamSathi team opens your full profile, it is listed here.';
 
   @override
   String get profileViewsEmpty => 'Nobody has opened your full profile yet.';
@@ -980,7 +981,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get disputesTitle => 'Complaints';
 
   @override
-  String get disputesHint => 'Something wrong in your hajiri, talab or work record? Tell us. Your employer will be asked to respond and KaamSathi will review it.';
+  String get disputesHint =>
+      'Something wrong in your hajiri, talab or work record? Tell us. Your employer will be asked to respond and KaamSathi will review it.';
 
   @override
   String get disputesEmpty => 'You have not raised any complaint.';
@@ -1034,7 +1036,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get disputeDescription => 'What is wrong?';
 
   @override
-  String get disputeDescriptionHint => 'Explain in your own words. For example: I worked on this day but it shows absent.';
+  String get disputeDescriptionHint =>
+      'Explain in your own words. For example: I worked on this day but it shows absent.';
 
   @override
   String get disputeDescriptionShort => 'Please write at least 10 letters.';
@@ -1060,7 +1063,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rateTitle => 'Rate employer';
 
   @override
-  String get rateHint => 'Your rating helps other workers. Only averages from several workers are used — your name is never shown to the employer.';
+  String get rateHint =>
+      'Your rating helps other workers. Only averages from several workers are used — your name is never shown to the employer.';
 
   @override
   String get ratePayOnTime => 'Paid on time';
@@ -1202,7 +1206,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get csOvertime => 'Overtime is paid at 1.5 times your hourly rate.';
 
   @override
-  String get csLeave => 'Leave: 1 day home leave for every 20 days worked, 12 days sick leave a year, 13 days mourning leave, 98 days maternity or 15 days paternity leave.';
+  String get csLeave =>
+      'Leave: 1 day home leave for every 20 days worked, 12 days sick leave a year, 13 days mourning leave, 98 days maternity or 15 days paternity leave.';
 
   @override
   String get csFestival => 'Dashain allowance: one month\'s basic salary each year.';
@@ -1217,7 +1222,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get csGrievance => 'If something is wrong, you can raise a complaint in KaamSathi at any time.';
 
   @override
-  String get csPdfNote => 'The full contract (PDF) has all the details, including probation and notice period. Open it before you accept.';
+  String get csPdfNote =>
+      'The full contract (PDF) has all the details, including probation and notice period. Open it before you accept.';
 
   @override
   String get contractAgree => 'I have read and understood my contract.';
@@ -1238,7 +1244,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get crewBecomeTitle => 'Become a team lead (Naike)';
 
   @override
-  String get crewBecomeBody => 'Bring your team to KaamSathi. When a worker you added gets a job and stays, KaamSathi pays you a referral reward. It is never taken from the worker\'s pay.';
+  String get crewBecomeBody =>
+      'Bring your team to KaamSathi. When a worker you added gets a job and stays, KaamSathi pays you a referral reward. It is never taken from the worker\'s pay.';
 
   @override
   String get crewName => 'Team name';
@@ -1280,7 +1287,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get crewAdded => 'Added. We sent them an SMS invite.';
 
   @override
-  String get crewMemberConsentNote => 'They will be asked to agree when they first log in. Their details are not shared before that.';
+  String get crewMemberConsentNote =>
+      'They will be asked to agree when they first log in. Their details are not shared before that.';
 
   @override
   String crewRemoveConfirm(String name) {
@@ -1337,7 +1345,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get credMenuSubtitle => 'NSTB, training certificates, driving licence';
 
   @override
-  String get credEmpty => 'Add your NSTB certificate, training certificate or licence. Verified certificates raise your reliability score.';
+  String get credEmpty =>
+      'Add your NSTB certificate, training certificate or licence. Verified certificates raise your reliability score.';
 
   @override
   String get credAdd => 'Add certificate';
@@ -1499,7 +1508,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sharePurposeOther => 'Other';
 
   @override
-  String get shareAgencyNote => 'KaamSathi does not find jobs abroad. Share with a licensed agency only if you choose to.';
+  String get shareAgencyNote =>
+      'KaamSathi does not find jobs abroad. Share with a licensed agency only if you choose to.';
 
   @override
   String get shareDays => 'Link works for';
@@ -1885,7 +1895,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get consentRevoke => 'You can stop sharing at any time from Money → Sharing. Every time they look, you will see it there.';
+  String get consentRevoke =>
+      'You can stop sharing at any time from Money → Sharing. Every time they look, you will see it there.';
 
   @override
   String consentNoLend(String partner) {
@@ -1985,13 +1996,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyMenuSubtitle => 'Get a copy, correct it or delete it';
 
   @override
-  String get privacyIntro => 'Under Nepal\'s Individual Privacy Act 2075, you can get a copy of your data, ask us to correct it, or ask us to delete it.';
+  String get privacyIntro =>
+      'Under Nepal\'s Individual Privacy Act 2075, you can get a copy of your data, ask us to correct it, or ask us to delete it.';
 
   @override
   String get privacyExport => 'Get a copy of my data';
 
   @override
-  String get privacyExportHint => 'We prepare a file with everything we hold about you. It can take a while. The download link works for a limited time.';
+  String get privacyExportHint =>
+      'We prepare a file with everything we hold about you. It can take a while. The download link works for a limited time.';
 
   @override
   String get privacyCorrection => 'Correct my data';
@@ -2009,7 +2022,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyDeletionHint => 'Remove your profile, photos and documents from KaamSathi.';
 
   @override
-  String get privacyDeletionWarning => 'Please read before you continue: your name, phone number, photos and documents will be removed, and your Skill Passport and all data sharing will stop. Hajiri and payroll records that your employer must keep by law will stay, but without your name. This cannot be undone.';
+  String get privacyDeletionWarning =>
+      'Please read before you continue: your name, phone number, photos and documents will be removed, and your Skill Passport and all data sharing will stop. Hajiri and payroll records that your employer must keep by law will stay, but without your name. This cannot be undone.';
 
   @override
   String get privacyDeletionConfirm => 'I understand. Delete my data.';
@@ -2121,7 +2135,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get securityMenuSubtitle => 'Phones and browsers where you are logged in';
 
   @override
-  String get securityIntro => 'These devices are logged in to your KaamSathi account. If you don\'t recognise one, log it out.';
+  String get securityIntro =>
+      'These devices are logged in to your KaamSathi account. If you don\'t recognise one, log it out.';
 
   @override
   String get securityThisDevice => 'This phone';
@@ -2173,7 +2188,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workHistMenuSubtitle => 'Add jobs you did before, with a reference';
 
   @override
-  String get workHistIntro => 'Add work you did before KaamSathi. When our team confirms it with your reference, it shows as verified on your Skill Passport.';
+  String get workHistIntro =>
+      'Add work you did before KaamSathi. When our team confirms it with your reference, it shows as verified on your Skill Passport.';
 
   @override
   String get workHistEmpty => 'No past work added yet.';
@@ -2483,7 +2499,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mobMenuSubtitle => 'Passport, permits and clearances — shared only when you choose';
 
   @override
-  String get mobIntro => 'Keep your documents safe in one place and share them with a licensed agency you choose. KaamSathi does not find jobs abroad.';
+  String get mobIntro =>
+      'Keep your documents safe in one place and share them with a licensed agency you choose. KaamSathi does not find jobs abroad.';
 
   @override
   String get mobSafetyTitle => 'Stay safe';
@@ -2492,7 +2509,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mobSafety1 => 'Use only agencies licensed by the Department of Foreign Employment (DoFE).';
 
   @override
-  String get mobSafety2 => 'Check the agency\'s licence yourself on the official DoFE website (dofe.gov.np) before you pay or sign anything.';
+  String get mobSafety2 =>
+      'Check the agency\'s licence yourself on the official DoFE website (dofe.gov.np) before you pay or sign anything.';
 
   @override
   String get mobSafety3 => 'Get a receipt for every payment. Never pay more than the government-approved fee.';
@@ -2599,7 +2617,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get mobShareBody => 'The agency will see which documents you have, whether they are verified and when they expire. It will not see photos or full numbers. You can stop sharing at any time.';
+  String get mobShareBody =>
+      'The agency will see which documents you have, whether they are verified and when they expire. It will not see photos or full numbers. You can stop sharing at any time.';
 
   @override
   String get mobShareDays => 'Share for';
@@ -2943,7 +2962,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get safetyDanger => 'If you are in danger now, call 100 (Police).';
 
   @override
-  String get safetyConfidential => 'This report is confidential. Your employer will not see it. Only KaamSathi\'s safety team reads it.';
+  String get safetyConfidential =>
+      'This report is confidential. Your employer will not see it. Only KaamSathi\'s safety team reads it.';
 
   @override
   String get safetyKind => 'What happened?';
@@ -2986,4 +3006,474 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get offerAnswerByLabel => 'Answer by';
+
+  @override
+  String get langTitle => 'Languages I speak';
+
+  @override
+  String get langMenuSubtitle => 'Employers look for workers who speak their customers\' language';
+
+  @override
+  String get langAdd => 'Add a language';
+
+  @override
+  String get langEmpty => 'No languages added yet.';
+
+  @override
+  String get langPick => 'Choose a language';
+
+  @override
+  String get langProficiency => 'How well do you speak it?';
+
+  @override
+  String get langSaved => 'Languages saved.';
+
+  @override
+  String get langMax => 'You can add up to 15 languages.';
+
+  @override
+  String get profBasic => 'Basic';
+
+  @override
+  String get profConversational => 'Conversational';
+
+  @override
+  String get profFluent => 'Fluent';
+
+  @override
+  String get profNative => 'Native (mother tongue)';
+
+  @override
+  String get langNameNe => 'Nepali';
+
+  @override
+  String get langNameEn => 'English';
+
+  @override
+  String get langNameHi => 'Hindi';
+
+  @override
+  String get langNameMai => 'Maithili';
+
+  @override
+  String get langNameBho => 'Bhojpuri';
+
+  @override
+  String get langNameNew => 'Nepal Bhasa (Newari)';
+
+  @override
+  String get langNameTha => 'Tharu';
+
+  @override
+  String get langNameTam => 'Tamang';
+
+  @override
+  String get langNameMgp => 'Magar';
+
+  @override
+  String get langNameGvr => 'Gurung';
+
+  @override
+  String get langNameLim => 'Limbu';
+
+  @override
+  String get langNameBap => 'Rai (Bantawa)';
+
+  @override
+  String get langNameXsr => 'Sherpa';
+
+  @override
+  String get langNameDty => 'Doteli';
+
+  @override
+  String get langNameAwa => 'Awadhi';
+
+  @override
+  String get langNameUr => 'Urdu';
+
+  @override
+  String get langNameAr => 'Arabic';
+
+  @override
+  String get langNameMs => 'Malay';
+
+  @override
+  String get langNameJa => 'Japanese';
+
+  @override
+  String get langNameKo => 'Korean';
+
+  @override
+  String get langNameZh => 'Chinese';
+
+  @override
+  String get complTitle => 'Complete your profile';
+
+  @override
+  String complPercent(String percent) {
+    return '$percent complete';
+  }
+
+  @override
+  String get complHint => 'A complete profile gets more job offers.';
+
+  @override
+  String get complPhoto => 'Add a profile photo';
+
+  @override
+  String get complIdentity => 'Add your citizenship or national ID';
+
+  @override
+  String get complSkills => 'Add at least one skill';
+
+  @override
+  String get complLanguages => 'Add the languages you speak';
+
+  @override
+  String get complAvailability => 'Set your availability and expected wage';
+
+  @override
+  String get complVerifiedCredential => 'Get a certificate verified';
+
+  @override
+  String get complWorkHistory => 'Add your work history';
+
+  @override
+  String get complPaymentDetails => 'Add bank or wallet details for salary';
+
+  @override
+  String get appsInvited => 'Invited by employer';
+
+  @override
+  String get appsInvitedHint => 'This employer worked with you before and invited you to apply.';
+
+  @override
+  String get ivTitle => 'Interviews';
+
+  @override
+  String get ivModeInPerson => 'In person';
+
+  @override
+  String get ivModePhone => 'Phone call';
+
+  @override
+  String get ivModeVideo => 'Video call';
+
+  @override
+  String get ivModeTradeTest => 'Skill test';
+
+  @override
+  String get ivOutcomePending => 'Upcoming';
+
+  @override
+  String get ivOutcomePassed => 'Passed';
+
+  @override
+  String get ivOutcomeFailed => 'Not selected';
+
+  @override
+  String get ivOutcomeNoShow => 'Missed';
+
+  @override
+  String ivWith(String name) {
+    return 'With $name';
+  }
+
+  @override
+  String ivPlace(String place) {
+    return 'Place: $place';
+  }
+
+  @override
+  String get ratingsTitle => 'My ratings';
+
+  @override
+  String get ratingsMenuSubtitle => 'What employers said about you, and what you said';
+
+  @override
+  String get ratingsReceived => 'From employers';
+
+  @override
+  String get ratingsGiven => 'Given by me';
+
+  @override
+  String get ratingsEmptyReceived => 'No employer has rated you yet.';
+
+  @override
+  String get ratingsEmptyGiven => 'You have not rated any employer yet.';
+
+  @override
+  String ratingsAverage(String score, String count) {
+    return 'Average $score · $count ratings';
+  }
+
+  @override
+  String get ratingsReliability => 'Reliability';
+
+  @override
+  String get ratingsSkill => 'Skill';
+
+  @override
+  String get ratingsFlag => 'Report this comment';
+
+  @override
+  String get ratingsFlagTitle => 'Report this comment?';
+
+  @override
+  String get ratingsFlagHint =>
+      'Tell us why it is unfair or untrue. KaamSathi\'s team will review it; your score stays the same until then.';
+
+  @override
+  String get ratingsFlagReason => 'Reason';
+
+  @override
+  String get ratingsFlagged => 'Sent for review.';
+
+  @override
+  String get ratingsStatusFlagged => 'Under review';
+
+  @override
+  String get ratingsStatusHidden => 'Comment hidden by KaamSathi';
+
+  @override
+  String get ratingsVoided => 'Not counted';
+
+  @override
+  String get disputeStatusAppealed => 'Appealed';
+
+  @override
+  String get disputeStatusAppealResolved => 'Appeal decided';
+
+  @override
+  String get disputeDetailTitle => 'Complaint';
+
+  @override
+  String get evidenceTitle => 'Evidence';
+
+  @override
+  String get evidenceEmpty => 'No evidence added yet.';
+
+  @override
+  String get evidenceHint =>
+      'Photos of payslips, receipts or the site help our team decide. Up to 10 files, 10 MB each.';
+
+  @override
+  String get evidenceAdd => 'Add evidence';
+
+  @override
+  String get evidenceNote => 'Note';
+
+  @override
+  String get evidenceUpload => 'Upload';
+
+  @override
+  String get evidenceUploaded => 'Evidence added.';
+
+  @override
+  String get evidenceTooBig => 'This file is too large (max 10 MB).';
+
+  @override
+  String get evidencePhoto => 'Photo';
+
+  @override
+  String get evidencePdf => 'PDF document';
+
+  @override
+  String evidenceCount(String count) {
+    return '$count files';
+  }
+
+  @override
+  String get appealButton => 'Appeal this decision';
+
+  @override
+  String appealUntil(String date) {
+    return 'You can appeal until $date.';
+  }
+
+  @override
+  String get appealReason => 'Why do you disagree?';
+
+  @override
+  String get appealHint => 'You can appeal only once. A different KaamSathi staff member reviews it within 7 days.';
+
+  @override
+  String get appealSent => 'Appeal sent.';
+
+  @override
+  String get appealSection => 'Appeal';
+
+  @override
+  String get appealWaiting => 'Waiting for review';
+
+  @override
+  String get appealUpheld => 'Decision upheld';
+
+  @override
+  String get appealOverturned => 'Decision overturned';
+
+  @override
+  String get credResubmit => 'Resubmit';
+
+  @override
+  String get credResubmitTitle => 'Resubmit certificate';
+
+  @override
+  String get credResubmitHint =>
+      'Fix what was wrong. Anything you leave unchanged — including the photo — is copied from the rejected one.';
+
+  @override
+  String get credResubmissionOf => 'Resubmitted after a rejection';
+
+  @override
+  String get credResubmitted => 'Sent again for checking.';
+
+  @override
+  String credEarlierNote(String note) {
+    return 'Earlier reason: $note';
+  }
+
+  @override
+  String get corrTitle => 'Correction requests';
+
+  @override
+  String get corrMenuSubtitle => 'Ask to fix a wrong hajiri day';
+
+  @override
+  String get corrRequest => 'Request a correction';
+
+  @override
+  String corrFor(String date) {
+    return 'Hajiri for $date';
+  }
+
+  @override
+  String corrRecorded(String status) {
+    return 'Recorded: $status';
+  }
+
+  @override
+  String get corrShouldBe => 'It should be';
+
+  @override
+  String get corrCheckIn => 'Arrival time';
+
+  @override
+  String get corrCheckOut => 'Leaving time';
+
+  @override
+  String get corrReason => 'Reason';
+
+  @override
+  String get corrReasonHint => 'e.g. I was at the site but the QR did not scan';
+
+  @override
+  String get corrSent => 'Request sent to your supervisor.';
+
+  @override
+  String get corrEmpty => 'No correction requests.';
+
+  @override
+  String get corrStatusPending => 'Waiting';
+
+  @override
+  String get corrStatusApproved => 'Approved';
+
+  @override
+  String get corrStatusRejected => 'Rejected';
+
+  @override
+  String get corrJob => 'Job';
+
+  @override
+  String get corrNoJob => 'You need an active job to request a correction.';
+
+  @override
+  String corrNote(String note) {
+    return 'Note: $note';
+  }
+
+  @override
+  String corrChange(String from, String to) {
+    return '$from → $to';
+  }
+
+  @override
+  String get corrQueueTitle => 'Hajiri corrections';
+
+  @override
+  String get corrQueueSubtitle => 'Workers asking to fix their hajiri';
+
+  @override
+  String get corrTabPending => 'Waiting';
+
+  @override
+  String get corrTabDecided => 'Decided';
+
+  @override
+  String get corrApprove => 'Approve';
+
+  @override
+  String get corrReject => 'Reject';
+
+  @override
+  String get corrApproveTitle => 'Approve this correction?';
+
+  @override
+  String get corrRejectTitle => 'Reject this correction?';
+
+  @override
+  String get corrApproved => 'Approved. Hajiri updated.';
+
+  @override
+  String get corrRejected => 'Rejected. The worker has been told.';
+
+  @override
+  String get corrNoteLabel => 'Note';
+
+  @override
+  String get corrRejectNote => 'Tell the worker why';
+
+  @override
+  String get talabRegularHours => 'Regular hours';
+
+  @override
+  String get talabHourlyWage => 'Hourly wage';
+
+  @override
+  String empWageHourly(String amount) {
+    return '$amount per hour';
+  }
+
+  @override
+  String get empWorkType => 'Work type';
+
+  @override
+  String get empPartTime => 'Part-time';
+
+  @override
+  String get empFullTime => 'Full-time';
+
+  @override
+  String rosterNotified(String count) {
+    return 'Saved · $count workers notified';
+  }
+
+  @override
+  String get rosterWarnOnLeave => 'On leave';
+
+  @override
+  String get rosterWarnHoliday => 'Public holiday';
+
+  @override
+  String get rosterWarnWeeklyOff => 'Weekly day off';
+
+  @override
+  String get rosterWarnConflict => 'Rostered at another workplace';
+
+  @override
+  String get rosterWarnLegend => '! = check this day';
+
+  @override
+  String get commonEdit => 'Edit';
 }

@@ -15,6 +15,7 @@ import '../../features/common/security/security_screen.dart';
 import '../../features/common/support/help_center.dart';
 import '../../features/common/support/safety_report_screen.dart';
 import '../../features/common/support/support_screen.dart';
+import '../../features/supervisor/corrections/corrections_queue_screen.dart';
 import '../../features/supervisor/hajiri/ui/register_screen.dart';
 import '../../features/supervisor/hajiri/ui/today_hajiri_screen.dart';
 import '../../features/supervisor/leave/ui/leaves_screen.dart';
@@ -36,17 +37,21 @@ import '../../features/worker/jobs/ui/jobs_screen.dart';
 import '../../features/worker/mobility/ui/mobility_screen.dart';
 import '../../features/worker/money/ui/consent_screen.dart';
 import '../../features/worker/money/ui/money_screen.dart';
+import '../../features/worker/my_hajiri/ui/corrections_screen.dart';
 import '../../features/worker/my_hajiri/ui/my_hajiri_screen.dart';
 import '../../features/worker/preferences/availability_screen.dart';
 import '../../features/worker/privacy/ui/my_data_screen.dart';
 import '../../features/worker/profile/ui/history_screen.dart';
+import '../../features/worker/profile/ui/languages_screen.dart';
 import '../../features/worker/profile/ui/profile_screen.dart';
 import '../../features/worker/roster/ui/my_shifts_screen.dart';
 import '../../features/worker/talab/ui/payslip_detail_screen.dart';
 import '../../features/worker/talab/ui/talab_screen.dart';
 import '../../features/worker/timesheets/ui/my_timesheets_screen.dart';
 import '../../features/worker/training/ui/training_screen.dart';
+import '../../features/worker/trust/ui/dispute_detail_screen.dart';
 import '../../features/worker/trust/ui/disputes_screen.dart';
+import '../../features/worker/trust/ui/my_ratings_screen.dart';
 import '../../features/worker/trust/ui/profile_views_screen.dart';
 import '../../features/worker/worker_shell.dart';
 import '../auth/session.dart';
@@ -116,6 +121,13 @@ abstract final class Routes {
   static const workerMobility = '/w/mobility';
   static const workerCareer = '/w/career';
   static const workerTimesheets = '/w/timesheets';
+
+  // Checklist completion: languages, ratings, dispute detail, corrections.
+  static const workerLanguages = '/w/languages';
+  static const workerRatings = '/w/ratings';
+  static String workerDispute(String id) => '$workerDisputes/$id';
+  static const workerCorrections = '/w/corrections';
+  static const supCorrections = '/s/corrections';
 }
 
 /// Bridges Riverpod state changes to go_router's refreshListenable.
@@ -193,7 +205,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.scan, builder: (_, _) => const ScanScreen()),
       // Worker sub-pages (full screen, pushed over the tabs).
       GoRoute(path: Routes.workerProfileViews, builder: (_, _) => const ProfileViewsScreen()),
-      GoRoute(path: Routes.workerDisputes, builder: (_, _) => const DisputesScreen()),
+      GoRoute(
+        path: Routes.workerDisputes,
+        builder: (_, _) => const DisputesScreen(),
+        routes: [GoRoute(path: ':id', builder: (_, state) => DisputeDetailScreen(id: state.pathParameters['id']!))],
+      ),
       GoRoute(
         path: Routes.workerDisputeNew,
         builder:
@@ -249,6 +265,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.workerMobility, builder: (_, _) => const MobilityScreen()),
       GoRoute(path: Routes.workerCareer, builder: (_, _) => const CareerScreen()),
       GoRoute(path: Routes.workerTimesheets, builder: (_, _) => const MyTimesheetsScreen()),
+      GoRoute(path: Routes.workerLanguages, builder: (_, _) => const LanguagesScreen()),
+      GoRoute(path: Routes.workerRatings, builder: (_, _) => const MyRatingsScreen()),
+      GoRoute(path: Routes.workerCorrections, builder: (_, _) => const MyCorrectionsScreen()),
+      GoRoute(path: Routes.supCorrections, builder: (_, _) => const CorrectionsQueueScreen()),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => SupervisorShell(shell: shell),
         branches: [

@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../core/flags.dart';
 import '../../../../core/format.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/router/router.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/month_switcher.dart';
 import '../../../common/inbox/inbox_screen.dart';
 import '../../data/worker_models.dart';
 import '../../data/worker_repository.dart';
+import 'corrections_screen.dart';
 
 /// Worker's own hajiri: BS month calendar with coloured days + totals.
 class MyHajiriScreen extends ConsumerStatefulWidget {
@@ -27,6 +32,7 @@ class _MyHajiriScreenState extends ConsumerState<MyHajiriScreen> {
     final key = (year: _month.year, month: _month.month);
     final value = ref.watch(myAttendanceProvider(key));
     final current = BsDate.fromAd(nepalToday()).firstOfMonth;
+    final corrections = ref.watch(flagOnProvider(FlagKeys.attendanceCorrections));
     return Scaffold(
       appBar: AppBar(title: Text(l.navAttendance), actions: const [InboxBell()]),
       body: RefreshIndicator(
@@ -48,11 +54,30 @@ class _MyHajiriScreenState extends ConsumerState<MyHajiriScreen> {
               AsyncData(:final value) => Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SectionCard(child: _Calendar(month: _month, data: value)),
+                  SectionCard(
+                    child: _Calendar(
+                      month: _month,
+                      data: value,
+                      onDay: corrections ? (d) => showHajiriDaySheet(context, d) : null,
+                    ),
+                  ),
                   const SizedBox(height: KsSpace.s4),
                   SectionCard(title: l.commonTotal, child: AttendanceTotals(month: value)),
                   const SizedBox(height: KsSpace.s4),
                   const _Legend(),
+                  if (corrections) ...[
+                    const SizedBox(height: KsSpace.s4),
+                    Card(
+                      key: const Key('hajiri_corrections'),
+                      child: ListTile(
+                        leading: const Icon(LucideIcons.calendarCog),
+                        title: Text(l.corrTitle),
+                        subtitle: Text(l.corrMenuSubtitle),
+                        trailing: const Icon(LucideIcons.chevronRight),
+                        onTap: () => context.push(Routes.workerCorrections),
+                      ),
+                    ),
+                  ],
                 ],
               ),
               AsyncError(:final error) => ErrorView(
@@ -68,10 +93,59 @@ class _MyHajiriScreenState extends ConsumerState<MyHajiriScreen> {
   }
 }
 
+/// Day details (status, times) with "Request a correction" for past days.
+Future<void> showHajiriDaySheet(BuildContext context, MyAttendanceDay day) {
+  final l = context.l10n;
+  final lang = context.lang;
+  final d = parseIsoDate(day.date);
+  final canRequest = d != null && !d.isAfter(nepalToday());
+  return showModalBottomSheet<void>(
+    context: context,
+    builder: (ctx) {
+      final t = Theme.of(ctx).textTheme;
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(KsSpace.page),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(l.corrFor(formatBsOrAd(null, day.date, lang)), style: t.titleMedium),
+              const SizedBox(height: KsSpace.s2),
+              KeyValueRow(label: l.navAttendance, value: attendanceLabel(l, day.status)),
+              if (day.checkInAt != null)
+                KeyValueRow(label: l.corrCheckIn, value: formatTime(day.checkInAt!.toLocal(), lang)),
+              if (day.checkOutAt != null)
+                KeyValueRow(label: l.corrCheckOut, value: formatTime(day.checkOutAt!.toLocal(), lang)),
+              if (canRequest) ...[
+                const SizedBox(height: KsSpace.s4),
+                FilledButton.icon(
+                  key: const Key('corr_request_btn'),
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    Navigator.of(context).push(
+                      MaterialPageRoute<bool>(
+                        builder: (_) => CorrectionRequestScreen(date: day.date, currentStatus: day.status),
+                      ),
+                    );
+                  },
+                  icon: const Icon(LucideIcons.pencilLine),
+                  label: Text(l.corrRequest),
+                ),
+              ],
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
 class _Calendar extends StatelessWidget {
-  const _Calendar({required this.month, required this.data});
+  const _Calendar({required this.month, required this.data, this.onDay});
   final BsDate month;
   final MyAttendanceMonth data;
+  final ValueChanged<MyAttendanceDay>? onDay;
 
   @override
   Widget build(BuildContext context) {
@@ -118,20 +192,28 @@ class _Calendar extends StatelessWidget {
                   final status = byDay[d]?.status;
                   final (bg, fg) = attendanceColors(context, status);
                   final isToday = today == BsDate(month.year, month.month, d);
+                  final day = byDay[d];
+                  final tap = onDay;
                   return Semantics(
                     label: '${localizeDigits('$d', lang)} ${attendanceLabel(l, status)}',
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: status == null ? null : bg,
-                        borderRadius: BorderRadius.circular(KsRadius.md),
-                        border: isToday ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2) : null,
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        localizeDigits('$d', lang),
-                        style: t.bodyMedium?.copyWith(
-                          color: status == null ? null : fg,
-                          fontWeight: status == null ? FontWeight.w400 : FontWeight.w600,
+                    button: tap != null && day != null,
+                    child: InkWell(
+                      key: Key('hajiri_day_$d'),
+                      borderRadius: BorderRadius.circular(KsRadius.md),
+                      onTap: tap == null || day == null ? null : () => tap(day),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: status == null ? null : bg,
+                          borderRadius: BorderRadius.circular(KsRadius.md),
+                          border: isToday ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2) : null,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          localizeDigits('$d', lang),
+                          style: t.bodyMedium?.copyWith(
+                            color: status == null ? null : fg,
+                            fontWeight: status == null ? FontWeight.w400 : FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),

@@ -67,8 +67,11 @@ class _BodyState extends ConsumerState<_Body> {
     // The contract endpoint answered 404: the employer hasn't made one yet.
     final noContract = remote.hasValue && remote.value == null && e.contract == null;
     String m(String? v) => formatMoney(v ?? '0', lang: lang);
-    final wage =
-        e.wageType == 'daily' ? l.empWageDaily(m(e.dailyWage)) : l.empWageMonthly(m(e.monthlyGross ?? e.basicSalary));
+    final wage = switch (e.wageType) {
+      'daily' => l.empWageDaily(m(e.dailyWage)),
+      'hourly' => l.empWageHourly(m(e.hourlyWage)),
+      _ => l.empWageMonthly(m(e.monthlyGross ?? e.basicSalary)),
+    };
     final canRate = !_rated && e.canRate();
 
     return ListView(
@@ -91,7 +94,12 @@ class _BodyState extends ConsumerState<_Body> {
               if (e.siteName != null) KeyValueRow(label: l.workSite, value: e.siteName!),
               KeyValueRow(label: l.empStart, value: formatBsOrAd(e.startDateBs, e.startDate, lang)),
               if (!e.isActive) KeyValueRow(label: l.empEndDate, value: formatBsOrAd(e.endDateBs, e.endDate, lang)),
-              KeyValueRow(label: l.empWage, value: wage),
+              KeyValueRow(key: const Key('emp_wage'), label: l.empWage, value: wage),
+              KeyValueRow(
+                key: const Key('emp_work_type'),
+                label: l.empWorkType,
+                value: e.partTime ? l.empPartTime : l.empFullTime,
+              ),
               KeyValueRow(label: l.termSsf, value: e.ssfEnrolled ? l.empSsfYes : l.empSsfNo),
             ],
           ),

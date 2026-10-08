@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/api/api_client.dart';
+import '../../../core/api/api_exception.dart';
 import '../../../core/api/cached.dart';
 import '../../../core/api/json.dart';
 import '../../../core/auth/session.dart';
@@ -114,6 +116,10 @@ class Dispute {
     this.employerNote,
     this.resolutionNote,
     this.raisedAt,
+    this.evidenceCount = 0,
+    this.canAppeal = false,
+    this.appealDeadline,
+    this.appeal,
   });
 
   final String id;
@@ -121,7 +127,7 @@ class Dispute {
   final String? kindLabel;
   final String description;
 
-  /// open | employer_responded | resolved | rejected
+  /// open | employer_responded | resolved | rejected | appealed | appeal_resolved
   final String status;
   final String? statusLabel;
   final NamedRef? organization;
@@ -132,6 +138,15 @@ class Dispute {
   final String? employerNote;
   final String? resolutionNote;
   final DateTime? raisedAt;
+  final int evidenceCount;
+
+  /// Server decides (once, within 14 days of the decision).
+  final bool canAppeal;
+  final DateTime? appealDeadline;
+  final DisputeAppeal? appeal;
+
+  /// Evidence may be added while the case is still being looked at.
+  bool get canAddEvidence => const {'open', 'employer_responded', 'appealed'}.contains(status);
 
   factory Dispute.fromJson(Json j) {
     String? idOf(Object? v) => v is Map ? str(v['id']) : str(v);
@@ -150,8 +165,192 @@ class Dispute {
       employerNote: str(j['employer_note']),
       resolutionNote: str(j['resolution_note']),
       raisedAt: dateTimeOf(j['raised_at'] ?? j['created_at']),
+      evidenceCount: intOf(j['evidence_count']) ?? 0,
+      canAppeal: boolOf(j['can_appeal']),
+      appealDeadline: dateTimeOf(j['appeal_deadline']),
+      appeal: DisputeAppeal.fromJson(j['appeal']),
     );
   }
+}
+
+/// `appeal: {reason, party, appealed_at, outcome, outcome_label, resolution_note, resolved_at}`.
+class DisputeAppeal {
+  const DisputeAppeal({
+    required this.reason,
+    this.party,
+    this.appealedAt,
+    this.outcome,
+    this.outcomeLabel,
+    this.resolutionNote,
+    this.resolvedAt,
+  });
+
+  final String reason;
+  final String? party;
+  final DateTime? appealedAt;
+
+  /// upheld | overturned | null (still waiting)
+  final String? outcome;
+  final String? outcomeLabel;
+  final String? resolutionNote;
+  final DateTime? resolvedAt;
+
+  static DisputeAppeal? fromJson(Object? v) {
+    final j = asJsonOrNull(v);
+    if (j == null) return null;
+    return DisputeAppeal(
+      reason: strOr(j['reason']),
+      party: str(j['party']),
+      appealedAt: dateTimeOf(j['appealed_at']),
+      outcome: str(j['outcome']),
+      outcomeLabel: str(j['outcome_label']),
+      resolutionNote: str(j['resolution_note']),
+      resolvedAt: dateTimeOf(j['resolved_at']),
+    );
+  }
+}
+
+/// `GET /me/disputes/{id}/evidence` item.
+class DisputeEvidence {
+  const DisputeEvidence({
+    required this.id,
+    required this.fileUrl,
+    required this.fileType,
+    required this.party,
+    this.partyLabel,
+    this.uploadedBy,
+    this.note,
+    this.createdAt,
+  });
+
+  final String id;
+
+  /// Signed, short-lived (10 min) — re-fetch the list before opening if old.
+  final String fileUrl;
+
+  /// image | pdf
+  final String fileType;
+
+  /// worker | employer | ops
+  final String party;
+  final String? partyLabel;
+  final String? uploadedBy;
+  final String? note;
+  final DateTime? createdAt;
+
+  bool get isPdf => fileType == 'pdf';
+
+  factory DisputeEvidence.fromJson(Json j) => DisputeEvidence(
+    id: strOr(j['id']),
+    fileUrl: strOr(j['file_url']),
+    fileType: strOr(j['file_type'], 'image'),
+    party: strOr(j['party'], 'worker'),
+    partyLabel: str(j['party_label']),
+    uploadedBy: str(asJsonOrNull(j['uploaded_by'])?['full_name']),
+    note: str(j['note']),
+    createdAt: dateTimeOf(j['created_at']),
+  );
+}
+
+/// Evidence uploads are capped server-side at 10 MB (jpg/png/webp/pdf).
+const evidenceMaxBytes = 10 * 1024 * 1024;
+
+/// Multipart body for `POST /me/disputes/{id}/evidence`.
+Future<FormData> evidenceForm(String path, {String? note}) async => FormData.fromMap({
+  'file': await MultipartFile.fromFile(path),
+  if (note != null && note.trim().isNotEmpty) 'note': note.trim(),
+});
+
+/// A rating in `GET /me/ratings` (`received` = employers about me,
+/// `given` = mine about employers). `rater` is a role, never a person.
+class RatingItem {
+  const RatingItem({
+    required this.id,
+    required this.rater,
+    required this.scoreA,
+    required this.scoreB,
+    this.comment,
+    this.commentStatus = 'visible',
+    this.commentStatusLabel,
+    this.voided = false,
+    this.organization,
+    this.employmentId,
+    this.canFlag = false,
+    this.createdAt,
+  });
+
+  final String id;
+
+  /// employer | worker
+  final String rater;
+
+  /// employer→worker: reliability; worker→employer: pay on time.
+  final int scoreA;
+
+  /// employer→worker: skill; worker→employer: conditions.
+  final int scoreB;
+
+  /// null when hidden by moderation.
+  final String? comment;
+
+  /// visible | flagged | hidden
+  final String commentStatus;
+  final String? commentStatusLabel;
+  final bool voided;
+  final NamedRef? organization;
+  final String? employmentId;
+  final bool canFlag;
+  final DateTime? createdAt;
+
+  double get average => (scoreA + scoreB) / 2;
+
+  RatingItem flagged() => RatingItem(
+    id: id,
+    rater: rater,
+    scoreA: scoreA,
+    scoreB: scoreB,
+    comment: comment,
+    commentStatus: 'flagged',
+    voided: voided,
+    organization: organization,
+    employmentId: employmentId,
+    createdAt: createdAt,
+  );
+
+  factory RatingItem.fromJson(Json j) => RatingItem(
+    id: strOr(j['id']),
+    rater: strOr(j['rater'], 'employer'),
+    scoreA: (intOf(j['score_a']) ?? 0).clamp(0, 5),
+    scoreB: (intOf(j['score_b']) ?? 0).clamp(0, 5),
+    comment: str(j['comment']),
+    commentStatus: strOr(j['comment_status'], 'visible'),
+    commentStatusLabel: str(j['comment_status_label']),
+    voided: boolOf(j['voided']),
+    organization: NamedRef.fromJson(j['organization']),
+    employmentId: str(j['employment_id']),
+    canFlag: boolOf(j['can_flag']),
+    createdAt: dateTimeOf(j['created_at']),
+  );
+}
+
+/// Average of the counted (not voided) ratings, or null when none.
+({double a, double b, int count})? ratingAverages(List<RatingItem> list) {
+  final counted = list.where((r) => !r.voided && r.scoreA > 0).toList();
+  if (counted.isEmpty) return null;
+  final a = counted.fold<int>(0, (s, r) => s + r.scoreA) / counted.length;
+  final b = counted.fold<int>(0, (s, r) => s + r.scoreB) / counted.length;
+  return (a: a, b: b, count: counted.length);
+}
+
+class MyRatings {
+  const MyRatings({this.received = const [], this.given = const []});
+  final List<RatingItem> received;
+  final List<RatingItem> given;
+
+  factory MyRatings.fromJson(Json j) => MyRatings(
+    received: asJsonList(j['received']).map(RatingItem.fromJson).toList(),
+    given: asJsonList(j['given']).map(RatingItem.fromJson).toList(),
+  );
 }
 
 /// Body for `POST /me/disputes`.
@@ -197,6 +396,27 @@ class TrustRepository {
 
   Future<void> raiseDispute(Json body) => _api.postNoContent('/me/disputes', data: body);
 
+  Future<List<DisputeEvidence>> evidence(String disputeId) async {
+    final data = await _api.get<dynamic>('/me/disputes/$disputeId/evidence');
+    return resultsOf(data).map(DisputeEvidence.fromJson).toList();
+  }
+
+  Future<DisputeEvidence> addEvidence(String disputeId, {required String path, String? note}) async =>
+      DisputeEvidence.fromJson(
+        asJson(
+          await _api.post<dynamic>('/me/disputes/$disputeId/evidence', data: await evidenceForm(path, note: note)),
+        ),
+      );
+
+  Future<Dispute> appeal(String disputeId, String reason) async => Dispute.fromJson(
+    asJson(await _api.post<dynamic>('/me/disputes/$disputeId/appeal', data: {'reason': reason.trim()})),
+  );
+
+  Future<MyRatings> ratings() async => MyRatings.fromJson(asJson(await _api.get<dynamic>('/me/ratings')));
+
+  Future<void> flagRating(String ratingId, String reason) =>
+      _api.postNoContent('/me/ratings/$ratingId/flag', data: {'reason': reason.trim()});
+
   /// Worker → employer rating (pay on time, conditions).
   Future<void> rateEmployer(String employmentId, {required int payOnTime, required int conditions, String? comment}) =>
       _api.postNoContent(
@@ -231,4 +451,24 @@ final disputesProvider = FutureProvider.autoDispose<List<Dispute>>((ref) {
   _userId(ref);
   ref.watch(langCodeProvider);
   return ref.watch(trustRepositoryProvider).disputes();
+});
+
+/// One dispute from the list (the list is small and already cached by the
+/// list screen; a missing id surfaces as not-found).
+final disputeProvider = FutureProvider.autoDispose.family<Dispute, String>((ref, id) async {
+  final all = await ref.watch(disputesProvider.future);
+  final d = all.where((x) => x.id == id).firstOrNull;
+  if (d == null) throw const ApiException(code: 'not_found', message: '', statusCode: 410);
+  return d;
+});
+
+final disputeEvidenceProvider = FutureProvider.autoDispose.family<List<DisputeEvidence>, String>((ref, id) {
+  _userId(ref);
+  return ref.watch(trustRepositoryProvider).evidence(id);
+});
+
+final myRatingsProvider = FutureProvider.autoDispose<MyRatings>((ref) {
+  _userId(ref);
+  ref.watch(langCodeProvider);
+  return ref.watch(trustRepositoryProvider).ratings();
 });

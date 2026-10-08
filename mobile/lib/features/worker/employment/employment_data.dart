@@ -57,6 +57,8 @@ class MyEmployment {
     this.dearnessAllowance,
     this.otherAllowance,
     this.dailyWage,
+    this.hourlyWage,
+    this.partTime = false,
     this.monthlyGross,
     this.ssfEnrolled = false,
     this.contract,
@@ -84,6 +86,10 @@ class MyEmployment {
   final String? dearnessAllowance;
   final String? otherAllowance;
   final String? dailyWage;
+
+  /// Hourly wage type (≤ 8 regular hours/day, the rest is overtime).
+  final String? hourlyWage;
+  final bool partTime;
   final String? monthlyGross;
   final bool ssfEnrolled;
   final ContractInfo? contract;
@@ -141,6 +147,8 @@ class MyEmployment {
       dearnessAllowance: str(j['dearness_allowance']),
       otherAllowance: str(j['other_allowance']),
       dailyWage: str(j['daily_wage']),
+      hourlyWage: str(j['hourly_wage']),
+      partTime: boolOf(j['part_time']),
       monthlyGross: str(j['monthly_gross']),
       ssfEnrolled: boolOf(j['ssf_enrolled']),
       contract: ContractInfo.fromJson(j['contract']),

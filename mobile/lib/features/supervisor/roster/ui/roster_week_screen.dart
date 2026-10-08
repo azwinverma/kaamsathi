@@ -54,7 +54,7 @@ class _RosterWeekScreenState extends ConsumerState<RosterWeekScreen> {
                     (w) =>
                         w.rows.isEmpty
                             ? ListView(children: [EmptyState(icon: LucideIcons.calendarRange, message: l.rosterEmpty)])
-                            : _Grid(week: w, shifts: shifts, onTap: (row, date) => _edit(key, row, date, shifts)),
+                            : _Grid(week: w, shifts: shifts, onTap: (row, date) => _edit(key, w, row, date, shifts)),
               ),
             ),
           ),
@@ -63,10 +63,11 @@ class _RosterWeekScreenState extends ConsumerState<RosterWeekScreen> {
     );
   }
 
-  Future<void> _edit(RosterKey key, RosterWeekRow row, String date, List<ShiftRef> shifts) async {
+  Future<void> _edit(RosterKey key, RosterWeek week, RosterWeekRow row, String date, List<ShiftRef> shifts) async {
     final l = context.l10n;
     final lang = context.lang;
     final current = row.cells[date];
+    final warnings = row.warnings[date] ?? const <String>[];
     // Result: ('shift', id) | ('off', null) | ('clear', null)
     final choice = await showModalBottomSheet<(String, String?)>(
       context: context,
@@ -79,6 +80,16 @@ class _RosterWeekScreenState extends ConsumerState<RosterWeekScreen> {
                   title: Text(row.workerName, style: Theme.of(ctx).textTheme.titleMedium),
                   subtitle: Text(formatBsOrAd(null, date, lang)),
                 ),
+                for (final w in warnings)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(KsSpace.page, 0, KsSpace.page, KsSpace.s2),
+                    child: InfoNote(
+                      key: Key('roster_warning_$w'),
+                      text: rosterWarningLabel(l, w, week.warningLabels),
+                      icon: LucideIcons.triangleAlert,
+                      tone: Tone.warning,
+                    ),
+                  ),
                 for (final s in shifts)
                   ListTile(
                     leading: const Icon(LucideIcons.clock),
@@ -104,7 +115,7 @@ class _RosterWeekScreenState extends ConsumerState<RosterWeekScreen> {
     );
     if (choice == null || !mounted) return;
     try {
-      await ref
+      final result = await ref
           .read(rosterRepositoryProvider)
           .setCell(
             employmentId: row.employmentId,
@@ -114,11 +125,33 @@ class _RosterWeekScreenState extends ConsumerState<RosterWeekScreen> {
             isOff: choice.$1 == 'off',
           );
       ref.invalidate(rosterWeekProvider(key));
-      if (mounted) showSnack(context, l.commonSaved);
+      if (!mounted) return;
+      final saved =
+          result.notifiedWorkers > 0
+              ? l.rosterNotified(localizeDigits('${result.notifiedWorkers}', lang))
+              : l.commonSaved;
+      // Warnings never block the save; show them with the confirmation.
+      final notes = {
+        for (final w in result.warnings)
+          (w.message?.isNotEmpty ?? false) ? w.message! : rosterWarningLabel(l, w.code, week.warningLabels),
+      };
+      showSnack(context, [saved, ...notes].join('\n'));
     } catch (e) {
       if (mounted) showSnack(context, errorText(context, e), error: true);
     }
   }
+}
+
+String rosterWarningLabel(AppLocalizations l, String code, Map<String, String> server) {
+  final s = server[code];
+  if (s != null && s.isNotEmpty) return s;
+  return switch (code) {
+    RosterWarning.onLeave => l.rosterWarnOnLeave,
+    RosterWarning.holiday => l.rosterWarnHoliday,
+    RosterWarning.weeklyOff => l.rosterWarnWeeklyOff,
+    RosterWarning.conflictElsewhere => l.rosterWarnConflict,
+    _ => code,
+  };
 }
 
 class _Grid extends StatelessWidget {
@@ -146,18 +179,22 @@ class _Grid extends StatelessWidget {
       return SizedBox(
         width: _cellW,
         height: 40,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              ad == null ? '' : weekdayName(ad, lang, short: true),
-              style: t.labelSmall?.copyWith(color: c.textSecondary),
-            ),
-            Text(
-              bs == null ? '' : localizeDigits('${bs.day}', lang),
-              style: t.labelMedium?.copyWith(color: d.date == today ? Theme.of(context).colorScheme.primary : null),
-            ),
-          ],
+        // Devanagari line heights are taller: scale down rather than overflow.
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                ad == null ? '' : weekdayName(ad, lang, short: true),
+                style: t.labelSmall?.copyWith(color: c.textSecondary),
+              ),
+              Text(
+                bs == null ? '' : localizeDigits('${bs.day}', lang),
+                style: t.labelMedium?.copyWith(color: d.date == today ? Theme.of(context).colorScheme.primary : null),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -172,9 +209,13 @@ class _Grid extends StatelessWidget {
               ? (c.warningBg, c.warningFg)
               : (c.infoBg, c.infoFg);
       final text = v == null ? '' : (v.isOff ? l.rosterOffShort : (shift?.short ?? '•'));
+      final warns = row.warnings[date] ?? const <String>[];
+      final warnText = warns.map((w) => rosterWarningLabel(l, w, week.warningLabels)).join(', ');
       return Semantics(
         button: true,
-        label: '${row.workerName} $date ${v == null ? l.shiftsNone : (v.isOff ? l.shiftsOff : shift?.name ?? '')}',
+        label:
+            '${row.workerName} $date ${v == null ? l.shiftsNone : (v.isOff ? l.shiftsOff : shift?.name ?? '')}'
+            '${warns.isEmpty ? '' : ' · $warnText'}',
         child: InkWell(
           onTap: () => onTap(row, date),
           borderRadius: BorderRadius.circular(KsRadius.sm),
@@ -188,7 +229,29 @@ class _Grid extends StatelessWidget {
               borderRadius: BorderRadius.circular(KsRadius.sm),
               border: v == null ? Border.all(color: c.border) : null,
             ),
-            child: Text(text, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: fg)),
+            child: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
+              children: [
+                Text(text, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: fg)),
+                if (warns.isNotEmpty)
+                  Positioned(
+                    top: -2,
+                    right: -2,
+                    child: Container(
+                      key: Key('roster_warn_${row.employmentId}_$date'),
+                      width: 16,
+                      height: 16,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(color: c.dangerFg, shape: BoxShape.circle),
+                      child: const Text(
+                        '!',
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Colors.white),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       );
@@ -261,6 +324,7 @@ class _Grid extends StatelessWidget {
                 children: [
                   for (final s in shifts) Text('${s.short} = ${s.label(lang)}', style: t.bodySmall),
                   Text('${l.rosterOffShort} = ${l.shiftsOff}', style: t.bodySmall),
+                  if (week.rows.any((r) => r.warnings.isNotEmpty)) Text(l.rosterWarnLegend, style: t.bodySmall),
                 ],
               ),
             ),

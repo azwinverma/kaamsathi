@@ -30,6 +30,8 @@ class Credential {
     this.statusLabel,
     this.note,
     this.documentUrl,
+    this.canResubmit = false,
+    this.resubmissionOf,
   });
 
   final String id;
@@ -49,6 +51,12 @@ class Credential {
   final String? note;
   final String? documentUrl;
 
+  /// Rejected and not yet resubmitted (G012).
+  final bool canResubmit;
+
+  /// The rejected credential this one replaces.
+  final ResubmissionRef? resubmissionOf;
+
   bool get canDelete => status == 'pending';
 
   factory Credential.fromJson(Json j) => Credential(
@@ -66,7 +74,60 @@ class Credential {
     statusLabel: str(j['status_label']),
     note: str(j['note']),
     documentUrl: str(j['document']),
+    canResubmit: boolOf(j['can_resubmit']),
+    resubmissionOf: ResubmissionRef.fromJson(j['resubmission_of']),
   );
+}
+
+/// `resubmission_of: {id, status, note, created_at}`.
+class ResubmissionRef {
+  const ResubmissionRef({required this.id, this.status, this.note, this.createdAt});
+  final String id;
+  final String? status;
+  final String? note;
+  final DateTime? createdAt;
+
+  static ResubmissionRef? fromJson(Object? v) {
+    final j = asJsonOrNull(v);
+    if (j == null) return null;
+    return ResubmissionRef(
+      id: strOr(j['id']),
+      status: str(j['status']),
+      note: str(j['note']),
+      createdAt: dateTimeOf(j['created_at']),
+    );
+  }
+}
+
+/// Fields for a credential create/resubmit. On resubmit, only fields that
+/// changed are sent; the server copies the rest (and the document) from the
+/// rejected original.
+Map<String, Object> credentialFields({
+  required String kind,
+  required String title,
+  required String issuer,
+  String? certificateNo,
+  String? level,
+  String? issuedOn,
+  String? expiresOn,
+  Credential? original,
+}) {
+  final out = <String, Object>{};
+  void put(String key, String? value, String? old) {
+    final v = value?.trim() ?? '';
+    if (v.isEmpty) return;
+    if (original != null && v == (old ?? '').trim()) return;
+    out[key] = v;
+  }
+
+  put('kind', kind, original?.kind);
+  put('title', title, original?.title);
+  put('issuer', issuer, original?.issuer);
+  put('certificate_no', certificateNo, original?.certificateNo);
+  put('level', level, original?.level);
+  put('issued_on', issuedOn, original?.issuedOn);
+  put('expires_on', expiresOn, original?.expiresOn);
+  return out;
 }
 
 /// Verified-only passport payload (ECOSYSTEM §3), shared by public + share views.
@@ -280,6 +341,15 @@ class CredentialsRepository {
   }
 
   Future<void> deleteCredential(String id) => _api.delete('/me/credentials/$id');
+
+  /// `POST /me/credentials/{id}/resubmit` (multipart; every field optional).
+  Future<void> resubmit(String id, Map<String, Object> fields, {String? documentPath}) async {
+    final form = FormData.fromMap({
+      ...fields,
+      if (documentPath != null) 'document': await MultipartFile.fromFile(documentPath),
+    });
+    await _api.post<dynamic>('/me/credentials/$id/resubmit', data: form);
+  }
 
   Future<Cached<Passport>> passport(String lang) => cachedFetch(
     prefs: _prefs,

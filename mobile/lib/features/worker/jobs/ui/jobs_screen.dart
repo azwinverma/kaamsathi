@@ -296,6 +296,13 @@ class _MyApplicationsTabState extends ConsumerState<MyApplicationsTab> {
                               spacing: KsSpace.s2,
                               runSpacing: KsSpace.s1,
                               children: [
+                                if (a.isEmployerInvite)
+                                  StatusBadge(
+                                    key: Key('invited_${a.id}'),
+                                    label: l.appsInvited,
+                                    tone: Tone.info,
+                                    icon: LucideIcons.mailOpen,
+                                  ),
                                 if (a.underReview)
                                   StatusBadge(label: l.appsUnderReview, tone: Tone.warning, icon: LucideIcons.hourglass)
                                 else
@@ -310,7 +317,15 @@ class _MyApplicationsTabState extends ConsumerState<MyApplicationsTab> {
                                   StatusBadge(label: l.appsResponseDeclined, tone: Tone.neutral, icon: LucideIcons.x),
                               ],
                             ),
-                            if (a.interviewAt != null) ...[
+                            if (a.isEmployerInvite) ...[
+                              const SizedBox(height: KsSpace.s2),
+                              InfoNote(text: l.appsInvitedHint, icon: LucideIcons.mailOpen),
+                            ],
+                            if (a.interviews.isNotEmpty) ...[
+                              const SizedBox(height: KsSpace.s3),
+                              Text(l.ivTitle, style: t.titleSmall),
+                              for (final iv in a.interviews) InterviewTile(interview: iv),
+                            ] else if (a.interviewAt != null) ...[
                               const SizedBox(height: KsSpace.s2),
                               Text(
                                 l.appsInterview(
@@ -352,6 +367,70 @@ class _MyApplicationsTabState extends ConsumerState<MyApplicationsTab> {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+String interviewModeLabel(AppLocalizations l, String mode) => switch (mode) {
+  'phone' => l.ivModePhone,
+  'video' => l.ivModeVideo,
+  'trade_test' => l.ivModeTradeTest,
+  _ => l.ivModeInPerson,
+};
+
+(String, Tone) interviewOutcome(AppLocalizations l, String outcome) => switch (outcome) {
+  'passed' => (l.ivOutcomePassed, Tone.success),
+  'failed' => (l.ivOutcomeFailed, Tone.neutral),
+  'no_show' => (l.ivOutcomeNoShow, Tone.danger),
+  _ => (l.ivOutcomePending, Tone.info),
+};
+
+/// One interview round: when, how, where, with whom, result.
+class InterviewTile extends StatelessWidget {
+  const InterviewTile({super.key, required this.interview});
+  final Interview interview;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final lang = context.lang;
+    final t = Theme.of(context).textTheme;
+    final iv = interview;
+    final at = iv.scheduledAt?.toLocal();
+    final when =
+        at == null
+            ? formatBsOrAd(iv.scheduledAtBs, null, lang)
+            : '${formatBsDateTime(at, lang)} · ${formatTime(at, lang)}';
+    final (outcome, tone) = interviewOutcome(l, iv.outcome);
+    final icon = switch (iv.mode) {
+      'phone' => LucideIcons.phone,
+      'video' => LucideIcons.video,
+      'trade_test' => LucideIcons.hammer,
+      _ => LucideIcons.users,
+    };
+    return Padding(
+      key: Key('interview_${iv.id}'),
+      padding: const EdgeInsets.only(top: KsSpace.s2),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 20),
+          const SizedBox(width: KsSpace.s2),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(when, style: t.bodyMedium),
+                Text(interviewModeLabel(l, iv.mode), style: t.bodySmall),
+                if (iv.location?.isNotEmpty ?? false) Text(l.ivPlace(iv.location!), style: t.bodySmall),
+                if (iv.interviewerName?.isNotEmpty ?? false) Text(l.ivWith(iv.interviewerName!), style: t.bodySmall),
+              ],
+            ),
+          ),
+          const SizedBox(width: KsSpace.s2),
+          StatusBadge(label: outcome, tone: tone),
+        ],
       ),
     );
   }

@@ -28,6 +28,8 @@ String disputeKindLabel(AppLocalizations l, String kind) => switch (kind) {
     'employer_responded' => (l.disputeStatusResponded, Tone.info),
     'resolved' => (l.disputeStatusResolved, Tone.success),
     'rejected' => (l.disputeStatusRejected, Tone.danger),
+    'appealed' => (l.disputeStatusAppealed, Tone.warning),
+    'appeal_resolved' => (l.disputeStatusAppealResolved, Tone.success),
     _ => (l.disputeStatusOpen, Tone.warning),
   };
   return ((d.statusLabel?.isNotEmpty ?? false) ? d.statusLabel! : label, tone);
@@ -76,47 +78,69 @@ class DisputesScreen extends ConsumerWidget {
                   if (items.isEmpty) EmptyState(icon: LucideIcons.messageSquare, message: l.disputesEmpty),
                   for (final d in items)
                     Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(KsSpace.s4),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    (d.kindLabel?.isNotEmpty ?? false) ? d.kindLabel! : disputeKindLabel(l, d.kind),
-                                    style: t.titleSmall,
+                      key: Key('dispute_${d.id}'),
+                      clipBehavior: Clip.antiAlias,
+                      child: InkWell(
+                        onTap: () => context.push(Routes.workerDispute(d.id)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(KsSpace.s4),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      (d.kindLabel?.isNotEmpty ?? false) ? d.kindLabel! : disputeKindLabel(l, d.kind),
+                                      style: t.titleSmall,
+                                    ),
                                   ),
-                                ),
-                                Builder(
-                                  builder: (_) {
-                                    final (label, tone) = disputeStatus(l, d);
-                                    return StatusBadge(label: label, tone: tone);
-                                  },
+                                  Builder(
+                                    builder: (_) {
+                                      final (label, tone) = disputeStatus(l, d);
+                                      return StatusBadge(label: label, tone: tone);
+                                    },
+                                  ),
+                                ],
+                              ),
+                              if (d.organization != null) Text(d.organization!.name, style: t.bodySmall),
+                              if (d.attendanceDate != null)
+                                Text(formatBsOrAd(d.attendanceDateBs, d.attendanceDate, lang), style: t.bodySmall),
+                              const SizedBox(height: KsSpace.s2),
+                              Text(d.description, style: t.bodyMedium),
+                              if (d.employerNote?.isNotEmpty ?? false) ...[
+                                const SizedBox(height: KsSpace.s2),
+                                Text(l.disputeEmployerNote, style: t.labelMedium),
+                                Text(d.employerNote!, style: t.bodyMedium),
+                              ],
+                              if (d.resolutionNote?.isNotEmpty ?? false) ...[
+                                const SizedBox(height: KsSpace.s2),
+                                Text(l.disputeResolution, style: t.labelMedium),
+                                Text(d.resolutionNote!, style: t.bodyMedium),
+                              ],
+                              if (d.raisedAt != null) ...[
+                                const SizedBox(height: KsSpace.s2),
+                                Text(l.disputeRaisedOn(formatBsDateTime(d.raisedAt, lang)), style: t.bodySmall),
+                              ],
+                              if (d.evidenceCount > 0 || d.canAppeal) ...[
+                                const SizedBox(height: KsSpace.s2),
+                                Wrap(
+                                  spacing: KsSpace.s2,
+                                  runSpacing: KsSpace.s1,
+                                  children: [
+                                    if (d.evidenceCount > 0)
+                                      StatusBadge(
+                                        label: l.evidenceCount(localizeDigits('${d.evidenceCount}', lang)),
+                                        tone: Tone.neutral,
+                                        icon: LucideIcons.paperclip,
+                                      ),
+                                    if (d.canAppeal)
+                                      StatusBadge(label: l.appealSection, tone: Tone.info, icon: LucideIcons.scale),
+                                  ],
                                 ),
                               ],
-                            ),
-                            if (d.organization != null) Text(d.organization!.name, style: t.bodySmall),
-                            if (d.attendanceDate != null)
-                              Text(formatBsOrAd(d.attendanceDateBs, d.attendanceDate, lang), style: t.bodySmall),
-                            const SizedBox(height: KsSpace.s2),
-                            Text(d.description, style: t.bodyMedium),
-                            if (d.employerNote?.isNotEmpty ?? false) ...[
-                              const SizedBox(height: KsSpace.s2),
-                              Text(l.disputeEmployerNote, style: t.labelMedium),
-                              Text(d.employerNote!, style: t.bodyMedium),
                             ],
-                            if (d.resolutionNote?.isNotEmpty ?? false) ...[
-                              const SizedBox(height: KsSpace.s2),
-                              Text(l.disputeResolution, style: t.labelMedium),
-                              Text(d.resolutionNote!, style: t.bodyMedium),
-                            ],
-                            if (d.raisedAt != null) ...[
-                              const SizedBox(height: KsSpace.s2),
-                              Text(l.disputeRaisedOn(formatBsDateTime(d.raisedAt, lang)), style: t.bodySmall),
-                            ],
-                          ],
+                          ),
                         ),
                       ),
                     ),

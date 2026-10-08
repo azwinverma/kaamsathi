@@ -27,6 +27,8 @@ class WorkerProfile {
     this.serviceRadiusKm,
     this.expectedMonthlyWage,
     this.availableFrom,
+    this.languages = const [],
+    this.completeness,
   });
 
   final String id;
@@ -53,6 +55,12 @@ class WorkerProfile {
   final int? serviceRadiusKm;
   final String? expectedMonthlyWage;
   final String? availableFrom;
+
+  /// Spoken languages (E004).
+  final List<SpokenLanguage> languages;
+
+  /// `profile_completeness` (E008); null on servers without it.
+  final ProfileCompleteness? completeness;
 
   String displayName(String lang) => lang == 'ne' && (fullNameNe?.isNotEmpty ?? false) ? fullNameNe! : fullName;
 
@@ -85,19 +93,114 @@ class WorkerProfile {
       serviceRadiusKm: intOf(j['service_radius_km']),
       expectedMonthlyWage: str(j['expected_monthly_wage']),
       availableFrom: str(j['available_from']),
+      languages: asJsonList(j['languages']).map(SpokenLanguage.fromJson).where((x) => x.code.isNotEmpty).toList(),
+      completeness: ProfileCompleteness.fromJson(j['profile_completeness']),
+    );
+  }
+}
+
+/// Spoken-language codes accepted by `PATCH /me/worker {languages}`.
+abstract final class SpokenLanguageCodes {
+  static const all = [
+    'ne', 'en', 'hi', 'mai', 'bho', 'new', 'tha', 'tam', 'mgp', 'gvr', 'lim', //
+    'bap', 'xsr', 'dty', 'awa', 'ur', 'ar', 'ms', 'ja', 'ko', 'zh',
+  ];
+  static const proficiencies = ['basic', 'conversational', 'fluent', 'native'];
+  static const max = 15;
+}
+
+/// `{language, language_label, proficiency, proficiency_label}`.
+class SpokenLanguage {
+  const SpokenLanguage({required this.code, this.proficiency = 'conversational', this.label, this.proficiencyLabel});
+  final String code;
+  final String proficiency;
+  final String? label;
+  final String? proficiencyLabel;
+
+  SpokenLanguage withProficiency(String p) => SpokenLanguage(code: code, proficiency: p, label: label);
+
+  Json toJson() => {'language': code, 'proficiency': proficiency};
+
+  factory SpokenLanguage.fromJson(Json j) => SpokenLanguage(
+    code: strOr(j['language'] ?? j['code']),
+    proficiency: strOr(j['proficiency'], 'conversational'),
+    label: str(j['language_label']),
+    proficiencyLabel: str(j['proficiency_label']),
+  );
+}
+
+/// The PATCH body that replaces the worker's whole language list.
+Json languagesPatch(List<SpokenLanguage> list) => {
+  'languages': [for (final x in list) x.toJson()],
+};
+
+/// Fixed-order completeness checklist keys.
+abstract final class CompletenessKey {
+  static const all = [
+    'photo',
+    'identity',
+    'skills',
+    'languages',
+    'availability',
+    'verified_credential',
+    'work_history',
+    'payment_details',
+  ];
+}
+
+class CompletenessItem {
+  const CompletenessItem({required this.key, required this.done, this.label});
+  final String key;
+  final bool done;
+  final String? label;
+}
+
+/// `profile_completeness: {percent, missing[], items[{key, done, label}]}`.
+class ProfileCompleteness {
+  const ProfileCompleteness({required this.percent, this.missing = const [], this.items = const []});
+  final int percent;
+  final List<String> missing;
+  final List<CompletenessItem> items;
+
+  bool get isComplete => percent >= 100 || (items.isNotEmpty && items.every((i) => i.done));
+
+  /// Items still to do, in the server's order.
+  List<CompletenessItem> get todo {
+    final open = items.where((i) => !i.done).toList();
+    if (open.isNotEmpty || items.isNotEmpty) return open;
+    return [for (final k in missing) CompletenessItem(key: k, done: false)];
+  }
+
+  static ProfileCompleteness? fromJson(Object? v) {
+    final j = asJsonOrNull(v);
+    if (j == null) return null;
+    return ProfileCompleteness(
+      percent: (intOf(j['percent']) ?? 0).clamp(0, 100),
+      missing: strList(j['missing']),
+      items: [
+        for (final i in asJsonList(j['items']))
+          CompletenessItem(key: strOr(i['key']), done: boolOf(i['done']), label: str(i['label'])),
+      ],
     );
   }
 }
 
 /// One day of `GET /me/attendance`.
 class MyAttendanceDay {
-  const MyAttendanceDay({required this.date, required this.bsDay, this.status});
+  const MyAttendanceDay({required this.date, required this.bsDay, this.status, this.checkInAt, this.checkOutAt});
   final String date;
   final int bsDay;
   final String? status;
+  final DateTime? checkInAt;
+  final DateTime? checkOutAt;
 
-  factory MyAttendanceDay.fromJson(Json j) =>
-      MyAttendanceDay(date: strOr(j['date']), bsDay: intOf(j['bs_day']) ?? 0, status: str(j['status']));
+  factory MyAttendanceDay.fromJson(Json j) => MyAttendanceDay(
+    date: strOr(j['date']),
+    bsDay: intOf(j['bs_day']) ?? 0,
+    status: str(j['status']),
+    checkInAt: dateTimeOf(j['check_in_at']),
+    checkOutAt: dateTimeOf(j['check_out_at']),
+  );
 }
 
 class MyAttendanceMonth {
@@ -136,6 +239,9 @@ class Payslip {
     this.absentDays,
     this.payableDays,
     this.overtimeHours,
+    this.regularHours,
+    this.hourlyWage,
+    this.employmentId,
     this.basicEarned,
     this.daEarned,
     this.allowanceEarned,
@@ -169,6 +275,13 @@ class Payslip {
   final num? absentDays;
   final num? payableDays;
   final num? overtimeHours;
+
+  /// Hours paid at the hourly rate (hourly wage type only).
+  final num? regularHours;
+
+  /// Hourly rate, when the server includes it (or the employment's).
+  final String? hourlyWage;
+  final String? employmentId;
   final String? basicEarned;
   final String? daEarned;
   final String? allowanceEarned;
@@ -186,6 +299,7 @@ class Payslip {
   final String? note;
 
   bool get isPaid => paymentStatus == 'paid';
+  bool get isHourly => wageType == 'hourly';
 
   String monthLabel(String lang) => formatBsMonthYear(bsYear, bsMonth, lang);
 
@@ -211,6 +325,9 @@ class Payslip {
       absentDays: numOf(j['absent_days']),
       payableDays: numOf(j['payable_days']),
       overtimeHours: numOf(j['overtime_hours']),
+      regularHours: numOf(j['regular_hours']),
+      hourlyWage: str(j['hourly_wage'] ?? asJsonOrNull(j['employment'])?['hourly_wage']),
+      employmentId: str(j['employment_id'] ?? asJsonOrNull(j['employment'])?['id']),
       basicEarned: str(j['basic_earned']),
       daEarned: str(j['da_earned']),
       allowanceEarned: str(j['allowance_earned']),

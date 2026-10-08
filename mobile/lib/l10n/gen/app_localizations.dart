@@ -90,10 +90,7 @@ abstract class AppLocalizations {
   ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[
-    Locale('en'),
-    Locale('ne')
-  ];
+  static const List<Locale> supportedLocales = <Locale>[Locale('en'), Locale('ne')];
 
   /// No description provided for @appName.
   ///
@@ -5704,6 +5701,888 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Answer by'**
   String get offerAnswerByLabel;
+
+  /// No description provided for @langTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Languages I speak'**
+  String get langTitle;
+
+  /// No description provided for @langMenuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Employers look for workers who speak their customers\' language'**
+  String get langMenuSubtitle;
+
+  /// No description provided for @langAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a language'**
+  String get langAdd;
+
+  /// No description provided for @langEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No languages added yet.'**
+  String get langEmpty;
+
+  /// No description provided for @langPick.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a language'**
+  String get langPick;
+
+  /// No description provided for @langProficiency.
+  ///
+  /// In en, this message translates to:
+  /// **'How well do you speak it?'**
+  String get langProficiency;
+
+  /// No description provided for @langSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Languages saved.'**
+  String get langSaved;
+
+  /// No description provided for @langMax.
+  ///
+  /// In en, this message translates to:
+  /// **'You can add up to 15 languages.'**
+  String get langMax;
+
+  /// No description provided for @profBasic.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic'**
+  String get profBasic;
+
+  /// No description provided for @profConversational.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversational'**
+  String get profConversational;
+
+  /// No description provided for @profFluent.
+  ///
+  /// In en, this message translates to:
+  /// **'Fluent'**
+  String get profFluent;
+
+  /// No description provided for @profNative.
+  ///
+  /// In en, this message translates to:
+  /// **'Native (mother tongue)'**
+  String get profNative;
+
+  /// No description provided for @langNameNe.
+  ///
+  /// In en, this message translates to:
+  /// **'Nepali'**
+  String get langNameNe;
+
+  /// No description provided for @langNameEn.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get langNameEn;
+
+  /// No description provided for @langNameHi.
+  ///
+  /// In en, this message translates to:
+  /// **'Hindi'**
+  String get langNameHi;
+
+  /// No description provided for @langNameMai.
+  ///
+  /// In en, this message translates to:
+  /// **'Maithili'**
+  String get langNameMai;
+
+  /// No description provided for @langNameBho.
+  ///
+  /// In en, this message translates to:
+  /// **'Bhojpuri'**
+  String get langNameBho;
+
+  /// No description provided for @langNameNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Nepal Bhasa (Newari)'**
+  String get langNameNew;
+
+  /// No description provided for @langNameTha.
+  ///
+  /// In en, this message translates to:
+  /// **'Tharu'**
+  String get langNameTha;
+
+  /// No description provided for @langNameTam.
+  ///
+  /// In en, this message translates to:
+  /// **'Tamang'**
+  String get langNameTam;
+
+  /// No description provided for @langNameMgp.
+  ///
+  /// In en, this message translates to:
+  /// **'Magar'**
+  String get langNameMgp;
+
+  /// No description provided for @langNameGvr.
+  ///
+  /// In en, this message translates to:
+  /// **'Gurung'**
+  String get langNameGvr;
+
+  /// No description provided for @langNameLim.
+  ///
+  /// In en, this message translates to:
+  /// **'Limbu'**
+  String get langNameLim;
+
+  /// No description provided for @langNameBap.
+  ///
+  /// In en, this message translates to:
+  /// **'Rai (Bantawa)'**
+  String get langNameBap;
+
+  /// No description provided for @langNameXsr.
+  ///
+  /// In en, this message translates to:
+  /// **'Sherpa'**
+  String get langNameXsr;
+
+  /// No description provided for @langNameDty.
+  ///
+  /// In en, this message translates to:
+  /// **'Doteli'**
+  String get langNameDty;
+
+  /// No description provided for @langNameAwa.
+  ///
+  /// In en, this message translates to:
+  /// **'Awadhi'**
+  String get langNameAwa;
+
+  /// No description provided for @langNameUr.
+  ///
+  /// In en, this message translates to:
+  /// **'Urdu'**
+  String get langNameUr;
+
+  /// No description provided for @langNameAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get langNameAr;
+
+  /// No description provided for @langNameMs.
+  ///
+  /// In en, this message translates to:
+  /// **'Malay'**
+  String get langNameMs;
+
+  /// No description provided for @langNameJa.
+  ///
+  /// In en, this message translates to:
+  /// **'Japanese'**
+  String get langNameJa;
+
+  /// No description provided for @langNameKo.
+  ///
+  /// In en, this message translates to:
+  /// **'Korean'**
+  String get langNameKo;
+
+  /// No description provided for @langNameZh.
+  ///
+  /// In en, this message translates to:
+  /// **'Chinese'**
+  String get langNameZh;
+
+  /// No description provided for @complTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile'**
+  String get complTitle;
+
+  /// No description provided for @complPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent} complete'**
+  String complPercent(String percent);
+
+  /// No description provided for @complHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A complete profile gets more job offers.'**
+  String get complHint;
+
+  /// No description provided for @complPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a profile photo'**
+  String get complPhoto;
+
+  /// No description provided for @complIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your citizenship or national ID'**
+  String get complIdentity;
+
+  /// No description provided for @complSkills.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one skill'**
+  String get complSkills;
+
+  /// No description provided for @complLanguages.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the languages you speak'**
+  String get complLanguages;
+
+  /// No description provided for @complAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your availability and expected wage'**
+  String get complAvailability;
+
+  /// No description provided for @complVerifiedCredential.
+  ///
+  /// In en, this message translates to:
+  /// **'Get a certificate verified'**
+  String get complVerifiedCredential;
+
+  /// No description provided for @complWorkHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your work history'**
+  String get complWorkHistory;
+
+  /// No description provided for @complPaymentDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Add bank or wallet details for salary'**
+  String get complPaymentDetails;
+
+  /// No description provided for @appsInvited.
+  ///
+  /// In en, this message translates to:
+  /// **'Invited by employer'**
+  String get appsInvited;
+
+  /// No description provided for @appsInvitedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This employer worked with you before and invited you to apply.'**
+  String get appsInvitedHint;
+
+  /// No description provided for @ivTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Interviews'**
+  String get ivTitle;
+
+  /// No description provided for @ivModeInPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'In person'**
+  String get ivModeInPerson;
+
+  /// No description provided for @ivModePhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone call'**
+  String get ivModePhone;
+
+  /// No description provided for @ivModeVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Video call'**
+  String get ivModeVideo;
+
+  /// No description provided for @ivModeTradeTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Skill test'**
+  String get ivModeTradeTest;
+
+  /// No description provided for @ivOutcomePending.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get ivOutcomePending;
+
+  /// No description provided for @ivOutcomePassed.
+  ///
+  /// In en, this message translates to:
+  /// **'Passed'**
+  String get ivOutcomePassed;
+
+  /// No description provided for @ivOutcomeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Not selected'**
+  String get ivOutcomeFailed;
+
+  /// No description provided for @ivOutcomeNoShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed'**
+  String get ivOutcomeNoShow;
+
+  /// No description provided for @ivWith.
+  ///
+  /// In en, this message translates to:
+  /// **'With {name}'**
+  String ivWith(String name);
+
+  /// No description provided for @ivPlace.
+  ///
+  /// In en, this message translates to:
+  /// **'Place: {place}'**
+  String ivPlace(String place);
+
+  /// No description provided for @ratingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My ratings'**
+  String get ratingsTitle;
+
+  /// No description provided for @ratingsMenuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What employers said about you, and what you said'**
+  String get ratingsMenuSubtitle;
+
+  /// No description provided for @ratingsReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'From employers'**
+  String get ratingsReceived;
+
+  /// No description provided for @ratingsGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'Given by me'**
+  String get ratingsGiven;
+
+  /// No description provided for @ratingsEmptyReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'No employer has rated you yet.'**
+  String get ratingsEmptyReceived;
+
+  /// No description provided for @ratingsEmptyGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'You have not rated any employer yet.'**
+  String get ratingsEmptyGiven;
+
+  /// No description provided for @ratingsAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Average {score} · {count} ratings'**
+  String ratingsAverage(String score, String count);
+
+  /// No description provided for @ratingsReliability.
+  ///
+  /// In en, this message translates to:
+  /// **'Reliability'**
+  String get ratingsReliability;
+
+  /// No description provided for @ratingsSkill.
+  ///
+  /// In en, this message translates to:
+  /// **'Skill'**
+  String get ratingsSkill;
+
+  /// No description provided for @ratingsFlag.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this comment'**
+  String get ratingsFlag;
+
+  /// No description provided for @ratingsFlagTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this comment?'**
+  String get ratingsFlagTitle;
+
+  /// No description provided for @ratingsFlagHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us why it is unfair or untrue. KaamSathi\'s team will review it; your score stays the same until then.'**
+  String get ratingsFlagHint;
+
+  /// No description provided for @ratingsFlagReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get ratingsFlagReason;
+
+  /// No description provided for @ratingsFlagged.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent for review.'**
+  String get ratingsFlagged;
+
+  /// No description provided for @ratingsStatusFlagged.
+  ///
+  /// In en, this message translates to:
+  /// **'Under review'**
+  String get ratingsStatusFlagged;
+
+  /// No description provided for @ratingsStatusHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment hidden by KaamSathi'**
+  String get ratingsStatusHidden;
+
+  /// No description provided for @ratingsVoided.
+  ///
+  /// In en, this message translates to:
+  /// **'Not counted'**
+  String get ratingsVoided;
+
+  /// No description provided for @disputeStatusAppealed.
+  ///
+  /// In en, this message translates to:
+  /// **'Appealed'**
+  String get disputeStatusAppealed;
+
+  /// No description provided for @disputeStatusAppealResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Appeal decided'**
+  String get disputeStatusAppealResolved;
+
+  /// No description provided for @disputeDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint'**
+  String get disputeDetailTitle;
+
+  /// No description provided for @evidenceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Evidence'**
+  String get evidenceTitle;
+
+  /// No description provided for @evidenceEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No evidence added yet.'**
+  String get evidenceEmpty;
+
+  /// No description provided for @evidenceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos of payslips, receipts or the site help our team decide. Up to 10 files, 10 MB each.'**
+  String get evidenceHint;
+
+  /// No description provided for @evidenceAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add evidence'**
+  String get evidenceAdd;
+
+  /// No description provided for @evidenceNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get evidenceNote;
+
+  /// No description provided for @evidenceUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get evidenceUpload;
+
+  /// No description provided for @evidenceUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Evidence added.'**
+  String get evidenceUploaded;
+
+  /// No description provided for @evidenceTooBig.
+  ///
+  /// In en, this message translates to:
+  /// **'This file is too large (max 10 MB).'**
+  String get evidenceTooBig;
+
+  /// No description provided for @evidencePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get evidencePhoto;
+
+  /// No description provided for @evidencePdf.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF document'**
+  String get evidencePdf;
+
+  /// No description provided for @evidenceCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} files'**
+  String evidenceCount(String count);
+
+  /// No description provided for @appealButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Appeal this decision'**
+  String get appealButton;
+
+  /// No description provided for @appealUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'You can appeal until {date}.'**
+  String appealUntil(String date);
+
+  /// No description provided for @appealReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Why do you disagree?'**
+  String get appealReason;
+
+  /// No description provided for @appealHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can appeal only once. A different KaamSathi staff member reviews it within 7 days.'**
+  String get appealHint;
+
+  /// No description provided for @appealSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Appeal sent.'**
+  String get appealSent;
+
+  /// No description provided for @appealSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Appeal'**
+  String get appealSection;
+
+  /// No description provided for @appealWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for review'**
+  String get appealWaiting;
+
+  /// No description provided for @appealUpheld.
+  ///
+  /// In en, this message translates to:
+  /// **'Decision upheld'**
+  String get appealUpheld;
+
+  /// No description provided for @appealOverturned.
+  ///
+  /// In en, this message translates to:
+  /// **'Decision overturned'**
+  String get appealOverturned;
+
+  /// No description provided for @credResubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Resubmit'**
+  String get credResubmit;
+
+  /// No description provided for @credResubmitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Resubmit certificate'**
+  String get credResubmitTitle;
+
+  /// No description provided for @credResubmitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Fix what was wrong. Anything you leave unchanged — including the photo — is copied from the rejected one.'**
+  String get credResubmitHint;
+
+  /// No description provided for @credResubmissionOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Resubmitted after a rejection'**
+  String get credResubmissionOf;
+
+  /// No description provided for @credResubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent again for checking.'**
+  String get credResubmitted;
+
+  /// No description provided for @credEarlierNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier reason: {note}'**
+  String credEarlierNote(String note);
+
+  /// No description provided for @corrTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Correction requests'**
+  String get corrTitle;
+
+  /// No description provided for @corrMenuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask to fix a wrong hajiri day'**
+  String get corrMenuSubtitle;
+
+  /// No description provided for @corrRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Request a correction'**
+  String get corrRequest;
+
+  /// No description provided for @corrFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Hajiri for {date}'**
+  String corrFor(String date);
+
+  /// No description provided for @corrRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded: {status}'**
+  String corrRecorded(String status);
+
+  /// No description provided for @corrShouldBe.
+  ///
+  /// In en, this message translates to:
+  /// **'It should be'**
+  String get corrShouldBe;
+
+  /// No description provided for @corrCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrival time'**
+  String get corrCheckIn;
+
+  /// No description provided for @corrCheckOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaving time'**
+  String get corrCheckOut;
+
+  /// No description provided for @corrReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get corrReason;
+
+  /// No description provided for @corrReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. I was at the site but the QR did not scan'**
+  String get corrReasonHint;
+
+  /// No description provided for @corrSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent to your supervisor.'**
+  String get corrSent;
+
+  /// No description provided for @corrEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No correction requests.'**
+  String get corrEmpty;
+
+  /// No description provided for @corrStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get corrStatusPending;
+
+  /// No description provided for @corrStatusApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get corrStatusApproved;
+
+  /// No description provided for @corrStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get corrStatusRejected;
+
+  /// No description provided for @corrJob.
+  ///
+  /// In en, this message translates to:
+  /// **'Job'**
+  String get corrJob;
+
+  /// No description provided for @corrNoJob.
+  ///
+  /// In en, this message translates to:
+  /// **'You need an active job to request a correction.'**
+  String get corrNoJob;
+
+  /// No description provided for @corrNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note: {note}'**
+  String corrNote(String note);
+
+  /// No description provided for @corrChange.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} → {to}'**
+  String corrChange(String from, String to);
+
+  /// No description provided for @corrQueueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hajiri corrections'**
+  String get corrQueueTitle;
+
+  /// No description provided for @corrQueueSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Workers asking to fix their hajiri'**
+  String get corrQueueSubtitle;
+
+  /// No description provided for @corrTabPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get corrTabPending;
+
+  /// No description provided for @corrTabDecided.
+  ///
+  /// In en, this message translates to:
+  /// **'Decided'**
+  String get corrTabDecided;
+
+  /// No description provided for @corrApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get corrApprove;
+
+  /// No description provided for @corrReject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get corrReject;
+
+  /// No description provided for @corrApproveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve this correction?'**
+  String get corrApproveTitle;
+
+  /// No description provided for @corrRejectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject this correction?'**
+  String get corrRejectTitle;
+
+  /// No description provided for @corrApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved. Hajiri updated.'**
+  String get corrApproved;
+
+  /// No description provided for @corrRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected. The worker has been told.'**
+  String get corrRejected;
+
+  /// No description provided for @corrNoteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get corrNoteLabel;
+
+  /// No description provided for @corrRejectNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell the worker why'**
+  String get corrRejectNote;
+
+  /// No description provided for @talabRegularHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular hours'**
+  String get talabRegularHours;
+
+  /// No description provided for @talabHourlyWage.
+  ///
+  /// In en, this message translates to:
+  /// **'Hourly wage'**
+  String get talabHourlyWage;
+
+  /// No description provided for @empWageHourly.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} per hour'**
+  String empWageHourly(String amount);
+
+  /// No description provided for @empWorkType.
+  ///
+  /// In en, this message translates to:
+  /// **'Work type'**
+  String get empWorkType;
+
+  /// No description provided for @empPartTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Part-time'**
+  String get empPartTime;
+
+  /// No description provided for @empFullTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Full-time'**
+  String get empFullTime;
+
+  /// No description provided for @rosterNotified.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved · {count} workers notified'**
+  String rosterNotified(String count);
+
+  /// No description provided for @rosterWarnOnLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'On leave'**
+  String get rosterWarnOnLeave;
+
+  /// No description provided for @rosterWarnHoliday.
+  ///
+  /// In en, this message translates to:
+  /// **'Public holiday'**
+  String get rosterWarnHoliday;
+
+  /// No description provided for @rosterWarnWeeklyOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly day off'**
+  String get rosterWarnWeeklyOff;
+
+  /// No description provided for @rosterWarnConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Rostered at another workplace'**
+  String get rosterWarnConflict;
+
+  /// No description provided for @rosterWarnLegend.
+  ///
+  /// In en, this message translates to:
+  /// **'! = check this day'**
+  String get rosterWarnLegend;
+
+  /// No description provided for @commonEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get commonEdit;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
@@ -5722,18 +6601,18 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en': return AppLocalizationsEn();
-    case 'ne': return AppLocalizationsNe();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'ne':
+      return AppLocalizationsNe();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
+    'that was used.',
   );
 }

@@ -67,6 +67,50 @@ class JobSummary {
   }
 }
 
+/// An interview round (`interviews[]` on a worker application). The worker
+/// view never carries the employer's notes.
+class Interview {
+  const Interview({
+    required this.id,
+    this.scheduledAt,
+    this.scheduledAtBs,
+    required this.mode,
+    this.modeLabel,
+    this.location,
+    this.interviewerName,
+    this.outcome = 'pending',
+    this.outcomeLabel,
+  });
+
+  final String id;
+  final DateTime? scheduledAt;
+  final String? scheduledAtBs;
+
+  /// in_person | phone | video | trade_test
+  final String mode;
+  final String? modeLabel;
+  final String? location;
+  final String? interviewerName;
+
+  /// pending | passed | failed | no_show
+  final String outcome;
+  final String? outcomeLabel;
+
+  bool get isPending => outcome == 'pending';
+
+  factory Interview.fromJson(Json j) => Interview(
+    id: strOr(j['id']),
+    scheduledAt: dateTimeOf(j['scheduled_at']),
+    scheduledAtBs: str(j['scheduled_at_bs']),
+    mode: strOr(j['mode'], 'in_person'),
+    modeLabel: str(j['mode_label']),
+    location: str(j['location']),
+    interviewerName: str(j['interviewer_name']),
+    outcome: strOr(j['outcome'], 'pending'),
+    outcomeLabel: str(j['outcome_label']),
+  );
+}
+
 /// `GET /me/applications` item.
 class MyApplication {
   const MyApplication({
@@ -78,6 +122,7 @@ class MyApplication {
     this.interviewAt,
     this.createdAt,
     this.canRespond,
+    this.interviews = const [],
   });
 
   final String id;
@@ -96,6 +141,12 @@ class MyApplication {
 
   /// Server's `can_respond` (non-terminal and past `sourced`), when sent.
   final bool? canRespond;
+
+  /// Interview rounds, upcoming first then most recent.
+  final List<Interview> interviews;
+
+  /// A past employer invited the worker back (L004).
+  bool get isEmployerInvite => source == 'employer_invite';
 
   /// Ops shortlisted the worker and is waiting for them to confirm.
   bool get needsResponse {
@@ -127,8 +178,21 @@ class MyApplication {
       interviewAt: dateTimeOf(j['interview_at']),
       createdAt: dateTimeOf(j['created_at']),
       canRespond: j.containsKey('can_respond') ? boolOf(j['can_respond']) : null,
+      interviews: sortInterviews(asJsonList(j['interviews']).map(Interview.fromJson)),
     );
   }
+}
+
+/// Pending rounds first (soonest first), then past rounds (newest first).
+List<Interview> sortInterviews(Iterable<Interview> list) {
+  final out = [...list];
+  out.sort((a, b) {
+    if (a.isPending != b.isPending) return a.isPending ? -1 : 1;
+    final x = a.scheduledAt ?? DateTime(0);
+    final y = b.scheduledAt ?? DateTime(0);
+    return a.isPending ? x.compareTo(y) : y.compareTo(x);
+  });
+  return out;
 }
 
 /// Applications needing an answer first, then newest.
