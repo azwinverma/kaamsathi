@@ -12,6 +12,8 @@ import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/eco.dart';
 import '../../../../core/widgets/signature/signature.dart';
+import '../../../bolau/bolau_repository.dart';
+import '../../../bolau/ui/sipalu/bolau_tab.dart';
 import '../jobs_data.dart';
 import 'offers.dart';
 
@@ -73,17 +75,24 @@ class JobCardFrame extends StatelessWidget {
   }
 }
 
-/// Jobs for you · Offers · My applications (`?tab=offers|applications`).
-class JobsScreen extends StatelessWidget {
+/// Jobs for you · Offers · My applications (`?tab=offers|applications`),
+/// plus Bolau (`?tab=bolau`) while the `bolau` flag is on.
+class JobsScreen extends ConsumerWidget {
   const JobsScreen({super.key, this.initialTab = 0});
   final int initialTab;
 
+  /// Tab index of Bolau when shown.
+  static const bolauTab = 3;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
+    final bolau = ref.watch(bolauEnabledProvider);
+    final count = bolau ? 4 : 3;
     return DefaultTabController(
-      length: 3,
-      initialIndex: initialTab.clamp(0, 2),
+      key: ValueKey(count),
+      length: count,
+      initialIndex: initialTab.clamp(0, count - 1),
       child: Scaffold(
         appBar: AppBar(
           title: Text(l.jobsTitle),
@@ -95,9 +104,25 @@ class JobsScreen extends StatelessWidget {
               icon: const Icon(LucideIcons.bellPlus),
             ),
           ],
-          bottom: TabBar(tabs: [Tab(text: l.jobsTabForYou), Tab(text: l.offersTab), Tab(text: l.jobsTabApplications)]),
+          bottom: TabBar(
+            isScrollable: bolau,
+            tabAlignment: bolau ? TabAlignment.start : null,
+            tabs: [
+              Tab(text: l.jobsTabForYou),
+              Tab(text: l.offersTab),
+              Tab(text: l.jobsTabApplications),
+              if (bolau) Tab(key: const Key('tab_bolau'), text: l.blTab),
+            ],
+          ),
         ),
-        body: const TabBarView(children: [RecommendedJobsTab(), OffersTab(), MyApplicationsTab()]),
+        body: TabBarView(
+          children: [
+            const RecommendedJobsTab(),
+            const OffersTab(),
+            const MyApplicationsTab(),
+            if (bolau) const SipaluBolauTab(),
+          ],
+        ),
       ),
     );
   }

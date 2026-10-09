@@ -16,6 +16,14 @@ abstract final class FlagKeys {
   static const ratings = 'worker_ratings';
   static const credentialResubmit = 'credential_resubmit';
   static const spokenLanguages = 'spoken_languages';
+
+  /// Sipalu self-profiles + Ghardhani bookings (CONTRACT-BOLAU). Unlike the
+  /// keys above this one is **off unless the server sends `true`** — see
+  /// `bolauEnabledProvider`.
+  static const bolau = 'bolau';
+
+  /// Ghardhani booking fee collection; off → fee waived.
+  static const bolauFee = 'bolau_fee';
 }
 
 /// `GET /flags` → `{flags: {key: bool}}` (also accepts a bare map).

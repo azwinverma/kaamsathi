@@ -6847,6 +6847,2400 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Training completed. Well done.'**
   String get celebrateTraining;
+
+  /// No description provided for @blStatusRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for reply'**
+  String get blStatusRequested;
+
+  /// No description provided for @blStatusAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get blStatusAccepted;
+
+  /// No description provided for @blStatusDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get blStatusDeclined;
+
+  /// No description provided for @blStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'No reply in time'**
+  String get blStatusExpired;
+
+  /// No description provided for @blStatusOnTheWay.
+  ///
+  /// In en, this message translates to:
+  /// **'On the way'**
+  String get blStatusOnTheWay;
+
+  /// No description provided for @blStatusArrived.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrived'**
+  String get blStatusArrived;
+
+  /// No description provided for @blStatusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Work started'**
+  String get blStatusInProgress;
+
+  /// No description provided for @blStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Work done'**
+  String get blStatusCompleted;
+
+  /// No description provided for @blStatusConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get blStatusConfirmed;
+
+  /// No description provided for @blStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get blStatusCancelled;
+
+  /// No description provided for @blStatusNoShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Did not come'**
+  String get blStatusNoShow;
+
+  /// No description provided for @blStatusDisputed.
+  ///
+  /// In en, this message translates to:
+  /// **'Under review'**
+  String get blStatusDisputed;
+
+  /// No description provided for @blPriceFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed price'**
+  String get blPriceFixed;
+
+  /// No description provided for @blPriceHourly.
+  ///
+  /// In en, this message translates to:
+  /// **'By the hour'**
+  String get blPriceHourly;
+
+  /// No description provided for @blPriceVisitQuote.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit, then quote'**
+  String get blPriceVisitQuote;
+
+  /// No description provided for @blPerHour.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} an hour'**
+  String blPerHour(String amount);
+
+  /// No description provided for @blFixedPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} fixed'**
+  String blFixedPrice(String amount);
+
+  /// No description provided for @blVisitThenQuote.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit {amount}, then a quote'**
+  String blVisitThenQuote(String amount);
+
+  /// No description provided for @blNewOnBolau.
+  ///
+  /// In en, this message translates to:
+  /// **'New on Bolau'**
+  String get blNewOnBolau;
+
+  /// No description provided for @blJobsDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} jobs done'**
+  String blJobsDone(String count);
+
+  /// No description provided for @blRatingA11y.
+  ///
+  /// In en, this message translates to:
+  /// **'Rated {rating} out of 5'**
+  String blRatingA11y(String rating);
+
+  /// No description provided for @blIdVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'ID verified'**
+  String get blIdVerified;
+
+  /// No description provided for @blInstant.
+  ///
+  /// In en, this message translates to:
+  /// **'Instant booking'**
+  String get blInstant;
+
+  /// No description provided for @blFromPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'From {amount}'**
+  String blFromPrice(String amount);
+
+  /// No description provided for @blNextFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free {when}'**
+  String blNextFree(String when);
+
+  /// No description provided for @blArrivalCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrival code'**
+  String get blArrivalCode;
+
+  /// No description provided for @blArrivalCodeA11y.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrival code {digits}'**
+  String blArrivalCodeA11y(String digits);
+
+  /// No description provided for @blArrivalCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Read this out when the Sipalu arrives at your door. Don\'t share it before.'**
+  String get blArrivalCodeHint;
+
+  /// No description provided for @blEnterArrivalCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrival code'**
+  String get blEnterArrivalCode;
+
+  /// No description provided for @blEnterArrivalCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask the Ghardhani for the 4-digit code when you reach the door.'**
+  String get blEnterArrivalCodeHint;
+
+  /// No description provided for @blIHaveArrived.
+  ///
+  /// In en, this message translates to:
+  /// **'I have arrived'**
+  String get blIHaveArrived;
+
+  /// No description provided for @blNow.
+  ///
+  /// In en, this message translates to:
+  /// **'now'**
+  String get blNow;
+
+  /// No description provided for @blRequestTimeUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Time is up'**
+  String get blRequestTimeUp;
+
+  /// No description provided for @blAnswerWithin.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer within {time}'**
+  String blAnswerWithin(String time);
+
+  /// No description provided for @blReportProblem.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a problem'**
+  String get blReportProblem;
+
+  /// No description provided for @blContactHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone and exact address are shared only after the booking is accepted.'**
+  String get blContactHidden;
+
+  /// No description provided for @blShowGhardhaniContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Ghardhani\'s phone'**
+  String get blShowGhardhaniContact;
+
+  /// No description provided for @blShowSipaluContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Sipalu\'s phone'**
+  String get blShowSipaluContact;
+
+  /// No description provided for @blPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get blPhone;
+
+  /// No description provided for @blAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get blAddress;
+
+  /// No description provided for @blLandmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Landmark'**
+  String get blLandmark;
+
+  /// No description provided for @blCopyNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy number'**
+  String get blCopyNumber;
+
+  /// No description provided for @blContactExpires.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden again 48 hours after the work is done.'**
+  String get blContactExpires;
+
+  /// No description provided for @blHowPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'How was the Sipalu paid?'**
+  String get blHowPaid;
+
+  /// No description provided for @blPaidDirectNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Money goes straight to the Sipalu. KaamSathi never holds it or takes a cut.'**
+  String get blPaidDirectNote;
+
+  /// No description provided for @blTagOnTime.
+  ///
+  /// In en, this message translates to:
+  /// **'On time'**
+  String get blTagOnTime;
+
+  /// No description provided for @blTagCleanWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Clean work'**
+  String get blTagCleanWork;
+
+  /// No description provided for @blTagPolite.
+  ///
+  /// In en, this message translates to:
+  /// **'Polite'**
+  String get blTagPolite;
+
+  /// No description provided for @blTagFairPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Fair price'**
+  String get blTagFairPrice;
+
+  /// No description provided for @blTagSkilled.
+  ///
+  /// In en, this message translates to:
+  /// **'Knew the job'**
+  String get blTagSkilled;
+
+  /// No description provided for @blTagRespectful.
+  ///
+  /// In en, this message translates to:
+  /// **'Respectful'**
+  String get blTagRespectful;
+
+  /// No description provided for @blTagPaidAsAgreed.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid as agreed'**
+  String get blTagPaidAsAgreed;
+
+  /// No description provided for @blTagClearInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear instructions'**
+  String get blTagClearInstructions;
+
+  /// No description provided for @blPickStars.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose 1 to 5 stars.'**
+  String get blPickStars;
+
+  /// No description provided for @blRatingSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you. Your rating is saved.'**
+  String get blRatingSaved;
+
+  /// No description provided for @blRateSipalu.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate the Sipalu'**
+  String get blRateSipalu;
+
+  /// No description provided for @blRateGhardhani.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate the Ghardhani'**
+  String get blRateGhardhani;
+
+  /// No description provided for @blRateHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Only you two can rate each other, once. Reviews are checked before they show.'**
+  String get blRateHint;
+
+  /// No description provided for @blSendRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Send rating'**
+  String get blSendRating;
+
+  /// No description provided for @blAmountRs.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount (Rs)'**
+  String get blAmountRs;
+
+  /// No description provided for @blEnterAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an amount.'**
+  String get blEnterAmount;
+
+  /// No description provided for @blNotAboveQuoted.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t be more than the agreed {amount}.'**
+  String blNotAboveQuoted(String amount);
+
+  /// No description provided for @blWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like to do?'**
+  String get blWelcomeTitle;
+
+  /// No description provided for @blChooseSipalu.
+  ///
+  /// In en, this message translates to:
+  /// **'I want to find work'**
+  String get blChooseSipalu;
+
+  /// No description provided for @blChooseSipaluBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Become a Sipalu. Households book you directly and pay you directly — no commission.'**
+  String get blChooseSipaluBody;
+
+  /// No description provided for @blChooseGhardhani.
+  ///
+  /// In en, this message translates to:
+  /// **'I want to book a Sipalu'**
+  String get blChooseGhardhani;
+
+  /// No description provided for @blChooseGhardhaniBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Find an ID-verified electrician, plumber, cook or cleaner near you.'**
+  String get blChooseGhardhaniBody;
+
+  /// No description provided for @blEmployerAddedMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Did an employer add you?'**
+  String get blEmployerAddedMe;
+
+  /// No description provided for @blEmployerAddedMeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'If your employer added you with this number, check again to open your work app.'**
+  String get blEmployerAddedMeBody;
+
+  /// No description provided for @blSwitchMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch mode'**
+  String get blSwitchMode;
+
+  /// No description provided for @blModeSipalu.
+  ///
+  /// In en, this message translates to:
+  /// **'Sipalu'**
+  String get blModeSipalu;
+
+  /// No description provided for @blModeSipaluHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your jobs, bookings and earnings'**
+  String get blModeSipaluHint;
+
+  /// No description provided for @blModeGhardhani.
+  ///
+  /// In en, this message translates to:
+  /// **'Ghardhani'**
+  String get blModeGhardhani;
+
+  /// No description provided for @blModeGhardhaniHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Book a Sipalu for work at home'**
+  String get blModeGhardhaniHint;
+
+  /// No description provided for @blModeSupervisor.
+  ///
+  /// In en, this message translates to:
+  /// **'Supervisor'**
+  String get blModeSupervisor;
+
+  /// No description provided for @blModeSupervisorHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hajiri and teams for your employer'**
+  String get blModeSupervisorHint;
+
+  /// No description provided for @blBecomeSipalu.
+  ///
+  /// In en, this message translates to:
+  /// **'Become a Sipalu'**
+  String get blBecomeSipalu;
+
+  /// No description provided for @blBecomeSipaluHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Get booked for your skills. No fees, ever.'**
+  String get blBecomeSipaluHint;
+
+  /// No description provided for @blWeeklyHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} hours a week'**
+  String blWeeklyHours(String hours);
+
+  /// No description provided for @blDayOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Day off'**
+  String get blDayOff;
+
+  /// No description provided for @blAboutMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'about {minutes} min'**
+  String blAboutMinutes(String minutes);
+
+  /// No description provided for @blPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get blPaused;
+
+  /// No description provided for @blAddService.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a service'**
+  String get blAddService;
+
+  /// No description provided for @blEditService.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit service'**
+  String get blEditService;
+
+  /// No description provided for @blServiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you do?'**
+  String get blServiceTitle;
+
+  /// No description provided for @blServiceTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Ceiling fan fitting'**
+  String get blServiceTitleHint;
+
+  /// No description provided for @blServiceTitleNe.
+  ///
+  /// In en, this message translates to:
+  /// **'Name in Nepali'**
+  String get blServiceTitleNe;
+
+  /// No description provided for @blHowCharge.
+  ///
+  /// In en, this message translates to:
+  /// **'How do you charge?'**
+  String get blHowCharge;
+
+  /// No description provided for @blVisitFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit fee'**
+  String get blVisitFee;
+
+  /// No description provided for @blVisitFeeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You look at the work first, then send a price. The Ghardhani approves it before you start.'**
+  String get blVisitFeeHint;
+
+  /// No description provided for @blPricePerHour.
+  ///
+  /// In en, this message translates to:
+  /// **'Price per hour'**
+  String get blPricePerHour;
+
+  /// No description provided for @blPriceForJob.
+  ///
+  /// In en, this message translates to:
+  /// **'Price for the job'**
+  String get blPriceForJob;
+
+  /// No description provided for @blMinHourlyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'At least {amount} an hour — the legal minimum wage.'**
+  String blMinHourlyHint(String amount);
+
+  /// No description provided for @blBelowMinHourly.
+  ///
+  /// In en, this message translates to:
+  /// **'Hourly price must be at least {amount}, the minimum wage.'**
+  String blBelowMinHourly(String amount);
+
+  /// No description provided for @blEstimatedMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Usual time (minutes)'**
+  String get blEstimatedMinutes;
+
+  /// No description provided for @blServiceActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Show this service'**
+  String get blServiceActive;
+
+  /// No description provided for @blPickTradeFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a skill first.'**
+  String get blPickTradeFirst;
+
+  /// No description provided for @blDirectPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers pay you directly — cash, eSewa, Khalti or bank. KaamSathi never takes a cut.'**
+  String get blDirectPay;
+
+  /// No description provided for @blStepBasics.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name and photo'**
+  String get blStepBasics;
+
+  /// No description provided for @blStepSkills.
+  ///
+  /// In en, this message translates to:
+  /// **'Your skills'**
+  String get blStepSkills;
+
+  /// No description provided for @blStepLanguages.
+  ///
+  /// In en, this message translates to:
+  /// **'Languages you speak'**
+  String get blStepLanguages;
+
+  /// No description provided for @blStepArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Where you work'**
+  String get blStepArea;
+
+  /// No description provided for @blStepAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'When you are free'**
+  String get blStepAvailability;
+
+  /// No description provided for @blStepServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services and prices'**
+  String get blStepServices;
+
+  /// No description provided for @blStepPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'How customers pay you'**
+  String get blStepPayment;
+
+  /// No description provided for @blStepIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'ID for verification'**
+  String get blStepIdentity;
+
+  /// No description provided for @blStepHandle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your public profile'**
+  String get blStepHandle;
+
+  /// No description provided for @blStepOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total}'**
+  String blStepOf(String step, String total);
+
+  /// No description provided for @blProfileComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile complete'**
+  String get blProfileComplete;
+
+  /// No description provided for @blBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get blBack;
+
+  /// No description provided for @blFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get blFinish;
+
+  /// No description provided for @blSaveContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Save and continue'**
+  String get blSaveContinue;
+
+  /// No description provided for @blOnboardingDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved. We\'ll tell you when your ID is checked.'**
+  String get blOnboardingDone;
+
+  /// No description provided for @blCelebrateProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Sipalu profile is complete.'**
+  String get blCelebrateProfile;
+
+  /// No description provided for @blCelebrateBookable.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re verified. Ghardhani can now book you.'**
+  String get blCelebrateBookable;
+
+  /// No description provided for @blPhotoOnFile.
+  ///
+  /// In en, this message translates to:
+  /// **'We have your photo. Add a new one only if you want to change it.'**
+  String get blPhotoOnFile;
+
+  /// No description provided for @blChangePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'New photo'**
+  String get blChangePhoto;
+
+  /// No description provided for @blYourPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Your photo'**
+  String get blYourPhoto;
+
+  /// No description provided for @blPhotoHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A clear photo of your face, no sunglasses. Ghardhani see it when they book.'**
+  String get blPhotoHint;
+
+  /// No description provided for @blAddOneSkill.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one skill.'**
+  String get blAddOneSkill;
+
+  /// No description provided for @blSkillsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the work you do. The first one is your main skill.'**
+  String get blSkillsHint;
+
+  /// No description provided for @blMainSkill.
+  ///
+  /// In en, this message translates to:
+  /// **'main'**
+  String get blMainSkill;
+
+  /// No description provided for @blYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Years'**
+  String get blYears;
+
+  /// No description provided for @blNstbLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'NSTB level'**
+  String get blNstbLevel;
+
+  /// No description provided for @blNstbNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No test yet'**
+  String get blNstbNone;
+
+  /// No description provided for @blNstbHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Have an NSTB certificate? Add it later from Learn so it can be checked.'**
+  String get blNstbHint;
+
+  /// No description provided for @blPickOneLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick at least one language.'**
+  String get blPickOneLanguage;
+
+  /// No description provided for @blLanguagesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ghardhani can look for someone who speaks their language.'**
+  String get blLanguagesHint;
+
+  /// No description provided for @blPickOneDistrict.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick at least one district.'**
+  String get blPickOneDistrict;
+
+  /// No description provided for @blAreaHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Where can you go for work?'**
+  String get blAreaHint;
+
+  /// No description provided for @blPickDistricts.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose districts'**
+  String get blPickDistricts;
+
+  /// No description provided for @blHowFar.
+  ///
+  /// In en, this message translates to:
+  /// **'How far from home?'**
+  String get blHowFar;
+
+  /// No description provided for @blKm.
+  ///
+  /// In en, this message translates to:
+  /// **'{km} km'**
+  String blKm(String km);
+
+  /// No description provided for @blAreaPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Ghardhani never see your exact location — only your districts.'**
+  String get blAreaPrivacy;
+
+  /// No description provided for @blPickOneDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on at least one day.'**
+  String get blPickOneDay;
+
+  /// No description provided for @blEndAfterStart.
+  ///
+  /// In en, this message translates to:
+  /// **'End time must be after start time.'**
+  String get blEndAfterStart;
+
+  /// No description provided for @blTimeOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Time off'**
+  String get blTimeOff;
+
+  /// No description provided for @blAddTimeOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Add time off'**
+  String get blAddTimeOff;
+
+  /// No description provided for @blAddOneService.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one service.'**
+  String get blAddOneService;
+
+  /// No description provided for @blServicesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Say what you do and what it costs. Ghardhani see the price before they book.'**
+  String get blServicesHint;
+
+  /// No description provided for @blWalletId.
+  ///
+  /// In en, this message translates to:
+  /// **'{wallet} number'**
+  String blWalletId(String wallet);
+
+  /// No description provided for @blOwnAccountOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Use your own account. Never pay anyone to get bookings.'**
+  String get blOwnAccountOnly;
+
+  /// No description provided for @blIdPhotoNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a photo of the front of your ID.'**
+  String get blIdPhotoNeeded;
+
+  /// No description provided for @blIdVerifiedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ID is verified. Nothing more to do here.'**
+  String get blIdVerifiedNote;
+
+  /// No description provided for @blIdPendingNote.
+  ///
+  /// In en, this message translates to:
+  /// **'We are checking your ID. This usually takes a day or two.'**
+  String get blIdPendingNote;
+
+  /// No description provided for @blIdWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'Only ID-verified Sipalu can be booked. Only KaamSathi\'s verification team sees your ID — never Ghardhani.'**
+  String get blIdWhy;
+
+  /// No description provided for @blCitizenship.
+  ///
+  /// In en, this message translates to:
+  /// **'Citizenship'**
+  String get blCitizenship;
+
+  /// No description provided for @blIdNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'ID number'**
+  String get blIdNumber;
+
+  /// No description provided for @blIdFront.
+  ///
+  /// In en, this message translates to:
+  /// **'Front of ID'**
+  String get blIdFront;
+
+  /// No description provided for @blIdBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back of ID'**
+  String get blIdBack;
+
+  /// No description provided for @blConsentNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Tick the box to show your profile to Ghardhani.'**
+  String get blConsentNeeded;
+
+  /// No description provided for @blHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'One line about your work'**
+  String get blHeadline;
+
+  /// No description provided for @blHeadlineHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. House wiring and fan fitting, 8 years'**
+  String get blHeadlineHint;
+
+  /// No description provided for @blHeadlineNe.
+  ///
+  /// In en, this message translates to:
+  /// **'The same in Nepali'**
+  String get blHeadlineNe;
+
+  /// No description provided for @blHandle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile link'**
+  String get blHandle;
+
+  /// No description provided for @blHandleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'3–30 small letters, numbers or -'**
+  String get blHandleHint;
+
+  /// No description provided for @blHandleInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Use 3–30 small letters (a–z), numbers or -.'**
+  String get blHandleInvalid;
+
+  /// No description provided for @blConsentPublic.
+  ///
+  /// In en, this message translates to:
+  /// **'Show my Sipalu profile to Ghardhani'**
+  String get blConsentPublic;
+
+  /// No description provided for @blConsentPublicHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Name, photo, skills, services, prices, areas and reviews. Never your phone, address or ID.'**
+  String get blConsentPublicHint;
+
+  /// No description provided for @blTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Bolau'**
+  String get blTab;
+
+  /// No description provided for @blSegBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings'**
+  String get blSegBookings;
+
+  /// No description provided for @blSegNearby.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearby'**
+  String get blSegNearby;
+
+  /// No description provided for @blSegOffers.
+  ///
+  /// In en, this message translates to:
+  /// **'My offers'**
+  String get blSegOffers;
+
+  /// No description provided for @blJoinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get booked by households near you'**
+  String get blJoinTitle;
+
+  /// No description provided for @blJoinBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Make a Sipalu profile with your skills and prices. Ghardhani book you and pay you directly. KaamSathi never takes a cut.'**
+  String get blJoinBody;
+
+  /// No description provided for @blStatusFinishProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile {percent} done'**
+  String blStatusFinishProfile(String percent);
+
+  /// No description provided for @blStatusIdCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for ID check'**
+  String get blStatusIdCheck;
+
+  /// No description provided for @blStatusPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Not taking bookings'**
+  String get blStatusPaused;
+
+  /// No description provided for @blStatusBookable.
+  ///
+  /// In en, this message translates to:
+  /// **'Ghardhani can book you'**
+  String get blStatusBookable;
+
+  /// No description provided for @blYourBolau.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Bolau'**
+  String get blYourBolau;
+
+  /// No description provided for @blContinueProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue my profile'**
+  String get blContinueProfile;
+
+  /// No description provided for @blTakeBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Take bookings'**
+  String get blTakeBookings;
+
+  /// No description provided for @blTakeBookingsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off when you are busy or away.'**
+  String get blTakeBookingsHint;
+
+  /// No description provided for @blTakeBookingsAfterId.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings start once your ID is verified.'**
+  String get blTakeBookingsAfterId;
+
+  /// No description provided for @blInstantHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Free slots are booked straight away, without waiting for you to accept.'**
+  String get blInstantHint;
+
+  /// No description provided for @blServicesAndHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Services, prices and hours'**
+  String get blServicesAndHours;
+
+  /// No description provided for @blEarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Earnings from Bolau'**
+  String get blEarnings;
+
+  /// No description provided for @blThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get blThisMonth;
+
+  /// No description provided for @blAllTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get blAllTime;
+
+  /// No description provided for @blPaidJobs.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid jobs'**
+  String get blPaidJobs;
+
+  /// No description provided for @blEarningsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs marked paid. The money went straight to you — KaamSathi never holds it.'**
+  String get blEarningsNote;
+
+  /// No description provided for @blDeclineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline this booking?'**
+  String get blDeclineTitle;
+
+  /// No description provided for @blDeclineBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The Ghardhani will be told you can\'t come. Declining often lowers how high you show in search.'**
+  String get blDeclineBody;
+
+  /// No description provided for @blAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted. We\'ve told the Ghardhani.'**
+  String get blAccepted;
+
+  /// No description provided for @blDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined.'**
+  String get blDeclined;
+
+  /// No description provided for @blNoBookingsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookings yet. Keep your hours up to date to get more.'**
+  String get blNoBookingsYet;
+
+  /// No description provided for @blIncoming.
+  ///
+  /// In en, this message translates to:
+  /// **'New requests'**
+  String get blIncoming;
+
+  /// No description provided for @blAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get blAccept;
+
+  /// No description provided for @blUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming up'**
+  String get blUpcoming;
+
+  /// No description provided for @blPast.
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier'**
+  String get blPast;
+
+  /// No description provided for @blNoNearby.
+  ///
+  /// In en, this message translates to:
+  /// **'No Kaam requests near you right now.'**
+  String get blNoNearby;
+
+  /// No description provided for @blNearbyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Open requests in your trades and areas. The exact address is shared only after the Ghardhani picks your offer.'**
+  String get blNearbyHint;
+
+  /// No description provided for @blPreferred.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred: {when}'**
+  String blPreferred(String when);
+
+  /// No description provided for @blBudgetUpTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget up to {amount}'**
+  String blBudgetUpTo(String amount);
+
+  /// No description provided for @blOffersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of {max} offers'**
+  String blOffersCount(String count, String max);
+
+  /// No description provided for @blYouOffered.
+  ///
+  /// In en, this message translates to:
+  /// **'You sent an offer'**
+  String get blYouOffered;
+
+  /// No description provided for @blOfferAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Chosen'**
+  String get blOfferAccepted;
+
+  /// No description provided for @blOfferNotChosen.
+  ///
+  /// In en, this message translates to:
+  /// **'Not chosen'**
+  String get blOfferNotChosen;
+
+  /// No description provided for @blOfferWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawn'**
+  String get blOfferWithdrawn;
+
+  /// No description provided for @blOfferPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get blOfferPending;
+
+  /// No description provided for @blWithdrawOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw this offer?'**
+  String get blWithdrawOffer;
+
+  /// No description provided for @blWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get blWithdraw;
+
+  /// No description provided for @blNoOffersSent.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t sent any offers yet.'**
+  String get blNoOffersSent;
+
+  /// No description provided for @blKaamRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Kaam request'**
+  String get blKaamRequest;
+
+  /// No description provided for @blArrivedSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrival confirmed. Start when you\'re ready.'**
+  String get blArrivedSaved;
+
+  /// No description provided for @blCodeLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many wrong tries. Ask the Ghardhani to check the code in their app, or contact support.'**
+  String get blCodeLocked;
+
+  /// No description provided for @blCodeWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'That code doesn\'t match. Check with the Ghardhani.'**
+  String get blCodeWrong;
+
+  /// No description provided for @blCodeWrongLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'That code doesn\'t match. {left} tries left.'**
+  String blCodeWrongLeft(String left);
+
+  /// No description provided for @blOnTheWaySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'The Ghardhani knows you\'re on the way.'**
+  String get blOnTheWaySaved;
+
+  /// No description provided for @blSendQuote.
+  ///
+  /// In en, this message translates to:
+  /// **'Send your price'**
+  String get blSendQuote;
+
+  /// No description provided for @blSendQuoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'After looking at the work. The Ghardhani approves it before you start.'**
+  String get blSendQuoteHint;
+
+  /// No description provided for @blQuoteSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Price sent. Wait for the Ghardhani to approve.'**
+  String get blQuoteSent;
+
+  /// No description provided for @blStartedSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Work started.'**
+  String get blStartedSaved;
+
+  /// No description provided for @blFinalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Final price'**
+  String get blFinalPrice;
+
+  /// No description provided for @blFinalPriceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What the Ghardhani pays you. It can\'t be more than agreed.'**
+  String get blFinalPriceHint;
+
+  /// No description provided for @blCompletedSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Marked done. The Ghardhani will confirm.'**
+  String get blCompletedSaved;
+
+  /// No description provided for @blPaidSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment noted.'**
+  String get blPaidSaved;
+
+  /// No description provided for @blCancelJobTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this job?'**
+  String get blCancelJobTitle;
+
+  /// No description provided for @blCancelJobBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Please only cancel if you really can\'t come. The Ghardhani will be told straight away.'**
+  String get blCancelJobBody;
+
+  /// No description provided for @blCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled.'**
+  String get blCancelled;
+
+  /// No description provided for @blImOnTheWay.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m on the way'**
+  String get blImOnTheWay;
+
+  /// No description provided for @blStartWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Start work'**
+  String get blStartWork;
+
+  /// No description provided for @blWorkDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Work done'**
+  String get blWorkDone;
+
+  /// No description provided for @blMarkPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as paid'**
+  String get blMarkPaid;
+
+  /// No description provided for @blCancelJob.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t come — cancel'**
+  String get blCancelJob;
+
+  /// No description provided for @blBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking'**
+  String get blBooking;
+
+  /// No description provided for @blForGhardhani.
+  ///
+  /// In en, this message translates to:
+  /// **'For {name}'**
+  String blForGhardhani(String name);
+
+  /// No description provided for @blProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get blProgress;
+
+  /// No description provided for @blContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get blContact;
+
+  /// No description provided for @blQuoteWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'You quoted {amount}. Waiting for the Ghardhani to approve.'**
+  String blQuoteWaiting(String amount);
+
+  /// No description provided for @blPaidVia.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid · {method}'**
+  String blPaidVia(String method);
+
+  /// No description provided for @blWhatsNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s needed'**
+  String get blWhatsNeeded;
+
+  /// No description provided for @blRequestGone.
+  ///
+  /// In en, this message translates to:
+  /// **'This request is no longer open.'**
+  String get blRequestGone;
+
+  /// No description provided for @blPickWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose when you can come.'**
+  String get blPickWhen;
+
+  /// No description provided for @blOfferSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer sent. We\'ll tell you if the Ghardhani picks it.'**
+  String get blOfferSent;
+
+  /// No description provided for @blRequestFull.
+  ///
+  /// In en, this message translates to:
+  /// **'This request already has 3 offers.'**
+  String get blRequestFull;
+
+  /// No description provided for @blExactAddressLater.
+  ///
+  /// In en, this message translates to:
+  /// **'You see the exact address only if the Ghardhani picks your offer.'**
+  String get blExactAddressLater;
+
+  /// No description provided for @blYouOfferedPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'You offered {price}.'**
+  String blYouOfferedPrice(String price);
+
+  /// No description provided for @blYourOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Your offer'**
+  String get blYourOffer;
+
+  /// No description provided for @blWhenCanYouCome.
+  ///
+  /// In en, this message translates to:
+  /// **'When can you come?'**
+  String get blWhenCanYouCome;
+
+  /// No description provided for @blOfferMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message to the Ghardhani'**
+  String get blOfferMessage;
+
+  /// No description provided for @blOfferMessageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. I have fixed this kind of leak many times.'**
+  String get blOfferMessageHint;
+
+  /// No description provided for @blSendOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Send offer'**
+  String get blSendOffer;
+
+  /// No description provided for @blRemoveService.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this service?'**
+  String get blRemoveService;
+
+  /// No description provided for @blNoServices.
+  ///
+  /// In en, this message translates to:
+  /// **'No services yet. Add what you do and your price.'**
+  String get blNoServices;
+
+  /// No description provided for @blSaveHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Save hours'**
+  String get blSaveHours;
+
+  /// No description provided for @blNoTimeOff.
+  ///
+  /// In en, this message translates to:
+  /// **'No time off planned.'**
+  String get blNoTimeOff;
+
+  /// No description provided for @blRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get blRequests;
+
+  /// No description provided for @blHelloName.
+  ///
+  /// In en, this message translates to:
+  /// **'Namaste, {name}'**
+  String blHelloName(String name);
+
+  /// No description provided for @blHomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Who do you need today?'**
+  String get blHomeTitle;
+
+  /// No description provided for @blSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Electrician, plumber, cook…'**
+  String get blSearchHint;
+
+  /// No description provided for @blSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get blSearch;
+
+  /// No description provided for @blPickTrade.
+  ///
+  /// In en, this message translates to:
+  /// **'What kind of work?'**
+  String get blPickTrade;
+
+  /// No description provided for @blNextBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Your next booking'**
+  String get blNextBooking;
+
+  /// No description provided for @blPostRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Post a Kaam request'**
+  String get blPostRequest;
+
+  /// No description provided for @blPostRequestHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the job and get up to 3 offers from verified Sipalu nearby.'**
+  String get blPostRequestHint;
+
+  /// No description provided for @blHowBolauWorks.
+  ///
+  /// In en, this message translates to:
+  /// **'How Bolau works'**
+  String get blHowBolauWorks;
+
+  /// No description provided for @blPromiseVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Every Sipalu you can book has had their ID checked by KaamSathi.'**
+  String get blPromiseVerified;
+
+  /// No description provided for @blPromisePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'You see the price before you book. No hidden fees.'**
+  String get blPromisePrice;
+
+  /// No description provided for @blPromisePayDirect.
+  ///
+  /// In en, this message translates to:
+  /// **'You pay the Sipalu directly — cash, eSewa, Khalti or bank.'**
+  String get blPromisePayDirect;
+
+  /// No description provided for @blPromiseSafety.
+  ///
+  /// In en, this message translates to:
+  /// **'Something wrong? Report it in confidence from any booking. In danger, call 100.'**
+  String get blPromiseSafety;
+
+  /// No description provided for @blPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get blPaid;
+
+  /// No description provided for @blFindSipalu.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a Sipalu'**
+  String get blFindSipalu;
+
+  /// No description provided for @blFourStarsUp.
+  ///
+  /// In en, this message translates to:
+  /// **'4★ and up'**
+  String get blFourStarsUp;
+
+  /// No description provided for @blNoSipaluFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Sipalu free for this yet. Post a Kaam request and nearby Sipalu can send offers.'**
+  String get blNoSipaluFound;
+
+  /// No description provided for @blFavRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from favourites.'**
+  String get blFavRemoved;
+
+  /// No description provided for @blFavAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to favourites.'**
+  String get blFavAdded;
+
+  /// No description provided for @blFavRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from favourites'**
+  String get blFavRemove;
+
+  /// No description provided for @blFavAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to favourites'**
+  String get blFavAdd;
+
+  /// No description provided for @blBookName.
+  ///
+  /// In en, this message translates to:
+  /// **'Book {name}'**
+  String blBookName(String name);
+
+  /// No description provided for @blRepliesIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Usually replies in {minutes} min'**
+  String blRepliesIn(String minutes);
+
+  /// No description provided for @blVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification'**
+  String get blVerification;
+
+  /// No description provided for @blNoServicesListed.
+  ///
+  /// In en, this message translates to:
+  /// **'No services listed yet. You can still describe the job when you book.'**
+  String get blNoServicesListed;
+
+  /// No description provided for @blBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Book'**
+  String get blBook;
+
+  /// No description provided for @blSkillsAndAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Skills and areas'**
+  String get blSkillsAndAreas;
+
+  /// No description provided for @blYearsN.
+  ///
+  /// In en, this message translates to:
+  /// **'{years} yrs'**
+  String blYearsN(String years);
+
+  /// No description provided for @blWorksIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Works in {places}'**
+  String blWorksIn(String places);
+
+  /// No description provided for @blSpeaks.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaks {languages}'**
+  String blSpeaks(String languages);
+
+  /// No description provided for @blUsualHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Usual hours'**
+  String get blUsualHours;
+
+  /// No description provided for @blAskInBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a time when you book; the Sipalu confirms it.'**
+  String get blAskInBooking;
+
+  /// No description provided for @blAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get blAbout;
+
+  /// No description provided for @blReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get blReviews;
+
+  /// No description provided for @blNoReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet.'**
+  String get blNoReviews;
+
+  /// No description provided for @blProfilePrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone numbers stay hidden until a booking is accepted. Talk through the app until then.'**
+  String get blProfilePrivacy;
+
+  /// No description provided for @blAddrOffice.
+  ///
+  /// In en, this message translates to:
+  /// **'Office'**
+  String get blAddrOffice;
+
+  /// No description provided for @blAddrOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get blAddrOther;
+
+  /// No description provided for @blAddrHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get blAddrHome;
+
+  /// No description provided for @blRemoveAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this address?'**
+  String get blRemoveAddress;
+
+  /// No description provided for @blAddresses.
+  ///
+  /// In en, this message translates to:
+  /// **'My addresses'**
+  String get blAddresses;
+
+  /// No description provided for @blAddAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Add address'**
+  String get blAddAddress;
+
+  /// No description provided for @blEditAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit address'**
+  String get blEditAddress;
+
+  /// No description provided for @blNoAddresses.
+  ///
+  /// In en, this message translates to:
+  /// **'No addresses yet. Add one to book a Sipalu.'**
+  String get blNoAddresses;
+
+  /// No description provided for @blDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'default'**
+  String get blDefault;
+
+  /// No description provided for @blAddressPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'A Sipalu sees only your ward and municipality until they accept. Your exact address is hidden again 48 hours after the job.'**
+  String get blAddressPrivacy;
+
+  /// No description provided for @blAddrLine.
+  ///
+  /// In en, this message translates to:
+  /// **'House, street or tole'**
+  String get blAddrLine;
+
+  /// No description provided for @blAddrLineHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. House 12, Jhamsikhel Marg'**
+  String get blAddrLineHint;
+
+  /// No description provided for @blWard.
+  ///
+  /// In en, this message translates to:
+  /// **'Ward'**
+  String get blWard;
+
+  /// No description provided for @blMunicipality.
+  ///
+  /// In en, this message translates to:
+  /// **'Municipality'**
+  String get blMunicipality;
+
+  /// No description provided for @blLandmarkHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Opposite the blue gate school'**
+  String get blLandmarkHint;
+
+  /// No description provided for @blUseByDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this address by default'**
+  String get blUseByDefault;
+
+  /// No description provided for @blBookTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Book a Sipalu'**
+  String get blBookTitle;
+
+  /// No description provided for @blPickTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a time'**
+  String get blPickTime;
+
+  /// No description provided for @blPickAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose or add an address.'**
+  String get blPickAddress;
+
+  /// No description provided for @blDescribeJob.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the job'**
+  String get blDescribeJob;
+
+  /// No description provided for @blBookedInstant.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked. The Sipalu has been told.'**
+  String get blBookedInstant;
+
+  /// No description provided for @blRequestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent. {name} has 30 minutes to reply.'**
+  String blRequestSent(String name);
+
+  /// No description provided for @blWhatWork.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you need?'**
+  String get blWhatWork;
+
+  /// No description provided for @blSomethingElse.
+  ///
+  /// In en, this message translates to:
+  /// **'Something else'**
+  String get blSomethingElse;
+
+  /// No description provided for @blSomethingElseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe it below; you agree on the price with the Sipalu.'**
+  String get blSomethingElseHint;
+
+  /// No description provided for @blNoteForSipalu.
+  ///
+  /// In en, this message translates to:
+  /// **'Note for the Sipalu'**
+  String get blNoteForSipalu;
+
+  /// No description provided for @blDescribeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Bathroom tap leaking, need it fixed today'**
+  String get blDescribeHint;
+
+  /// No description provided for @blWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'When?'**
+  String get blWhen;
+
+  /// No description provided for @blToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get blToday;
+
+  /// No description provided for @blNoSlots.
+  ///
+  /// In en, this message translates to:
+  /// **'No free time on this day. Try another day.'**
+  String get blNoSlots;
+
+  /// No description provided for @blWhere.
+  ///
+  /// In en, this message translates to:
+  /// **'Where?'**
+  String get blWhere;
+
+  /// No description provided for @blPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get blPrice;
+
+  /// No description provided for @blToSipalu.
+  ///
+  /// In en, this message translates to:
+  /// **'To the Sipalu'**
+  String get blToSipalu;
+
+  /// No description provided for @blAgreeOnPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Agreed with the Sipalu'**
+  String get blAgreeOnPrice;
+
+  /// No description provided for @blBookingFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking fee'**
+  String get blBookingFee;
+
+  /// No description provided for @blFeeWaived.
+  ///
+  /// In en, this message translates to:
+  /// **'Free for now'**
+  String get blFeeWaived;
+
+  /// No description provided for @blPayDirectNote.
+  ///
+  /// In en, this message translates to:
+  /// **'You pay the Sipalu directly when the work is done — cash, eSewa, Khalti or bank. Nothing is added later.'**
+  String get blPayDirectNote;
+
+  /// No description provided for @blFeeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The booking fee goes to KaamSathi, never out of the Sipalu\'s pay. Refunded if the Sipalu declines or doesn\'t come.'**
+  String get blFeeNote;
+
+  /// No description provided for @blFreeCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Free to cancel until 2 hours before the start.'**
+  String get blFreeCancel;
+
+  /// No description provided for @blConfirmBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm booking'**
+  String get blConfirmBooking;
+
+  /// No description provided for @blSendRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Send booking request'**
+  String get blSendRequest;
+
+  /// No description provided for @blInstantNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This Sipalu takes instant bookings — free slots are confirmed straight away.'**
+  String get blInstantNote;
+
+  /// No description provided for @blRequestNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The Sipalu has 30 minutes to accept. You\'ll get an SMS either way.'**
+  String get blRequestNote;
+
+  /// No description provided for @blMyBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'My bookings'**
+  String get blMyBookings;
+
+  /// No description provided for @blNoBookingsGhar.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookings yet. Find a Sipalu for the work you need.'**
+  String get blNoBookingsGhar;
+
+  /// No description provided for @blActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Now and coming up'**
+  String get blActive;
+
+  /// No description provided for @blCancelBookingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this booking?'**
+  String get blCancelBookingTitle;
+
+  /// No description provided for @blCancelFree.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s free to cancel now. The Sipalu will be told straight away.'**
+  String get blCancelFree;
+
+  /// No description provided for @blCancelLate.
+  ///
+  /// In en, this message translates to:
+  /// **'The start is less than 2 hours away. You can still cancel, but late cancellations are noted. The Sipalu is never charged.'**
+  String get blCancelLate;
+
+  /// No description provided for @blCancelLateShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Less than 2 hours to go — cancelling now is noted as late.'**
+  String get blCancelLateShort;
+
+  /// No description provided for @blApproveQuoteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve {amount}?'**
+  String blApproveQuoteTitle(String amount);
+
+  /// No description provided for @blApproveQuoteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The Sipalu starts work after you approve. You pay them directly when it\'s done.'**
+  String get blApproveQuoteBody;
+
+  /// No description provided for @blApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get blApprove;
+
+  /// No description provided for @blQuoteApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Price approved.'**
+  String get blQuoteApproved;
+
+  /// No description provided for @blConfirmDoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Is the work done?'**
+  String get blConfirmDoneTitle;
+
+  /// No description provided for @blConfirmDoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm only if you are happy with it. If something is wrong, report a problem instead.'**
+  String get blConfirmDoneBody;
+
+  /// No description provided for @blConfirmDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, work is done'**
+  String get blConfirmDone;
+
+  /// No description provided for @blThanksConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks. Don\'t forget to pay the Sipalu directly.'**
+  String get blThanksConfirm;
+
+  /// No description provided for @blNoShowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The Sipalu didn\'t come?'**
+  String get blNoShowTitle;
+
+  /// No description provided for @blNoShowBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll look into it and refund any booking fee.'**
+  String get blNoShowBody;
+
+  /// No description provided for @blReportNoShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Report: didn\'t come'**
+  String get blReportNoShow;
+
+  /// No description provided for @blNoShowSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Reported. Our team will contact you.'**
+  String get blNoShowSaved;
+
+  /// No description provided for @blCancelBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel booking'**
+  String get blCancelBooking;
+
+  /// No description provided for @blApproveQuote.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve the price'**
+  String get blApproveQuote;
+
+  /// No description provided for @blSeeProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'See profile'**
+  String get blSeeProfile;
+
+  /// No description provided for @blWaitingSipalu.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the Sipalu to accept. If there\'s no reply in 30 minutes, the request closes and you can book someone else.'**
+  String get blWaitingSipalu;
+
+  /// No description provided for @blQuoteToApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'The Sipalu quoted {amount} after looking at the work.'**
+  String blQuoteToApprove(String amount);
+
+  /// No description provided for @blPayDirectShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay the Sipalu directly. KaamSathi never holds the money.'**
+  String get blPayDirectShort;
+
+  /// No description provided for @blReqOffers.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers in'**
+  String get blReqOffers;
+
+  /// No description provided for @blReqBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked'**
+  String get blReqBooked;
+
+  /// No description provided for @blReqOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for offers'**
+  String get blReqOpen;
+
+  /// No description provided for @blMyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'My Kaam requests'**
+  String get blMyRequests;
+
+  /// No description provided for @blNoRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'No Kaam requests yet. Post one and up to 3 verified Sipalu nearby can send offers.'**
+  String get blNoRequests;
+
+  /// No description provided for @blPickTradeShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the kind of work.'**
+  String get blPickTradeShort;
+
+  /// No description provided for @blRequestPosted.
+  ///
+  /// In en, this message translates to:
+  /// **'Posted. We\'ve told verified Sipalu nearby.'**
+  String get blRequestPosted;
+
+  /// No description provided for @blReqTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you need done?'**
+  String get blReqTitle;
+
+  /// No description provided for @blReqDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'More details'**
+  String get blReqDetails;
+
+  /// No description provided for @blReqPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos (up to {max})'**
+  String blReqPhotos(String max);
+
+  /// No description provided for @blDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get blDay;
+
+  /// No description provided for @blFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get blFrom;
+
+  /// No description provided for @blTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get blTo;
+
+  /// No description provided for @blBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Your budget'**
+  String get blBudget;
+
+  /// No description provided for @blReqPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sipalu see only your ward and municipality. Your exact address goes only to the Sipalu you pick.'**
+  String get blReqPrivacy;
+
+  /// No description provided for @blPostRequestCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Post request'**
+  String get blPostRequestCta;
+
+  /// No description provided for @blAcceptOfferTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Book {name}?'**
+  String blAcceptOfferTitle(String name);
+
+  /// No description provided for @blAcceptOfferBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The other offers will be closed. You pay the Sipalu directly when the work is done.'**
+  String get blAcceptOfferBody;
+
+  /// No description provided for @blAcceptOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose this offer'**
+  String get blAcceptOffer;
+
+  /// No description provided for @blOfferAcceptedSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked. The Sipalu has been told.'**
+  String get blOfferAcceptedSaved;
+
+  /// No description provided for @blCancelRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Close this request?'**
+  String get blCancelRequest;
+
+  /// No description provided for @blCancelRequestCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Close request'**
+  String get blCancelRequestCta;
+
+  /// No description provided for @blReqOpenUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Open until {when}'**
+  String blReqOpenUntil(String when);
+
+  /// No description provided for @blOffersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offers ({count} of {max})'**
+  String blOffersTitle(String count, String max);
+
+  /// No description provided for @blNoOffersYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No offers yet. Sipalu nearby have been told — offers usually come within an hour.'**
+  String get blNoOffersYet;
+
+  /// No description provided for @blNoOffersClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'This request closed without offers.'**
+  String get blNoOffersClosed;
+
+  /// No description provided for @blOpenBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the booking'**
+  String get blOpenBooking;
+
+  /// No description provided for @blLowestPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Lowest price'**
+  String get blLowestPrice;
+
+  /// No description provided for @blCanCome.
+  ///
+  /// In en, this message translates to:
+  /// **'Can come {when}'**
+  String blCanCome(String when);
+
+  /// No description provided for @blFavourites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourite Sipalu'**
+  String get blFavourites;
+
+  /// No description provided for @blSafetyHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety and help'**
+  String get blSafetyHelp;
+
+  /// No description provided for @blSafetySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Harassment, unsafe work, payment trouble — in confidence'**
+  String get blSafetySubtitle;
+
+  /// No description provided for @blNoFavourites.
+  ///
+  /// In en, this message translates to:
+  /// **'No favourites yet. Tap the heart on a Sipalu\'s profile to save them.'**
+  String get blNoFavourites;
+
+  /// No description provided for @blSafetyConfidential.
+  ///
+  /// In en, this message translates to:
+  /// **'This report is confidential. The other person will not see it. Only KaamSathi\'s safety team reads it.'**
+  String get blSafetyConfidential;
+
+  /// No description provided for @blArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Area'**
+  String get blArea;
+
+  /// No description provided for @blTagExplainedWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Explained the work'**
+  String get blTagExplainedWork;
+
+  /// No description provided for @blTagSafePlace.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe place to work'**
+  String get blTagSafePlace;
+
+  /// No description provided for @blRejectQuote.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline the price'**
+  String get blRejectQuote;
+
+  /// No description provided for @blRejectQuoteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline this price?'**
+  String get blRejectQuoteTitle;
+
+  /// No description provided for @blRejectQuoteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The Sipalu can send a new price, or you can cancel. You only pay the visit fee if they came.'**
+  String get blRejectQuoteBody;
+
+  /// No description provided for @blQuoteRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Price declined. The Sipalu has been told.'**
+  String get blQuoteRejected;
+
+  /// No description provided for @blQuoteWasRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'The Ghardhani declined your price. You can send a new one.'**
+  String get blQuoteWasRejected;
+
+  /// No description provided for @blBelowMinForTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Too low for the time it takes — at least {amount} an hour (minimum wage).'**
+  String blBelowMinForTime(String amount);
+
+  /// No description provided for @blNotBookableWhy.
+  ///
+  /// In en, this message translates to:
+  /// **'Not bookable yet: {reasons}'**
+  String blNotBookableWhy(String reasons);
+
+  /// No description provided for @blSuspended.
+  ///
+  /// In en, this message translates to:
+  /// **'Bolau is paused for your profile. Contact support to know more.'**
+  String get blSuspended;
+
+  /// No description provided for @blPhotoNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a clear photo of your face.'**
+  String get blPhotoNeeded;
+
+  /// No description provided for @blAnswerBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer by {when}'**
+  String blAnswerBy(String when);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

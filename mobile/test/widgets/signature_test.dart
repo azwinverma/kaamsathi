@@ -166,7 +166,9 @@ void main() {
     });
 
     test('only real milestones have a message', () {
-      expect(Milestone.values, hasLength(4));
+      // Credential, placement, profile 100%, training, and (Bolau) becoming
+      // bookable after ID verification.
+      expect(Milestone.values, hasLength(5));
     });
   });
 

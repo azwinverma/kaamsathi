@@ -9,13 +9,22 @@ import '../common.dart';
 
 /// The only moments that earn a celebration (brand v3 "Delight must be
 /// earned"; DIRECTION.md motion). Never for saves, logins or filters.
-enum Milestone { firstVerifiedCredential, firstPlacement, profileComplete, trainingCompleted }
+enum Milestone {
+  firstVerifiedCredential,
+  firstPlacement,
+  profileComplete,
+  trainingCompleted,
+
+  /// Bolau: ID verified and taking bookings — Ghardhani can book this Sipalu.
+  sipaluBookable,
+}
 
 String milestoneMessage(AppLocalizations l, Milestone m) => switch (m) {
   Milestone.firstVerifiedCredential => l.celebrateCredential,
   Milestone.firstPlacement => l.celebratePlacement,
   Milestone.profileComplete => l.celebrateProfile,
   Milestone.trainingCompleted => l.celebrateTraining,
+  Milestone.sipaluBookable => l.blCelebrateBookable,
 };
 
 /// Shows a short check-burst celebration with [message] over the current

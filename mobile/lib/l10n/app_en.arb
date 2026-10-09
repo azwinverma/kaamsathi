@@ -1901,5 +1901,714 @@
   "celebrateCredential": "Your first certificate is verified.",
   "celebratePlacement": "You have joined your new job. All the best.",
   "celebrateProfile": "Your profile is complete.",
-  "celebrateTraining": "Training completed. Well done."
+  "celebrateTraining": "Training completed. Well done.",
+  "blStatusRequested": "Waiting for reply",
+  "blStatusAccepted": "Accepted",
+  "blStatusDeclined": "Declined",
+  "blStatusExpired": "No reply in time",
+  "blStatusOnTheWay": "On the way",
+  "blStatusArrived": "Arrived",
+  "blStatusInProgress": "Work started",
+  "blStatusCompleted": "Work done",
+  "blStatusConfirmed": "Confirmed",
+  "blStatusCancelled": "Cancelled",
+  "blStatusNoShow": "Did not come",
+  "blStatusDisputed": "Under review",
+  "blPriceFixed": "Fixed price",
+  "blPriceHourly": "By the hour",
+  "blPriceVisitQuote": "Visit, then quote",
+  "blPerHour": "{amount} an hour",
+  "@blPerHour": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "blFixedPrice": "{amount} fixed",
+  "@blFixedPrice": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "blVisitThenQuote": "Visit {amount}, then a quote",
+  "@blVisitThenQuote": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "blNewOnBolau": "New on Bolau",
+  "blJobsDone": "{count} jobs done",
+  "@blJobsDone": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "blRatingA11y": "Rated {rating} out of 5",
+  "@blRatingA11y": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "blIdVerified": "ID verified",
+  "blInstant": "Instant booking",
+  "blFromPrice": "From {amount}",
+  "@blFromPrice": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "blNextFree": "Free {when}",
+  "@blNextFree": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "blArrivalCode": "Arrival code",
+  "blArrivalCodeA11y": "Arrival code {digits}",
+  "@blArrivalCodeA11y": {
+    "placeholders": {
+      "digits": {
+        "type": "String"
+      }
+    }
+  },
+  "blArrivalCodeHint": "Read this out when the Sipalu arrives at your door. Don't share it before.",
+  "blEnterArrivalCode": "Arrival code",
+  "blEnterArrivalCodeHint": "Ask the Ghardhani for the 4-digit code when you reach the door.",
+  "blIHaveArrived": "I have arrived",
+  "blNow": "now",
+  "blRequestTimeUp": "Time is up",
+  "blAnswerWithin": "Answer within {time}",
+  "@blAnswerWithin": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "blReportProblem": "Report a problem",
+  "blContactHidden": "Phone and exact address are shared only after the booking is accepted.",
+  "blShowGhardhaniContact": "Show Ghardhani's phone",
+  "blShowSipaluContact": "Show Sipalu's phone",
+  "blPhone": "Phone",
+  "blAddress": "Address",
+  "blLandmark": "Landmark",
+  "blCopyNumber": "Copy number",
+  "blContactExpires": "Hidden again 48 hours after the work is done.",
+  "blHowPaid": "How was the Sipalu paid?",
+  "blPaidDirectNote": "Money goes straight to the Sipalu. KaamSathi never holds it or takes a cut.",
+  "blTagOnTime": "On time",
+  "blTagCleanWork": "Clean work",
+  "blTagPolite": "Polite",
+  "blTagFairPrice": "Fair price",
+  "blTagSkilled": "Knew the job",
+  "blTagRespectful": "Respectful",
+  "blTagPaidAsAgreed": "Paid as agreed",
+  "blTagClearInstructions": "Clear instructions",
+  "blPickStars": "Choose 1 to 5 stars.",
+  "blRatingSaved": "Thank you. Your rating is saved.",
+  "blRateSipalu": "Rate the Sipalu",
+  "blRateGhardhani": "Rate the Ghardhani",
+  "blRateHint": "Only you two can rate each other, once. Reviews are checked before they show.",
+  "blSendRating": "Send rating",
+  "blAmountRs": "Amount (Rs)",
+  "blEnterAmount": "Enter an amount.",
+  "blNotAboveQuoted": "Can't be more than the agreed {amount}.",
+  "@blNotAboveQuoted": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "blWelcomeTitle": "What would you like to do?",
+  "blChooseSipalu": "I want to find work",
+  "blChooseSipaluBody": "Become a Sipalu. Households book you directly and pay you directly — no commission.",
+  "blChooseGhardhani": "I want to book a Sipalu",
+  "blChooseGhardhaniBody": "Find an ID-verified electrician, plumber, cook or cleaner near you.",
+  "blEmployerAddedMe": "Did an employer add you?",
+  "blEmployerAddedMeBody": "If your employer added you with this number, check again to open your work app.",
+  "blSwitchMode": "Switch mode",
+  "blModeSipalu": "Sipalu",
+  "blModeSipaluHint": "Your jobs, bookings and earnings",
+  "blModeGhardhani": "Ghardhani",
+  "blModeGhardhaniHint": "Book a Sipalu for work at home",
+  "blModeSupervisor": "Supervisor",
+  "blModeSupervisorHint": "Hajiri and teams for your employer",
+  "blBecomeSipalu": "Become a Sipalu",
+  "blBecomeSipaluHint": "Get booked for your skills. No fees, ever.",
+  "blWeeklyHours": "{hours} hours a week",
+  "@blWeeklyHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "blDayOff": "Day off",
+  "blAboutMinutes": "about {minutes} min",
+  "@blAboutMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "blPaused": "Paused",
+  "blAddService": "Add a service",
+  "blEditService": "Edit service",
+  "blServiceTitle": "What do you do?",
+  "blServiceTitleHint": "e.g. Ceiling fan fitting",
+  "blServiceTitleNe": "Name in Nepali",
+  "blHowCharge": "How do you charge?",
+  "blVisitFee": "Visit fee",
+  "blVisitFeeHint": "You look at the work first, then send a price. The Ghardhani approves it before you start.",
+  "blPricePerHour": "Price per hour",
+  "blPriceForJob": "Price for the job",
+  "blMinHourlyHint": "At least {amount} an hour — the legal minimum wage.",
+  "@blMinHourlyHint": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "blBelowMinHourly": "Hourly price must be at least {amount}, the minimum wage.",
+  "@blBelowMinHourly": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "blEstimatedMinutes": "Usual time (minutes)",
+  "blServiceActive": "Show this service",
+  "blPickTradeFirst": "Add a skill first.",
+  "blDirectPay": "Customers pay you directly — cash, eSewa, Khalti or bank. KaamSathi never takes a cut.",
+  "blStepBasics": "Your name and photo",
+  "blStepSkills": "Your skills",
+  "blStepLanguages": "Languages you speak",
+  "blStepArea": "Where you work",
+  "blStepAvailability": "When you are free",
+  "blStepServices": "Services and prices",
+  "blStepPayment": "How customers pay you",
+  "blStepIdentity": "ID for verification",
+  "blStepHandle": "Your public profile",
+  "blStepOf": "Step {step} of {total}",
+  "@blStepOf": {
+    "placeholders": {
+      "step": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "blProfileComplete": "Profile complete",
+  "blBack": "Back",
+  "blFinish": "Finish",
+  "blSaveContinue": "Save and continue",
+  "blOnboardingDone": "Saved. We'll tell you when your ID is checked.",
+  "blCelebrateProfile": "Your Sipalu profile is complete.",
+  "blCelebrateBookable": "You're verified. Ghardhani can now book you.",
+  "blPhotoOnFile": "We have your photo. Add a new one only if you want to change it.",
+  "blChangePhoto": "New photo",
+  "blYourPhoto": "Your photo",
+  "blPhotoHint": "A clear photo of your face, no sunglasses. Ghardhani see it when they book.",
+  "blAddOneSkill": "Add at least one skill.",
+  "blSkillsHint": "Pick the work you do. The first one is your main skill.",
+  "blMainSkill": "main",
+  "blYears": "Years",
+  "blNstbLevel": "NSTB level",
+  "blNstbNone": "No test yet",
+  "blNstbHint": "Have an NSTB certificate? Add it later from Learn so it can be checked.",
+  "blPickOneLanguage": "Pick at least one language.",
+  "blLanguagesHint": "Ghardhani can look for someone who speaks their language.",
+  "blPickOneDistrict": "Pick at least one district.",
+  "blAreaHint": "Where can you go for work?",
+  "blPickDistricts": "Choose districts",
+  "blHowFar": "How far from home?",
+  "blKm": "{km} km",
+  "@blKm": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "blAreaPrivacy": "Ghardhani never see your exact location — only your districts.",
+  "blPickOneDay": "Turn on at least one day.",
+  "blEndAfterStart": "End time must be after start time.",
+  "blTimeOff": "Time off",
+  "blAddTimeOff": "Add time off",
+  "blAddOneService": "Add at least one service.",
+  "blServicesHint": "Say what you do and what it costs. Ghardhani see the price before they book.",
+  "blWalletId": "{wallet} number",
+  "@blWalletId": {
+    "placeholders": {
+      "wallet": {
+        "type": "String"
+      }
+    }
+  },
+  "blOwnAccountOnly": "Use your own account. Never pay anyone to get bookings.",
+  "blIdPhotoNeeded": "Add a photo of the front of your ID.",
+  "blIdVerifiedNote": "Your ID is verified. Nothing more to do here.",
+  "blIdPendingNote": "We are checking your ID. This usually takes a day or two.",
+  "blIdWhy": "Only ID-verified Sipalu can be booked. Only KaamSathi's verification team sees your ID — never Ghardhani.",
+  "blCitizenship": "Citizenship",
+  "blIdNumber": "ID number",
+  "blIdFront": "Front of ID",
+  "blIdBack": "Back of ID",
+  "blConsentNeeded": "Tick the box to show your profile to Ghardhani.",
+  "blHeadline": "One line about your work",
+  "blHeadlineHint": "e.g. House wiring and fan fitting, 8 years",
+  "blHeadlineNe": "The same in Nepali",
+  "blHandle": "Profile link",
+  "blHandleHint": "3–30 small letters, numbers or -",
+  "blHandleInvalid": "Use 3–30 small letters (a–z), numbers or -.",
+  "blConsentPublic": "Show my Sipalu profile to Ghardhani",
+  "blConsentPublicHint": "Name, photo, skills, services, prices, areas and reviews. Never your phone, address or ID.",
+  "blTab": "Bolau",
+  "blSegBookings": "Bookings",
+  "blSegNearby": "Nearby",
+  "blSegOffers": "My offers",
+  "blJoinTitle": "Get booked by households near you",
+  "blJoinBody": "Make a Sipalu profile with your skills and prices. Ghardhani book you and pay you directly. KaamSathi never takes a cut.",
+  "blStatusFinishProfile": "Profile {percent} done",
+  "@blStatusFinishProfile": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "blStatusIdCheck": "Waiting for ID check",
+  "blStatusPaused": "Not taking bookings",
+  "blStatusBookable": "Ghardhani can book you",
+  "blYourBolau": "Your Bolau",
+  "blContinueProfile": "Continue my profile",
+  "blTakeBookings": "Take bookings",
+  "blTakeBookingsHint": "Turn off when you are busy or away.",
+  "blTakeBookingsAfterId": "Bookings start once your ID is verified.",
+  "blInstantHint": "Free slots are booked straight away, without waiting for you to accept.",
+  "blServicesAndHours": "Services, prices and hours",
+  "blEarnings": "Earnings from Bolau",
+  "blThisMonth": "This month",
+  "blAllTime": "All time",
+  "blPaidJobs": "Paid jobs",
+  "blEarningsNote": "Jobs marked paid. The money went straight to you — KaamSathi never holds it.",
+  "blDeclineTitle": "Decline this booking?",
+  "blDeclineBody": "The Ghardhani will be told you can't come. Declining often lowers how high you show in search.",
+  "blAccepted": "Accepted. We've told the Ghardhani.",
+  "blDeclined": "Declined.",
+  "blNoBookingsYet": "No bookings yet. Keep your hours up to date to get more.",
+  "blIncoming": "New requests",
+  "blAccept": "Accept",
+  "blUpcoming": "Coming up",
+  "blPast": "Earlier",
+  "blNoNearby": "No Kaam requests near you right now.",
+  "blNearbyHint": "Open requests in your trades and areas. The exact address is shared only after the Ghardhani picks your offer.",
+  "blPreferred": "Preferred: {when}",
+  "@blPreferred": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "blBudgetUpTo": "Budget up to {amount}",
+  "@blBudgetUpTo": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "blOffersCount": "{count} of {max} offers",
+  "@blOffersCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "blYouOffered": "You sent an offer",
+  "blOfferAccepted": "Chosen",
+  "blOfferNotChosen": "Not chosen",
+  "blOfferWithdrawn": "Withdrawn",
+  "blOfferPending": "Waiting",
+  "blWithdrawOffer": "Withdraw this offer?",
+  "blWithdraw": "Withdraw",
+  "blNoOffersSent": "You haven't sent any offers yet.",
+  "blKaamRequest": "Kaam request",
+  "blArrivedSaved": "Arrival confirmed. Start when you're ready.",
+  "blCodeLocked": "Too many wrong tries. Ask the Ghardhani to check the code in their app, or contact support.",
+  "blCodeWrong": "That code doesn't match. Check with the Ghardhani.",
+  "blCodeWrongLeft": "That code doesn't match. {left} tries left.",
+  "@blCodeWrongLeft": {
+    "placeholders": {
+      "left": {
+        "type": "String"
+      }
+    }
+  },
+  "blOnTheWaySaved": "The Ghardhani knows you're on the way.",
+  "blSendQuote": "Send your price",
+  "blSendQuoteHint": "After looking at the work. The Ghardhani approves it before you start.",
+  "blQuoteSent": "Price sent. Wait for the Ghardhani to approve.",
+  "blStartedSaved": "Work started.",
+  "blFinalPrice": "Final price",
+  "blFinalPriceHint": "What the Ghardhani pays you. It can't be more than agreed.",
+  "blCompletedSaved": "Marked done. The Ghardhani will confirm.",
+  "blPaidSaved": "Payment noted.",
+  "blCancelJobTitle": "Cancel this job?",
+  "blCancelJobBody": "Please only cancel if you really can't come. The Ghardhani will be told straight away.",
+  "blCancelled": "Cancelled.",
+  "blImOnTheWay": "I'm on the way",
+  "blStartWork": "Start work",
+  "blWorkDone": "Work done",
+  "blMarkPaid": "Mark as paid",
+  "blCancelJob": "Can't come — cancel",
+  "blBooking": "Booking",
+  "blForGhardhani": "For {name}",
+  "@blForGhardhani": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "blProgress": "Progress",
+  "blContact": "Contact",
+  "blQuoteWaiting": "You quoted {amount}. Waiting for the Ghardhani to approve.",
+  "@blQuoteWaiting": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "blPaidVia": "Paid · {method}",
+  "@blPaidVia": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "blWhatsNeeded": "What's needed",
+  "blRequestGone": "This request is no longer open.",
+  "blPickWhen": "Choose when you can come.",
+  "blOfferSent": "Offer sent. We'll tell you if the Ghardhani picks it.",
+  "blRequestFull": "This request already has 3 offers.",
+  "blExactAddressLater": "You see the exact address only if the Ghardhani picks your offer.",
+  "blYouOfferedPrice": "You offered {price}.",
+  "@blYouOfferedPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "blYourOffer": "Your offer",
+  "blWhenCanYouCome": "When can you come?",
+  "blOfferMessage": "Message to the Ghardhani",
+  "blOfferMessageHint": "e.g. I have fixed this kind of leak many times.",
+  "blSendOffer": "Send offer",
+  "blRemoveService": "Remove this service?",
+  "blNoServices": "No services yet. Add what you do and your price.",
+  "blSaveHours": "Save hours",
+  "blNoTimeOff": "No time off planned.",
+  "blRequests": "Requests",
+  "blHelloName": "Namaste, {name}",
+  "@blHelloName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "blHomeTitle": "Who do you need today?",
+  "blSearchHint": "Electrician, plumber, cook…",
+  "blSearch": "Search",
+  "blPickTrade": "What kind of work?",
+  "blNextBooking": "Your next booking",
+  "blPostRequest": "Post a Kaam request",
+  "blPostRequestHint": "Describe the job and get up to 3 offers from verified Sipalu nearby.",
+  "blHowBolauWorks": "How Bolau works",
+  "blPromiseVerified": "Every Sipalu you can book has had their ID checked by KaamSathi.",
+  "blPromisePrice": "You see the price before you book. No hidden fees.",
+  "blPromisePayDirect": "You pay the Sipalu directly — cash, eSewa, Khalti or bank.",
+  "blPromiseSafety": "Something wrong? Report it in confidence from any booking. In danger, call 100.",
+  "blPaid": "Paid",
+  "blFindSipalu": "Find a Sipalu",
+  "blFourStarsUp": "4★ and up",
+  "blNoSipaluFound": "No Sipalu free for this yet. Post a Kaam request and nearby Sipalu can send offers.",
+  "blFavRemoved": "Removed from favourites.",
+  "blFavAdded": "Saved to favourites.",
+  "blFavRemove": "Remove from favourites",
+  "blFavAdd": "Save to favourites",
+  "blBookName": "Book {name}",
+  "@blBookName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "blRepliesIn": "Usually replies in {minutes} min",
+  "@blRepliesIn": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "blVerification": "Verification",
+  "blNoServicesListed": "No services listed yet. You can still describe the job when you book.",
+  "blBook": "Book",
+  "blSkillsAndAreas": "Skills and areas",
+  "blYearsN": "{years} yrs",
+  "@blYearsN": {
+    "placeholders": {
+      "years": {
+        "type": "String"
+      }
+    }
+  },
+  "blWorksIn": "Works in {places}",
+  "@blWorksIn": {
+    "placeholders": {
+      "places": {
+        "type": "String"
+      }
+    }
+  },
+  "blSpeaks": "Speaks {languages}",
+  "@blSpeaks": {
+    "placeholders": {
+      "languages": {
+        "type": "String"
+      }
+    }
+  },
+  "blUsualHours": "Usual hours",
+  "blAskInBooking": "Pick a time when you book; the Sipalu confirms it.",
+  "blAbout": "About",
+  "blReviews": "Reviews",
+  "blNoReviews": "No reviews yet.",
+  "blProfilePrivacy": "Phone numbers stay hidden until a booking is accepted. Talk through the app until then.",
+  "blAddrOffice": "Office",
+  "blAddrOther": "Other",
+  "blAddrHome": "Home",
+  "blRemoveAddress": "Remove this address?",
+  "blAddresses": "My addresses",
+  "blAddAddress": "Add address",
+  "blEditAddress": "Edit address",
+  "blNoAddresses": "No addresses yet. Add one to book a Sipalu.",
+  "blDefault": "default",
+  "blAddressPrivacy": "A Sipalu sees only your ward and municipality until they accept. Your exact address is hidden again 48 hours after the job.",
+  "blAddrLine": "House, street or tole",
+  "blAddrLineHint": "e.g. House 12, Jhamsikhel Marg",
+  "blWard": "Ward",
+  "blMunicipality": "Municipality",
+  "blLandmarkHint": "e.g. Opposite the blue gate school",
+  "blUseByDefault": "Use this address by default",
+  "blBookTitle": "Book a Sipalu",
+  "blPickTime": "Choose a time",
+  "blPickAddress": "Choose or add an address.",
+  "blDescribeJob": "Describe the job",
+  "blBookedInstant": "Booked. The Sipalu has been told.",
+  "blRequestSent": "Request sent. {name} has 30 minutes to reply.",
+  "@blRequestSent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "blWhatWork": "What do you need?",
+  "blSomethingElse": "Something else",
+  "blSomethingElseHint": "Describe it below; you agree on the price with the Sipalu.",
+  "blNoteForSipalu": "Note for the Sipalu",
+  "blDescribeHint": "e.g. Bathroom tap leaking, need it fixed today",
+  "blWhen": "When?",
+  "blToday": "Today",
+  "blNoSlots": "No free time on this day. Try another day.",
+  "blWhere": "Where?",
+  "blPrice": "Price",
+  "blToSipalu": "To the Sipalu",
+  "blAgreeOnPrice": "Agreed with the Sipalu",
+  "blBookingFee": "Booking fee",
+  "blFeeWaived": "Free for now",
+  "blPayDirectNote": "You pay the Sipalu directly when the work is done — cash, eSewa, Khalti or bank. Nothing is added later.",
+  "blFeeNote": "The booking fee goes to KaamSathi, never out of the Sipalu's pay. Refunded if the Sipalu declines or doesn't come.",
+  "blFreeCancel": "Free to cancel until 2 hours before the start.",
+  "blConfirmBooking": "Confirm booking",
+  "blSendRequest": "Send booking request",
+  "blInstantNote": "This Sipalu takes instant bookings — free slots are confirmed straight away.",
+  "blRequestNote": "The Sipalu has 30 minutes to accept. You'll get an SMS either way.",
+  "blMyBookings": "My bookings",
+  "blNoBookingsGhar": "No bookings yet. Find a Sipalu for the work you need.",
+  "blActive": "Now and coming up",
+  "blCancelBookingTitle": "Cancel this booking?",
+  "blCancelFree": "It's free to cancel now. The Sipalu will be told straight away.",
+  "blCancelLate": "The start is less than 2 hours away. You can still cancel, but late cancellations are noted. The Sipalu is never charged.",
+  "blCancelLateShort": "Less than 2 hours to go — cancelling now is noted as late.",
+  "blApproveQuoteTitle": "Approve {amount}?",
+  "@blApproveQuoteTitle": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "blApproveQuoteBody": "The Sipalu starts work after you approve. You pay them directly when it's done.",
+  "blApprove": "Approve",
+  "blQuoteApproved": "Price approved.",
+  "blConfirmDoneTitle": "Is the work done?",
+  "blConfirmDoneBody": "Confirm only if you are happy with it. If something is wrong, report a problem instead.",
+  "blConfirmDone": "Yes, work is done",
+  "blThanksConfirm": "Thanks. Don't forget to pay the Sipalu directly.",
+  "blNoShowTitle": "The Sipalu didn't come?",
+  "blNoShowBody": "We'll look into it and refund any booking fee.",
+  "blReportNoShow": "Report: didn't come",
+  "blNoShowSaved": "Reported. Our team will contact you.",
+  "blCancelBooking": "Cancel booking",
+  "blApproveQuote": "Approve the price",
+  "blSeeProfile": "See profile",
+  "blWaitingSipalu": "Waiting for the Sipalu to accept. If there's no reply in 30 minutes, the request closes and you can book someone else.",
+  "blQuoteToApprove": "The Sipalu quoted {amount} after looking at the work.",
+  "@blQuoteToApprove": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "blPayDirectShort": "Pay the Sipalu directly. KaamSathi never holds the money.",
+  "blReqOffers": "Offers in",
+  "blReqBooked": "Booked",
+  "blReqOpen": "Waiting for offers",
+  "blMyRequests": "My Kaam requests",
+  "blNoRequests": "No Kaam requests yet. Post one and up to 3 verified Sipalu nearby can send offers.",
+  "blPickTradeShort": "Choose the kind of work.",
+  "blRequestPosted": "Posted. We've told verified Sipalu nearby.",
+  "blReqTitle": "What do you need done?",
+  "blReqDetails": "More details",
+  "blReqPhotos": "Photos (up to {max})",
+  "@blReqPhotos": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "blDay": "Day",
+  "blFrom": "From",
+  "blTo": "To",
+  "blBudget": "Your budget",
+  "blReqPrivacy": "Sipalu see only your ward and municipality. Your exact address goes only to the Sipalu you pick.",
+  "blPostRequestCta": "Post request",
+  "blAcceptOfferTitle": "Book {name}?",
+  "@blAcceptOfferTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "blAcceptOfferBody": "The other offers will be closed. You pay the Sipalu directly when the work is done.",
+  "blAcceptOffer": "Choose this offer",
+  "blOfferAcceptedSaved": "Booked. The Sipalu has been told.",
+  "blCancelRequest": "Close this request?",
+  "blCancelRequestCta": "Close request",
+  "blReqOpenUntil": "Open until {when}",
+  "@blReqOpenUntil": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "blOffersTitle": "Offers ({count} of {max})",
+  "@blOffersTitle": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "blNoOffersYet": "No offers yet. Sipalu nearby have been told — offers usually come within an hour.",
+  "blNoOffersClosed": "This request closed without offers.",
+  "blOpenBooking": "Open the booking",
+  "blLowestPrice": "Lowest price",
+  "blCanCome": "Can come {when}",
+  "@blCanCome": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "blFavourites": "Favourite Sipalu",
+  "blSafetyHelp": "Safety and help",
+  "blSafetySubtitle": "Harassment, unsafe work, payment trouble — in confidence",
+  "blNoFavourites": "No favourites yet. Tap the heart on a Sipalu's profile to save them.",
+  "blSafetyConfidential": "This report is confidential. The other person will not see it. Only KaamSathi's safety team reads it.",
+  "blArea": "Area",
+  "blTagExplainedWork": "Explained the work",
+  "blTagSafePlace": "Safe place to work",
+  "blRejectQuote": "Decline the price",
+  "blRejectQuoteTitle": "Decline this price?",
+  "blRejectQuoteBody": "The Sipalu can send a new price, or you can cancel. You only pay the visit fee if they came.",
+  "blQuoteRejected": "Price declined. The Sipalu has been told.",
+  "blQuoteWasRejected": "The Ghardhani declined your price. You can send a new one.",
+  "blBelowMinForTime": "Too low for the time it takes — at least {amount} an hour (minimum wage).",
+  "@blBelowMinForTime": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "blNotBookableWhy": "Not bookable yet: {reasons}",
+  "@blNotBookableWhy": {
+    "placeholders": {
+      "reasons": {
+        "type": "String"
+      }
+    }
+  },
+  "blSuspended": "Bolau is paused for your profile. Contact support to know more.",
+  "blPhotoNeeded": "Add a clear photo of your face.",
+  "blAnswerBy": "Answer by {when}",
+  "@blAnswerBy": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  }
 }

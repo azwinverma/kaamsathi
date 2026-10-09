@@ -3630,4 +3630,1304 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get celebrateTraining => 'तालिम पूरा भयो। स्याबास।';
+
+  @override
+  String get blStatusRequested => 'जवाफ पर्खँदै';
+
+  @override
+  String get blStatusAccepted => 'स्वीकार भयो';
+
+  @override
+  String get blStatusDeclined => 'अस्वीकार भयो';
+
+  @override
+  String get blStatusExpired => 'समयमा जवाफ आएन';
+
+  @override
+  String get blStatusOnTheWay => 'बाटोमा';
+
+  @override
+  String get blStatusArrived => 'आइपुग्नुभयो';
+
+  @override
+  String get blStatusInProgress => 'काम सुरु भयो';
+
+  @override
+  String get blStatusCompleted => 'काम सकियो';
+
+  @override
+  String get blStatusConfirmed => 'पक्का भयो';
+
+  @override
+  String get blStatusCancelled => 'रद्द भयो';
+
+  @override
+  String get blStatusNoShow => 'आउनुभएन';
+
+  @override
+  String get blStatusDisputed => 'जाँच हुँदैछ';
+
+  @override
+  String get blPriceFixed => 'तोकिएको मूल्य';
+
+  @override
+  String get blPriceHourly => 'घण्टाको हिसाबले';
+
+  @override
+  String get blPriceVisitQuote => 'हेरेपछि मूल्य';
+
+  @override
+  String blPerHour(String amount) {
+    return 'घण्टाको $amount';
+  }
+
+  @override
+  String blFixedPrice(String amount) {
+    return '$amount (तोकिएको)';
+  }
+
+  @override
+  String blVisitThenQuote(String amount) {
+    return 'हेर्न आउँदा $amount, त्यसपछि मूल्य';
+  }
+
+  @override
+  String get blNewOnBolau => 'बोलाउमा नयाँ';
+
+  @override
+  String blJobsDone(String count) {
+    return '$count काम सकिएको';
+  }
+
+  @override
+  String blRatingA11y(String rating) {
+    return '५ मा $rating रेटिङ';
+  }
+
+  @override
+  String get blIdVerified => 'परिचय प्रमाणित';
+
+  @override
+  String get blInstant => 'तुरुन्त बुकिङ';
+
+  @override
+  String blFromPrice(String amount) {
+    return '$amount देखि';
+  }
+
+  @override
+  String blNextFree(String when) {
+    return 'खाली: $when';
+  }
+
+  @override
+  String get blArrivalCode => 'आगमन कोड';
+
+  @override
+  String blArrivalCodeA11y(String digits) {
+    return 'आगमन कोड $digits';
+  }
+
+  @override
+  String get blArrivalCodeHint => 'सिपालु ढोकामा आइपुगेपछि मात्र यो कोड भन्नुहोस्। पहिले कसैलाई नदिनुहोस्।';
+
+  @override
+  String get blEnterArrivalCode => 'आगमन कोड';
+
+  @override
+  String get blEnterArrivalCodeHint => 'ढोकामा पुगेपछि घरधनीसँग ४ अंकको कोड सोध्नुहोस्।';
+
+  @override
+  String get blIHaveArrived => 'म आइपुगें';
+
+  @override
+  String get blNow => 'अहिले';
+
+  @override
+  String get blRequestTimeUp => 'समय सकियो';
+
+  @override
+  String blAnswerWithin(String time) {
+    return '$time भित्र जवाफ दिनुहोस्';
+  }
+
+  @override
+  String get blReportProblem => 'समस्या रिपोर्ट गर्नुहोस्';
+
+  @override
+  String get blContactHidden => 'बुकिङ स्वीकार भएपछि मात्र फोन र ठेगाना देखिन्छ।';
+
+  @override
+  String get blShowGhardhaniContact => 'घरधनीको फोन हेर्नुहोस्';
+
+  @override
+  String get blShowSipaluContact => 'सिपालुको फोन हेर्नुहोस्';
+
+  @override
+  String get blPhone => 'फोन';
+
+  @override
+  String get blAddress => 'ठेगाना';
+
+  @override
+  String get blLandmark => 'चिनारी ठाउँ';
+
+  @override
+  String get blCopyNumber => 'नम्बर कपी गर्नुहोस्';
+
+  @override
+  String get blContactExpires => 'काम सकिएको ४८ घण्टापछि फेरि लुक्छ।';
+
+  @override
+  String get blHowPaid => 'सिपालुलाई कसरी भुक्तानी भयो?';
+
+  @override
+  String get blPaidDirectNote => 'पैसा सिधै सिपालुलाई जान्छ। कामसाथीले राख्दैन, कमिसन पनि लिँदैन।';
+
+  @override
+  String get blTagOnTime => 'समयमै';
+
+  @override
+  String get blTagCleanWork => 'सफा काम';
+
+  @override
+  String get blTagPolite => 'नम्र';
+
+  @override
+  String get blTagFairPrice => 'उचित मूल्य';
+
+  @override
+  String get blTagSkilled => 'सीप भएको';
+
+  @override
+  String get blTagRespectful => 'सम्मानजनक';
+
+  @override
+  String get blTagPaidAsAgreed => 'भनेअनुसार भुक्तानी';
+
+  @override
+  String get blTagClearInstructions => 'स्पष्ट निर्देशन';
+
+  @override
+  String get blPickStars => '१ देखि ५ तारा छान्नुहोस्।';
+
+  @override
+  String get blRatingSaved => 'धन्यवाद। तपाईंको रेटिङ सुरक्षित भयो।';
+
+  @override
+  String get blRateSipalu => 'सिपालुलाई रेटिङ दिनुहोस्';
+
+  @override
+  String get blRateGhardhani => 'घरधनीलाई रेटिङ दिनुहोस्';
+
+  @override
+  String get blRateHint => 'तपाईं दुईले मात्र एकपटक एकअर्कालाई रेटिङ दिन सक्नुहुन्छ। समीक्षा देखिनुअघि जाँचिन्छ।';
+
+  @override
+  String get blSendRating => 'रेटिङ पठाउनुहोस्';
+
+  @override
+  String get blAmountRs => 'रकम (रु)';
+
+  @override
+  String get blEnterAmount => 'रकम लेख्नुहोस्।';
+
+  @override
+  String blNotAboveQuoted(String amount) {
+    return 'तय भएको $amount भन्दा बढी हुँदैन।';
+  }
+
+  @override
+  String get blWelcomeTitle => 'तपाईं के गर्न चाहनुहुन्छ?';
+
+  @override
+  String get blChooseSipalu => 'म काम खोज्दैछु';
+
+  @override
+  String get blChooseSipaluBody => 'सिपालु बन्नुहोस्। घरधनीले सिधै बोलाउँछन्, सिधै तिर्छन् — कुनै कमिसन छैन।';
+
+  @override
+  String get blChooseGhardhani => 'मलाई सिपालु बोलाउनु छ';
+
+  @override
+  String get blChooseGhardhaniBody =>
+      'नजिकैको परिचय प्रमाणित बिजुली मिस्त्री, प्लम्बर, भान्से वा सफाइकर्मी खोज्नुहोस्।';
+
+  @override
+  String get blEmployerAddedMe => 'रोजगारदाताले थप्नुभएको हो?';
+
+  @override
+  String get blEmployerAddedMeBody => 'रोजगारदाताले यही नम्बरले थप्नुभएको भए, फेरि जाँच्नुहोस्।';
+
+  @override
+  String get blSwitchMode => 'मोड बदल्नुहोस्';
+
+  @override
+  String get blModeSipalu => 'सिपालु';
+
+  @override
+  String get blModeSipaluHint => 'तपाईंको काम, बुकिङ र कमाइ';
+
+  @override
+  String get blModeGhardhani => 'घरधनी';
+
+  @override
+  String get blModeGhardhaniHint => 'घरको कामका लागि सिपालु बोलाउनुहोस्';
+
+  @override
+  String get blModeSupervisor => 'सुपरभाइजर';
+
+  @override
+  String get blModeSupervisorHint => 'रोजगारदाताको हाजिरी र टोली';
+
+  @override
+  String get blBecomeSipalu => 'सिपालु बन्नुहोस्';
+
+  @override
+  String get blBecomeSipaluHint => 'आफ्नो सीपले बुकिङ पाउनुहोस्। कहिल्यै शुल्क लाग्दैन।';
+
+  @override
+  String blWeeklyHours(String hours) {
+    return 'हप्तामा $hours घण्टा';
+  }
+
+  @override
+  String get blDayOff => 'बिदा';
+
+  @override
+  String blAboutMinutes(String minutes) {
+    return 'करिब $minutes मिनेट';
+  }
+
+  @override
+  String get blPaused => 'रोकिएको';
+
+  @override
+  String get blAddService => 'सेवा थप्नुहोस्';
+
+  @override
+  String get blEditService => 'सेवा सम्पादन';
+
+  @override
+  String get blServiceTitle => 'तपाईं के काम गर्नुहुन्छ?';
+
+  @override
+  String get blServiceTitleHint => 'जस्तै: सिलिङ फ्यान जडान';
+
+  @override
+  String get blServiceTitleNe => 'नेपालीमा नाम';
+
+  @override
+  String get blHowCharge => 'कसरी पैसा लिनुहुन्छ?';
+
+  @override
+  String get blVisitFee => 'हेर्न आउने शुल्क';
+
+  @override
+  String get blVisitFeeHint =>
+      'पहिले काम हेर्नुहोस्, अनि मूल्य पठाउनुहोस्। घरधनीले स्वीकृत गरेपछि मात्र काम सुरु हुन्छ।';
+
+  @override
+  String get blPricePerHour => 'प्रति घण्टा मूल्य';
+
+  @override
+  String get blPriceForJob => 'कामको मूल्य';
+
+  @override
+  String blMinHourlyHint(String amount) {
+    return 'कम्तीमा घण्टाको $amount — कानुनी न्यूनतम ज्याला।';
+  }
+
+  @override
+  String blBelowMinHourly(String amount) {
+    return 'घण्टाको मूल्य न्यूनतम ज्याला $amount भन्दा कम हुनु हुँदैन।';
+  }
+
+  @override
+  String get blEstimatedMinutes => 'सामान्यतया लाग्ने समय (मिनेट)';
+
+  @override
+  String get blServiceActive => 'यो सेवा देखाउनुहोस्';
+
+  @override
+  String get blPickTradeFirst => 'पहिले सीप थप्नुहोस्।';
+
+  @override
+  String get blDirectPay => 'ग्राहकले सिधै तपाईंलाई तिर्छन् — नगद, इसेवा, खल्ती वा बैंक। कामसाथीले कुनै कमिसन लिँदैन।';
+
+  @override
+  String get blStepBasics => 'तपाईंको नाम र फोटो';
+
+  @override
+  String get blStepSkills => 'तपाईंको सीप';
+
+  @override
+  String get blStepLanguages => 'तपाईं बोल्ने भाषा';
+
+  @override
+  String get blStepArea => 'काम गर्ने ठाउँ';
+
+  @override
+  String get blStepAvailability => 'तपाईं खाली हुने समय';
+
+  @override
+  String get blStepServices => 'सेवा र मूल्य';
+
+  @override
+  String get blStepPayment => 'ग्राहकले कसरी तिर्ने';
+
+  @override
+  String get blStepIdentity => 'प्रमाणीकरणका लागि परिचयपत्र';
+
+  @override
+  String get blStepHandle => 'तपाईंको सार्वजनिक प्रोफाइल';
+
+  @override
+  String blStepOf(String step, String total) {
+    return 'चरण $step / $total';
+  }
+
+  @override
+  String get blProfileComplete => 'प्रोफाइल पूरा';
+
+  @override
+  String get blBack => 'पछाडि';
+
+  @override
+  String get blFinish => 'सक्नुहोस्';
+
+  @override
+  String get blSaveContinue => 'सेभ गरेर अगाडि बढ्नुहोस्';
+
+  @override
+  String get blOnboardingDone => 'सेभ भयो। परिचयपत्र जाँच भएपछि खबर गर्छौं।';
+
+  @override
+  String get blCelebrateProfile => 'तपाईंको सिपालु प्रोफाइल पूरा भयो।';
+
+  @override
+  String get blCelebrateBookable => 'तपाईं प्रमाणित हुनुभयो। अब घरधनीले बोलाउन सक्छन्।';
+
+  @override
+  String get blPhotoOnFile => 'तपाईंको फोटो छ। बदल्न मात्र नयाँ थप्नुहोस्।';
+
+  @override
+  String get blChangePhoto => 'नयाँ फोटो';
+
+  @override
+  String get blYourPhoto => 'तपाईंको फोटो';
+
+  @override
+  String get blPhotoHint => 'अनुहार प्रस्ट देखिने फोटो, कालो चस्मा बिना। बुक गर्दा घरधनीले देख्छन्।';
+
+  @override
+  String get blAddOneSkill => 'कम्तीमा एउटा सीप थप्नुहोस्।';
+
+  @override
+  String get blSkillsHint => 'तपाईंले गर्ने काम छान्नुहोस्। पहिलो चाहिँ मुख्य सीप हुन्छ।';
+
+  @override
+  String get blMainSkill => 'मुख्य';
+
+  @override
+  String get blYears => 'वर्ष';
+
+  @override
+  String get blNstbLevel => 'NSTB तह';
+
+  @override
+  String get blNstbNone => 'परीक्षा दिएको छैन';
+
+  @override
+  String get blNstbHint => 'NSTB प्रमाणपत्र छ? पछि Learn बाट थप्नुहोस्, जाँच गर्न मिल्छ।';
+
+  @override
+  String get blPickOneLanguage => 'कम्तीमा एउटा भाषा छान्नुहोस्।';
+
+  @override
+  String get blLanguagesHint => 'घरधनीले आफ्नो भाषा बोल्ने सिपालु खोज्न सक्छन्।';
+
+  @override
+  String get blPickOneDistrict => 'कम्तीमा एउटा जिल्ला छान्नुहोस्।';
+
+  @override
+  String get blAreaHint => 'कामका लागि कहाँसम्म जान सक्नुहुन्छ?';
+
+  @override
+  String get blPickDistricts => 'जिल्ला छान्नुहोस्';
+
+  @override
+  String get blHowFar => 'घरबाट कति टाढासम्म?';
+
+  @override
+  String blKm(String km) {
+    return '$km कि.मि.';
+  }
+
+  @override
+  String get blAreaPrivacy => 'घरधनीले तपाईंको ठ्याक्कै ठाउँ देख्दैनन् — जिल्ला मात्र।';
+
+  @override
+  String get blPickOneDay => 'कम्तीमा एक दिन खोल्नुहोस्।';
+
+  @override
+  String get blEndAfterStart => 'सकिने समय सुरु समयभन्दा पछि हुनुपर्छ।';
+
+  @override
+  String get blTimeOff => 'बिदा';
+
+  @override
+  String get blAddTimeOff => 'बिदा थप्नुहोस्';
+
+  @override
+  String get blAddOneService => 'कम्तीमा एउटा सेवा थप्नुहोस्।';
+
+  @override
+  String get blServicesHint => 'के काम गर्नुहुन्छ र कति लाग्छ लेख्नुहोस्। बुक गर्नुअघि घरधनीले मूल्य देख्छन्।';
+
+  @override
+  String blWalletId(String wallet) {
+    return '$wallet नम्बर';
+  }
+
+  @override
+  String get blOwnAccountOnly => 'आफ्नै खाता राख्नुहोस्। बुकिङ पाउन कसैलाई पैसा नतिर्नुहोस्।';
+
+  @override
+  String get blIdPhotoNeeded => 'परिचयपत्रको अगाडिको फोटो थप्नुहोस्।';
+
+  @override
+  String get blIdVerifiedNote => 'तपाईंको परिचयपत्र प्रमाणित छ। यहाँ थप केही गर्नु पर्दैन।';
+
+  @override
+  String get blIdPendingNote => 'परिचयपत्र जाँच हुँदैछ। प्रायः एक-दुई दिन लाग्छ।';
+
+  @override
+  String get blIdWhy =>
+      'परिचय प्रमाणित सिपालुलाई मात्र बोलाउन मिल्छ। तपाईंको परिचयपत्र कामसाथीको प्रमाणीकरण टोलीले मात्र देख्छ — घरधनीले होइन।';
+
+  @override
+  String get blCitizenship => 'नागरिकता';
+
+  @override
+  String get blIdNumber => 'परिचयपत्र नम्बर';
+
+  @override
+  String get blIdFront => 'परिचयपत्रको अगाडि';
+
+  @override
+  String get blIdBack => 'परिचयपत्रको पछाडि';
+
+  @override
+  String get blConsentNeeded => 'घरधनीलाई प्रोफाइल देखाउन बाकसमा चिनो लगाउनुहोस्।';
+
+  @override
+  String get blHeadline => 'तपाईंको कामबारे एक लाइन';
+
+  @override
+  String get blHeadlineHint => 'जस्तै: घरको वायरिङ र फ्यान जडान, ८ वर्ष';
+
+  @override
+  String get blHeadlineNe => 'त्यही नेपालीमा';
+
+  @override
+  String get blHandle => 'प्रोफाइल लिङ्क';
+
+  @override
+  String get blHandleHint => '३–३० साना अक्षर, अंक वा -';
+
+  @override
+  String get blHandleInvalid => '३–३० साना अक्षर (a–z), अंक वा - मात्र।';
+
+  @override
+  String get blConsentPublic => 'मेरो सिपालु प्रोफाइल घरधनीलाई देखाउनुहोस्';
+
+  @override
+  String get blConsentPublicHint =>
+      'नाम, फोटो, सीप, सेवा, मूल्य, क्षेत्र र समीक्षा। फोन, ठेगाना वा परिचयपत्र कहिल्यै होइन।';
+
+  @override
+  String get blTab => 'बोलाउ';
+
+  @override
+  String get blSegBookings => 'बुकिङ';
+
+  @override
+  String get blSegNearby => 'नजिकै';
+
+  @override
+  String get blSegOffers => 'मेरा प्रस्ताव';
+
+  @override
+  String get blJoinTitle => 'नजिकका घरधनीबाट काम पाउनुहोस्';
+
+  @override
+  String get blJoinBody =>
+      'आफ्नो सीप र मूल्यसहित सिपालु प्रोफाइल बनाउनुहोस्। घरधनीले बोलाउँछन् र सिधै तिर्छन्। कामसाथीले कमिसन लिँदैन।';
+
+  @override
+  String blStatusFinishProfile(String percent) {
+    return 'प्रोफाइल $percent पूरा';
+  }
+
+  @override
+  String get blStatusIdCheck => 'परिचयपत्र जाँच पर्खँदै';
+
+  @override
+  String get blStatusPaused => 'बुकिङ बन्द छ';
+
+  @override
+  String get blStatusBookable => 'घरधनीले बोलाउन सक्छन्';
+
+  @override
+  String get blYourBolau => 'तपाईंको बोलाउ';
+
+  @override
+  String get blContinueProfile => 'प्रोफाइल पूरा गर्नुहोस्';
+
+  @override
+  String get blTakeBookings => 'बुकिङ लिने';
+
+  @override
+  String get blTakeBookingsHint => 'व्यस्त वा बाहिर हुँदा बन्द गर्नुहोस्।';
+
+  @override
+  String get blTakeBookingsAfterId => 'परिचयपत्र प्रमाणित भएपछि बुकिङ सुरु हुन्छ।';
+
+  @override
+  String get blInstantHint => 'खाली समय तपाईंले स्वीकार नगरी सिधै बुक हुन्छ।';
+
+  @override
+  String get blServicesAndHours => 'सेवा, मूल्य र समय';
+
+  @override
+  String get blEarnings => 'बोलाउबाट कमाइ';
+
+  @override
+  String get blThisMonth => 'यो महिना';
+
+  @override
+  String get blAllTime => 'हालसम्म';
+
+  @override
+  String get blPaidJobs => 'भुक्तानी भएका काम';
+
+  @override
+  String get blEarningsNote => 'भुक्तानी भयो भनिएका काम। पैसा सिधै तपाईंलाई आयो — कामसाथीले राख्दैन।';
+
+  @override
+  String get blDeclineTitle => 'यो बुकिङ अस्वीकार गर्ने?';
+
+  @override
+  String get blDeclineBody =>
+      'तपाईं आउन सक्नुहुन्न भनेर घरधनीलाई खबर जान्छ। धेरै अस्वीकार गर्दा खोजमा तल पर्न सक्नुहुन्छ।';
+
+  @override
+  String get blAccepted => 'स्वीकार भयो। घरधनीलाई खबर गर्‍यौं।';
+
+  @override
+  String get blDeclined => 'अस्वीकार गरियो।';
+
+  @override
+  String get blNoBookingsYet => 'अहिलेसम्म बुकिङ छैन। धेरै पाउन आफ्नो समय अद्यावधिक राख्नुहोस्।';
+
+  @override
+  String get blIncoming => 'नयाँ अनुरोध';
+
+  @override
+  String get blAccept => 'स्वीकार गर्नुहोस्';
+
+  @override
+  String get blUpcoming => 'आउँदै गरेका';
+
+  @override
+  String get blPast => 'पहिलेका';
+
+  @override
+  String get blNoNearby => 'अहिले नजिकै कुनै कामको अनुरोध छैन।';
+
+  @override
+  String get blNearbyHint =>
+      'तपाईंको सीप र क्षेत्रका खुला अनुरोध। घरधनीले तपाईंको प्रस्ताव छानेपछि मात्र ठ्याक्कै ठेगाना देखिन्छ।';
+
+  @override
+  String blPreferred(String when) {
+    return 'चाहेको समय: $when';
+  }
+
+  @override
+  String blBudgetUpTo(String amount) {
+    return 'बजेट $amount सम्म';
+  }
+
+  @override
+  String blOffersCount(String count, String max) {
+    return '$max मध्ये $count प्रस्ताव';
+  }
+
+  @override
+  String get blYouOffered => 'तपाईंले प्रस्ताव पठाउनुभयो';
+
+  @override
+  String get blOfferAccepted => 'छानियो';
+
+  @override
+  String get blOfferNotChosen => 'छानिएन';
+
+  @override
+  String get blOfferWithdrawn => 'फिर्ता लिइयो';
+
+  @override
+  String get blOfferPending => 'पर्खँदै';
+
+  @override
+  String get blWithdrawOffer => 'यो प्रस्ताव फिर्ता लिने?';
+
+  @override
+  String get blWithdraw => 'फिर्ता लिनुहोस्';
+
+  @override
+  String get blNoOffersSent => 'तपाईंले अहिलेसम्म प्रस्ताव पठाउनुभएको छैन।';
+
+  @override
+  String get blKaamRequest => 'कामको अनुरोध';
+
+  @override
+  String get blArrivedSaved => 'आइपुगेको पक्का भयो। तयार हुँदा काम सुरु गर्नुहोस्।';
+
+  @override
+  String get blCodeLocked => 'धेरै पटक गलत भयो। घरधनीलाई एपमा कोड हेर्न भन्नुहोस्, वा सहयोग लिनुहोस्।';
+
+  @override
+  String get blCodeWrong => 'कोड मिलेन। घरधनीसँग फेरि सोध्नुहोस्।';
+
+  @override
+  String blCodeWrongLeft(String left) {
+    return 'कोड मिलेन। अझै $left पटक प्रयास गर्न सकिन्छ।';
+  }
+
+  @override
+  String get blOnTheWaySaved => 'तपाईं बाटोमा हुनुहुन्छ भनेर घरधनीलाई थाहा भयो।';
+
+  @override
+  String get blSendQuote => 'आफ्नो मूल्य पठाउनुहोस्';
+
+  @override
+  String get blSendQuoteHint => 'काम हेरेपछि। घरधनीले स्वीकृत गरेपछि मात्र सुरु गर्नुहोस्।';
+
+  @override
+  String get blQuoteSent => 'मूल्य पठाइयो। घरधनीको स्वीकृति पर्खनुहोस्।';
+
+  @override
+  String get blStartedSaved => 'काम सुरु भयो।';
+
+  @override
+  String get blFinalPrice => 'अन्तिम मूल्य';
+
+  @override
+  String get blFinalPriceHint => 'घरधनीले तपाईंलाई तिर्ने रकम। तय भएभन्दा बढी हुँदैन।';
+
+  @override
+  String get blCompletedSaved => 'सकियो भनियो। घरधनीले पक्का गर्नुहुनेछ।';
+
+  @override
+  String get blPaidSaved => 'भुक्तानी टिपियो।';
+
+  @override
+  String get blCancelJobTitle => 'यो काम रद्द गर्ने?';
+
+  @override
+  String get blCancelJobBody => 'साँच्चै आउन नसक्ने भए मात्र रद्द गर्नुहोस्। घरधनीलाई तुरुन्त खबर जान्छ।';
+
+  @override
+  String get blCancelled => 'रद्द भयो।';
+
+  @override
+  String get blImOnTheWay => 'म बाटोमा छु';
+
+  @override
+  String get blStartWork => 'काम सुरु गर्नुहोस्';
+
+  @override
+  String get blWorkDone => 'काम सकियो';
+
+  @override
+  String get blMarkPaid => 'भुक्तानी भयो भन्नुहोस्';
+
+  @override
+  String get blCancelJob => 'आउन सक्दिनँ — रद्द';
+
+  @override
+  String get blBooking => 'बुकिङ';
+
+  @override
+  String blForGhardhani(String name) {
+    return '$name का लागि';
+  }
+
+  @override
+  String get blProgress => 'प्रगति';
+
+  @override
+  String get blContact => 'सम्पर्क';
+
+  @override
+  String blQuoteWaiting(String amount) {
+    return 'तपाईंले $amount भन्नुभयो। घरधनीको स्वीकृति पर्खँदै।';
+  }
+
+  @override
+  String blPaidVia(String method) {
+    return 'भुक्तानी भयो · $method';
+  }
+
+  @override
+  String get blWhatsNeeded => 'के काम चाहिएको';
+
+  @override
+  String get blRequestGone => 'यो अनुरोध अब खुला छैन।';
+
+  @override
+  String get blPickWhen => 'कहिले आउन सक्नुहुन्छ छान्नुहोस्।';
+
+  @override
+  String get blOfferSent => 'प्रस्ताव पठाइयो। घरधनीले छाने खबर गर्छौं।';
+
+  @override
+  String get blRequestFull => 'यो अनुरोधमा ३ वटा प्रस्ताव आइसके।';
+
+  @override
+  String get blExactAddressLater => 'घरधनीले तपाईंको प्रस्ताव छानेपछि मात्र ठ्याक्कै ठेगाना देखिन्छ।';
+
+  @override
+  String blYouOfferedPrice(String price) {
+    return 'तपाईंले $price प्रस्ताव गर्नुभयो।';
+  }
+
+  @override
+  String get blYourOffer => 'तपाईंको प्रस्ताव';
+
+  @override
+  String get blWhenCanYouCome => 'कहिले आउन सक्नुहुन्छ?';
+
+  @override
+  String get blOfferMessage => 'घरधनीलाई सन्देश';
+
+  @override
+  String get blOfferMessageHint => 'जस्तै: यस्तो चुहावट धेरै पटक बनाएको छु।';
+
+  @override
+  String get blSendOffer => 'प्रस्ताव पठाउनुहोस्';
+
+  @override
+  String get blRemoveService => 'यो सेवा हटाउने?';
+
+  @override
+  String get blNoServices => 'अहिलेसम्म सेवा छैन। आफ्नो काम र मूल्य थप्नुहोस्।';
+
+  @override
+  String get blSaveHours => 'समय सेभ गर्नुहोस्';
+
+  @override
+  String get blNoTimeOff => 'कुनै बिदा राखिएको छैन।';
+
+  @override
+  String get blRequests => 'अनुरोध';
+
+  @override
+  String blHelloName(String name) {
+    return 'नमस्ते, $name';
+  }
+
+  @override
+  String get blHomeTitle => 'आज कसलाई बोलाउने?';
+
+  @override
+  String get blSearchHint => 'बिजुली मिस्त्री, प्लम्बर, भान्से…';
+
+  @override
+  String get blSearch => 'खोज्नुहोस्';
+
+  @override
+  String get blPickTrade => 'कस्तो काम?';
+
+  @override
+  String get blNextBooking => 'तपाईंको अर्को बुकिङ';
+
+  @override
+  String get blPostRequest => 'कामको अनुरोध राख्नुहोस्';
+
+  @override
+  String get blPostRequestHint => 'काम बताउनुहोस्, नजिकका प्रमाणित सिपालुबाट ३ वटासम्म प्रस्ताव पाउनुहोस्।';
+
+  @override
+  String get blHowBolauWorks => 'बोलाउ कसरी चल्छ';
+
+  @override
+  String get blPromiseVerified => 'बोलाउन मिल्ने हरेक सिपालुको परिचयपत्र कामसाथीले जाँचेको छ।';
+
+  @override
+  String get blPromisePrice => 'बुक गर्नुअघि नै मूल्य देखिन्छ। कुनै लुकेको शुल्क छैन।';
+
+  @override
+  String get blPromisePayDirect => 'सिपालुलाई सिधै तिर्नुहोस् — नगद, इसेवा, खल्ती वा बैंक।';
+
+  @override
+  String get blPromiseSafety =>
+      'केही गडबड भयो? जुनसुकै बुकिङबाट गोप्य रूपमा रिपोर्ट गर्नुहोस्। खतरामा परे १०० मा फोन गर्नुहोस्।';
+
+  @override
+  String get blPaid => 'तिरियो';
+
+  @override
+  String get blFindSipalu => 'सिपालु खोज्नुहोस्';
+
+  @override
+  String get blFourStarsUp => '४★ वा माथि';
+
+  @override
+  String get blNoSipaluFound =>
+      'अहिले यसका लागि खाली सिपालु छैनन्। कामको अनुरोध राख्नुहोस्, नजिकका सिपालुले प्रस्ताव पठाउन सक्छन्।';
+
+  @override
+  String get blFavRemoved => 'मनपर्नेबाट हटाइयो।';
+
+  @override
+  String get blFavAdded => 'मनपर्नेमा राखियो।';
+
+  @override
+  String get blFavRemove => 'मनपर्नेबाट हटाउनुहोस्';
+
+  @override
+  String get blFavAdd => 'मनपर्नेमा राख्नुहोस्';
+
+  @override
+  String blBookName(String name) {
+    return '$name लाई बोलाउनुहोस्';
+  }
+
+  @override
+  String blRepliesIn(String minutes) {
+    return 'प्रायः $minutes मिनेटमा जवाफ दिन्छन्';
+  }
+
+  @override
+  String get blVerification => 'प्रमाणीकरण';
+
+  @override
+  String get blNoServicesListed => 'सेवा राखिएको छैन। बुक गर्दा काम बताउन सक्नुहुन्छ।';
+
+  @override
+  String get blBook => 'बोलाउनुहोस्';
+
+  @override
+  String get blSkillsAndAreas => 'सीप र क्षेत्र';
+
+  @override
+  String blYearsN(String years) {
+    return '$years वर्ष';
+  }
+
+  @override
+  String blWorksIn(String places) {
+    return '$places मा काम गर्छन्';
+  }
+
+  @override
+  String blSpeaks(String languages) {
+    return '$languages बोल्छन्';
+  }
+
+  @override
+  String get blUsualHours => 'सामान्य समय';
+
+  @override
+  String get blAskInBooking => 'बुक गर्दा समय छान्नुहोस्; सिपालुले पक्का गर्छन्।';
+
+  @override
+  String get blAbout => 'परिचय';
+
+  @override
+  String get blReviews => 'समीक्षा';
+
+  @override
+  String get blNoReviews => 'अहिलेसम्म समीक्षा छैन।';
+
+  @override
+  String get blProfilePrivacy => 'बुकिङ स्वीकार नभएसम्म फोन नम्बर लुक्छ। त्यसअघि एपबाटै कुरा गर्नुहोस्।';
+
+  @override
+  String get blAddrOffice => 'कार्यालय';
+
+  @override
+  String get blAddrOther => 'अन्य';
+
+  @override
+  String get blAddrHome => 'घर';
+
+  @override
+  String get blRemoveAddress => 'यो ठेगाना हटाउने?';
+
+  @override
+  String get blAddresses => 'मेरा ठेगाना';
+
+  @override
+  String get blAddAddress => 'ठेगाना थप्नुहोस्';
+
+  @override
+  String get blEditAddress => 'ठेगाना सम्पादन';
+
+  @override
+  String get blNoAddresses => 'अहिलेसम्म ठेगाना छैन। सिपालु बोलाउन एउटा थप्नुहोस्।';
+
+  @override
+  String get blDefault => 'मुख्य';
+
+  @override
+  String get blAddressPrivacy =>
+      'सिपालुले स्वीकार नगरेसम्म वडा र नगरपालिका मात्र देख्छन्। काम सकिएको ४८ घण्टापछि ठेगाना फेरि लुक्छ।';
+
+  @override
+  String get blAddrLine => 'घर, सडक वा टोल';
+
+  @override
+  String get blAddrLineHint => 'जस्तै: घर नं. १२, झम्सिखेल मार्ग';
+
+  @override
+  String get blWard => 'वडा';
+
+  @override
+  String get blMunicipality => 'नगरपालिका / गाउँपालिका';
+
+  @override
+  String get blLandmarkHint => 'जस्तै: निलो गेट भएको स्कुलको अगाडि';
+
+  @override
+  String get blUseByDefault => 'यो ठेगाना मुख्य बनाउनुहोस्';
+
+  @override
+  String get blBookTitle => 'सिपालु बोलाउनुहोस्';
+
+  @override
+  String get blPickTime => 'समय छान्नुहोस्';
+
+  @override
+  String get blPickAddress => 'ठेगाना छान्नुहोस् वा थप्नुहोस्।';
+
+  @override
+  String get blDescribeJob => 'काम बताउनुहोस्';
+
+  @override
+  String get blBookedInstant => 'बुक भयो। सिपालुलाई खबर गरियो।';
+
+  @override
+  String blRequestSent(String name) {
+    return 'अनुरोध पठाइयो। $name ले ३० मिनेटभित्र जवाफ दिनुहुनेछ।';
+  }
+
+  @override
+  String get blWhatWork => 'के काम चाहियो?';
+
+  @override
+  String get blSomethingElse => 'अरू काम';
+
+  @override
+  String get blSomethingElseHint => 'तल बताउनुहोस्; मूल्य सिपालुसँग मिलाउनुहोस्।';
+
+  @override
+  String get blNoteForSipalu => 'सिपालुका लागि नोट';
+
+  @override
+  String get blDescribeHint => 'जस्तै: बाथरुमको धारा चुहिन्छ, आजै बनाउनु छ';
+
+  @override
+  String get blWhen => 'कहिले?';
+
+  @override
+  String get blToday => 'आज';
+
+  @override
+  String get blNoSlots => 'यो दिन खाली समय छैन। अर्को दिन हेर्नुहोस्।';
+
+  @override
+  String get blWhere => 'कहाँ?';
+
+  @override
+  String get blPrice => 'मूल्य';
+
+  @override
+  String get blToSipalu => 'सिपालुलाई';
+
+  @override
+  String get blAgreeOnPrice => 'सिपालुसँग मिलाएर';
+
+  @override
+  String get blBookingFee => 'बुकिङ शुल्क';
+
+  @override
+  String get blFeeWaived => 'अहिले निःशुल्क';
+
+  @override
+  String get blPayDirectNote => 'काम सकिएपछि सिपालुलाई सिधै तिर्नुहोस् — नगद, इसेवा, खल्ती वा बैंक। पछि केही थपिँदैन।';
+
+  @override
+  String get blFeeNote =>
+      'बुकिङ शुल्क कामसाथीलाई जान्छ, सिपालुको कमाइबाट कहिल्यै काटिँदैन। सिपालुले अस्वीकार गरे वा नआए फिर्ता हुन्छ।';
+
+  @override
+  String get blFreeCancel => 'सुरु हुनुभन्दा २ घण्टाअघिसम्म निःशुल्क रद्द गर्न सकिन्छ।';
+
+  @override
+  String get blConfirmBooking => 'बुकिङ पक्का गर्नुहोस्';
+
+  @override
+  String get blSendRequest => 'बुकिङ अनुरोध पठाउनुहोस्';
+
+  @override
+  String get blInstantNote => 'यी सिपालुले तुरुन्त बुकिङ लिन्छन् — खाली समय तुरुन्तै पक्का हुन्छ।';
+
+  @override
+  String get blRequestNote => 'सिपालुले ३० मिनेटभित्र स्वीकार गर्नुपर्छ। जे भए पनि SMS आउँछ।';
+
+  @override
+  String get blMyBookings => 'मेरा बुकिङ';
+
+  @override
+  String get blNoBookingsGhar => 'अहिलेसम्म बुकिङ छैन। चाहिएको कामका लागि सिपालु खोज्नुहोस्।';
+
+  @override
+  String get blActive => 'अहिले र आउँदै';
+
+  @override
+  String get blCancelBookingTitle => 'यो बुकिङ रद्द गर्ने?';
+
+  @override
+  String get blCancelFree => 'अहिले रद्द गर्दा शुल्क लाग्दैन। सिपालुलाई तुरुन्त खबर जान्छ।';
+
+  @override
+  String get blCancelLate =>
+      'सुरु हुन २ घण्टाभन्दा कम बाँकी छ। अझै रद्द गर्न सकिन्छ, तर ढिलो रद्द गरेको टिपिन्छ। सिपालुलाई कहिल्यै शुल्क लाग्दैन।';
+
+  @override
+  String get blCancelLateShort => '२ घण्टाभन्दा कम बाँकी — अहिले रद्द गर्दा ढिलो रद्द भनेर टिपिन्छ।';
+
+  @override
+  String blApproveQuoteTitle(String amount) {
+    return '$amount स्वीकृत गर्ने?';
+  }
+
+  @override
+  String get blApproveQuoteBody => 'स्वीकृत गरेपछि सिपालुले काम सुरु गर्नुहुन्छ। सकिएपछि सिधै तिर्नुहोस्।';
+
+  @override
+  String get blApprove => 'स्वीकृत गर्नुहोस्';
+
+  @override
+  String get blQuoteApproved => 'मूल्य स्वीकृत भयो।';
+
+  @override
+  String get blConfirmDoneTitle => 'काम सकियो?';
+
+  @override
+  String get blConfirmDoneBody => 'चित्त बुझे मात्र पक्का गर्नुहोस्। केही गडबड भए समस्या रिपोर्ट गर्नुहोस्।';
+
+  @override
+  String get blConfirmDone => 'हो, काम सकियो';
+
+  @override
+  String get blThanksConfirm => 'धन्यवाद। सिपालुलाई सिधै तिर्न नबिर्सनुहोस्।';
+
+  @override
+  String get blNoShowTitle => 'सिपालु आउनुभएन?';
+
+  @override
+  String get blNoShowBody => 'हामी हेर्छौं र बुकिङ शुल्क तिरेको भए फिर्ता गर्छौं।';
+
+  @override
+  String get blReportNoShow => 'रिपोर्ट: आउनुभएन';
+
+  @override
+  String get blNoShowSaved => 'रिपोर्ट भयो। हाम्रो टोलीले सम्पर्क गर्नेछ।';
+
+  @override
+  String get blCancelBooking => 'बुकिङ रद्द गर्नुहोस्';
+
+  @override
+  String get blApproveQuote => 'मूल्य स्वीकृत गर्नुहोस्';
+
+  @override
+  String get blSeeProfile => 'प्रोफाइल हेर्नुहोस्';
+
+  @override
+  String get blWaitingSipalu =>
+      'सिपालुको स्वीकृति पर्खँदै। ३० मिनेटमा जवाफ नआए अनुरोध बन्द हुन्छ र अरूलाई बोलाउन सक्नुहुन्छ।';
+
+  @override
+  String blQuoteToApprove(String amount) {
+    return 'काम हेरेपछि सिपालुले $amount भन्नुभयो।';
+  }
+
+  @override
+  String get blPayDirectShort => 'सिपालुलाई सिधै तिर्नुहोस्। कामसाथीले पैसा राख्दैन।';
+
+  @override
+  String get blReqOffers => 'प्रस्ताव आए';
+
+  @override
+  String get blReqBooked => 'बुक भयो';
+
+  @override
+  String get blReqOpen => 'प्रस्ताव पर्खँदै';
+
+  @override
+  String get blMyRequests => 'मेरा कामका अनुरोध';
+
+  @override
+  String get blNoRequests =>
+      'अहिलेसम्म अनुरोध छैन। एउटा राख्नुहोस्, नजिकका ३ जनासम्म प्रमाणित सिपालुले प्रस्ताव पठाउन सक्छन्।';
+
+  @override
+  String get blPickTradeShort => 'कामको किसिम छान्नुहोस्।';
+
+  @override
+  String get blRequestPosted => 'राखियो। नजिकका प्रमाणित सिपालुलाई खबर गर्‍यौं।';
+
+  @override
+  String get blReqTitle => 'के काम गराउनु छ?';
+
+  @override
+  String get blReqDetails => 'थप विवरण';
+
+  @override
+  String blReqPhotos(String max) {
+    return 'फोटो ($max वटासम्म)';
+  }
+
+  @override
+  String get blDay => 'दिन';
+
+  @override
+  String get blFrom => 'देखि';
+
+  @override
+  String get blTo => 'सम्म';
+
+  @override
+  String get blBudget => 'तपाईंको बजेट';
+
+  @override
+  String get blReqPrivacy =>
+      'सिपालुले वडा र नगरपालिका मात्र देख्छन्। ठ्याक्कै ठेगाना तपाईंले छानेको सिपालुलाई मात्र जान्छ।';
+
+  @override
+  String get blPostRequestCta => 'अनुरोध राख्नुहोस्';
+
+  @override
+  String blAcceptOfferTitle(String name) {
+    return '$name लाई बोलाउने?';
+  }
+
+  @override
+  String get blAcceptOfferBody => 'अरू प्रस्ताव बन्द हुनेछन्। काम सकिएपछि सिपालुलाई सिधै तिर्नुहोस्।';
+
+  @override
+  String get blAcceptOffer => 'यो प्रस्ताव छान्नुहोस्';
+
+  @override
+  String get blOfferAcceptedSaved => 'बुक भयो। सिपालुलाई खबर गरियो।';
+
+  @override
+  String get blCancelRequest => 'यो अनुरोध बन्द गर्ने?';
+
+  @override
+  String get blCancelRequestCta => 'अनुरोध बन्द गर्नुहोस्';
+
+  @override
+  String blReqOpenUntil(String when) {
+    return '$when सम्म खुला';
+  }
+
+  @override
+  String blOffersTitle(String count, String max) {
+    return 'प्रस्ताव ($max मध्ये $count)';
+  }
+
+  @override
+  String get blNoOffersYet => 'अहिलेसम्म प्रस्ताव छैन। नजिकका सिपालुलाई खबर गइसकेको छ — प्रायः एक घण्टाभित्र आउँछ।';
+
+  @override
+  String get blNoOffersClosed => 'यो अनुरोध प्रस्ताव बिना बन्द भयो।';
+
+  @override
+  String get blOpenBooking => 'बुकिङ हेर्नुहोस्';
+
+  @override
+  String get blLowestPrice => 'सबैभन्दा कम मूल्य';
+
+  @override
+  String blCanCome(String when) {
+    return '$when आउन सक्छन्';
+  }
+
+  @override
+  String get blFavourites => 'मनपर्ने सिपालु';
+
+  @override
+  String get blSafetyHelp => 'सुरक्षा र सहयोग';
+
+  @override
+  String get blSafetySubtitle => 'दुर्व्यवहार, असुरक्षित काम, भुक्तानी समस्या — गोप्य रूपमा';
+
+  @override
+  String get blNoFavourites => 'अहिलेसम्म मनपर्ने छैन। सिपालुको प्रोफाइलमा मुटु थिचेर राख्नुहोस्।';
+
+  @override
+  String get blSafetyConfidential =>
+      'यो रिपोर्ट गोप्य हुन्छ। अर्को पक्षले देख्दैन। कामसाथीको सुरक्षा टोलीले मात्र पढ्छ।';
+
+  @override
+  String get blArea => 'क्षेत्र';
+
+  @override
+  String get blTagExplainedWork => 'काम बुझाइदिए';
+
+  @override
+  String get blTagSafePlace => 'काम गर्न सुरक्षित ठाउँ';
+
+  @override
+  String get blRejectQuote => 'मूल्य अस्वीकार गर्नुहोस्';
+
+  @override
+  String get blRejectQuoteTitle => 'यो मूल्य अस्वीकार गर्ने?';
+
+  @override
+  String get blRejectQuoteBody =>
+      'सिपालुले नयाँ मूल्य पठाउन सक्नुहुन्छ, वा तपाईं रद्द गर्न सक्नुहुन्छ। आउनुभएको भए हेर्ने शुल्क मात्र तिर्नुहोस्।';
+
+  @override
+  String get blQuoteRejected => 'मूल्य अस्वीकार गरियो। सिपालुलाई खबर गरियो।';
+
+  @override
+  String get blQuoteWasRejected => 'घरधनीले तपाईंको मूल्य अस्वीकार गर्नुभयो। नयाँ मूल्य पठाउन सक्नुहुन्छ।';
+
+  @override
+  String blBelowMinForTime(String amount) {
+    return 'लाग्ने समयका लागि धेरै कम — कम्तीमा घण्टाको $amount (न्यूनतम ज्याला)।';
+  }
+
+  @override
+  String blNotBookableWhy(String reasons) {
+    return 'अहिले बोलाउन मिल्दैन: $reasons';
+  }
+
+  @override
+  String get blSuspended => 'तपाईंको प्रोफाइलमा बोलाउ रोकिएको छ। थप जान्न सहयोगमा सम्पर्क गर्नुहोस्।';
+
+  @override
+  String get blPhotoNeeded => 'अनुहार प्रस्ट देखिने फोटो थप्नुहोस्।';
+
+  @override
+  String blAnswerBy(String when) {
+    return '$when सम्म जवाफ दिनुहोस्';
+  }
 }

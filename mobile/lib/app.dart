@@ -7,6 +7,7 @@ import 'core/l10n/l10n.dart';
 import 'core/providers.dart';
 import 'core/router/router.dart';
 import 'core/theme/app_theme.dart';
+import 'features/bolau/bolau_repository.dart';
 
 class KaamSathiApp extends ConsumerWidget {
   const KaamSathiApp({super.key, this.useGoogleFonts = true});
@@ -19,7 +20,8 @@ class KaamSathiApp extends ConsumerWidget {
     final router = ref.watch(routerProvider);
     // Supervisor mode is the calm "documentary ledger"; worker mode (and the
     // pre-login screens) the "street mural" (docs/design/DIRECTION.md).
-    final ledger = ref.watch(sessionProvider.select((s) => s.mode)) == AppMode.supervisor;
+    final bolau = ref.watch(bolauEnabledProvider);
+    final ledger = effectiveMode(ref.watch(sessionProvider), bolau: bolau) == AppMode.supervisor;
     return MaterialApp.router(
       title: 'KaamSathi',
       debugShowCheckedModeBanner: false,

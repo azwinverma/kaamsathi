@@ -8,7 +8,9 @@ import '../../core/format.dart';
 import '../../core/l10n/l10n.dart';
 import '../../core/router/router.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/theme/tokens.dart';
 import '../../core/widgets/eco.dart';
+import '../bolau/bolau_repository.dart';
 import '../supervisor/hajiri/hajiri_providers.dart';
 
 /// Confirms and performs logout, warning about unsynced hajiri.
@@ -36,7 +38,10 @@ Future<void> confirmLogout(BuildContext context, WidgetRef ref) async {
   await ref.read(sessionProvider.notifier).logout();
 }
 
-/// "Switch to worker/supervisor view" tile, shown only with both roles.
+/// Mode switch row. Without Bolau: "Switch to worker/supervisor view",
+/// shown only with both roles. With Bolau on: "Switch mode" opens a sheet
+/// with every mode this person can use — Sipalu (or "Become a Sipalu"),
+/// Ghardhani and supervisor.
 class ModeSwitchTile extends ConsumerWidget {
   const ModeSwitchTile({super.key});
 
@@ -44,6 +49,18 @@ class ModeSwitchTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final s = ref.watch(sessionProvider);
+    final bolau = ref.watch(bolauEnabledProvider);
+    if (bolau) {
+      final mode = effectiveMode(s, bolau: true);
+      return ListTile(
+        key: const Key('mode_switch'),
+        leading: const Icon(LucideIcons.arrowLeftRight),
+        title: Text(l.blSwitchMode),
+        subtitle: Text(modeLabel(l, mode)),
+        trailing: const Icon(LucideIcons.chevronRight),
+        onTap: () => showModeSheet(context, ref),
+      );
+    }
     if (!(s.me?.hasBothModes ?? false)) return const SizedBox.shrink();
     final toWorker = s.mode == AppMode.supervisor;
     return ListTile(
@@ -52,6 +69,86 @@ class ModeSwitchTile extends ConsumerWidget {
       trailing: const Icon(LucideIcons.chevronRight),
       onTap: () => ref.read(sessionProvider.notifier).setMode(toWorker ? AppMode.worker : AppMode.supervisor),
     );
+  }
+}
+
+String modeLabel(AppLocalizations l, AppMode? m) => switch (m) {
+  AppMode.worker => l.blModeSipalu,
+  AppMode.ghardhani => l.blModeGhardhani,
+  AppMode.supervisor => l.blModeSupervisor,
+  null => '',
+};
+
+/// Bottom sheet listing the modes (Bolau on).
+Future<void> showModeSheet(BuildContext context, WidgetRef ref) async {
+  final s = ref.read(sessionProvider);
+  final me = s.me;
+  final current = effectiveMode(s, bolau: true);
+  final picked = await showModalBottomSheet<String>(
+    context: context,
+    builder: (ctx) {
+      final l = ctx.l10n;
+      Widget tile(String key, IconData icon, String title, String subtitle, {bool selected = false}) => ListTile(
+        key: Key('mode_$key'),
+        leading: Icon(icon),
+        title: Text(title),
+        subtitle: Text(subtitle),
+        trailing: selected ? const Icon(LucideIcons.check) : null,
+        selected: selected,
+        onTap: () => Navigator.pop(ctx, key),
+      );
+      return SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(KsSpace.page),
+                child: Text(l.blSwitchMode, style: Theme.of(ctx).textTheme.titleLarge),
+              ),
+              if (me?.isWorker ?? false)
+                tile(
+                  'worker',
+                  LucideIcons.hammer,
+                  l.blModeSipalu,
+                  l.blModeSipaluHint,
+                  selected: current == AppMode.worker,
+                )
+              else
+                tile('join', LucideIcons.userPlus, l.blBecomeSipalu, l.blBecomeSipaluHint),
+              tile(
+                'ghardhani',
+                LucideIcons.house,
+                l.blModeGhardhani,
+                l.blModeGhardhaniHint,
+                selected: current == AppMode.ghardhani,
+              ),
+              if (me?.canSupervise ?? false)
+                tile(
+                  'supervisor',
+                  LucideIcons.clipboardCheck,
+                  l.blModeSupervisor,
+                  l.blModeSupervisorHint,
+                  selected: current == AppMode.supervisor,
+                ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+  if (picked == null || !context.mounted) return;
+  final session = ref.read(sessionProvider.notifier);
+  switch (picked) {
+    case 'join':
+      await context.push(Routes.sipaluJoin);
+    case 'worker':
+      await session.setMode(AppMode.worker);
+    case 'ghardhani':
+      await session.setMode(AppMode.ghardhani);
+    case 'supervisor':
+      await session.setMode(AppMode.supervisor);
   }
 }
 
@@ -80,6 +177,7 @@ class AccountHelpTiles extends ConsumerWidget {
         ),
         if (worker)
           MenuTile(
+            key: const Key('menu_safety'),
             icon: LucideIcons.shieldAlert,
             title: l.safetyTitle,
             subtitle: l.safetyMenuSubtitle,

@@ -3622,4 +3622,1306 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get celebrateTraining => 'Training completed. Well done.';
+
+  @override
+  String get blStatusRequested => 'Waiting for reply';
+
+  @override
+  String get blStatusAccepted => 'Accepted';
+
+  @override
+  String get blStatusDeclined => 'Declined';
+
+  @override
+  String get blStatusExpired => 'No reply in time';
+
+  @override
+  String get blStatusOnTheWay => 'On the way';
+
+  @override
+  String get blStatusArrived => 'Arrived';
+
+  @override
+  String get blStatusInProgress => 'Work started';
+
+  @override
+  String get blStatusCompleted => 'Work done';
+
+  @override
+  String get blStatusConfirmed => 'Confirmed';
+
+  @override
+  String get blStatusCancelled => 'Cancelled';
+
+  @override
+  String get blStatusNoShow => 'Did not come';
+
+  @override
+  String get blStatusDisputed => 'Under review';
+
+  @override
+  String get blPriceFixed => 'Fixed price';
+
+  @override
+  String get blPriceHourly => 'By the hour';
+
+  @override
+  String get blPriceVisitQuote => 'Visit, then quote';
+
+  @override
+  String blPerHour(String amount) {
+    return '$amount an hour';
+  }
+
+  @override
+  String blFixedPrice(String amount) {
+    return '$amount fixed';
+  }
+
+  @override
+  String blVisitThenQuote(String amount) {
+    return 'Visit $amount, then a quote';
+  }
+
+  @override
+  String get blNewOnBolau => 'New on Bolau';
+
+  @override
+  String blJobsDone(String count) {
+    return '$count jobs done';
+  }
+
+  @override
+  String blRatingA11y(String rating) {
+    return 'Rated $rating out of 5';
+  }
+
+  @override
+  String get blIdVerified => 'ID verified';
+
+  @override
+  String get blInstant => 'Instant booking';
+
+  @override
+  String blFromPrice(String amount) {
+    return 'From $amount';
+  }
+
+  @override
+  String blNextFree(String when) {
+    return 'Free $when';
+  }
+
+  @override
+  String get blArrivalCode => 'Arrival code';
+
+  @override
+  String blArrivalCodeA11y(String digits) {
+    return 'Arrival code $digits';
+  }
+
+  @override
+  String get blArrivalCodeHint => 'Read this out when the Sipalu arrives at your door. Don\'t share it before.';
+
+  @override
+  String get blEnterArrivalCode => 'Arrival code';
+
+  @override
+  String get blEnterArrivalCodeHint => 'Ask the Ghardhani for the 4-digit code when you reach the door.';
+
+  @override
+  String get blIHaveArrived => 'I have arrived';
+
+  @override
+  String get blNow => 'now';
+
+  @override
+  String get blRequestTimeUp => 'Time is up';
+
+  @override
+  String blAnswerWithin(String time) {
+    return 'Answer within $time';
+  }
+
+  @override
+  String get blReportProblem => 'Report a problem';
+
+  @override
+  String get blContactHidden => 'Phone and exact address are shared only after the booking is accepted.';
+
+  @override
+  String get blShowGhardhaniContact => 'Show Ghardhani\'s phone';
+
+  @override
+  String get blShowSipaluContact => 'Show Sipalu\'s phone';
+
+  @override
+  String get blPhone => 'Phone';
+
+  @override
+  String get blAddress => 'Address';
+
+  @override
+  String get blLandmark => 'Landmark';
+
+  @override
+  String get blCopyNumber => 'Copy number';
+
+  @override
+  String get blContactExpires => 'Hidden again 48 hours after the work is done.';
+
+  @override
+  String get blHowPaid => 'How was the Sipalu paid?';
+
+  @override
+  String get blPaidDirectNote => 'Money goes straight to the Sipalu. KaamSathi never holds it or takes a cut.';
+
+  @override
+  String get blTagOnTime => 'On time';
+
+  @override
+  String get blTagCleanWork => 'Clean work';
+
+  @override
+  String get blTagPolite => 'Polite';
+
+  @override
+  String get blTagFairPrice => 'Fair price';
+
+  @override
+  String get blTagSkilled => 'Knew the job';
+
+  @override
+  String get blTagRespectful => 'Respectful';
+
+  @override
+  String get blTagPaidAsAgreed => 'Paid as agreed';
+
+  @override
+  String get blTagClearInstructions => 'Clear instructions';
+
+  @override
+  String get blPickStars => 'Choose 1 to 5 stars.';
+
+  @override
+  String get blRatingSaved => 'Thank you. Your rating is saved.';
+
+  @override
+  String get blRateSipalu => 'Rate the Sipalu';
+
+  @override
+  String get blRateGhardhani => 'Rate the Ghardhani';
+
+  @override
+  String get blRateHint => 'Only you two can rate each other, once. Reviews are checked before they show.';
+
+  @override
+  String get blSendRating => 'Send rating';
+
+  @override
+  String get blAmountRs => 'Amount (Rs)';
+
+  @override
+  String get blEnterAmount => 'Enter an amount.';
+
+  @override
+  String blNotAboveQuoted(String amount) {
+    return 'Can\'t be more than the agreed $amount.';
+  }
+
+  @override
+  String get blWelcomeTitle => 'What would you like to do?';
+
+  @override
+  String get blChooseSipalu => 'I want to find work';
+
+  @override
+  String get blChooseSipaluBody =>
+      'Become a Sipalu. Households book you directly and pay you directly — no commission.';
+
+  @override
+  String get blChooseGhardhani => 'I want to book a Sipalu';
+
+  @override
+  String get blChooseGhardhaniBody => 'Find an ID-verified electrician, plumber, cook or cleaner near you.';
+
+  @override
+  String get blEmployerAddedMe => 'Did an employer add you?';
+
+  @override
+  String get blEmployerAddedMeBody => 'If your employer added you with this number, check again to open your work app.';
+
+  @override
+  String get blSwitchMode => 'Switch mode';
+
+  @override
+  String get blModeSipalu => 'Sipalu';
+
+  @override
+  String get blModeSipaluHint => 'Your jobs, bookings and earnings';
+
+  @override
+  String get blModeGhardhani => 'Ghardhani';
+
+  @override
+  String get blModeGhardhaniHint => 'Book a Sipalu for work at home';
+
+  @override
+  String get blModeSupervisor => 'Supervisor';
+
+  @override
+  String get blModeSupervisorHint => 'Hajiri and teams for your employer';
+
+  @override
+  String get blBecomeSipalu => 'Become a Sipalu';
+
+  @override
+  String get blBecomeSipaluHint => 'Get booked for your skills. No fees, ever.';
+
+  @override
+  String blWeeklyHours(String hours) {
+    return '$hours hours a week';
+  }
+
+  @override
+  String get blDayOff => 'Day off';
+
+  @override
+  String blAboutMinutes(String minutes) {
+    return 'about $minutes min';
+  }
+
+  @override
+  String get blPaused => 'Paused';
+
+  @override
+  String get blAddService => 'Add a service';
+
+  @override
+  String get blEditService => 'Edit service';
+
+  @override
+  String get blServiceTitle => 'What do you do?';
+
+  @override
+  String get blServiceTitleHint => 'e.g. Ceiling fan fitting';
+
+  @override
+  String get blServiceTitleNe => 'Name in Nepali';
+
+  @override
+  String get blHowCharge => 'How do you charge?';
+
+  @override
+  String get blVisitFee => 'Visit fee';
+
+  @override
+  String get blVisitFeeHint =>
+      'You look at the work first, then send a price. The Ghardhani approves it before you start.';
+
+  @override
+  String get blPricePerHour => 'Price per hour';
+
+  @override
+  String get blPriceForJob => 'Price for the job';
+
+  @override
+  String blMinHourlyHint(String amount) {
+    return 'At least $amount an hour — the legal minimum wage.';
+  }
+
+  @override
+  String blBelowMinHourly(String amount) {
+    return 'Hourly price must be at least $amount, the minimum wage.';
+  }
+
+  @override
+  String get blEstimatedMinutes => 'Usual time (minutes)';
+
+  @override
+  String get blServiceActive => 'Show this service';
+
+  @override
+  String get blPickTradeFirst => 'Add a skill first.';
+
+  @override
+  String get blDirectPay => 'Customers pay you directly — cash, eSewa, Khalti or bank. KaamSathi never takes a cut.';
+
+  @override
+  String get blStepBasics => 'Your name and photo';
+
+  @override
+  String get blStepSkills => 'Your skills';
+
+  @override
+  String get blStepLanguages => 'Languages you speak';
+
+  @override
+  String get blStepArea => 'Where you work';
+
+  @override
+  String get blStepAvailability => 'When you are free';
+
+  @override
+  String get blStepServices => 'Services and prices';
+
+  @override
+  String get blStepPayment => 'How customers pay you';
+
+  @override
+  String get blStepIdentity => 'ID for verification';
+
+  @override
+  String get blStepHandle => 'Your public profile';
+
+  @override
+  String blStepOf(String step, String total) {
+    return 'Step $step of $total';
+  }
+
+  @override
+  String get blProfileComplete => 'Profile complete';
+
+  @override
+  String get blBack => 'Back';
+
+  @override
+  String get blFinish => 'Finish';
+
+  @override
+  String get blSaveContinue => 'Save and continue';
+
+  @override
+  String get blOnboardingDone => 'Saved. We\'ll tell you when your ID is checked.';
+
+  @override
+  String get blCelebrateProfile => 'Your Sipalu profile is complete.';
+
+  @override
+  String get blCelebrateBookable => 'You\'re verified. Ghardhani can now book you.';
+
+  @override
+  String get blPhotoOnFile => 'We have your photo. Add a new one only if you want to change it.';
+
+  @override
+  String get blChangePhoto => 'New photo';
+
+  @override
+  String get blYourPhoto => 'Your photo';
+
+  @override
+  String get blPhotoHint => 'A clear photo of your face, no sunglasses. Ghardhani see it when they book.';
+
+  @override
+  String get blAddOneSkill => 'Add at least one skill.';
+
+  @override
+  String get blSkillsHint => 'Pick the work you do. The first one is your main skill.';
+
+  @override
+  String get blMainSkill => 'main';
+
+  @override
+  String get blYears => 'Years';
+
+  @override
+  String get blNstbLevel => 'NSTB level';
+
+  @override
+  String get blNstbNone => 'No test yet';
+
+  @override
+  String get blNstbHint => 'Have an NSTB certificate? Add it later from Learn so it can be checked.';
+
+  @override
+  String get blPickOneLanguage => 'Pick at least one language.';
+
+  @override
+  String get blLanguagesHint => 'Ghardhani can look for someone who speaks their language.';
+
+  @override
+  String get blPickOneDistrict => 'Pick at least one district.';
+
+  @override
+  String get blAreaHint => 'Where can you go for work?';
+
+  @override
+  String get blPickDistricts => 'Choose districts';
+
+  @override
+  String get blHowFar => 'How far from home?';
+
+  @override
+  String blKm(String km) {
+    return '$km km';
+  }
+
+  @override
+  String get blAreaPrivacy => 'Ghardhani never see your exact location — only your districts.';
+
+  @override
+  String get blPickOneDay => 'Turn on at least one day.';
+
+  @override
+  String get blEndAfterStart => 'End time must be after start time.';
+
+  @override
+  String get blTimeOff => 'Time off';
+
+  @override
+  String get blAddTimeOff => 'Add time off';
+
+  @override
+  String get blAddOneService => 'Add at least one service.';
+
+  @override
+  String get blServicesHint => 'Say what you do and what it costs. Ghardhani see the price before they book.';
+
+  @override
+  String blWalletId(String wallet) {
+    return '$wallet number';
+  }
+
+  @override
+  String get blOwnAccountOnly => 'Use your own account. Never pay anyone to get bookings.';
+
+  @override
+  String get blIdPhotoNeeded => 'Add a photo of the front of your ID.';
+
+  @override
+  String get blIdVerifiedNote => 'Your ID is verified. Nothing more to do here.';
+
+  @override
+  String get blIdPendingNote => 'We are checking your ID. This usually takes a day or two.';
+
+  @override
+  String get blIdWhy =>
+      'Only ID-verified Sipalu can be booked. Only KaamSathi\'s verification team sees your ID — never Ghardhani.';
+
+  @override
+  String get blCitizenship => 'Citizenship';
+
+  @override
+  String get blIdNumber => 'ID number';
+
+  @override
+  String get blIdFront => 'Front of ID';
+
+  @override
+  String get blIdBack => 'Back of ID';
+
+  @override
+  String get blConsentNeeded => 'Tick the box to show your profile to Ghardhani.';
+
+  @override
+  String get blHeadline => 'One line about your work';
+
+  @override
+  String get blHeadlineHint => 'e.g. House wiring and fan fitting, 8 years';
+
+  @override
+  String get blHeadlineNe => 'The same in Nepali';
+
+  @override
+  String get blHandle => 'Profile link';
+
+  @override
+  String get blHandleHint => '3–30 small letters, numbers or -';
+
+  @override
+  String get blHandleInvalid => 'Use 3–30 small letters (a–z), numbers or -.';
+
+  @override
+  String get blConsentPublic => 'Show my Sipalu profile to Ghardhani';
+
+  @override
+  String get blConsentPublicHint =>
+      'Name, photo, skills, services, prices, areas and reviews. Never your phone, address or ID.';
+
+  @override
+  String get blTab => 'Bolau';
+
+  @override
+  String get blSegBookings => 'Bookings';
+
+  @override
+  String get blSegNearby => 'Nearby';
+
+  @override
+  String get blSegOffers => 'My offers';
+
+  @override
+  String get blJoinTitle => 'Get booked by households near you';
+
+  @override
+  String get blJoinBody =>
+      'Make a Sipalu profile with your skills and prices. Ghardhani book you and pay you directly. KaamSathi never takes a cut.';
+
+  @override
+  String blStatusFinishProfile(String percent) {
+    return 'Profile $percent done';
+  }
+
+  @override
+  String get blStatusIdCheck => 'Waiting for ID check';
+
+  @override
+  String get blStatusPaused => 'Not taking bookings';
+
+  @override
+  String get blStatusBookable => 'Ghardhani can book you';
+
+  @override
+  String get blYourBolau => 'Your Bolau';
+
+  @override
+  String get blContinueProfile => 'Continue my profile';
+
+  @override
+  String get blTakeBookings => 'Take bookings';
+
+  @override
+  String get blTakeBookingsHint => 'Turn off when you are busy or away.';
+
+  @override
+  String get blTakeBookingsAfterId => 'Bookings start once your ID is verified.';
+
+  @override
+  String get blInstantHint => 'Free slots are booked straight away, without waiting for you to accept.';
+
+  @override
+  String get blServicesAndHours => 'Services, prices and hours';
+
+  @override
+  String get blEarnings => 'Earnings from Bolau';
+
+  @override
+  String get blThisMonth => 'This month';
+
+  @override
+  String get blAllTime => 'All time';
+
+  @override
+  String get blPaidJobs => 'Paid jobs';
+
+  @override
+  String get blEarningsNote => 'Jobs marked paid. The money went straight to you — KaamSathi never holds it.';
+
+  @override
+  String get blDeclineTitle => 'Decline this booking?';
+
+  @override
+  String get blDeclineBody =>
+      'The Ghardhani will be told you can\'t come. Declining often lowers how high you show in search.';
+
+  @override
+  String get blAccepted => 'Accepted. We\'ve told the Ghardhani.';
+
+  @override
+  String get blDeclined => 'Declined.';
+
+  @override
+  String get blNoBookingsYet => 'No bookings yet. Keep your hours up to date to get more.';
+
+  @override
+  String get blIncoming => 'New requests';
+
+  @override
+  String get blAccept => 'Accept';
+
+  @override
+  String get blUpcoming => 'Coming up';
+
+  @override
+  String get blPast => 'Earlier';
+
+  @override
+  String get blNoNearby => 'No Kaam requests near you right now.';
+
+  @override
+  String get blNearbyHint =>
+      'Open requests in your trades and areas. The exact address is shared only after the Ghardhani picks your offer.';
+
+  @override
+  String blPreferred(String when) {
+    return 'Preferred: $when';
+  }
+
+  @override
+  String blBudgetUpTo(String amount) {
+    return 'Budget up to $amount';
+  }
+
+  @override
+  String blOffersCount(String count, String max) {
+    return '$count of $max offers';
+  }
+
+  @override
+  String get blYouOffered => 'You sent an offer';
+
+  @override
+  String get blOfferAccepted => 'Chosen';
+
+  @override
+  String get blOfferNotChosen => 'Not chosen';
+
+  @override
+  String get blOfferWithdrawn => 'Withdrawn';
+
+  @override
+  String get blOfferPending => 'Waiting';
+
+  @override
+  String get blWithdrawOffer => 'Withdraw this offer?';
+
+  @override
+  String get blWithdraw => 'Withdraw';
+
+  @override
+  String get blNoOffersSent => 'You haven\'t sent any offers yet.';
+
+  @override
+  String get blKaamRequest => 'Kaam request';
+
+  @override
+  String get blArrivedSaved => 'Arrival confirmed. Start when you\'re ready.';
+
+  @override
+  String get blCodeLocked =>
+      'Too many wrong tries. Ask the Ghardhani to check the code in their app, or contact support.';
+
+  @override
+  String get blCodeWrong => 'That code doesn\'t match. Check with the Ghardhani.';
+
+  @override
+  String blCodeWrongLeft(String left) {
+    return 'That code doesn\'t match. $left tries left.';
+  }
+
+  @override
+  String get blOnTheWaySaved => 'The Ghardhani knows you\'re on the way.';
+
+  @override
+  String get blSendQuote => 'Send your price';
+
+  @override
+  String get blSendQuoteHint => 'After looking at the work. The Ghardhani approves it before you start.';
+
+  @override
+  String get blQuoteSent => 'Price sent. Wait for the Ghardhani to approve.';
+
+  @override
+  String get blStartedSaved => 'Work started.';
+
+  @override
+  String get blFinalPrice => 'Final price';
+
+  @override
+  String get blFinalPriceHint => 'What the Ghardhani pays you. It can\'t be more than agreed.';
+
+  @override
+  String get blCompletedSaved => 'Marked done. The Ghardhani will confirm.';
+
+  @override
+  String get blPaidSaved => 'Payment noted.';
+
+  @override
+  String get blCancelJobTitle => 'Cancel this job?';
+
+  @override
+  String get blCancelJobBody =>
+      'Please only cancel if you really can\'t come. The Ghardhani will be told straight away.';
+
+  @override
+  String get blCancelled => 'Cancelled.';
+
+  @override
+  String get blImOnTheWay => 'I\'m on the way';
+
+  @override
+  String get blStartWork => 'Start work';
+
+  @override
+  String get blWorkDone => 'Work done';
+
+  @override
+  String get blMarkPaid => 'Mark as paid';
+
+  @override
+  String get blCancelJob => 'Can\'t come — cancel';
+
+  @override
+  String get blBooking => 'Booking';
+
+  @override
+  String blForGhardhani(String name) {
+    return 'For $name';
+  }
+
+  @override
+  String get blProgress => 'Progress';
+
+  @override
+  String get blContact => 'Contact';
+
+  @override
+  String blQuoteWaiting(String amount) {
+    return 'You quoted $amount. Waiting for the Ghardhani to approve.';
+  }
+
+  @override
+  String blPaidVia(String method) {
+    return 'Paid · $method';
+  }
+
+  @override
+  String get blWhatsNeeded => 'What\'s needed';
+
+  @override
+  String get blRequestGone => 'This request is no longer open.';
+
+  @override
+  String get blPickWhen => 'Choose when you can come.';
+
+  @override
+  String get blOfferSent => 'Offer sent. We\'ll tell you if the Ghardhani picks it.';
+
+  @override
+  String get blRequestFull => 'This request already has 3 offers.';
+
+  @override
+  String get blExactAddressLater => 'You see the exact address only if the Ghardhani picks your offer.';
+
+  @override
+  String blYouOfferedPrice(String price) {
+    return 'You offered $price.';
+  }
+
+  @override
+  String get blYourOffer => 'Your offer';
+
+  @override
+  String get blWhenCanYouCome => 'When can you come?';
+
+  @override
+  String get blOfferMessage => 'Message to the Ghardhani';
+
+  @override
+  String get blOfferMessageHint => 'e.g. I have fixed this kind of leak many times.';
+
+  @override
+  String get blSendOffer => 'Send offer';
+
+  @override
+  String get blRemoveService => 'Remove this service?';
+
+  @override
+  String get blNoServices => 'No services yet. Add what you do and your price.';
+
+  @override
+  String get blSaveHours => 'Save hours';
+
+  @override
+  String get blNoTimeOff => 'No time off planned.';
+
+  @override
+  String get blRequests => 'Requests';
+
+  @override
+  String blHelloName(String name) {
+    return 'Namaste, $name';
+  }
+
+  @override
+  String get blHomeTitle => 'Who do you need today?';
+
+  @override
+  String get blSearchHint => 'Electrician, plumber, cook…';
+
+  @override
+  String get blSearch => 'Search';
+
+  @override
+  String get blPickTrade => 'What kind of work?';
+
+  @override
+  String get blNextBooking => 'Your next booking';
+
+  @override
+  String get blPostRequest => 'Post a Kaam request';
+
+  @override
+  String get blPostRequestHint => 'Describe the job and get up to 3 offers from verified Sipalu nearby.';
+
+  @override
+  String get blHowBolauWorks => 'How Bolau works';
+
+  @override
+  String get blPromiseVerified => 'Every Sipalu you can book has had their ID checked by KaamSathi.';
+
+  @override
+  String get blPromisePrice => 'You see the price before you book. No hidden fees.';
+
+  @override
+  String get blPromisePayDirect => 'You pay the Sipalu directly — cash, eSewa, Khalti or bank.';
+
+  @override
+  String get blPromiseSafety => 'Something wrong? Report it in confidence from any booking. In danger, call 100.';
+
+  @override
+  String get blPaid => 'Paid';
+
+  @override
+  String get blFindSipalu => 'Find a Sipalu';
+
+  @override
+  String get blFourStarsUp => '4★ and up';
+
+  @override
+  String get blNoSipaluFound => 'No Sipalu free for this yet. Post a Kaam request and nearby Sipalu can send offers.';
+
+  @override
+  String get blFavRemoved => 'Removed from favourites.';
+
+  @override
+  String get blFavAdded => 'Saved to favourites.';
+
+  @override
+  String get blFavRemove => 'Remove from favourites';
+
+  @override
+  String get blFavAdd => 'Save to favourites';
+
+  @override
+  String blBookName(String name) {
+    return 'Book $name';
+  }
+
+  @override
+  String blRepliesIn(String minutes) {
+    return 'Usually replies in $minutes min';
+  }
+
+  @override
+  String get blVerification => 'Verification';
+
+  @override
+  String get blNoServicesListed => 'No services listed yet. You can still describe the job when you book.';
+
+  @override
+  String get blBook => 'Book';
+
+  @override
+  String get blSkillsAndAreas => 'Skills and areas';
+
+  @override
+  String blYearsN(String years) {
+    return '$years yrs';
+  }
+
+  @override
+  String blWorksIn(String places) {
+    return 'Works in $places';
+  }
+
+  @override
+  String blSpeaks(String languages) {
+    return 'Speaks $languages';
+  }
+
+  @override
+  String get blUsualHours => 'Usual hours';
+
+  @override
+  String get blAskInBooking => 'Pick a time when you book; the Sipalu confirms it.';
+
+  @override
+  String get blAbout => 'About';
+
+  @override
+  String get blReviews => 'Reviews';
+
+  @override
+  String get blNoReviews => 'No reviews yet.';
+
+  @override
+  String get blProfilePrivacy =>
+      'Phone numbers stay hidden until a booking is accepted. Talk through the app until then.';
+
+  @override
+  String get blAddrOffice => 'Office';
+
+  @override
+  String get blAddrOther => 'Other';
+
+  @override
+  String get blAddrHome => 'Home';
+
+  @override
+  String get blRemoveAddress => 'Remove this address?';
+
+  @override
+  String get blAddresses => 'My addresses';
+
+  @override
+  String get blAddAddress => 'Add address';
+
+  @override
+  String get blEditAddress => 'Edit address';
+
+  @override
+  String get blNoAddresses => 'No addresses yet. Add one to book a Sipalu.';
+
+  @override
+  String get blDefault => 'default';
+
+  @override
+  String get blAddressPrivacy =>
+      'A Sipalu sees only your ward and municipality until they accept. Your exact address is hidden again 48 hours after the job.';
+
+  @override
+  String get blAddrLine => 'House, street or tole';
+
+  @override
+  String get blAddrLineHint => 'e.g. House 12, Jhamsikhel Marg';
+
+  @override
+  String get blWard => 'Ward';
+
+  @override
+  String get blMunicipality => 'Municipality';
+
+  @override
+  String get blLandmarkHint => 'e.g. Opposite the blue gate school';
+
+  @override
+  String get blUseByDefault => 'Use this address by default';
+
+  @override
+  String get blBookTitle => 'Book a Sipalu';
+
+  @override
+  String get blPickTime => 'Choose a time';
+
+  @override
+  String get blPickAddress => 'Choose or add an address.';
+
+  @override
+  String get blDescribeJob => 'Describe the job';
+
+  @override
+  String get blBookedInstant => 'Booked. The Sipalu has been told.';
+
+  @override
+  String blRequestSent(String name) {
+    return 'Request sent. $name has 30 minutes to reply.';
+  }
+
+  @override
+  String get blWhatWork => 'What do you need?';
+
+  @override
+  String get blSomethingElse => 'Something else';
+
+  @override
+  String get blSomethingElseHint => 'Describe it below; you agree on the price with the Sipalu.';
+
+  @override
+  String get blNoteForSipalu => 'Note for the Sipalu';
+
+  @override
+  String get blDescribeHint => 'e.g. Bathroom tap leaking, need it fixed today';
+
+  @override
+  String get blWhen => 'When?';
+
+  @override
+  String get blToday => 'Today';
+
+  @override
+  String get blNoSlots => 'No free time on this day. Try another day.';
+
+  @override
+  String get blWhere => 'Where?';
+
+  @override
+  String get blPrice => 'Price';
+
+  @override
+  String get blToSipalu => 'To the Sipalu';
+
+  @override
+  String get blAgreeOnPrice => 'Agreed with the Sipalu';
+
+  @override
+  String get blBookingFee => 'Booking fee';
+
+  @override
+  String get blFeeWaived => 'Free for now';
+
+  @override
+  String get blPayDirectNote =>
+      'You pay the Sipalu directly when the work is done — cash, eSewa, Khalti or bank. Nothing is added later.';
+
+  @override
+  String get blFeeNote =>
+      'The booking fee goes to KaamSathi, never out of the Sipalu\'s pay. Refunded if the Sipalu declines or doesn\'t come.';
+
+  @override
+  String get blFreeCancel => 'Free to cancel until 2 hours before the start.';
+
+  @override
+  String get blConfirmBooking => 'Confirm booking';
+
+  @override
+  String get blSendRequest => 'Send booking request';
+
+  @override
+  String get blInstantNote => 'This Sipalu takes instant bookings — free slots are confirmed straight away.';
+
+  @override
+  String get blRequestNote => 'The Sipalu has 30 minutes to accept. You\'ll get an SMS either way.';
+
+  @override
+  String get blMyBookings => 'My bookings';
+
+  @override
+  String get blNoBookingsGhar => 'No bookings yet. Find a Sipalu for the work you need.';
+
+  @override
+  String get blActive => 'Now and coming up';
+
+  @override
+  String get blCancelBookingTitle => 'Cancel this booking?';
+
+  @override
+  String get blCancelFree => 'It\'s free to cancel now. The Sipalu will be told straight away.';
+
+  @override
+  String get blCancelLate =>
+      'The start is less than 2 hours away. You can still cancel, but late cancellations are noted. The Sipalu is never charged.';
+
+  @override
+  String get blCancelLateShort => 'Less than 2 hours to go — cancelling now is noted as late.';
+
+  @override
+  String blApproveQuoteTitle(String amount) {
+    return 'Approve $amount?';
+  }
+
+  @override
+  String get blApproveQuoteBody => 'The Sipalu starts work after you approve. You pay them directly when it\'s done.';
+
+  @override
+  String get blApprove => 'Approve';
+
+  @override
+  String get blQuoteApproved => 'Price approved.';
+
+  @override
+  String get blConfirmDoneTitle => 'Is the work done?';
+
+  @override
+  String get blConfirmDoneBody =>
+      'Confirm only if you are happy with it. If something is wrong, report a problem instead.';
+
+  @override
+  String get blConfirmDone => 'Yes, work is done';
+
+  @override
+  String get blThanksConfirm => 'Thanks. Don\'t forget to pay the Sipalu directly.';
+
+  @override
+  String get blNoShowTitle => 'The Sipalu didn\'t come?';
+
+  @override
+  String get blNoShowBody => 'We\'ll look into it and refund any booking fee.';
+
+  @override
+  String get blReportNoShow => 'Report: didn\'t come';
+
+  @override
+  String get blNoShowSaved => 'Reported. Our team will contact you.';
+
+  @override
+  String get blCancelBooking => 'Cancel booking';
+
+  @override
+  String get blApproveQuote => 'Approve the price';
+
+  @override
+  String get blSeeProfile => 'See profile';
+
+  @override
+  String get blWaitingSipalu =>
+      'Waiting for the Sipalu to accept. If there\'s no reply in 30 minutes, the request closes and you can book someone else.';
+
+  @override
+  String blQuoteToApprove(String amount) {
+    return 'The Sipalu quoted $amount after looking at the work.';
+  }
+
+  @override
+  String get blPayDirectShort => 'Pay the Sipalu directly. KaamSathi never holds the money.';
+
+  @override
+  String get blReqOffers => 'Offers in';
+
+  @override
+  String get blReqBooked => 'Booked';
+
+  @override
+  String get blReqOpen => 'Waiting for offers';
+
+  @override
+  String get blMyRequests => 'My Kaam requests';
+
+  @override
+  String get blNoRequests => 'No Kaam requests yet. Post one and up to 3 verified Sipalu nearby can send offers.';
+
+  @override
+  String get blPickTradeShort => 'Choose the kind of work.';
+
+  @override
+  String get blRequestPosted => 'Posted. We\'ve told verified Sipalu nearby.';
+
+  @override
+  String get blReqTitle => 'What do you need done?';
+
+  @override
+  String get blReqDetails => 'More details';
+
+  @override
+  String blReqPhotos(String max) {
+    return 'Photos (up to $max)';
+  }
+
+  @override
+  String get blDay => 'Day';
+
+  @override
+  String get blFrom => 'From';
+
+  @override
+  String get blTo => 'To';
+
+  @override
+  String get blBudget => 'Your budget';
+
+  @override
+  String get blReqPrivacy =>
+      'Sipalu see only your ward and municipality. Your exact address goes only to the Sipalu you pick.';
+
+  @override
+  String get blPostRequestCta => 'Post request';
+
+  @override
+  String blAcceptOfferTitle(String name) {
+    return 'Book $name?';
+  }
+
+  @override
+  String get blAcceptOfferBody => 'The other offers will be closed. You pay the Sipalu directly when the work is done.';
+
+  @override
+  String get blAcceptOffer => 'Choose this offer';
+
+  @override
+  String get blOfferAcceptedSaved => 'Booked. The Sipalu has been told.';
+
+  @override
+  String get blCancelRequest => 'Close this request?';
+
+  @override
+  String get blCancelRequestCta => 'Close request';
+
+  @override
+  String blReqOpenUntil(String when) {
+    return 'Open until $when';
+  }
+
+  @override
+  String blOffersTitle(String count, String max) {
+    return 'Offers ($count of $max)';
+  }
+
+  @override
+  String get blNoOffersYet => 'No offers yet. Sipalu nearby have been told — offers usually come within an hour.';
+
+  @override
+  String get blNoOffersClosed => 'This request closed without offers.';
+
+  @override
+  String get blOpenBooking => 'Open the booking';
+
+  @override
+  String get blLowestPrice => 'Lowest price';
+
+  @override
+  String blCanCome(String when) {
+    return 'Can come $when';
+  }
+
+  @override
+  String get blFavourites => 'Favourite Sipalu';
+
+  @override
+  String get blSafetyHelp => 'Safety and help';
+
+  @override
+  String get blSafetySubtitle => 'Harassment, unsafe work, payment trouble — in confidence';
+
+  @override
+  String get blNoFavourites => 'No favourites yet. Tap the heart on a Sipalu\'s profile to save them.';
+
+  @override
+  String get blSafetyConfidential =>
+      'This report is confidential. The other person will not see it. Only KaamSathi\'s safety team reads it.';
+
+  @override
+  String get blArea => 'Area';
+
+  @override
+  String get blTagExplainedWork => 'Explained the work';
+
+  @override
+  String get blTagSafePlace => 'Safe place to work';
+
+  @override
+  String get blRejectQuote => 'Decline the price';
+
+  @override
+  String get blRejectQuoteTitle => 'Decline this price?';
+
+  @override
+  String get blRejectQuoteBody =>
+      'The Sipalu can send a new price, or you can cancel. You only pay the visit fee if they came.';
+
+  @override
+  String get blQuoteRejected => 'Price declined. The Sipalu has been told.';
+
+  @override
+  String get blQuoteWasRejected => 'The Ghardhani declined your price. You can send a new one.';
+
+  @override
+  String blBelowMinForTime(String amount) {
+    return 'Too low for the time it takes — at least $amount an hour (minimum wage).';
+  }
+
+  @override
+  String blNotBookableWhy(String reasons) {
+    return 'Not bookable yet: $reasons';
+  }
+
+  @override
+  String get blSuspended => 'Bolau is paused for your profile. Contact support to know more.';
+
+  @override
+  String get blPhotoNeeded => 'Add a clear photo of your face.';
+
+  @override
+  String blAnswerBy(String when) {
+    return 'Answer by $when';
+  }
 }

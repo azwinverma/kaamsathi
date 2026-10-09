@@ -11,7 +11,9 @@ import 'token_store.dart';
 
 enum AuthStatus { unknown, loggedOut, loggedIn }
 
-enum AppMode { supervisor, worker }
+/// supervisor (employer staff, ledger UI) · worker (Sipalu: employee and/or
+/// Bolau self-profile) · ghardhani (books Sipalu; any user, Bolau only).
+enum AppMode { supervisor, worker, ghardhani }
 
 /// Who is signed in and which mode / organization / site they're working in.
 class Session {
@@ -144,6 +146,9 @@ class SessionController extends Notifier<Session> {
     final saved = prefs.mode;
     if (saved == 'supervisor' && me.canSupervise) mode = AppMode.supervisor;
     if (saved == 'worker' && me.isWorker) mode = AppMode.worker;
+    // Anyone can be a Ghardhani; whether Bolau is on is decided at routing
+    // time ([effectiveMode]).
+    if (saved == 'ghardhani') mode = AppMode.ghardhani;
     mode ??= me.canSupervise ? AppMode.supervisor : (me.isWorker ? AppMode.worker : null);
 
     // Org: saved if still a membership; auto-pick when there's only one.
@@ -219,6 +224,17 @@ class SessionController extends Notifier<Session> {
     await _tokens.clear();
     await ref.read(prefsProvider).clearSession();
   }
+}
+
+/// The mode the app actually runs in: Ghardhani mode falls back to the
+/// user's other roles (or none) while the `bolau` flag is off.
+AppMode? effectiveMode(Session s, {required bool bolau}) {
+  if (s.mode != AppMode.ghardhani || bolau) return s.mode;
+  final me = s.me;
+  if (me == null) return null;
+  if (me.isWorker) return AppMode.worker;
+  if (me.canSupervise) return AppMode.supervisor;
+  return null;
 }
 
 final sessionProvider = NotifierProvider<SessionController, Session>(SessionController.new);

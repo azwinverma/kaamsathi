@@ -8,6 +8,21 @@ import '../../features/auth/ui/no_access_screen.dart';
 import '../../features/auth/ui/org_pick_screen.dart';
 import '../../features/auth/ui/otp_screen.dart';
 import '../../features/auth/ui/splash_screen.dart';
+import '../../features/bolau/bolau_repository.dart';
+import '../../features/bolau/ui/ghardhani/addresses_screen.dart';
+import '../../features/bolau/ui/ghardhani/book_screen.dart';
+import '../../features/bolau/ui/ghardhani/ghar_bookings_screen.dart';
+import '../../features/bolau/ui/ghardhani/ghar_home_screen.dart';
+import '../../features/bolau/ui/ghardhani/ghar_profile_screen.dart';
+import '../../features/bolau/ui/ghardhani/ghardhani_shell.dart';
+import '../../features/bolau/ui/ghardhani/requests_screens.dart';
+import '../../features/bolau/ui/ghardhani/search_screen.dart';
+import '../../features/bolau/ui/ghardhani/sipalu_profile_screen.dart';
+import '../../features/bolau/ui/mode/welcome_screen.dart';
+import '../../features/bolau/ui/sipalu/onboarding_screen.dart';
+import '../../features/bolau/ui/sipalu/request_offer_screen.dart';
+import '../../features/bolau/ui/sipalu/services_editor_screen.dart';
+import '../../features/bolau/ui/sipalu/sipalu_job_screen.dart';
 import '../../features/common/inbox/inbox_screen.dart';
 import '../../features/common/inbox/notification_prefs.dart';
 import '../../features/common/legal/legal_screen.dart';
@@ -132,6 +147,50 @@ abstract final class Routes {
   static String workerDispute(String id) => '$workerDisputes/$id';
   static const workerCorrections = '/w/corrections';
   static const supCorrections = '/s/corrections';
+
+  // Bolau (CONTRACT-BOLAU; only while the `bolau` flag is on).
+  /// First-run choice: find work (Sipalu) or book a Sipalu (Ghardhani).
+  static const welcome = '/welcome';
+
+  /// Sipalu onboarding wizard (any mode; also before a mode exists).
+  static const sipaluJoin = '/sipalu/join';
+
+  /// Sipalu side, inside the worker app (Jobs → Bolau segment).
+  static const workerBolau = '/w/jobs?tab=bolau';
+  static String sipaluJob(String id) => '/w/bolau/job/$id';
+  static String sipaluRequest(String id) => '/w/bolau/request/$id';
+  static const sipaluServices = '/w/bolau/services';
+
+  /// Ghardhani mode (B shell, 4 tabs).
+  static const gharHome = '/g/home';
+  static const gharBookings = '/g/bookings';
+  static const gharRequests = '/g/requests';
+  static const gharProfile = '/g/profile';
+  static String gharSearch({String? trade}) =>
+      trade == null || trade.isEmpty ? '/g/search' : '/g/search?trade=${Uri.encodeQueryComponent(trade)}';
+  static String gharSipalu(String handle) => '/g/sipalu/$handle';
+  static String gharBook(String handle, {String? serviceId}) =>
+      serviceId == null ? '/g/sipalu/$handle/book' : '/g/sipalu/$handle/book?service=$serviceId';
+  static String gharBooking(String id) => '/g/booking/$id';
+  static const gharRequestNew = '/g/request-new';
+  static String gharRequest(String id) => '/g/request/$id';
+  static const gharAddresses = '/g/addresses';
+  static const gharFavourites = '/g/favourites';
+  static String safetyFor({String? booking, String? code}) =>
+      booking == null ? helpSafety : '$helpSafety?booking=$booking${code == null ? '' : '&code=$code'}';
+}
+
+/// Ghardhani bottom navigation: Home · Bookings · Requests · Profile.
+const gharTabRoots = [Routes.gharHome, Routes.gharBookings, Routes.gharRequests, Routes.gharProfile];
+
+/// Locations that only exist while Bolau is switched on.
+bool isBolauLocation(String location) {
+  final path = Uri.parse(location).path;
+  return path.startsWith('/g/') ||
+      path.startsWith('/w/bolau') ||
+      path.startsWith('/sipalu/') ||
+      path == Routes.welcome ||
+      Uri.parse(location).queryParameters['tab'] == 'bolau';
 }
 
 /// Worker bottom navigation (brand v2 §18: Home · Jobs · Work · Learn ·
@@ -150,6 +209,7 @@ const workerTabRoots = [
 bool isWorkerTabLocation(String location) {
   final path = Uri.parse(location).path;
   return workerTabRoots.contains(path) ||
+      gharTabRoots.contains(path) ||
       path == Routes.workerTalab ||
       path.startsWith('${Routes.workerTalab}/') ||
       path.startsWith('${Routes.workerProfile}/');
@@ -170,11 +230,19 @@ class _RouterRefresh extends ChangeNotifier {
   _RouterRefresh(Ref ref) {
     ref.listen(sessionProvider, (_, _) => notifyListeners());
     ref.listen(languageProvider, (_, _) => notifyListeners());
+    ref.listen(bolauEnabledProvider, (_, _) => notifyListeners());
   }
 }
 
-/// Pure redirect logic (unit-testable).
-String? resolveRedirect({required String location, required Session session, required String? language}) {
+/// Pure redirect logic (unit-testable). [bolau] is the client flag: Bolau
+/// screens (first-run choice, Sipalu onboarding, Ghardhani mode) exist only
+/// while it is on.
+String? resolveRedirect({
+  required String location,
+  required Session session,
+  required String? language,
+  bool bolau = false,
+}) {
   const preAuth = {Routes.login, Routes.otp};
   if (session.status == AuthStatus.unknown) {
     return location == Routes.splash ? null : Routes.splash;
@@ -189,25 +257,40 @@ String? resolveRedirect({required String location, required Session session, req
   if (session.me?.pendingLegal.isNotEmpty ?? false) {
     return location == Routes.legal ? null : Routes.legal;
   }
-  if (session.mode == null) {
-    return location == Routes.noAccess ? null : Routes.noAccess;
+  final mode = effectiveMode(session, bolau: bolau);
+  if (mode == null) {
+    if (!bolau) return location == Routes.noAccess ? null : Routes.noAccess;
+    // Bolau on: anyone can start as a Sipalu or a Ghardhani.
+    if (location == Routes.welcome || location == Routes.sipaluJoin || location == Routes.noAccess) return null;
+    return Routes.welcome;
   }
-  if (session.needsOrgPick) {
+  if (mode == AppMode.supervisor && session.membership == null) {
     return location == Routes.orgPick ? null : Routes.orgPick;
   }
-  final home = session.mode == AppMode.supervisor ? Routes.supHajiri : Routes.workerHome;
+  final home = switch (mode) {
+    AppMode.supervisor => Routes.supHajiri,
+    AppMode.worker => Routes.workerHome,
+    AppMode.ghardhani => Routes.gharHome,
+  };
   if (location == Routes.splash ||
       location == Routes.legal ||
       location == Routes.language ||
       location == Routes.noAccess ||
+      location == Routes.welcome ||
       preAuth.contains(location)) {
     return home;
   }
-  if (session.mode == AppMode.supervisor && location.startsWith('/w/')) {
-    return home;
-  }
-  if (session.mode == AppMode.worker && (location.startsWith('/s/') || location == Routes.orgPick)) {
-    return home;
+  if (!bolau && isBolauLocation(location)) return home;
+  final w = location.startsWith('/w/');
+  final sup = location.startsWith('/s/');
+  final g = location.startsWith('/g/');
+  switch (mode) {
+    case AppMode.supervisor:
+      if (w || g) return home;
+    case AppMode.worker:
+      if (sup || g || location == Routes.orgPick) return home;
+    case AppMode.ghardhani:
+      if (sup || w || location == Routes.orgPick) return home;
   }
   return null;
 }
@@ -223,6 +306,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           location: state.matchedLocation,
           session: ref.read(sessionProvider),
           language: ref.read(languageProvider),
+          bolau: ref.read(bolauEnabledProvider),
         ),
     routes: [
       GoRoute(path: Routes.splash, builder: (_, _) => const SplashScreen()),
@@ -269,7 +353,46 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.inbox, builder: (_, _) => const InboxScreen()),
       GoRoute(path: Routes.security, builder: (_, _) => const SecurityScreen()),
       GoRoute(path: Routes.helpNew, builder: (_, _) => const NewSupportCaseScreen()),
-      GoRoute(path: Routes.helpSafety, builder: (_, _) => const SafetyReportScreen()),
+      GoRoute(
+        path: Routes.helpSafety,
+        builder:
+            (_, state) => SafetyReportScreen(
+              bookingId: state.uri.queryParameters['booking'],
+              bookingCode: state.uri.queryParameters['code'],
+            ),
+      ),
+      // Bolau: first-run choice, Sipalu onboarding and Sipalu pages.
+      GoRoute(path: Routes.welcome, builder: (_, _) => const WelcomeScreen()),
+      GoRoute(path: Routes.sipaluJoin, builder: (_, _) => const SipaluOnboardingScreen()),
+      GoRoute(path: '/w/bolau/job/:id', builder: (_, state) => SipaluJobScreen(id: state.pathParameters['id']!)),
+      GoRoute(path: '/w/bolau/request/:id', builder: (_, state) => RequestOfferScreen(id: state.pathParameters['id']!)),
+      GoRoute(path: Routes.sipaluServices, builder: (_, _) => const SipaluServicesScreen()),
+      // Ghardhani pages pushed over the Ghardhani tabs.
+      GoRoute(
+        path: '/g/search',
+        builder:
+            (_, state) =>
+                BolauSearchScreen(trade: state.uri.queryParameters['trade'], q: state.uri.queryParameters['q']),
+      ),
+      GoRoute(
+        path: '/g/sipalu/:handle',
+        builder: (_, state) => SipaluProfileScreen(handle: state.pathParameters['handle']!),
+        routes: [
+          GoRoute(
+            path: 'book',
+            builder:
+                (_, state) => BookScreen(
+                  handle: state.pathParameters['handle']!,
+                  serviceId: state.uri.queryParameters['service'],
+                ),
+          ),
+        ],
+      ),
+      GoRoute(path: '/g/booking/:id', builder: (_, state) => GharBookingScreen(id: state.pathParameters['id']!)),
+      GoRoute(path: Routes.gharRequestNew, builder: (_, _) => const RequestNewScreen()),
+      GoRoute(path: '/g/request/:id', builder: (_, state) => GharRequestScreen(id: state.pathParameters['id']!)),
+      GoRoute(path: Routes.gharAddresses, builder: (_, _) => const AddressesScreen()),
+      GoRoute(path: Routes.gharFavourites, builder: (_, _) => const FavouritesScreen()),
       GoRoute(path: Routes.notificationPrefs, builder: (_, _) => const NotificationPrefsScreen()),
       GoRoute(path: Routes.legal, builder: (_, _) => const LegalScreen()),
       GoRoute(
@@ -293,6 +416,21 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.workerRatings, builder: (_, _) => const MyRatingsScreen()),
       GoRoute(path: Routes.workerCorrections, builder: (_, _) => const MyCorrectionsScreen()),
       GoRoute(path: Routes.supCorrections, builder: (_, _) => const CorrectionsQueueScreen()),
+      StatefulShellRoute.indexedStack(
+        builder: (_, _, shell) => GhardhaniShell(shell: shell),
+        branches: [
+          StatefulShellBranch(routes: [GoRoute(path: Routes.gharHome, builder: (_, _) => const GharHomeScreen())]),
+          StatefulShellBranch(
+            routes: [GoRoute(path: Routes.gharBookings, builder: (_, _) => const GharBookingsScreen())],
+          ),
+          StatefulShellBranch(
+            routes: [GoRoute(path: Routes.gharRequests, builder: (_, _) => const GharRequestsScreen())],
+          ),
+          StatefulShellBranch(
+            routes: [GoRoute(path: Routes.gharProfile, builder: (_, _) => const GharProfileScreen())],
+          ),
+        ],
+      ),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => SupervisorShell(shell: shell),
         branches: [
@@ -318,6 +456,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                       initialTab: switch (state.uri.queryParameters['tab']) {
                         'offers' => 1,
                         'applications' => 2,
+                        'bolau' => JobsScreen.bolauTab,
                         _ => 0,
                       },
                     ),

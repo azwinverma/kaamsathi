@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/api/json.dart';
+import '../../../core/auth/me.dart';
 import '../../../core/auth/session.dart';
 import '../../../core/flags.dart';
 import '../../../core/format.dart';
@@ -12,6 +13,8 @@ import '../../../core/router/router.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/widgets/common.dart';
 import '../../../core/widgets/eco.dart';
+import '../../bolau/bolau_logic.dart';
+import '../../bolau/bolau_repository.dart';
 import 'inbox_data.dart';
 
 /// Bell with the unread badge, for app bars. Opens the inbox.
@@ -46,9 +49,62 @@ class InboxBell extends ConsumerWidget {
   }
 }
 
+/// Where a Bolau notification opens, and the mode it belongs to (the inbox
+/// switches mode first when needed). Null for other kinds, or when the user
+/// can't use that side (no Sipalu profile).
+({String route, AppMode mode})? bolauNotificationTarget(AppNotification n, AppMode? mode, {Me? me}) {
+  final current = switch (mode) {
+    AppMode.ghardhani => BookingSide.ghardhani,
+    AppMode.worker => BookingSide.sipalu,
+    _ => null,
+  };
+  final side = bolauSideFor(n.kind, n.data, link: n.link, current: current);
+  if (side == null) return null;
+  // Ids from data, else from the server link (`/ghar/bookings/{id}`,
+  // `/bolau/jobs/{id}`, `/bolau/requests/{id}`, `/ghar/requests/{id}`).
+  final segs = Uri.tryParse(n.link ?? '')?.pathSegments ?? const <String>[];
+  String? fromLink(Set<String> names) =>
+      segs.length >= 3 && names.contains(segs[1]) && segs[2].isNotEmpty ? segs[2] : null;
+  String? id(String k) {
+    final v = n.data[k];
+    final s = v is Map ? str(v['id']) : str(v);
+    return s == null || s.isEmpty ? null : s;
+  }
+
+  final booking = id('booking_id') ?? fromLink({'bookings', 'jobs'});
+  final request = id('request_id') ?? fromLink({'requests'});
+  if (side == BookingSide.sipalu) {
+    if (me != null && !me.isWorker) return null;
+    final route =
+        booking != null
+            ? Routes.sipaluJob(booking)
+            : request != null && bolauEvent(n.kind) == 'request_new'
+            ? Routes.sipaluRequest(request)
+            : Routes.workerBolau;
+    return (route: route, mode: AppMode.worker);
+  }
+  final route =
+      booking != null
+          ? Routes.gharBooking(booking)
+          : request != null
+          ? Routes.gharRequest(request)
+          : (bolauEvent(n.kind).startsWith('booking') ? Routes.gharBookings : Routes.gharRequests);
+  return (route: route, mode: AppMode.ghardhani);
+}
+
 /// In-app destination for a notification, or null to just mark it read.
-/// Only returns routes that exist in the current [mode].
-String? routeForNotification(AppNotification n, AppMode? mode) {
+/// Only returns routes that exist in the current [mode] (Bolau kinds: see
+/// [bolauNotificationTarget]; ignored while [bolau] is off).
+String? routeForNotification(AppNotification n, AppMode? mode, {bool bolau = false, Me? me}) {
+  if (isBolauNotification(n.kind)) {
+    return bolau ? bolauNotificationTarget(n, mode, me: me)?.route : null;
+  }
+  if (mode == AppMode.ghardhani) {
+    final caseId = str(n.data['case_id'] ?? n.data['support_case_id']);
+    if (caseId != null && caseId.isNotEmpty) return Routes.helpCase(caseId);
+    if (n.kind.toLowerCase().contains('support')) return Routes.help;
+    return null;
+  }
   final worker = mode != AppMode.supervisor;
   final link = n.link ?? '';
   final k = n.kind.toLowerCase();
@@ -133,7 +189,15 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
       }
     }
     if (!mounted) return;
-    final route = routeForNotification(n, ref.read(sessionProvider).mode);
+    final session = ref.read(sessionProvider);
+    final bolau = ref.read(bolauEnabledProvider);
+    final mode = effectiveMode(session, bolau: bolau);
+    final target = bolau ? bolauNotificationTarget(n, mode, me: session.me) : null;
+    if (target != null && target.mode != mode) {
+      await ref.read(sessionProvider.notifier).setMode(target.mode);
+      if (!mounted) return;
+    }
+    final route = target?.route ?? routeForNotification(n, mode, bolau: bolau, me: session.me);
     if (route == null) return;
     if (isWorkerTabLocation(route)) {
       context.go(route); // switch bottom-nav tab

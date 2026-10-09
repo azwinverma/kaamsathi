@@ -8,6 +8,7 @@ import '../../../core/router/router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/widgets/common.dart';
+import '../../bolau/bolau_repository.dart';
 import 'support_data.dart';
 
 String safetyKindLabel(AppLocalizations l, String k) => switch (k) {
@@ -46,7 +47,12 @@ class DangerCallout extends StatelessWidget {
 
 /// Confidential safety report: never visible to the employer.
 class SafetyReportScreen extends ConsumerStatefulWidget {
-  const SafetyReportScreen({super.key});
+  const SafetyReportScreen({super.key, this.bookingId, this.bookingCode});
+
+  /// Bolau: the booking this report is about (the other party never sees
+  /// the report).
+  final String? bookingId;
+  final String? bookingCode;
 
   @override
   ConsumerState<SafetyReportScreen> createState() => _SafetyReportScreenState();
@@ -71,22 +77,35 @@ class _SafetyReportScreenState extends ConsumerState<SafetyReportScreen> {
     final l = context.l10n;
     setState(() => _busy = true);
     try {
-      final created = await ref
-          .read(supportRepositoryProvider)
-          .reportSafety(
-            safetyReportBody(
-              kind: _kind,
-              subject: safetyKindLabel(lookupAppLocalizations(const Locale('en')), _kind),
-              description: _desc.text,
-              emergency: _emergency,
-              anonymous: _anonymous,
-            ),
-          );
+      final bookingId = widget.bookingId;
+      final String? caseId;
+      if (bookingId != null) {
+        // Bolau: tied to the booking, never shown to the other party.
+        caseId = await ref.read(bolauRepositoryProvider).safetyReport(bookingId, {
+          'safety_kind': _kind,
+          'description': _desc.text.trim(),
+          'emergency': _emergency,
+          'anonymous': _anonymous,
+        });
+      } else {
+        final created = await ref
+            .read(supportRepositoryProvider)
+            .reportSafety(
+              safetyReportBody(
+                kind: _kind,
+                subject: safetyKindLabel(lookupAppLocalizations(const Locale('en')), _kind),
+                description: _desc.text,
+                emergency: _emergency,
+                anonymous: _anonymous,
+              ),
+            );
+        caseId = created?.id;
+      }
       ref.invalidate(supportCasesProvider);
       if (!mounted) return;
       showSnack(context, l.safetySent);
-      if (created != null) {
-        context.pushReplacement(Routes.helpCase(created.id));
+      if (caseId != null) {
+        context.pushReplacement(Routes.helpCase(caseId));
       } else {
         context.pop();
       }
@@ -103,7 +122,9 @@ class _SafetyReportScreenState extends ConsumerState<SafetyReportScreen> {
     final t = Theme.of(context).textTheme;
     final c = context.ks;
     return Scaffold(
-      appBar: AppBar(title: Text(l.safetyTitle)),
+      appBar: AppBar(
+        title: Text(widget.bookingCode == null ? l.safetyTitle : '${l.safetyTitle} · ${widget.bookingCode}'),
+      ),
       body: Form(
         key: _form,
         child: ListView(
@@ -120,7 +141,12 @@ class _SafetyReportScreenState extends ConsumerState<SafetyReportScreen> {
                 children: [
                   Icon(LucideIcons.lock, size: 18, color: c.infoText),
                   const SizedBox(width: KsSpace.s2),
-                  Expanded(child: Text(l.safetyConfidential, style: t.bodyMedium?.copyWith(color: c.infoText))),
+                  Expanded(
+                    child: Text(
+                      widget.bookingId == null ? l.safetyConfidential : l.blSafetyConfidential,
+                      style: t.bodyMedium?.copyWith(color: c.infoText),
+                    ),
+                  ),
                 ],
               ),
             ),
