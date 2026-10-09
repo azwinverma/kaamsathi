@@ -5084,4 +5084,55 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get blPortfolioPhoto => 'कामको फोटो';
+
+  @override
+  String get disputeKindBooking => 'बुकिङ';
+
+  @override
+  String get disputeProgress => 'प्रगति';
+
+  @override
+  String get disputeStepRaised => 'उजुरी दर्ता भयो';
+
+  @override
+  String get disputeStepResponded => 'अर्को पक्षले जवाफ दियो';
+
+  @override
+  String get disputeStepAwaitingDecision => 'कामसाथीको निर्णय पर्खँदै';
+
+  @override
+  String get disputeStepDecided => 'कामसाथीले निर्णय गर्‍यो';
+
+  @override
+  String get disputeStepAppealed => 'पुनरावेदन पठाइयो';
+
+  @override
+  String get disputeStepAwaitingAppeal => 'पुनरावेदनको निर्णय पर्खँदै';
+
+  @override
+  String get disputeStepAppealDecided => 'पुनरावेदनको निर्णय भयो';
+
+  @override
+  String disputeBookingRef(String code) {
+    return 'बुकिङ $code';
+  }
+
+  @override
+  String get blBookingDisputeTitle => 'उजुरी';
+
+  @override
+  String get blBookingDisputeView => 'उजुरी खोल्नुहोस्';
+
+  @override
+  String get gharDisputesTitle => 'मेरा उजुरीहरू';
+
+  @override
+  String get gharDisputesSubtitle => 'हेर्नुहोस्, प्रमाण थप्नुहोस् वा पुनरावेदन गर्नुहोस्';
+
+  @override
+  String get gharDisputesHint =>
+      'तपाईंको बुकिङबारे तपाईं वा सिपालुले दिएका उजुरीहरू। कामसाथीले हेर्दै गर्दा फोटो प्रमाणको रूपमा थप्नुहोस्, र निर्णयमा असहमत भए पुनरावेदन गर्नुहोस्।';
+
+  @override
+  String get gharDisputesEmpty => 'तपाईंको बुकिङबारे कुनै उजुरी छैन।';
 }

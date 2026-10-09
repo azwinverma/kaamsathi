@@ -15,7 +15,8 @@ import '../../../core/widgets/common.dart';
 import '../../../core/widgets/eco.dart';
 import '../../../core/widgets/signature/signature.dart';
 import '../../common/support/safety_report_screen.dart';
-import '../../worker/trust/trust_data.dart' show Dispute, disputesProvider;
+import '../../worker/trust/trust_data.dart' show Dispute, bookingDisputesProvider, disputesProvider;
+import '../../worker/trust/ui/disputes_screen.dart' show disputeStatus;
 import '../bolau_logic.dart';
 import '../bolau_models.dart';
 import '../bolau_repository.dart';
@@ -824,9 +825,9 @@ class VerificationLadder extends StatelessWidget {
   Widget build(BuildContext context) => SkillLadder(earned: ladderRungsForLevel(level), height: 64);
 }
 
-/// Where a freshly raised booking dispute opens: the worker dispute detail
-/// (evidence + appeal) for the Sipalu, the read-only party view for the
-/// Ghardhani.
+/// Where a booking dispute opens: the worker dispute detail (`/me/disputes`)
+/// for the Sipalu, the Ghardhani's (`/me/booking-disputes`) for the
+/// household — both with evidence and appeal.
 String bookingDisputeRoute(BookingSide side, String disputeId) =>
     side == BookingSide.sipalu ? Routes.workerDispute(disputeId) : Routes.gharDispute(disputeId);
 
@@ -839,7 +840,12 @@ Future<Dispute?> raiseBookingDispute(BuildContext context, WidgetRef ref, Bookin
   try {
     final d = await ref.read(bolauRepositoryProvider).raiseDispute(b.id, text);
     ref.invalidate(bookingProvider(b.id));
-    ref.invalidate(disputesProvider);
+    ref.invalidate(disputeOfBookingProvider(b.id));
+    if (side == BookingSide.sipalu) {
+      ref.invalidate(disputesProvider);
+    } else {
+      ref.invalidate(bookingDisputesProvider);
+    }
     if (!context.mounted) return d;
     showSnack(context, l.blDisputeSent);
     unawaited(context.push(bookingDisputeRoute(side, d.id), extra: d));
@@ -847,6 +853,50 @@ Future<Dispute?> raiseBookingDispute(BuildContext context, WidgetRef ref, Bookin
   } catch (e) {
     if (context.mounted) showSnack(context, errorText(context, e), error: true);
     return null;
+  }
+}
+
+/// The booking's dispute (`GET /bolau/bookings/{id}/dispute`), whoever
+/// raised it: status, what was said, the decision and a link to the full
+/// dispute. Nothing while there is none or it cannot be read.
+class BookingDisputeSection extends ConsumerWidget {
+  const BookingDisputeSection({super.key, required this.booking, required this.side});
+  final Booking booking;
+  final BookingSide side;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final d = ref.watch(disputeOfBookingProvider(booking.id)).value;
+    if (d == null) return const SizedBox.shrink();
+    final l = context.l10n;
+    final t = Theme.of(context).textTheme;
+    final (label, tone) = disputeStatus(l, d);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: KsSpace.s3),
+      child: SectionCard(
+        key: const Key('booking_dispute_section'),
+        title: l.blBookingDisputeTitle,
+        trailing: StatusBadge(label: label, tone: tone),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(d.description, style: t.bodyMedium, maxLines: 3, overflow: TextOverflow.ellipsis),
+            if (d.resolutionNote?.isNotEmpty ?? false) ...[
+              const SizedBox(height: KsSpace.s2),
+              Text(l.disputeResolution, style: t.labelMedium),
+              Text(d.resolutionNote!, style: t.bodyMedium, maxLines: 3, overflow: TextOverflow.ellipsis),
+            ],
+            const SizedBox(height: KsSpace.s2),
+            OutlinedButton.icon(
+              key: const Key('booking_dispute_open'),
+              onPressed: () => context.push(bookingDisputeRoute(side, d.id), extra: d),
+              icon: const Icon(LucideIcons.scale),
+              label: Text(l.blBookingDisputeView),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

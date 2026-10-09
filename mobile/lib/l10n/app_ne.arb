@@ -1567,5 +1567,21 @@
   "blPortfolioTooBig": "यो फोटो धेरै ठूलो छ (बढीमा ८ MB)।",
   "blPortfolioPublic": "तपाईंको सार्वजनिक प्रोफाइलमा देखिन्छ। आफ्नै काम मात्र — ग्राहकको अनुहार, घर नम्बर वा कागजात नराख्नुहोस्।",
   "blPortfolioPhotoAlt": "कामको फोटो: {caption}",
-  "blPortfolioPhoto": "कामको फोटो"
+  "blPortfolioPhoto": "कामको फोटो",
+  "disputeKindBooking": "बुकिङ",
+  "disputeProgress": "प्रगति",
+  "disputeStepRaised": "उजुरी दर्ता भयो",
+  "disputeStepResponded": "अर्को पक्षले जवाफ दियो",
+  "disputeStepAwaitingDecision": "कामसाथीको निर्णय पर्खँदै",
+  "disputeStepDecided": "कामसाथीले निर्णय गर्‍यो",
+  "disputeStepAppealed": "पुनरावेदन पठाइयो",
+  "disputeStepAwaitingAppeal": "पुनरावेदनको निर्णय पर्खँदै",
+  "disputeStepAppealDecided": "पुनरावेदनको निर्णय भयो",
+  "disputeBookingRef": "बुकिङ {code}",
+  "blBookingDisputeTitle": "उजुरी",
+  "blBookingDisputeView": "उजुरी खोल्नुहोस्",
+  "gharDisputesTitle": "मेरा उजुरीहरू",
+  "gharDisputesSubtitle": "हेर्नुहोस्, प्रमाण थप्नुहोस् वा पुनरावेदन गर्नुहोस्",
+  "gharDisputesHint": "तपाईंको बुकिङबारे तपाईं वा सिपालुले दिएका उजुरीहरू। कामसाथीले हेर्दै गर्दा फोटो प्रमाणको रूपमा थप्नुहोस्, र निर्णयमा असहमत भए पुनरावेदन गर्नुहोस्।",
+  "gharDisputesEmpty": "तपाईंको बुकिङबारे कुनै उजुरी छैन।"
 }

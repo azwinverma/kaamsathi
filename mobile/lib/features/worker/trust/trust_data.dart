@@ -97,6 +97,26 @@ class ProfileView {
 
 abstract final class DisputeKind {
   static const all = ['attendance', 'wage', 'employment_dates', 'rating', 'identity', 'other'];
+
+  /// A Bolau booking dispute (raised from the booking, never from the form).
+  static const booking = 'booking';
+}
+
+/// Whose endpoints a dispute is read and followed up through.
+///
+/// The worker on the case (incl. a Sipalu on a booking dispute) uses
+/// `/me/disputes/{id}`; the Ghardhani on a booking dispute is not the case's
+/// worker and uses `/me/booking-disputes/{id}` (CONTRACT-BOLAU note 9).
+enum DisputeParty {
+  worker('/me/disputes'),
+  ghardhani('/me/booking-disputes');
+
+  const DisputeParty(this.basePath);
+  final String basePath;
+
+  String detail(String id) => '$basePath/$id';
+  String evidence(String id) => '$basePath/$id/evidence';
+  String appeal(String id) => '$basePath/$id/appeal';
 }
 
 /// `GET /me/disputes` item.
@@ -120,6 +140,10 @@ class Dispute {
     this.canAppeal = false,
     this.appealDeadline,
     this.appeal,
+    this.bookingId,
+    this.bookingCode,
+    this.respondedAt,
+    this.resolvedAt,
   });
 
   final String id;
@@ -145,6 +169,19 @@ class Dispute {
   final DateTime? appealDeadline;
   final DisputeAppeal? appeal;
 
+  /// `booking: {id, code}` on a Bolau booking dispute.
+  final String? bookingId;
+  final String? bookingCode;
+
+  /// Employer / other party answered (or null).
+  final DateTime? respondedAt;
+
+  /// Decision taken (resolved or rejected).
+  final DateTime? resolvedAt;
+
+  /// Decided and not under appeal.
+  bool get isClosed => const {'resolved', 'rejected', 'appeal_resolved'}.contains(status);
+
   /// Evidence may be added while the case is still being looked at.
   bool get canAddEvidence => const {'open', 'employer_responded', 'appealed'}.contains(status);
 
@@ -169,8 +206,43 @@ class Dispute {
       canAppeal: boolOf(j['can_appeal']),
       appealDeadline: dateTimeOf(j['appeal_deadline']),
       appeal: DisputeAppeal.fromJson(j['appeal']),
+      bookingId: str(asJsonOrNull(j['booking'])?['id']),
+      bookingCode: str(asJsonOrNull(j['booking'])?['code']),
+      respondedAt: dateTimeOf(j['responded_at']),
+      resolvedAt: dateTimeOf(j['resolved_at']),
     );
   }
+}
+
+/// One row of a dispute's status timeline.
+enum DisputeStepKind { raised, responded, decision, appealed, appealDecision }
+
+class DisputeStep {
+  const DisputeStep(this.kind, {required this.done, this.at});
+  final DisputeStepKind kind;
+  final bool done;
+  final DateTime? at;
+}
+
+/// Raised → (responded) → decision → (appealed → appeal decision), from the
+/// shared dispute payload. Optional rows only appear once they happened.
+List<DisputeStep> disputeTimeline(Dispute d) {
+  const decided = {'resolved', 'rejected', 'appealed', 'appeal_resolved'};
+  final a = d.appeal;
+  return [
+    DisputeStep(DisputeStepKind.raised, done: true, at: d.raisedAt),
+    if (d.respondedAt != null || d.status == 'employer_responded')
+      DisputeStep(DisputeStepKind.responded, done: true, at: d.respondedAt),
+    DisputeStep(DisputeStepKind.decision, done: d.resolvedAt != null || decided.contains(d.status), at: d.resolvedAt),
+    if (a != null) ...[
+      DisputeStep(DisputeStepKind.appealed, done: true, at: a.appealedAt),
+      DisputeStep(
+        DisputeStepKind.appealDecision,
+        done: a.outcome != null || d.status == 'appeal_resolved',
+        at: a.resolvedAt,
+      ),
+    ],
+  ];
 }
 
 /// `appeal: {reason, party, appealed_at, outcome, outcome_label, resolution_note, resolved_at}`.
@@ -396,21 +468,35 @@ class TrustRepository {
 
   Future<void> raiseDispute(Json body) => _api.postNoContent('/me/disputes', data: body);
 
-  Future<List<DisputeEvidence>> evidence(String disputeId) async {
-    final data = await _api.get<dynamic>('/me/disputes/$disputeId/evidence');
+  /// The Ghardhani's own booking disputes (`GET /me/booking-disputes`).
+  Future<List<Dispute>> bookingDisputes({List<String> status = const []}) async {
+    final data = await _api.get<dynamic>(
+      DisputeParty.ghardhani.basePath,
+      query: {'page_size': 100, if (status.isNotEmpty) 'status': status.join(',')},
+    );
+    return resultsOf(data).map(Dispute.fromJson).toList();
+  }
+
+  /// One of the Ghardhani's booking disputes (`GET /me/booking-disputes/{id}`).
+  Future<Dispute> bookingDispute(String id) async =>
+      Dispute.fromJson(asJson(await _api.get<dynamic>(DisputeParty.ghardhani.detail(id))));
+
+  Future<List<DisputeEvidence>> evidence(String disputeId, {DisputeParty party = DisputeParty.worker}) async {
+    final data = await _api.get<dynamic>(party.evidence(disputeId));
     return resultsOf(data).map(DisputeEvidence.fromJson).toList();
   }
 
-  Future<DisputeEvidence> addEvidence(String disputeId, {required String path, String? note}) async =>
-      DisputeEvidence.fromJson(
-        asJson(
-          await _api.post<dynamic>('/me/disputes/$disputeId/evidence', data: await evidenceForm(path, note: note)),
-        ),
-      );
-
-  Future<Dispute> appeal(String disputeId, String reason) async => Dispute.fromJson(
-    asJson(await _api.post<dynamic>('/me/disputes/$disputeId/appeal', data: {'reason': reason.trim()})),
+  Future<DisputeEvidence> addEvidence(
+    String disputeId, {
+    required String path,
+    String? note,
+    DisputeParty party = DisputeParty.worker,
+  }) async => DisputeEvidence.fromJson(
+    asJson(await _api.post<dynamic>(party.evidence(disputeId), data: await evidenceForm(path, note: note))),
   );
+
+  Future<Dispute> appeal(String disputeId, String reason, {DisputeParty party = DisputeParty.worker}) async =>
+      Dispute.fromJson(asJson(await _api.post<dynamic>(party.appeal(disputeId), data: {'reason': reason.trim()})));
 
   Future<MyRatings> ratings() async => MyRatings.fromJson(asJson(await _api.get<dynamic>('/me/ratings')));
 
@@ -466,6 +552,42 @@ final disputeEvidenceProvider = FutureProvider.autoDispose.family<List<DisputeEv
   _userId(ref);
   return ref.watch(trustRepositoryProvider).evidence(id);
 });
+
+/// The Ghardhani's booking disputes (Profile → My disputes).
+final bookingDisputesProvider = FutureProvider.autoDispose<List<Dispute>>((ref) {
+  _userId(ref);
+  ref.watch(langCodeProvider);
+  return ref.watch(trustRepositoryProvider).bookingDisputes();
+});
+
+/// One booking dispute as the Ghardhani sees it.
+final bookingDisputeProvider = FutureProvider.autoDispose.family<Dispute, String>((ref, id) {
+  _userId(ref);
+  ref.watch(langCodeProvider);
+  return ref.watch(trustRepositoryProvider).bookingDispute(id);
+});
+
+final bookingDisputeEvidenceProvider = FutureProvider.autoDispose.family<List<DisputeEvidence>, String>((ref, id) {
+  _userId(ref);
+  return ref.watch(trustRepositoryProvider).evidence(id, party: DisputeParty.ghardhani);
+});
+
+/// The detail / evidence providers for [party].
+FutureProvider<Dispute> disputeDetailProvider(DisputeParty party, String id) =>
+    party == DisputeParty.ghardhani ? bookingDisputeProvider(id) : disputeProvider(id);
+
+FutureProvider<List<DisputeEvidence>> evidenceListProvider(DisputeParty party, String id) =>
+    party == DisputeParty.ghardhani ? bookingDisputeEvidenceProvider(id) : disputeEvidenceProvider(id);
+
+/// Drops the cached dispute (list + detail) for [party] after a change.
+void invalidateDispute(WidgetRef ref, DisputeParty party, String id) {
+  if (party == DisputeParty.ghardhani) {
+    ref.invalidate(bookingDisputesProvider);
+    ref.invalidate(bookingDisputeProvider(id));
+  } else {
+    ref.invalidate(disputesProvider);
+  }
+}
 
 final myRatingsProvider = FutureProvider.autoDispose<MyRatings>((ref) {
   _userId(ref);

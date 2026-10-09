@@ -2726,5 +2726,28 @@
       }
     }
   },
-  "blPortfolioPhoto": "Work photo"
+  "blPortfolioPhoto": "Work photo",
+  "disputeKindBooking": "Booking",
+  "disputeProgress": "Progress",
+  "disputeStepRaised": "Dispute raised",
+  "disputeStepResponded": "The other side responded",
+  "disputeStepAwaitingDecision": "Waiting for KaamSathi's decision",
+  "disputeStepDecided": "KaamSathi decided",
+  "disputeStepAppealed": "Appeal sent",
+  "disputeStepAwaitingAppeal": "Waiting for the appeal decision",
+  "disputeStepAppealDecided": "Appeal decided",
+  "disputeBookingRef": "Booking {code}",
+  "@disputeBookingRef": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "blBookingDisputeTitle": "Dispute",
+  "blBookingDisputeView": "Open dispute",
+  "gharDisputesTitle": "My disputes",
+  "gharDisputesSubtitle": "Follow up, add evidence or appeal",
+  "gharDisputesHint": "Disputes about your bookings, raised by you or the Sipalu. Add photos as evidence while KaamSathi looks into it, and appeal a decision if you disagree.",
+  "gharDisputesEmpty": "No disputes about your bookings."
 }

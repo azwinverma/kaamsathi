@@ -12,6 +12,7 @@ import '../../features/bolau/bolau_repository.dart';
 import '../../features/bolau/ui/ghardhani/addresses_screen.dart';
 import '../../features/bolau/ui/ghardhani/book_screen.dart';
 import '../../features/bolau/ui/ghardhani/ghar_bookings_screen.dart';
+import '../../features/bolau/ui/ghardhani/ghar_disputes_screen.dart';
 import '../../features/bolau/ui/ghardhani/ghar_home_screen.dart';
 import '../../features/bolau/ui/ghardhani/ghar_profile_screen.dart';
 import '../../features/bolau/ui/ghardhani/ghardhani_shell.dart';
@@ -66,7 +67,7 @@ import '../../features/worker/talab/ui/payslip_detail_screen.dart';
 import '../../features/worker/talab/ui/talab_screen.dart';
 import '../../features/worker/timesheets/ui/my_timesheets_screen.dart';
 import '../../features/worker/training/ui/training_screen.dart';
-import '../../features/worker/trust/trust_data.dart' show Dispute;
+import '../../features/worker/trust/trust_data.dart' show Dispute, DisputeParty;
 import '../../features/worker/trust/ui/dispute_detail_screen.dart';
 import '../../features/worker/trust/ui/disputes_screen.dart';
 import '../../features/worker/trust/ui/my_ratings_screen.dart';
@@ -176,8 +177,9 @@ abstract final class Routes {
       serviceId == null ? '/g/sipalu/$handle/book' : '/g/sipalu/$handle/book?service=$serviceId';
   static String gharBooking(String id) => '/g/booking/$id';
 
-  /// A booking dispute as the Ghardhani sees it (the dispute is passed as
-  /// `extra`; there is no Ghardhani dispute list endpoint).
+  /// The Ghardhani's booking disputes (`/me/booking-disputes`) and one of
+  /// them (the dispute may be passed as `extra` for an instant first paint).
+  static const gharDisputes = '/g/disputes';
   static String gharDispute(String id) => '/g/dispute/$id';
   static const gharRequestNew = '/g/request-new';
   static String gharRequest(String id) => '/g/request/$id';
@@ -412,9 +414,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             (_, state) => DisputeDetailScreen(
               id: state.pathParameters['id']!,
               initial: state.extra is Dispute ? state.extra! as Dispute : null,
-              partyView: true,
+              party: DisputeParty.ghardhani,
             ),
       ),
+      GoRoute(path: Routes.gharDisputes, builder: (_, _) => const GharDisputesScreen()),
       GoRoute(path: Routes.gharRequestNew, builder: (_, _) => const RequestNewScreen()),
       GoRoute(path: '/g/request/:id', builder: (_, state) => GharRequestScreen(id: state.pathParameters['id']!)),
       GoRoute(path: Routes.gharAddresses, builder: (_, _) => const AddressesScreen()),

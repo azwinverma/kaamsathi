@@ -20,6 +20,7 @@ String disputeKindLabel(AppLocalizations l, String kind) => switch (kind) {
   'employment_dates' => l.disputeKindEmploymentDates,
   'rating' => l.disputeKindRating,
   'identity' => l.disputeKindIdentity,
+  'booking' => l.disputeKindBooking,
   _ => l.disputeKindOther,
 };
 
@@ -49,7 +50,6 @@ class DisputesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
-    final lang = context.lang;
     final t = Theme.of(context).textTheme;
     final value = ref.watch(disputesProvider);
     return Scaffold(
@@ -77,75 +77,92 @@ class DisputesScreen extends ConsumerWidget {
                   const SizedBox(height: KsSpace.s3),
                   if (items.isEmpty) EmptyState(icon: LucideIcons.messageSquare, message: l.disputesEmpty),
                   for (final d in items)
-                    Card(
+                    DisputeCard(
                       key: Key('dispute_${d.id}'),
-                      clipBehavior: Clip.antiAlias,
-                      child: InkWell(
-                        onTap: () => context.push(Routes.workerDispute(d.id)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(KsSpace.s4),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      (d.kindLabel?.isNotEmpty ?? false) ? d.kindLabel! : disputeKindLabel(l, d.kind),
-                                      style: t.titleSmall,
-                                    ),
-                                  ),
-                                  Builder(
-                                    builder: (_) {
-                                      final (label, tone) = disputeStatus(l, d);
-                                      return StatusBadge(label: label, tone: tone);
-                                    },
-                                  ),
-                                ],
-                              ),
-                              if (d.organization != null) Text(d.organization!.name, style: t.bodySmall),
-                              if (d.attendanceDate != null)
-                                Text(formatBsOrAd(d.attendanceDateBs, d.attendanceDate, lang), style: t.bodySmall),
-                              const SizedBox(height: KsSpace.s2),
-                              Text(d.description, style: t.bodyMedium),
-                              if (d.employerNote?.isNotEmpty ?? false) ...[
-                                const SizedBox(height: KsSpace.s2),
-                                Text(l.disputeEmployerNote, style: t.labelMedium),
-                                Text(d.employerNote!, style: t.bodyMedium),
-                              ],
-                              if (d.resolutionNote?.isNotEmpty ?? false) ...[
-                                const SizedBox(height: KsSpace.s2),
-                                Text(l.disputeResolution, style: t.labelMedium),
-                                Text(d.resolutionNote!, style: t.bodyMedium),
-                              ],
-                              if (d.raisedAt != null) ...[
-                                const SizedBox(height: KsSpace.s2),
-                                Text(l.disputeRaisedOn(formatBsDateTime(d.raisedAt, lang)), style: t.bodySmall),
-                              ],
-                              if (d.evidenceCount > 0 || d.canAppeal) ...[
-                                const SizedBox(height: KsSpace.s2),
-                                Wrap(
-                                  spacing: KsSpace.s2,
-                                  runSpacing: KsSpace.s1,
-                                  children: [
-                                    if (d.evidenceCount > 0)
-                                      StatusBadge(
-                                        label: l.evidenceCount(localizeDigits('${d.evidenceCount}', lang)),
-                                        tone: Tone.neutral,
-                                        icon: LucideIcons.paperclip,
-                                      ),
-                                    if (d.canAppeal)
-                                      StatusBadge(label: l.appealSection, tone: Tone.info, icon: LucideIcons.scale),
-                                  ],
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                      ),
+                      dispute: d,
+                      onTap: () => context.push(Routes.workerDispute(d.id)),
                     ),
                 ],
               ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A dispute in a list (worker `/me/disputes`, Ghardhani
+/// `/me/booking-disputes`): kind, status, booking/organisation, description,
+/// notes, evidence and appeal hints.
+class DisputeCard extends StatelessWidget {
+  const DisputeCard({super.key, required this.dispute, required this.onTap});
+  final Dispute dispute;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final lang = context.lang;
+    final t = Theme.of(context).textTheme;
+    final d = dispute;
+    final (label, tone) = disputeStatus(l, d);
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(KsSpace.s4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      (d.kindLabel?.isNotEmpty ?? false) ? d.kindLabel! : disputeKindLabel(l, d.kind),
+                      style: t.titleSmall,
+                    ),
+                  ),
+                  StatusBadge(label: label, tone: tone),
+                ],
+              ),
+              if (d.organization != null) Text(d.organization!.name, style: t.bodySmall),
+              if (d.bookingCode != null) Text(l.disputeBookingRef(d.bookingCode!), style: t.bodySmall),
+              if (d.attendanceDate != null)
+                Text(formatBsOrAd(d.attendanceDateBs, d.attendanceDate, lang), style: t.bodySmall),
+              const SizedBox(height: KsSpace.s2),
+              Text(d.description, style: t.bodyMedium),
+              if (d.employerNote?.isNotEmpty ?? false) ...[
+                const SizedBox(height: KsSpace.s2),
+                Text(l.disputeEmployerNote, style: t.labelMedium),
+                Text(d.employerNote!, style: t.bodyMedium),
+              ],
+              if (d.resolutionNote?.isNotEmpty ?? false) ...[
+                const SizedBox(height: KsSpace.s2),
+                Text(l.disputeResolution, style: t.labelMedium),
+                Text(d.resolutionNote!, style: t.bodyMedium),
+              ],
+              if (d.raisedAt != null) ...[
+                const SizedBox(height: KsSpace.s2),
+                Text(l.disputeRaisedOn(formatBsDateTime(d.raisedAt, lang)), style: t.bodySmall),
+              ],
+              if (d.evidenceCount > 0 || d.canAppeal) ...[
+                const SizedBox(height: KsSpace.s2),
+                Wrap(
+                  spacing: KsSpace.s2,
+                  runSpacing: KsSpace.s1,
+                  children: [
+                    if (d.evidenceCount > 0)
+                      StatusBadge(
+                        label: l.evidenceCount(localizeDigits('${d.evidenceCount}', lang)),
+                        tone: Tone.neutral,
+                        icon: LucideIcons.paperclip,
+                      ),
+                    if (d.canAppeal) StatusBadge(label: l.appealSection, tone: Tone.info, icon: LucideIcons.scale),
+                  ],
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );

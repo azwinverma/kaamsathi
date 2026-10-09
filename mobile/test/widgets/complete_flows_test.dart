@@ -52,17 +52,25 @@ class _FakeWorkerRepo implements WorkerRepository {
 class _FakeTrust implements TrustRepository {
   final uploads = <(String, String, String?)>[];
   final appeals = <(String, String)>[];
+  final parties = <DisputeParty>[];
   final flags = <(String, String)>[];
 
   @override
-  Future<DisputeEvidence> addEvidence(String disputeId, {required String path, String? note}) async {
+  Future<DisputeEvidence> addEvidence(
+    String disputeId, {
+    required String path,
+    String? note,
+    DisputeParty party = DisputeParty.worker,
+  }) async {
     uploads.add((disputeId, path, note));
+    parties.add(party);
     return DisputeEvidence.fromJson(evidenceListJson.first);
   }
 
   @override
-  Future<Dispute> appeal(String disputeId, String reason) async {
+  Future<Dispute> appeal(String disputeId, String reason, {DisputeParty party = DisputeParty.worker}) async {
     appeals.add((disputeId, reason));
+    parties.add(party);
     return Dispute.fromJson(resultsOf(disputesCompleteJson).first);
   }
 
@@ -204,6 +212,7 @@ void main() {
       await tester.tap(upload);
       await tester.pumpAndSettle();
       expect(fake.uploads, [('d6', '/nonexistent/ev.jpg', 'Register page for 1 Asoj')]);
+      expect(fake.parties, [DisputeParty.worker]); // worker / Sipalu: /me/disputes
     });
 
     testWidgets('files over 10 MB are refused before upload', (tester) async {
@@ -261,6 +270,7 @@ void main() {
       await tester.tap(confirm);
       await tester.pumpAndSettle();
       expect(fake.appeals, [('d5', 'I have the OT approval slip.')]);
+      expect(fake.parties, [DisputeParty.worker]); // worker / Sipalu: /me/disputes
       expect(find.text('Appeal sent.'), findsOneWidget);
     });
 

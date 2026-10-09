@@ -61,8 +61,9 @@ const _notConfigured = ApiException(
 
 /// Records Bolau calls instead of talking to the server.
 class _FakeRepo extends BolauRepository {
-  _FakeRepo({this.payError, this.configError, this.config0, this.minWage})
+  _FakeRepo({this.payError, this.configError, this.config0, this.minWage, this.existingDispute})
     : super(ApiClient(tokens: _NoTokens(), orgId: () => null, language: () => 'en'));
+  final Dispute? existingDispute;
   final Object? payError;
   final Object? configError;
   final BolauConfig? config0;
@@ -89,6 +90,9 @@ class _FakeRepo extends BolauRepository {
     calls.add(('dispute', {'booking': id, 'description': description}));
     return Dispute.fromJson(_disputeJson);
   }
+
+  @override
+  Future<Dispute?> bookingDispute(String id) async => existingDispute;
 
   @override
   Future<Json> payFee(String id, String provider) async {
@@ -220,16 +224,28 @@ final _cases = <_Case>[
   ),
   (
     'Booking dispute (Ghardhani view)',
-    DisputeDetailScreen(id: 'd1', initial: Dispute.fromJson(_disputeJson), partyView: true),
-    <Object>[],
-    <Object>[],
+    DisputeDetailScreen(id: 'd1', initial: Dispute.fromJson(_disputeJson), party: DisputeParty.ghardhani),
+    [
+      bookingDisputeProvider.overrideWith((ref, id) async => Dispute.fromJson(_disputeJson)),
+      bookingDisputeEvidenceProvider.overrideWith((ref, id) async => const <DisputeEvidence>[]),
+    ],
+    [
+      bookingDisputeProvider.overrideWith((ref, id) => throw off),
+      bookingDisputeEvidenceProvider.overrideWith((ref, id) => throw off),
+    ],
     AppMode.ghardhani,
   ),
   (
     'Booking dispute (Ghardhani, nothing passed)',
-    const DisputeDetailScreen(id: 'd1', partyView: true),
-    <Object>[],
-    <Object>[],
+    const DisputeDetailScreen(id: 'd1', party: DisputeParty.ghardhani),
+    [
+      bookingDisputeProvider.overrideWith((ref, id) async => Dispute.fromJson(_disputeJson)),
+      bookingDisputeEvidenceProvider.overrideWith((ref, id) async => const <DisputeEvidence>[]),
+    ],
+    [
+      bookingDisputeProvider.overrideWith((ref, id) => throw off),
+      bookingDisputeEvidenceProvider.overrideWith((ref, id) => throw off),
+    ],
     AppMode.ghardhani,
   ),
 ];
@@ -255,7 +271,7 @@ Future<GoRouter> _pumpRouted(
             (_, s) => DisputeDetailScreen(
               id: s.pathParameters['id']!,
               initial: s.extra is Dispute ? s.extra! as Dispute : null,
-              partyView: true,
+              party: DisputeParty.ghardhani,
             ),
       ),
       GoRoute(
@@ -531,7 +547,10 @@ void main() {
         ..._commonWith(),
         bolauRepositoryProvider.overrideWithValue(repo),
         bookingProvider.overrideWith((ref, id) async => Booking.fromJson(bookingAcceptedGhardhaniJson)),
+        bookingDisputeProvider.overrideWith((ref, id) async => Dispute.fromJson(_disputeJson)),
+        bookingDisputeEvidenceProvider.overrideWith((ref, id) async => const <DisputeEvidence>[]),
       ], mode: AppMode.ghardhani);
+      expect(find.byKey(const Key('booking_dispute_section')), findsNothing); // none yet
       await _scrollTo(tester, find.byKey(const Key('booking_dispute')));
       await tester.tap(find.byKey(const Key('booking_dispute')));
       await tester.pumpAndSettle();
@@ -545,11 +564,12 @@ void main() {
       expect(bookingDisputeRoute(BookingSide.ghardhani, 'd1'), '/g/dispute/d1');
       final screen = tester.widget<DisputeDetailScreen>(find.byType(DisputeDetailScreen));
       expect(screen.id, 'd1');
-      expect(screen.partyView, isTrue);
+      expect(screen.party, DisputeParty.ghardhani);
       expect(screen.initial?.id, 'd1');
       expect(router.canPop(), isTrue);
       expect(find.byKey(const Key('dispute_support_note')), findsOneWidget);
-      expect(find.byKey(const Key('evidence_card')), findsNothing);
+      expect(find.byKey(const Key('dispute_timeline')), findsOneWidget);
+      expect(find.byKey(const Key('evidence_card')), findsOneWidget);
       expect(find.text('[BK-7Q4M · raised by ghardhani] The tap still leaks'), findsOneWidget);
     });
 
@@ -575,10 +595,50 @@ void main() {
       expect(bookingDisputeRoute(BookingSide.sipalu, 'd1'), '/w/disputes/d1');
       final screen = tester.widget<DisputeDetailScreen>(find.byType(DisputeDetailScreen));
       expect(screen.id, 'd1');
-      expect(screen.partyView, isFalse);
+      expect(screen.party, DisputeParty.worker);
       expect(router.canPop(), isTrue);
       expect(find.byKey(const Key('evidence_card')), findsOneWidget);
       expect(find.byKey(const Key('dispute_support_note')), findsNothing);
+    });
+
+    testWidgets('Ghardhani booking shows its dispute (GET …/dispute) and opens the full view', (tester) async {
+      final repo = _FakeRepo(existingDispute: Dispute.fromJson(_disputeJson));
+      await _pumpRouted(tester, const GharBookingScreen(id: 'b3'), [
+        _flags(),
+        ..._commonWith(),
+        bolauRepositoryProvider.overrideWithValue(repo),
+        bookingProvider.overrideWith((ref, id) async => Booking.fromJson(bookingAcceptedGhardhaniJson)),
+        bookingDisputeProvider.overrideWith((ref, id) async => Dispute.fromJson(_disputeJson)),
+        bookingDisputeEvidenceProvider.overrideWith((ref, id) async => const <DisputeEvidence>[]),
+      ], mode: AppMode.ghardhani);
+      expect(find.byKey(const Key('booking_dispute_section')), findsOneWidget);
+      // One open dispute per booking: no second "Raise a dispute".
+      expect(find.byKey(const Key('booking_dispute')), findsNothing);
+      await _scrollTo(tester, find.byKey(const Key('booking_dispute_open')));
+      await tester.tap(find.byKey(const Key('booking_dispute_open')));
+      await tester.pumpAndSettle();
+      final screen = tester.widget<DisputeDetailScreen>(find.byType(DisputeDetailScreen));
+      expect(screen.party, DisputeParty.ghardhani);
+      expect(screen.id, 'd1');
+      expect(find.byKey(const Key('evidence_card')), findsOneWidget);
+    });
+
+    testWidgets('a decided booking dispute shows the decision; a new dispute may be raised', (tester) async {
+      final decided = Dispute.fromJson({
+        ..._disputeJson,
+        'status': 'resolved',
+        'resolution_note': 'Sipalu will come back to fix the tap.',
+      });
+      await _pumpRouted(tester, const GharBookingScreen(id: 'b3'), [
+        _flags(),
+        ..._commonWith(),
+        bolauRepositoryProvider.overrideWithValue(_FakeRepo(existingDispute: decided)),
+        bookingProvider.overrideWith((ref, id) async => Booking.fromJson(bookingAcceptedGhardhaniJson)),
+      ], mode: AppMode.ghardhani);
+      expect(find.byKey(const Key('booking_dispute_section')), findsOneWidget);
+      expect(find.text('Sipalu will come back to fix the tap.'), findsOneWidget);
+      await _scrollTo(tester, find.byKey(const Key('booking_dispute')));
+      expect(find.byKey(const Key('booking_dispute')), findsOneWidget);
     });
 
     test('dispute is offered only in disputable states', () {

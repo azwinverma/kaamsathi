@@ -194,6 +194,7 @@ class _GharBookingScreenState extends ConsumerState<GharBookingScreen> {
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(bookingProvider(widget.id));
+          ref.invalidate(disputeOfBookingProvider(widget.id));
           try {
             await ref.read(bookingProvider(widget.id).future);
           } catch (_) {}
@@ -224,6 +225,7 @@ class _GharBookingScreenState extends ConsumerState<GharBookingScreen> {
     final s = b.sipalu;
     final cfg = ref.watch(bolauConfigValueProvider);
     final hours = localizeDigits('${cfg.freeCancelHours}', lang);
+    final dispute = ref.watch(disputeOfBookingProvider(b.id)).value;
     return ListView(
       padding: const EdgeInsets.all(KsSpace.page),
       children: [
@@ -297,6 +299,7 @@ class _GharBookingScreenState extends ConsumerState<GharBookingScreen> {
             style: t.bodySmall?.copyWith(color: context.ks.textMuted),
           ),
         const SizedBox(height: KsSpace.s3),
+        BookingDisputeSection(booking: b, side: BookingSide.ghardhani),
         SectionCard(title: l.blProgress, child: BookingTimeline(booking: b)),
         const SizedBox(height: KsSpace.s3),
         SectionCard(
@@ -331,7 +334,7 @@ class _GharBookingScreenState extends ConsumerState<GharBookingScreen> {
           SectionCard(title: l.blWhatsNeeded, child: Text(b.description, style: t.bodyLarge)),
         ],
         const SizedBox(height: KsSpace.s4),
-        if (canDisputeBooking(b)) ...[
+        if (canDisputeBooking(b) && (dispute == null || dispute.isClosed)) ...[
           RaiseDisputeButton(booking: b, side: BookingSide.ghardhani),
           const SizedBox(height: KsSpace.s2),
         ],

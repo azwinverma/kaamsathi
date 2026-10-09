@@ -28,6 +28,7 @@ import 'package:kaamsathi/features/common/account_actions.dart';
 import 'package:kaamsathi/features/common/ref_data.dart';
 import 'package:kaamsathi/features/worker/jobs/jobs_data.dart';
 import 'package:kaamsathi/features/worker/jobs/ui/jobs_screen.dart';
+import 'package:kaamsathi/features/worker/trust/trust_data.dart' show Dispute;
 
 import '../fixtures/bolau_fixtures.dart';
 import 'ext_harness.dart';
@@ -63,6 +64,9 @@ class _FakeRepo extends BolauRepository {
     calls.add((step, data, files));
     return const OnboardingState(completedSteps: ['name', 'photo'], nextStep: 'skills', completeness: 17);
   }
+
+  @override
+  Future<Dispute?> bookingDispute(String id) async => null;
 
   @override
   Future<Booking> sipaluAction(String id, String action, [Json body = const {}]) async {

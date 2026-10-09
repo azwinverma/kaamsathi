@@ -73,6 +73,13 @@ class GharProfileScreen extends ConsumerWidget {
                   title: l.blFavourites,
                   onTap: () => context.push(Routes.gharFavourites),
                 ),
+                MenuTile(
+                  key: const Key('menu_ghar_disputes'),
+                  icon: LucideIcons.scale,
+                  title: l.gharDisputesTitle,
+                  subtitle: l.gharDisputesSubtitle,
+                  onTap: () => context.push(Routes.gharDisputes),
+                ),
               ],
             ),
           ),

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/api/api_client.dart';
+import '../../core/api/api_exception.dart';
 import '../../core/api/json.dart';
 import '../../core/auth/session.dart';
 import '../../core/flags.dart';
@@ -53,6 +54,10 @@ abstract final class BolauPaths {
   /// report.
   static String bookingAction(String id, String action) => '$bookings/$id/$action';
   static String contact(String id) => '$bookings/$id/contact';
+
+  /// `GET` = the booking's latest dispute (either party; 404 when none),
+  /// `POST` = raise one.
+  static String bookingDispute(String id) => '$bookings/$id/dispute';
   static const myBookings = '/me/bolau/bookings';
   static const requests = '/bolau/requests';
   static String request(String id) => '$requests/$id';
@@ -255,10 +260,18 @@ class BolauRepository {
 
   /// Raises a booking dispute (`{description}`); returns the trust dispute.
   Future<Dispute> raiseDispute(String id, String description) async => Dispute.fromJson(
-    asJson(
-      await _api.post<dynamic>(BolauPaths.bookingAction(id, 'dispute'), data: {'description': description.trim()}),
-    ),
+    asJson(await _api.post<dynamic>(BolauPaths.bookingDispute(id), data: {'description': description.trim()})),
   );
+
+  /// The booking's latest dispute, or null when it has none (404).
+  Future<Dispute?> bookingDispute(String id) async {
+    try {
+      return Dispute.fromJson(asJson(await _api.get<dynamic>(BolauPaths.bookingDispute(id))));
+    } on ApiException catch (e) {
+      if (e.statusCode == 404 && !e.isNetwork) return null;
+      rethrow;
+    }
+  }
 
   /// Starts an online payment of the booking fee → `{redirect_url, reference}`.
   /// Throws `provider_not_configured` until a merchant agreement exists.
@@ -439,6 +452,12 @@ final myOffersProvider = FutureProvider.autoDispose<List<BolauOffer>>((ref) {
 
 final bookingProvider = FutureProvider.autoDispose.family<Booking, String>((ref, id) {
   return ref.watch(bolauRepositoryProvider).booking(id);
+});
+
+/// The dispute on a booking (null = none), for the booking's Dispute section.
+final disputeOfBookingProvider = FutureProvider.autoDispose.family<Dispute?, String>((ref, bookingId) {
+  _uid(ref);
+  return ref.watch(bolauRepositoryProvider).bookingDispute(bookingId);
 });
 
 final bolauTradesProvider = FutureProvider.autoDispose<List<BolauTrade>>((ref) {

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../../../core/api/api_exception.dart';
 import '../../../../core/flags.dart';
 import '../../../../core/format.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/router/router.dart';
 import '../../../../core/theme/tokens.dart';
 import '../../../../core/widgets/common.dart';
 import '../../../../core/widgets/eco.dart';
@@ -13,46 +14,40 @@ import '../../../../core/widgets/photo_picker.dart';
 import '../trust_data.dart';
 import 'disputes_screen.dart';
 
-/// One complaint: details, evidence (list + add photo), appeal.
+/// One complaint: status timeline, details, decision, evidence (list + add
+/// photo) and appeal.
 ///
-/// [initial] is the dispute just raised (e.g. from a Bolau booking), shown
-/// when the list cannot be read. [partyView] is the Ghardhani's view of a
-/// booking dispute: they are not the worker on the case, so evidence and
-/// appeals (worker endpoints) are left to support.
+/// [party] picks the endpoints: the worker on the case (incl. a Sipalu on a
+/// booking dispute) uses `/me/disputes/{id}`, the Ghardhani on a booking
+/// dispute `/me/booking-disputes/{id}` (+ `/evidence`, `/appeal`).
+/// [initial] is the dispute just raised or already loaded (e.g. from a
+/// booking), shown when the server cannot be read.
 class DisputeDetailScreen extends ConsumerWidget {
-  const DisputeDetailScreen({super.key, required this.id, this.initial, this.partyView = false});
+  const DisputeDetailScreen({super.key, required this.id, this.initial, this.party = DisputeParty.worker});
   final String id;
   final Dispute? initial;
-  final bool partyView;
+  final DisputeParty party;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
     final first = initial;
-    final AsyncValue<Dispute> value;
-    if (partyView) {
-      value =
-          first != null
-              ? AsyncData(first)
-              : const AsyncError(ApiException(code: 'not_found', message: '', statusCode: 404), StackTrace.empty);
-    } else {
-      final v = ref.watch(disputeProvider(id));
-      value = v.hasError && first != null ? AsyncData(first) : v;
-    }
+    final v = ref.watch(disputeDetailProvider(party, id));
+    final value = v.hasError && first != null ? AsyncData(first) : v;
     return Scaffold(
       appBar: AppBar(title: Text(l.disputeDetailTitle)),
       body: RefreshIndicator(
         onRefresh: () async {
-          ref.invalidate(disputesProvider);
-          ref.invalidate(disputeEvidenceProvider(id));
+          invalidateDispute(ref, party, id);
+          ref.invalidate(evidenceListProvider(party, id));
           try {
-            await ref.read(disputeProvider(id).future);
+            await ref.read(disputeDetailProvider(party, id).future);
           } catch (_) {}
         },
         child: FeatureAsyncBody<Dispute>(
           value: value,
-          onRetry: () => ref.invalidate(disputesProvider),
-          data: (d) => _Body(dispute: d, partyView: partyView),
+          onRetry: () => invalidateDispute(ref, party, id),
+          data: (d) => _Body(dispute: d, party: party),
         ),
       ),
     );
@@ -60,9 +55,9 @@ class DisputeDetailScreen extends ConsumerWidget {
 }
 
 class _Body extends ConsumerWidget {
-  const _Body({required this.dispute, this.partyView = false});
+  const _Body({required this.dispute, required this.party});
   final Dispute dispute;
-  final bool partyView;
+  final DisputeParty party;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -71,8 +66,10 @@ class _Body extends ConsumerWidget {
     final t = Theme.of(context).textTheme;
     final d = dispute;
     final (label, tone) = disputeStatus(l, d);
-    final evidenceOn = !partyView && ref.watch(flagOnProvider(FlagKeys.disputeEvidence));
-    final appealOn = !partyView && ref.watch(flagOnProvider(FlagKeys.disputeAppeal));
+    final evidenceOn = ref.watch(flagOnProvider(FlagKeys.disputeEvidence));
+    final appealOn = ref.watch(flagOnProvider(FlagKeys.disputeAppeal));
+    final ghardhani = party == DisputeParty.ghardhani;
+    final bookingId = d.bookingId;
     return ListView(
       padding: const EdgeInsets.all(KsSpace.page),
       children: [
@@ -83,6 +80,21 @@ class _Body extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (d.organization != null) Text(d.organization!.name, style: t.bodySmall),
+              if (d.bookingCode != null)
+                InkWell(
+                  key: const Key('dispute_booking'),
+                  onTap:
+                      bookingId == null
+                          ? null
+                          : () => context.push(ghardhani ? Routes.gharBooking(bookingId) : Routes.sipaluJob(bookingId)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: KsSpace.s1),
+                    child: Text(
+                      l.disputeBookingRef(d.bookingCode!),
+                      style: t.labelLarge?.copyWith(color: Theme.of(context).colorScheme.primary),
+                    ),
+                  ),
+                ),
               if (d.attendanceDate != null)
                 Text(formatBsOrAd(d.attendanceDateBs, d.attendanceDate, lang), style: t.bodySmall),
               const SizedBox(height: KsSpace.s2),
@@ -95,7 +107,7 @@ class _Body extends ConsumerWidget {
               if (d.resolutionNote?.isNotEmpty ?? false) ...[
                 const SizedBox(height: KsSpace.s3),
                 Text(l.disputeResolution, style: t.labelMedium),
-                Text(d.resolutionNote!, style: t.bodyMedium),
+                Text(d.resolutionNote!, key: const Key('dispute_decision'), style: t.bodyMedium),
               ],
               if (d.raisedAt != null) ...[
                 const SizedBox(height: KsSpace.s2),
@@ -104,23 +116,99 @@ class _Body extends ConsumerWidget {
             ],
           ),
         ),
-        if (partyView) ...[
+        const SizedBox(height: KsSpace.s4),
+        SectionCard(title: l.disputeProgress, child: DisputeTimelineView(dispute: d)),
+        if (ghardhani && !d.isClosed) ...[
           const SizedBox(height: KsSpace.s4),
           InfoNote(key: const Key('dispute_support_note'), icon: LucideIcons.headset, text: l.blDisputeSupportNote),
         ],
         if (appealOn && (d.appeal != null || d.canAppeal)) ...[
           const SizedBox(height: KsSpace.s4),
-          _AppealCard(dispute: d),
+          _AppealCard(dispute: d, party: party),
         ],
-        if (evidenceOn) ...[const SizedBox(height: KsSpace.s4), _EvidenceCard(dispute: d)],
+        if (evidenceOn) ...[const SizedBox(height: KsSpace.s4), _EvidenceCard(dispute: d, party: party)],
+      ],
+    );
+  }
+}
+
+/// Raised → responded → decision → appeal, ticked as each happens.
+class DisputeTimelineView extends StatelessWidget {
+  const DisputeTimelineView({super.key, required this.dispute});
+  final Dispute dispute;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final lang = context.lang;
+    final c = context.ks;
+    final t = Theme.of(context).textTheme;
+    final steps = disputeTimeline(dispute);
+    String label(DisputeStep s) => switch (s.kind) {
+      DisputeStepKind.raised => l.disputeStepRaised,
+      DisputeStepKind.responded => l.disputeStepResponded,
+      DisputeStepKind.decision => s.done ? l.disputeStepDecided : l.disputeStepAwaitingDecision,
+      DisputeStepKind.appealed => l.disputeStepAppealed,
+      DisputeStepKind.appealDecision => s.done ? l.disputeStepAppealDecided : l.disputeStepAwaitingAppeal,
+    };
+    return Column(
+      key: const Key('dispute_timeline'),
+      children: [
+        for (final (i, s) in steps.indexed)
+          Semantics(
+            label: label(s),
+            excludeSemantics: true,
+            child: Row(
+              key: Key('dispute_step_${s.kind.name}'),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  children: [
+                    Container(
+                      width: 18,
+                      height: 18,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: s.done ? c.verified : c.surface,
+                        border: Border.all(color: s.done ? c.verified : c.borderStrong, width: 2),
+                      ),
+                      child: s.done ? Icon(LucideIcons.check, size: 11, color: c.surface) : null,
+                    ),
+                    if (i < steps.length - 1)
+                      Container(width: 2, height: 22, color: steps[i + 1].done ? c.verified : c.border),
+                  ],
+                ),
+                const SizedBox(width: KsSpace.s3),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Text.rich(
+                      TextSpan(
+                        text: label(s),
+                        style: t.bodyMedium?.copyWith(color: s.done ? null : c.textMuted),
+                        children: [
+                          if (s.at != null)
+                            TextSpan(
+                              text: '  ${formatBsDateTime(s.at, lang)}',
+                              style: t.bodySmall?.copyWith(color: c.textMuted),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }
 }
 
 class _AppealCard extends ConsumerStatefulWidget {
-  const _AppealCard({required this.dispute});
+  const _AppealCard({required this.dispute, required this.party});
   final Dispute dispute;
+  final DisputeParty party;
 
   @override
   ConsumerState<_AppealCard> createState() => _AppealCardState();
@@ -135,8 +223,8 @@ class _AppealCardState extends ConsumerState<_AppealCard> {
     if (reason == null || !mounted) return;
     setState(() => _busy = true);
     try {
-      await ref.read(trustRepositoryProvider).appeal(widget.dispute.id, reason);
-      ref.invalidate(disputesProvider);
+      await ref.read(trustRepositoryProvider).appeal(widget.dispute.id, reason, party: widget.party);
+      invalidateDispute(ref, widget.party, widget.dispute.id);
       if (mounted) showSnack(context, l.appealSent);
     } catch (e) {
       if (mounted) showSnack(context, errorText(context, e), error: true);
@@ -254,8 +342,9 @@ class _AppealDialogState extends State<_AppealDialog> {
 }
 
 class _EvidenceCard extends ConsumerWidget {
-  const _EvidenceCard({required this.dispute});
+  const _EvidenceCard({required this.dispute, required this.party});
   final Dispute dispute;
+  final DisputeParty party;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -263,7 +352,7 @@ class _EvidenceCard extends ConsumerWidget {
     final lang = context.lang;
     final t = Theme.of(context).textTheme;
     final d = dispute;
-    final value = ref.watch(disputeEvidenceProvider(d.id));
+    final value = ref.watch(evidenceListProvider(party, d.id));
     return SectionCard(
       key: const Key('evidence_card'),
       title: l.evidenceTitle,
@@ -272,7 +361,7 @@ class _EvidenceCard extends ConsumerWidget {
         children: [
           FeatureAsyncSection<List<DisputeEvidence>>(
             value: value,
-            onRetry: () => ref.invalidate(disputeEvidenceProvider(d.id)),
+            onRetry: () => ref.invalidate(evidenceListProvider(party, d.id)),
             data:
                 (items) => Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -314,7 +403,7 @@ class _EvidenceCard extends ConsumerWidget {
                             () => Navigator.of(context).push(
                               MaterialPageRoute<void>(
                                 fullscreenDialog: true,
-                                builder: (_) => AddEvidenceScreen(disputeId: d.id),
+                                builder: (_) => AddEvidenceScreen(disputeId: d.id, party: party),
                               ),
                             ),
                         icon: const Icon(LucideIcons.paperclip),
@@ -332,8 +421,9 @@ class _EvidenceCard extends ConsumerWidget {
 
 /// Photo (camera/gallery, ≤ 10 MB) + optional note → multipart upload.
 class AddEvidenceScreen extends ConsumerStatefulWidget {
-  const AddEvidenceScreen({super.key, required this.disputeId});
+  const AddEvidenceScreen({super.key, required this.disputeId, this.party = DisputeParty.worker});
   final String disputeId;
+  final DisputeParty party;
 
   @override
   ConsumerState<AddEvidenceScreen> createState() => _AddEvidenceScreenState();
@@ -356,9 +446,11 @@ class _AddEvidenceScreenState extends ConsumerState<AddEvidenceScreen> {
     if (path == null) return;
     setState(() => _busy = true);
     try {
-      await ref.read(trustRepositoryProvider).addEvidence(widget.disputeId, path: path, note: _note.text);
-      ref.invalidate(disputeEvidenceProvider(widget.disputeId));
-      ref.invalidate(disputesProvider);
+      await ref
+          .read(trustRepositoryProvider)
+          .addEvidence(widget.disputeId, path: path, note: _note.text, party: widget.party);
+      ref.invalidate(evidenceListProvider(widget.party, widget.disputeId));
+      invalidateDispute(ref, widget.party, widget.disputeId);
       if (!mounted) return;
       showSnack(context, l.evidenceUploaded);
       Navigator.of(context).pop();

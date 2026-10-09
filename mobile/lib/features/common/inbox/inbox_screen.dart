@@ -100,6 +100,10 @@ String? routeForNotification(AppNotification n, AppMode? mode, {bool bolau = fal
     return bolau ? bolauNotificationTarget(n, mode, me: me)?.route : null;
   }
   if (mode == AppMode.ghardhani) {
+    if (n.kind.toLowerCase().contains('dispute')) {
+      final disputeId = str(n.data['dispute_id']);
+      return disputeId != null && disputeId.isNotEmpty ? Routes.gharDispute(disputeId) : Routes.gharDisputes;
+    }
     final caseId = str(n.data['case_id'] ?? n.data['support_case_id']);
     if (caseId != null && caseId.isNotEmpty) return Routes.helpCase(caseId);
     if (n.kind.toLowerCase().contains('support')) return Routes.help;

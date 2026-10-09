@@ -9499,6 +9499,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Work photo'**
   String get blPortfolioPhoto;
+
+  /// No description provided for @disputeKindBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking'**
+  String get disputeKindBooking;
+
+  /// No description provided for @disputeProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get disputeProgress;
+
+  /// No description provided for @disputeStepRaised.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispute raised'**
+  String get disputeStepRaised;
+
+  /// No description provided for @disputeStepResponded.
+  ///
+  /// In en, this message translates to:
+  /// **'The other side responded'**
+  String get disputeStepResponded;
+
+  /// No description provided for @disputeStepAwaitingDecision.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for KaamSathi\'s decision'**
+  String get disputeStepAwaitingDecision;
+
+  /// No description provided for @disputeStepDecided.
+  ///
+  /// In en, this message translates to:
+  /// **'KaamSathi decided'**
+  String get disputeStepDecided;
+
+  /// No description provided for @disputeStepAppealed.
+  ///
+  /// In en, this message translates to:
+  /// **'Appeal sent'**
+  String get disputeStepAppealed;
+
+  /// No description provided for @disputeStepAwaitingAppeal.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the appeal decision'**
+  String get disputeStepAwaitingAppeal;
+
+  /// No description provided for @disputeStepAppealDecided.
+  ///
+  /// In en, this message translates to:
+  /// **'Appeal decided'**
+  String get disputeStepAppealDecided;
+
+  /// No description provided for @disputeBookingRef.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking {code}'**
+  String disputeBookingRef(String code);
+
+  /// No description provided for @blBookingDisputeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispute'**
+  String get blBookingDisputeTitle;
+
+  /// No description provided for @blBookingDisputeView.
+  ///
+  /// In en, this message translates to:
+  /// **'Open dispute'**
+  String get blBookingDisputeView;
+
+  /// No description provided for @gharDisputesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My disputes'**
+  String get gharDisputesTitle;
+
+  /// No description provided for @gharDisputesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow up, add evidence or appeal'**
+  String get gharDisputesSubtitle;
+
+  /// No description provided for @gharDisputesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Disputes about your bookings, raised by you or the Sipalu. Add photos as evidence while KaamSathi looks into it, and appeal a decision if you disagree.'**
+  String get gharDisputesHint;
+
+  /// No description provided for @gharDisputesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No disputes about your bookings.'**
+  String get gharDisputesEmpty;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

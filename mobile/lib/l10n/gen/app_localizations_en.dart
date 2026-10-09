@@ -5078,4 +5078,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get blPortfolioPhoto => 'Work photo';
+
+  @override
+  String get disputeKindBooking => 'Booking';
+
+  @override
+  String get disputeProgress => 'Progress';
+
+  @override
+  String get disputeStepRaised => 'Dispute raised';
+
+  @override
+  String get disputeStepResponded => 'The other side responded';
+
+  @override
+  String get disputeStepAwaitingDecision => 'Waiting for KaamSathi\'s decision';
+
+  @override
+  String get disputeStepDecided => 'KaamSathi decided';
+
+  @override
+  String get disputeStepAppealed => 'Appeal sent';
+
+  @override
+  String get disputeStepAwaitingAppeal => 'Waiting for the appeal decision';
+
+  @override
+  String get disputeStepAppealDecided => 'Appeal decided';
+
+  @override
+  String disputeBookingRef(String code) {
+    return 'Booking $code';
+  }
+
+  @override
+  String get blBookingDisputeTitle => 'Dispute';
+
+  @override
+  String get blBookingDisputeView => 'Open dispute';
+
+  @override
+  String get gharDisputesTitle => 'My disputes';
+
+  @override
+  String get gharDisputesSubtitle => 'Follow up, add evidence or appeal';
+
+  @override
+  String get gharDisputesHint =>
+      'Disputes about your bookings, raised by you or the Sipalu. Add photos as evidence while KaamSathi looks into it, and appeal a decision if you disagree.';
+
+  @override
+  String get gharDisputesEmpty => 'No disputes about your bookings.';
 }
