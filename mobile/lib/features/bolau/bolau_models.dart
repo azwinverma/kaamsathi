@@ -239,6 +239,7 @@ class MySipalu {
     this.bookableProblems = const [],
     this.publicConsent = false,
     this.suspended = false,
+    this.portfolio = const [],
   });
 
   final String? handle;
@@ -278,6 +279,9 @@ class MySipalu {
   final List<String> bookableProblems;
   final bool publicConsent;
   final bool suspended;
+
+  /// Work photos (max [PortfolioItem.max]).
+  final List<PortfolioItem> portfolio;
 
   bool get isVerified => verificationStatus == 'verified';
 
@@ -332,6 +336,7 @@ class MySipalu {
       bookableProblems: strList(j['bookable_problems']),
       publicConsent: boolOf(j['public_consent']),
       suspended: j['suspended'] != null && j['suspended'] != false,
+      portfolio: asJsonList(j['portfolio']).map(PortfolioItem.fromJson).toList(),
     );
   }
 }
@@ -428,6 +433,7 @@ class PublicSipalu {
     this.passportUrl,
     this.bookingFee,
     this.nextAvailable,
+    this.portfolio = const [],
   });
 
   final String handle;
@@ -461,6 +467,9 @@ class PublicSipalu {
   /// The Ghardhani's booking fee for this Sipalu, when the server says.
   final String? bookingFee;
   final DateTime? nextAvailable;
+
+  /// Work photos (signed thumbnail URLs).
+  final List<PortfolioItem> portfolio;
 
   String displayName(String lang) => lang == 'ne' && (nameNe?.isNotEmpty ?? false) ? nameNe! : name;
   String? headlineFor(String lang) => lang == 'ne' && (headlineNe?.isNotEmpty ?? false) ? headlineNe : headline;
@@ -514,8 +523,45 @@ class PublicSipalu {
       instantBooking: boolOf(j['instant_booking']),
       passportUrl: str(j['passport_url']),
       bookingFee: str(j['booking_fee']),
+      portfolio: asJsonList(j['portfolio']).map(PortfolioItem.fromJson).toList(),
     );
   }
+}
+
+/// A Sipalu work photo (`/me/sipalu/portfolio`, public `portfolio[]`).
+class PortfolioItem {
+  const PortfolioItem({required this.id, this.imageUrl, this.thumbUrl, this.caption, this.captionNe, this.trade});
+
+  /// Server cap (`PortfolioItem.MAX_ITEMS`).
+  static const max = 12;
+
+  /// Upload limit (`validate_upload(max_mb=8)`).
+  static const maxBytes = 8 * 1024 * 1024;
+
+  final String id;
+  final String? imageUrl;
+  final String? thumbUrl;
+  final String? caption;
+  final String? captionNe;
+  final Trade? trade;
+
+  String? get thumb => thumbUrl ?? imageUrl;
+  String? get full => imageUrl ?? thumbUrl;
+
+  String? captionFor(String lang) {
+    if (lang == 'ne' && (captionNe?.isNotEmpty ?? false)) return captionNe;
+    if (caption?.isNotEmpty ?? false) return caption;
+    return (captionNe?.isNotEmpty ?? false) ? captionNe : null;
+  }
+
+  factory PortfolioItem.fromJson(Json j) => PortfolioItem(
+    id: strOr(j['id']),
+    imageUrl: str(j['image_url']),
+    thumbUrl: str(j['thumb_url']),
+    caption: str(j['caption']),
+    captionNe: str(j['caption_ne']),
+    trade: Trade.fromAny(j['trade']),
+  );
 }
 
 /// A Ghardhani address (`/me/addresses`).
@@ -773,11 +819,14 @@ class Booking {
 
   /// Deadline for the Sipalu to answer: server value, else 30 min after the
   /// request (or 15 min before the start, whichever is first).
-  DateTime? get answerBy {
+  DateTime? get answerBy => answerWithin(BolauConfig.fallback.acceptTimeoutMinutes);
+
+  /// [answerBy] with the server's accept timeout (`/bolau/config`).
+  DateTime? answerWithin(int timeoutMinutes) {
     if (respondBy != null) return respondBy;
     final c = createdAt;
     if (c == null) return null;
-    var t = c.add(const Duration(minutes: 30));
+    var t = c.add(Duration(minutes: timeoutMinutes > 0 ? timeoutMinutes : 30));
     final s = scheduledStart;
     if (s != null) {
       final beforeStart = s.subtract(const Duration(minutes: 15));
@@ -1041,6 +1090,50 @@ class MinimumHourly {
     final j = asJson(data);
     final v = str(j['hourly_part_time'] ?? j['hourly']);
     return v == null || (parsePaisa(v) ?? 0) <= 0 ? fallback : MinimumHourly(v);
+  }
+}
+
+/// `GET /bolau/config` — public Bolau settings (404 while Bolau is off).
+/// Every field falls back to the contract default.
+class BolauConfig {
+  const BolauConfig({
+    this.bookingFee = defaultBookingFee,
+    this.bookingFeeEnabled,
+    this.freeCancelHours = 2,
+    this.acceptTimeoutMinutes = 30,
+    this.minHourlyRate,
+    this.maxOffers = 3,
+    this.emergencyLine = '100',
+  });
+
+  static const fallback = BolauConfig();
+
+  final String bookingFee;
+
+  /// Null when unknown (endpoint unreachable) → the `bolau_fee` flag decides.
+  final bool? bookingFeeEnabled;
+  final int freeCancelHours;
+  final int acceptTimeoutMinutes;
+
+  /// Null when unknown → `/ref/minimum-wage`, then Rs 107.
+  final String? minHourlyRate;
+  final int maxOffers;
+  final String emergencyLine;
+
+  factory BolauConfig.fromJson(Object? data) {
+    final j = asJson(data);
+    int pos(Object? v, int d) => (intOf(v) ?? 0) > 0 ? intOf(v)! : d;
+    final fee = str(j['booking_fee']);
+    final min = str(j['min_hourly_rate']);
+    return BolauConfig(
+      bookingFee: fee == null || (parsePaisa(fee) ?? -1) < 0 ? defaultBookingFee : fee,
+      bookingFeeEnabled: j['booking_fee_enabled'] is bool ? j['booking_fee_enabled'] as bool : null,
+      freeCancelHours: pos(j['free_cancel_hours'], 2),
+      acceptTimeoutMinutes: pos(j['accept_timeout_minutes'], 30),
+      minHourlyRate: min != null && (parsePaisa(min) ?? 0) > 0 ? min : null,
+      maxOffers: pos(j['max_offers'], 3),
+      emergencyLine: strOr(j['emergency_line'], '100').isEmpty ? '100' : strOr(j['emergency_line'], '100'),
+    );
   }
 }
 

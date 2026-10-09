@@ -166,7 +166,7 @@ class _SipaluJobScreenState extends ConsumerState<SipaluJobScreen> {
         SipaluBookingSummary(booking: b),
         if (b.status == BookingStatus.requested) ...[
           const SizedBox(height: KsSpace.s2),
-          CountdownText(deadline: b.answerBy),
+          CountdownText(deadline: b.answerWithin(ref.watch(bolauConfigValueProvider).acceptTimeoutMinutes)),
         ],
         if (g != null && g.name.isNotEmpty) ...[
           const SizedBox(height: KsSpace.s2),
@@ -230,6 +230,10 @@ class _SipaluJobScreenState extends ConsumerState<SipaluJobScreen> {
           SectionCard(title: l.blWhatsNeeded, child: Text(b.description, style: t.bodyLarge)),
         ],
         const SizedBox(height: KsSpace.s4),
+        if (canDisputeBooking(b)) ...[
+          RaiseDisputeButton(booking: b, side: BookingSide.sipalu),
+          const SizedBox(height: KsSpace.s2),
+        ],
         BolauSafetyCard(booking: b),
       ],
     );

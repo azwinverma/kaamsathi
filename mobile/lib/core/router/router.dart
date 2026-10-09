@@ -20,6 +20,7 @@ import '../../features/bolau/ui/ghardhani/search_screen.dart';
 import '../../features/bolau/ui/ghardhani/sipalu_profile_screen.dart';
 import '../../features/bolau/ui/mode/welcome_screen.dart';
 import '../../features/bolau/ui/sipalu/onboarding_screen.dart';
+import '../../features/bolau/ui/sipalu/portfolio_screen.dart';
 import '../../features/bolau/ui/sipalu/request_offer_screen.dart';
 import '../../features/bolau/ui/sipalu/services_editor_screen.dart';
 import '../../features/bolau/ui/sipalu/sipalu_job_screen.dart';
@@ -65,6 +66,7 @@ import '../../features/worker/talab/ui/payslip_detail_screen.dart';
 import '../../features/worker/talab/ui/talab_screen.dart';
 import '../../features/worker/timesheets/ui/my_timesheets_screen.dart';
 import '../../features/worker/training/ui/training_screen.dart';
+import '../../features/worker/trust/trust_data.dart' show Dispute;
 import '../../features/worker/trust/ui/dispute_detail_screen.dart';
 import '../../features/worker/trust/ui/disputes_screen.dart';
 import '../../features/worker/trust/ui/my_ratings_screen.dart';
@@ -160,6 +162,7 @@ abstract final class Routes {
   static String sipaluJob(String id) => '/w/bolau/job/$id';
   static String sipaluRequest(String id) => '/w/bolau/request/$id';
   static const sipaluServices = '/w/bolau/services';
+  static const sipaluPortfolio = '/w/bolau/portfolio';
 
   /// Ghardhani mode (B shell, 4 tabs).
   static const gharHome = '/g/home';
@@ -172,6 +175,10 @@ abstract final class Routes {
   static String gharBook(String handle, {String? serviceId}) =>
       serviceId == null ? '/g/sipalu/$handle/book' : '/g/sipalu/$handle/book?service=$serviceId';
   static String gharBooking(String id) => '/g/booking/$id';
+
+  /// A booking dispute as the Ghardhani sees it (the dispute is passed as
+  /// `extra`; there is no Ghardhani dispute list endpoint).
+  static String gharDispute(String id) => '/g/dispute/$id';
   static const gharRequestNew = '/g/request-new';
   static String gharRequest(String id) => '/g/request/$id';
   static const gharAddresses = '/g/addresses';
@@ -327,7 +334,16 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: Routes.workerDisputes,
         builder: (_, _) => const DisputesScreen(),
-        routes: [GoRoute(path: ':id', builder: (_, state) => DisputeDetailScreen(id: state.pathParameters['id']!))],
+        routes: [
+          GoRoute(
+            path: ':id',
+            builder:
+                (_, state) => DisputeDetailScreen(
+                  id: state.pathParameters['id']!,
+                  initial: state.extra is Dispute ? state.extra! as Dispute : null,
+                ),
+          ),
+        ],
       ),
       GoRoute(
         path: Routes.workerDisputeNew,
@@ -367,6 +383,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/w/bolau/job/:id', builder: (_, state) => SipaluJobScreen(id: state.pathParameters['id']!)),
       GoRoute(path: '/w/bolau/request/:id', builder: (_, state) => RequestOfferScreen(id: state.pathParameters['id']!)),
       GoRoute(path: Routes.sipaluServices, builder: (_, _) => const SipaluServicesScreen()),
+      GoRoute(path: Routes.sipaluPortfolio, builder: (_, _) => const SipaluPortfolioScreen()),
       // Ghardhani pages pushed over the Ghardhani tabs.
       GoRoute(
         path: '/g/search',
@@ -389,6 +406,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       GoRoute(path: '/g/booking/:id', builder: (_, state) => GharBookingScreen(id: state.pathParameters['id']!)),
+      GoRoute(
+        path: '/g/dispute/:id',
+        builder:
+            (_, state) => DisputeDetailScreen(
+              id: state.pathParameters['id']!,
+              initial: state.extra is Dispute ? state.extra! as Dispute : null,
+              partyView: true,
+            ),
+      ),
       GoRoute(path: Routes.gharRequestNew, builder: (_, _) => const RequestNewScreen()),
       GoRoute(path: '/g/request/:id', builder: (_, state) => GharRequestScreen(id: state.pathParameters['id']!)),
       GoRoute(path: Routes.gharAddresses, builder: (_, _) => const AddressesScreen()),

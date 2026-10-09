@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../../../core/flags.dart';
 import '../../../../core/format.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/router/router.dart';
@@ -17,9 +16,12 @@ import '../../bolau_repository.dart';
 import '../bolau_widgets.dart';
 import 'addresses_screen.dart';
 
-/// Booking fee line for the Ghardhani: the amount while `bolau_fee` is on,
-/// otherwise waived. Returns (amount or null when waived).
-String? bookingFeeFor(PublicSipalu p, {required bool feeOn}) => feeOn ? (p.bookingFee ?? defaultBookingFee) : null;
+/// Booking fee line for the Ghardhani: the amount while the fee is on
+/// (`/bolau/config`, else the `bolau_fee` flag), otherwise waived. Returns
+/// the amount, or null when waived. The Sipalu's own `booking_fee` wins,
+/// then the config amount, then the contract default.
+String? bookingFeeFor(PublicSipalu p, {required bool feeOn, String? configFee}) =>
+    feeOn ? (p.bookingFee ?? configFee ?? defaultBookingFee) : null;
 
 /// Book a specific Sipalu: service → time → address → price → confirm.
 class BookScreen extends ConsumerWidget {
@@ -142,8 +144,8 @@ class _BookFormState extends ConsumerState<_BookForm> {
     final l = context.l10n;
     final lang = context.lang;
     final t = Theme.of(context).textTheme;
-    final feeOn = ref.watch(flagsProvider)[FlagKeys.bolauFee] == true;
-    final fee = bookingFeeFor(_p, feeOn: feeOn);
+    final cfg = ref.watch(bolauConfigValueProvider);
+    final fee = bookingFeeFor(_p, feeOn: ref.watch(bookingFeeEnabledProvider), configFee: cfg.bookingFee);
     final addresses = ref.watch(addressesProvider);
     final now = DateTime.now();
     final days = [for (var i = 0; i < 7; i++) nepalToday().add(Duration(days: i))];
@@ -309,12 +311,18 @@ class _BookFormState extends ConsumerState<_BookForm> {
               ),
               const Divider(),
               Text(l.blPayDirectNote, style: t.bodyMedium),
-              if (fee != null) Text(l.blFeeNote, style: t.bodySmall),
+              if (fee != null) ...[
+                Text(l.blFeeNote, style: t.bodySmall),
+                Text(l.blFeeIsKaamSathi, key: const Key('book_fee_note'), style: t.bodySmall),
+              ],
             ],
           ),
         ),
         const SizedBox(height: KsSpace.s3),
-        InfoNote(icon: LucideIcons.calendarX, text: l.blFreeCancel),
+        InfoNote(
+          icon: LucideIcons.calendarX,
+          text: l.blFreeCancelHours(localizeDigits('${cfg.freeCancelHours}', lang)),
+        ),
         const SizedBox(height: KsSpace.s4),
         FilledButton.icon(
           key: const Key('book_confirm'),
@@ -327,7 +335,7 @@ class _BookFormState extends ConsumerState<_BookForm> {
         ),
         const SizedBox(height: KsSpace.s2),
         Text(
-          _p.instantBooking ? l.blInstantNote : l.blRequestNote,
+          _p.instantBooking ? l.blInstantNote : l.blRequestNoteMin(localizeDigits('${cfg.acceptTimeoutMinutes}', lang)),
           textAlign: TextAlign.center,
           style: t.bodySmall?.copyWith(color: context.ks.textMuted),
         ),

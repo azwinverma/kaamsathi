@@ -467,7 +467,8 @@ class _GharRequestScreenState extends ConsumerState<GharRequestScreen> {
     final l = context.l10n;
     final lang = context.lang;
     final t = Theme.of(context).textTheme;
-    final offers = r.offers.take(maxOffersPerRequest).toList();
+    final maxOffers = ref.watch(bolauConfigValueProvider).maxOffers;
+    final offers = r.offers.take(maxOffers).toList();
     return ListView(
       padding: const EdgeInsets.all(KsSpace.page),
       children: [
@@ -484,7 +485,7 @@ class _GharRequestScreenState extends ConsumerState<GharRequestScreen> {
         ],
         const SizedBox(height: KsSpace.s4),
         Text(
-          l.blOffersTitle(localizeDigits('${offers.length}', lang), localizeDigits('$maxOffersPerRequest', lang)),
+          l.blOffersTitle(localizeDigits('${offers.length}', lang), localizeDigits('$maxOffers', lang)),
           key: const Key('offers_title'),
           style: t.titleMedium,
         ),

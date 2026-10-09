@@ -15,6 +15,7 @@ import '../../../worker/profile/ui/languages_screen.dart' show spokenLanguageNam
 import '../../bolau_models.dart';
 import '../../bolau_repository.dart';
 import '../bolau_widgets.dart';
+import '../sipalu/portfolio_screen.dart' show PortfolioStrip;
 import '../sipalu/sipalu_editors.dart' show apiWeekdayName, weekdayDisplayOrder;
 
 /// A Sipalu's public profile (never phone, address, ID or location).
@@ -218,6 +219,14 @@ class _Body extends StatelessWidget {
         if (bio != null && bio.isNotEmpty) ...[
           const SizedBox(height: KsSpace.s3),
           SectionCard(title: l.blAbout, child: Text(bio, style: t.bodyLarge)),
+        ],
+        if (p.portfolio.isNotEmpty) ...[
+          const SizedBox(height: KsSpace.s3),
+          SectionCard(
+            key: const Key('sipalu_portfolio'),
+            title: l.blPortfolio,
+            child: PortfolioStrip(items: p.portfolio),
+          ),
         ],
         const SizedBox(height: KsSpace.s3),
         SectionCard(

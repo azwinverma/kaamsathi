@@ -9241,6 +9241,264 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Answer by {when}'**
   String blAnswerBy(String when);
+
+  /// No description provided for @blFreeCancelHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Free to cancel until {hours} hours before the start.'**
+  String blFreeCancelHours(String hours);
+
+  /// No description provided for @blCancelLateHours.
+  ///
+  /// In en, this message translates to:
+  /// **'The start is less than {hours} hours away. You can still cancel, but late cancellations are noted. The Sipalu is never charged.'**
+  String blCancelLateHours(String hours);
+
+  /// No description provided for @blCancelLateShortHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Less than {hours} hours to go — cancelling now is noted as late.'**
+  String blCancelLateShortHours(String hours);
+
+  /// No description provided for @blWaitingSipaluMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the Sipalu to accept. If there\'s no reply in {minutes} minutes, the request closes and you can book someone else.'**
+  String blWaitingSipaluMin(String minutes);
+
+  /// No description provided for @blRequestNoteMin.
+  ///
+  /// In en, this message translates to:
+  /// **'The Sipalu has {minutes} minutes to accept. You\'ll get an SMS either way.'**
+  String blRequestNoteMin(String minutes);
+
+  /// No description provided for @blFeeIsKaamSathi.
+  ///
+  /// In en, this message translates to:
+  /// **'The booking fee is KaamSathi\'s own fee. You pay the Sipalu directly — KaamSathi never takes anything from their pay.'**
+  String get blFeeIsKaamSathi;
+
+  /// No description provided for @blPayFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay booking fee'**
+  String get blPayFee;
+
+  /// No description provided for @blPayFeeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay the booking fee'**
+  String get blPayFeeTitle;
+
+  /// No description provided for @blPayFeeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} to KaamSathi. This is not the Sipalu\'s pay — you pay them directly.'**
+  String blPayFeeBody(String amount);
+
+  /// No description provided for @blFeeNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Online payment isn\'t available yet — your booking is still confirmed.'**
+  String get blFeeNotConfigured;
+
+  /// No description provided for @blFeePayLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish paying with {provider} at this link:'**
+  String blFeePayLink(String provider);
+
+  /// No description provided for @blFeeDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Due'**
+  String get blFeeDue;
+
+  /// No description provided for @blFeeNotCollected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not collected now'**
+  String get blFeeNotCollected;
+
+  /// No description provided for @blFeePaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get blFeePaid;
+
+  /// No description provided for @blFeeRefunded.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded'**
+  String get blFeeRefunded;
+
+  /// No description provided for @blFeeReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking fee receipt'**
+  String get blFeeReceipt;
+
+  /// No description provided for @blFeeOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'The booking is confirmed either way — paying the fee never blocks the work.'**
+  String get blFeeOptional;
+
+  /// No description provided for @blRaiseDispute.
+  ///
+  /// In en, this message translates to:
+  /// **'Raise a dispute'**
+  String get blRaiseDispute;
+
+  /// No description provided for @blRaiseDisputeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Raise a dispute about this booking'**
+  String get blRaiseDisputeTitle;
+
+  /// No description provided for @blRaiseDisputeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Say what went wrong — price, payment, damage or work not done. KaamSathi support looks at both sides. You can add photos after sending.'**
+  String get blRaiseDisputeHint;
+
+  /// No description provided for @blRaiseDisputeGharHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Say what went wrong — price, payment, damage or work not done. KaamSathi support looks at both sides and will contact you.'**
+  String get blRaiseDisputeGharHint;
+
+  /// No description provided for @blDisputeWhat.
+  ///
+  /// In en, this message translates to:
+  /// **'What happened?'**
+  String get blDisputeWhat;
+
+  /// No description provided for @blDisputeSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispute sent. Support will look into it.'**
+  String get blDisputeSent;
+
+  /// No description provided for @blDisputeSupportNote.
+  ///
+  /// In en, this message translates to:
+  /// **'KaamSathi support is looking into this and will contact you. For anything urgent, use “Report a problem”.'**
+  String get blDisputeSupportNote;
+
+  /// No description provided for @blPortfolio.
+  ///
+  /// In en, this message translates to:
+  /// **'Work photos'**
+  String get blPortfolio;
+
+  /// No description provided for @blPortfolioManage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage work photos'**
+  String get blPortfolioManage;
+
+  /// No description provided for @blPortfolioEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No work photos yet. Photos of finished work help households choose you.'**
+  String get blPortfolioEmpty;
+
+  /// No description provided for @blPortfolioAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add photo'**
+  String get blPortfolioAdd;
+
+  /// No description provided for @blPortfolioCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of {max} photos'**
+  String blPortfolioCount(String count, String max);
+
+  /// No description provided for @blPortfolioFull.
+  ///
+  /// In en, this message translates to:
+  /// **'You can show up to {max} photos. Delete one to add another.'**
+  String blPortfolioFull(String max);
+
+  /// No description provided for @blPortfolioCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Caption (English)'**
+  String get blPortfolioCaption;
+
+  /// No description provided for @blPortfolioCaptionNe.
+  ///
+  /// In en, this message translates to:
+  /// **'Caption (Nepali)'**
+  String get blPortfolioCaptionNe;
+
+  /// No description provided for @blPortfolioTrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Trade'**
+  String get blPortfolioTrade;
+
+  /// No description provided for @blPortfolioAnyTrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get blPortfolioAnyTrade;
+
+  /// No description provided for @blPortfolioEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit photo'**
+  String get blPortfolioEdit;
+
+  /// No description provided for @blPortfolioDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete photo'**
+  String get blPortfolioDelete;
+
+  /// No description provided for @blPortfolioDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It will no longer show on your profile.'**
+  String get blPortfolioDeleteBody;
+
+  /// No description provided for @blPortfolioSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo saved'**
+  String get blPortfolioSaved;
+
+  /// No description provided for @blPortfolioDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo deleted'**
+  String get blPortfolioDeleted;
+
+  /// No description provided for @blPortfolioTooBig.
+  ///
+  /// In en, this message translates to:
+  /// **'This photo is too large (8 MB at most).'**
+  String get blPortfolioTooBig;
+
+  /// No description provided for @blPortfolioPublic.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown on your public profile. Only your own work — no customers\' faces, house numbers or documents.'**
+  String get blPortfolioPublic;
+
+  /// No description provided for @blPortfolioPhotoAlt.
+  ///
+  /// In en, this message translates to:
+  /// **'Work photo: {caption}'**
+  String blPortfolioPhotoAlt(String caption);
+
+  /// No description provided for @blPortfolioPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Work photo'**
+  String get blPortfolioPhoto;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

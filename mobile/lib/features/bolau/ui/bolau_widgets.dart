@@ -15,6 +15,7 @@ import '../../../core/widgets/common.dart';
 import '../../../core/widgets/eco.dart';
 import '../../../core/widgets/signature/signature.dart';
 import '../../common/support/safety_report_screen.dart';
+import '../../worker/trust/trust_data.dart' show Dispute, disputesProvider;
 import '../bolau_logic.dart';
 import '../bolau_models.dart';
 import '../bolau_repository.dart';
@@ -821,4 +822,115 @@ class VerificationLadder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SkillLadder(earned: ladderRungsForLevel(level), height: 64);
+}
+
+/// Where a freshly raised booking dispute opens: the worker dispute detail
+/// (evidence + appeal) for the Sipalu, the read-only party view for the
+/// Ghardhani.
+String bookingDisputeRoute(BookingSide side, String disputeId) =>
+    side == BookingSide.sipalu ? Routes.workerDispute(disputeId) : Routes.gharDispute(disputeId);
+
+/// "Raise a dispute" on a booking (either party) → `POST …/dispute
+/// {description}`, then opens the dispute. Returns the dispute when sent.
+Future<Dispute?> raiseBookingDispute(BuildContext context, WidgetRef ref, Booking b, BookingSide side) async {
+  final l = context.l10n;
+  final text = await showDialog<String>(context: context, builder: (_) => _DisputeDialog(side: side));
+  if (text == null || !context.mounted) return null;
+  try {
+    final d = await ref.read(bolauRepositoryProvider).raiseDispute(b.id, text);
+    ref.invalidate(bookingProvider(b.id));
+    ref.invalidate(disputesProvider);
+    if (!context.mounted) return d;
+    showSnack(context, l.blDisputeSent);
+    unawaited(context.push(bookingDisputeRoute(side, d.id), extra: d));
+    return d;
+  } catch (e) {
+    if (context.mounted) showSnack(context, errorText(context, e), error: true);
+    return null;
+  }
+}
+
+/// Button shown on a booking while a dispute can be raised.
+class RaiseDisputeButton extends ConsumerStatefulWidget {
+  const RaiseDisputeButton({super.key, required this.booking, required this.side});
+  final Booking booking;
+  final BookingSide side;
+
+  @override
+  ConsumerState<RaiseDisputeButton> createState() => _RaiseDisputeButtonState();
+}
+
+class _RaiseDisputeButtonState extends ConsumerState<RaiseDisputeButton> {
+  bool _busy = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!canDisputeBooking(widget.booking)) return const SizedBox.shrink();
+    return OutlinedButton.icon(
+      key: const Key('booking_dispute'),
+      onPressed:
+          _busy
+              ? null
+              : () async {
+                setState(() => _busy = true);
+                await raiseBookingDispute(context, ref, widget.booking, widget.side);
+                if (mounted) setState(() => _busy = false);
+              },
+      icon: const Icon(LucideIcons.scale),
+      label: Text(context.l10n.blRaiseDispute),
+    );
+  }
+}
+
+class _DisputeDialog extends StatefulWidget {
+  const _DisputeDialog({required this.side});
+  final BookingSide side;
+
+  @override
+  State<_DisputeDialog> createState() => _DisputeDialogState();
+}
+
+class _DisputeDialogState extends State<_DisputeDialog> {
+  final _c = TextEditingController();
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return AlertDialog(
+      title: Text(l.blRaiseDisputeTitle),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(widget.side == BookingSide.sipalu ? l.blRaiseDisputeHint : l.blRaiseDisputeGharHint),
+            const SizedBox(height: KsSpace.s3),
+            TextField(
+              key: const Key('dispute_description'),
+              controller: _c,
+              minLines: 3,
+              maxLines: 6,
+              maxLength: 2000,
+              decoration: InputDecoration(labelText: l.blDisputeWhat, alignLabelWithHint: true),
+              onChanged: (_) => setState(() {}),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l.commonCancel)),
+        FilledButton(
+          key: const Key('dispute_send'),
+          onPressed: _c.text.trim().length < 5 ? null : () => Navigator.pop(context, _c.text.trim()),
+          child: Text(l.ecoSubmit),
+        ),
+      ],
+    );
+  }
 }

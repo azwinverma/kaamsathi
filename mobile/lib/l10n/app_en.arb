@@ -2610,5 +2610,121 @@
         "type": "String"
       }
     }
-  }
+  },
+  "blFreeCancelHours": "Free to cancel until {hours} hours before the start.",
+  "@blFreeCancelHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "blCancelLateHours": "The start is less than {hours} hours away. You can still cancel, but late cancellations are noted. The Sipalu is never charged.",
+  "@blCancelLateHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "blCancelLateShortHours": "Less than {hours} hours to go — cancelling now is noted as late.",
+  "@blCancelLateShortHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "blWaitingSipaluMin": "Waiting for the Sipalu to accept. If there's no reply in {minutes} minutes, the request closes and you can book someone else.",
+  "@blWaitingSipaluMin": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "blRequestNoteMin": "The Sipalu has {minutes} minutes to accept. You'll get an SMS either way.",
+  "@blRequestNoteMin": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "blFeeIsKaamSathi": "The booking fee is KaamSathi's own fee. You pay the Sipalu directly — KaamSathi never takes anything from their pay.",
+  "blPayFee": "Pay booking fee",
+  "blPayFeeTitle": "Pay the booking fee",
+  "blPayFeeBody": "{amount} to KaamSathi. This is not the Sipalu's pay — you pay them directly.",
+  "@blPayFeeBody": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "blFeeNotConfigured": "Online payment isn't available yet — your booking is still confirmed.",
+  "blFeePayLink": "Finish paying with {provider} at this link:",
+  "@blFeePayLink": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
+  },
+  "blFeeDue": "Due",
+  "blFeeNotCollected": "Not collected now",
+  "blFeePaid": "Paid",
+  "blFeeRefunded": "Refunded",
+  "blFeeReceipt": "Booking fee receipt",
+  "blFeeOptional": "The booking is confirmed either way — paying the fee never blocks the work.",
+  "blRaiseDispute": "Raise a dispute",
+  "blRaiseDisputeTitle": "Raise a dispute about this booking",
+  "blRaiseDisputeHint": "Say what went wrong — price, payment, damage or work not done. KaamSathi support looks at both sides. You can add photos after sending.",
+  "blRaiseDisputeGharHint": "Say what went wrong — price, payment, damage or work not done. KaamSathi support looks at both sides and will contact you.",
+  "blDisputeWhat": "What happened?",
+  "blDisputeSent": "Dispute sent. Support will look into it.",
+  "blDisputeSupportNote": "KaamSathi support is looking into this and will contact you. For anything urgent, use “Report a problem”.",
+  "blPortfolio": "Work photos",
+  "blPortfolioManage": "Manage work photos",
+  "blPortfolioEmpty": "No work photos yet. Photos of finished work help households choose you.",
+  "blPortfolioAdd": "Add photo",
+  "blPortfolioCount": "{count} of {max} photos",
+  "@blPortfolioCount": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "blPortfolioFull": "You can show up to {max} photos. Delete one to add another.",
+  "@blPortfolioFull": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "blPortfolioCaption": "Caption (English)",
+  "blPortfolioCaptionNe": "Caption (Nepali)",
+  "blPortfolioTrade": "Trade",
+  "blPortfolioAnyTrade": "Not set",
+  "blPortfolioEdit": "Edit photo",
+  "blPortfolioDelete": "Delete photo",
+  "blPortfolioDeleteBody": "It will no longer show on your profile.",
+  "blPortfolioSaved": "Photo saved",
+  "blPortfolioDeleted": "Photo deleted",
+  "blPortfolioTooBig": "This photo is too large (8 MB at most).",
+  "blPortfolioPublic": "Shown on your public profile. Only your own work — no customers' faces, house numbers or documents.",
+  "blPortfolioPhotoAlt": "Work photo: {caption}",
+  "@blPortfolioPhotoAlt": {
+    "placeholders": {
+      "caption": {
+        "type": "String"
+      }
+    }
+  },
+  "blPortfolioPhoto": "Work photo"
 }

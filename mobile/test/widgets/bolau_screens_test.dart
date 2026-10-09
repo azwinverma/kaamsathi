@@ -75,6 +75,7 @@ List<District> _districts() => [const District(code: 'lalitpur', nameEn: 'Lalitp
 
 final _common = <Object>[
   minimumHourlyProvider.overrideWith((ref) async => const MinimumHourly('107')),
+  bolauConfigProvider.overrideWith((ref) async => BolauConfig.fallback),
   tradesProvider.overrideWith(
     (ref) async => const [
       Trade(code: 'electrician', nameEn: 'Electrician', nameNe: 'बिजुली मिस्त्री'),
@@ -395,6 +396,11 @@ void main() {
       expect(find.byKey(const Key('arrival_code')), findsOneWidget);
       expect(find.text('4 8 2 1'), findsOneWidget);
       expect(find.byKey(const Key('booking_timeline')), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('booking_report')),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
       expect(find.byKey(const Key('booking_report')), findsOneWidget);
       expect(find.byKey(const Key('safety_danger')), findsOneWidget);
     });

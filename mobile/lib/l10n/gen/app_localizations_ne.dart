@@ -4930,4 +4930,158 @@ class AppLocalizationsNe extends AppLocalizations {
   String blAnswerBy(String when) {
     return '$when सम्म जवाफ दिनुहोस्';
   }
+
+  @override
+  String blFreeCancelHours(String hours) {
+    return 'सुरु हुनुभन्दा $hours घण्टाअघिसम्म निःशुल्क रद्द गर्न सकिन्छ।';
+  }
+
+  @override
+  String blCancelLateHours(String hours) {
+    return 'सुरु हुन $hours घण्टाभन्दा कम बाँकी छ। अझै रद्द गर्न सकिन्छ, तर ढिलो रद्द गरेको टिपिन्छ। सिपालुलाई कहिल्यै शुल्क लाग्दैन।';
+  }
+
+  @override
+  String blCancelLateShortHours(String hours) {
+    return '$hours घण्टाभन्दा कम बाँकी — अहिले रद्द गर्दा ढिलो रद्द भनेर टिपिन्छ।';
+  }
+
+  @override
+  String blWaitingSipaluMin(String minutes) {
+    return 'सिपालुले स्वीकार गर्ने पर्खाइमा। $minutes मिनेटभित्र जवाफ नआए अनुरोध बन्द हुन्छ र अर्कोलाई बुक गर्न सक्नुहुन्छ।';
+  }
+
+  @override
+  String blRequestNoteMin(String minutes) {
+    return 'सिपालुसँग स्वीकार गर्न $minutes मिनेट हुन्छ। जे भए पनि तपाईंलाई SMS आउँछ।';
+  }
+
+  @override
+  String get blFeeIsKaamSathi =>
+      'बुकिङ शुल्क कामसाथीको आफ्नै शुल्क हो। सिपालुलाई तपाईं सिधै तिर्नुहुन्छ — कामसाथीले उहाँको कमाइबाट केही लिँदैन।';
+
+  @override
+  String get blPayFee => 'बुकिङ शुल्क तिर्नुहोस्';
+
+  @override
+  String get blPayFeeTitle => 'बुकिङ शुल्क तिर्नुहोस्';
+
+  @override
+  String blPayFeeBody(String amount) {
+    return '$amount कामसाथीलाई। यो सिपालुको ज्याला होइन — उहाँलाई सिधै तिर्नुहोस्।';
+  }
+
+  @override
+  String get blFeeNotConfigured => 'अनलाइन भुक्तानी अझै उपलब्ध छैन — तपाईंको बुकिङ पक्का नै छ।';
+
+  @override
+  String blFeePayLink(String provider) {
+    return 'यो लिङ्कमा $provider बाट भुक्तानी पूरा गर्नुहोस्:';
+  }
+
+  @override
+  String get blFeeDue => 'तिर्न बाँकी';
+
+  @override
+  String get blFeeNotCollected => 'अहिले उठाइँदैन';
+
+  @override
+  String get blFeePaid => 'तिरिसकियो';
+
+  @override
+  String get blFeeRefunded => 'फिर्ता भयो';
+
+  @override
+  String get blFeeReceipt => 'बुकिङ शुल्कको रसिद';
+
+  @override
+  String get blFeeOptional => 'जे भए पनि बुकिङ पक्का छ — शुल्क नतिर्दा काम रोकिँदैन।';
+
+  @override
+  String get blRaiseDispute => 'उजुरी दिनुहोस्';
+
+  @override
+  String get blRaiseDisputeTitle => 'यो बुकिङबारे उजुरी';
+
+  @override
+  String get blRaiseDisputeHint =>
+      'के बिग्रियो लेख्नुहोस् — मूल्य, भुक्तानी, क्षति वा काम नभएको। कामसाथी सहयोगले दुवै पक्ष हेर्छ। पठाएपछि फोटो थप्न सक्नुहुन्छ।';
+
+  @override
+  String get blRaiseDisputeGharHint =>
+      'के बिग्रियो लेख्नुहोस् — मूल्य, भुक्तानी, क्षति वा काम नभएको। कामसाथी सहयोगले दुवै पक्ष हेर्छ र तपाईंलाई सम्पर्क गर्छ।';
+
+  @override
+  String get blDisputeWhat => 'के भयो?';
+
+  @override
+  String get blDisputeSent => 'उजुरी पठाइयो। सहयोग टोलीले हेर्नेछ।';
+
+  @override
+  String get blDisputeSupportNote =>
+      'कामसाथी सहयोगले यो हेर्दैछ र तपाईंलाई सम्पर्क गर्नेछ। जरुरी भए “समस्या रिपोर्ट गर्नुहोस्” प्रयोग गर्नुहोस्।';
+
+  @override
+  String get blPortfolio => 'कामका फोटो';
+
+  @override
+  String get blPortfolioManage => 'कामका फोटो मिलाउनुहोस्';
+
+  @override
+  String get blPortfolioEmpty => 'अहिलेसम्म कामका फोटो छैनन्। सकिएको कामका फोटोले घरधनीलाई तपाईं छान्न मद्दत गर्छ।';
+
+  @override
+  String get blPortfolioAdd => 'फोटो थप्नुहोस्';
+
+  @override
+  String blPortfolioCount(String count, String max) {
+    return '$max मध्ये $count फोटो';
+  }
+
+  @override
+  String blPortfolioFull(String max) {
+    return 'बढीमा $max फोटो देखाउन सकिन्छ। अर्को थप्न एउटा हटाउनुहोस्।';
+  }
+
+  @override
+  String get blPortfolioCaption => 'क्याप्सन (अङ्ग्रेजी)';
+
+  @override
+  String get blPortfolioCaptionNe => 'क्याप्सन (नेपाली)';
+
+  @override
+  String get blPortfolioTrade => 'पेसा';
+
+  @override
+  String get blPortfolioAnyTrade => 'छानिएको छैन';
+
+  @override
+  String get blPortfolioEdit => 'फोटो सम्पादन';
+
+  @override
+  String get blPortfolioDelete => 'फोटो हटाउनुहोस्';
+
+  @override
+  String get blPortfolioDeleteBody => 'यो तपाईंको प्रोफाइलमा अब देखिँदैन।';
+
+  @override
+  String get blPortfolioSaved => 'फोटो सुरक्षित भयो';
+
+  @override
+  String get blPortfolioDeleted => 'फोटो हटाइयो';
+
+  @override
+  String get blPortfolioTooBig => 'यो फोटो धेरै ठूलो छ (बढीमा ८ MB)।';
+
+  @override
+  String get blPortfolioPublic =>
+      'तपाईंको सार्वजनिक प्रोफाइलमा देखिन्छ। आफ्नै काम मात्र — ग्राहकको अनुहार, घर नम्बर वा कागजात नराख्नुहोस्।';
+
+  @override
+  String blPortfolioPhotoAlt(String caption) {
+    return 'कामको फोटो: $caption';
+  }
+
+  @override
+  String get blPortfolioPhoto => 'कामको फोटो';
 }

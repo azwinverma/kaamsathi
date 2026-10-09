@@ -89,10 +89,10 @@ List<BookingAction> bookingActions(Booking b, BookingSide side, {DateTime? now})
   return out;
 }
 
-/// Cancelling is free until 2 h before the start (contract §4; the server's
-/// `free_cancel_until` when sent).
-bool isFreeCancellation(Booking b, {DateTime? now}) {
-  final until = b.freeCancelUntil ?? b.scheduledStart?.subtract(const Duration(hours: 2));
+/// Cancelling is free until [freeHours] (`/bolau/config`, default 2) before
+/// the start (contract §4; the server's `free_cancel_until` when sent).
+bool isFreeCancellation(Booking b, {DateTime? now, int freeHours = 2}) {
+  final until = b.freeCancelUntil ?? b.scheduledStart?.subtract(Duration(hours: freeHours));
   if (until == null) return true;
   return (now ?? DateTime.now()).isBefore(until);
 }
@@ -436,3 +436,55 @@ BookingSide? bolauSideFor(String kind, Json data, {String? link, BookingSide? cu
   if (_ghardhaniEvents.contains(e)) return BookingSide.ghardhani;
   return current ?? BookingSide.ghardhani;
 }
+
+// ---------------------------------------------------------------------------
+// Booking fee (contract §6: KaamSathi's own fee, paid by the Ghardhani only)
+// ---------------------------------------------------------------------------
+
+/// What the Ghardhani sees on the booking-fee line.
+enum FeeState {
+  /// Nothing to pay (fee switched off or zero).
+  waived,
+
+  /// Due, and online payment can be started.
+  payable,
+
+  /// Due, but fees are off right now — nothing to do.
+  pending,
+  paid,
+  refunded,
+}
+
+FeeState feeState(Booking b, {required bool feeEnabled}) {
+  final amount = parsePaisa(b.bookingFee) ?? 0;
+  return switch (b.bookingFeeStatus) {
+    'paid' => FeeState.paid,
+    'refunded' => FeeState.refunded,
+    'pending' when amount > 0 => feeEnabled ? FeeState.payable : FeeState.pending,
+    _ => FeeState.waived,
+  };
+}
+
+/// Gateways the booking fee can be paid with (`POST …/fee/pay {provider}`).
+const feeProviders = ['esewa', 'khalti'];
+
+/// `GET /bolau/bookings/{id}/receipt.pdf` (paid fees only).
+String feeReceiptPath(String bookingId) => '/bolau/bookings/$bookingId/receipt.pdf';
+
+// ---------------------------------------------------------------------------
+// Disputes
+// ---------------------------------------------------------------------------
+
+/// Statuses the server accepts a booking dispute in (`bookings.DISPUTABLE`).
+const disputableStatuses = {
+  BookingStatus.accepted,
+  BookingStatus.onTheWay,
+  BookingStatus.arrived,
+  BookingStatus.inProgress,
+  BookingStatus.completed,
+  BookingStatus.confirmed,
+  BookingStatus.noShow,
+  BookingStatus.cancelled,
+};
+
+bool canDisputeBooking(Booking b) => disputableStatuses.contains(b.status);

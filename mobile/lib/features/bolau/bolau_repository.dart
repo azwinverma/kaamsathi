@@ -9,6 +9,7 @@ import '../../core/api/json.dart';
 import '../../core/auth/session.dart';
 import '../../core/flags.dart';
 import '../../core/providers.dart';
+import '../worker/trust/trust_data.dart' show Dispute;
 import 'bolau_models.dart';
 
 /// Every Bolau endpoint (docs/CONTRACT-BOLAU.md) in one place.
@@ -22,6 +23,8 @@ abstract final class BolauPaths {
   static const timeOff = '/me/sipalu/time-off';
   static String timeOffItem(String id) => '$timeOff/$id';
   static const handle = '/me/sipalu/handle';
+  static const portfolio = '/me/sipalu/portfolio';
+  static String portfolioItem(String id) => '$portfolio/$id';
   static const myJobs = '/me/bolau/jobs';
 
   /// Sipalu transitions: accept, decline, on-the-way, arrive, start,
@@ -56,6 +59,9 @@ abstract final class BolauPaths {
   static String cancelRequest(String id) => '$requests/$id/cancel';
   static String acceptOffer(String requestId, String offerId) => '$requests/$requestId/offers/$offerId/accept';
   static const myRequests = '/me/bolau/requests';
+  static String payFee(String id) => '$bookings/$id/fee/pay';
+  static String receipt(String id) => '$bookings/$id/receipt.pdf';
+  static const config = '/bolau/config';
 
   static const minimumWage = '/ref/minimum-wage';
 }
@@ -87,6 +93,35 @@ class BolauRepository {
     }
     return OnboardingState.fromJson(await _api.post<dynamic>(BolauPaths.onboardingStep, data: body));
   }
+
+  Future<List<PortfolioItem>> portfolio() async =>
+      resultsOf(await _api.get<dynamic>(BolauPaths.portfolio)).map(PortfolioItem.fromJson).toList();
+
+  /// Multipart `image` + `caption`, `caption_ne`, `trade` (all optional
+  /// except the image).
+  Future<PortfolioItem> addPortfolio(String imagePath, {String? caption, String? captionNe, String? trade}) async {
+    final form = FormData.fromMap({
+      'image': await MultipartFile.fromFile(imagePath),
+      ...portfolioFields(caption: caption, captionNe: captionNe, trade: trade),
+    });
+    return PortfolioItem.fromJson(asJson(await _api.post<dynamic>(BolauPaths.portfolio, data: form)));
+  }
+
+  Future<PortfolioItem> updatePortfolio(String id, {String? caption, String? captionNe, String? trade}) async =>
+      PortfolioItem.fromJson(
+        asJson(
+          await _api.patch<dynamic>(
+            BolauPaths.portfolioItem(id),
+            data: {
+              'caption': caption?.trim() ?? '',
+              'caption_ne': captionNe?.trim() ?? '',
+              'trade': (trade?.isEmpty ?? true) ? null : trade,
+            },
+          ),
+        ),
+      );
+
+  Future<void> deletePortfolio(String id) => _api.delete(BolauPaths.portfolioItem(id));
 
   Future<List<SipaluService>> services() async =>
       resultsOf(await _api.get<dynamic>(BolauPaths.services)).map(SipaluService.fromJson).toList();
@@ -218,6 +253,20 @@ class BolauRepository {
     return str(data['case_id']);
   }
 
+  /// Raises a booking dispute (`{description}`); returns the trust dispute.
+  Future<Dispute> raiseDispute(String id, String description) async => Dispute.fromJson(
+    asJson(
+      await _api.post<dynamic>(BolauPaths.bookingAction(id, 'dispute'), data: {'description': description.trim()}),
+    ),
+  );
+
+  /// Starts an online payment of the booking fee → `{redirect_url, reference}`.
+  /// Throws `provider_not_configured` until a merchant agreement exists.
+  Future<Json> payFee(String id, String provider) async =>
+      asJson(await _api.post<dynamic>(BolauPaths.payFee(id), data: {'provider': provider}));
+
+  Future<BolauConfig> config() async => BolauConfig.fromJson(await _api.get<dynamic>(BolauPaths.config));
+
   Future<BookingContact> contact(String id) async =>
       BookingContact.fromJson(await _api.get<dynamic>(BolauPaths.contact(id)));
 
@@ -263,6 +312,13 @@ class BolauRepository {
   Future<MinimumHourly> minimumHourly() async =>
       MinimumHourly.fromJson(await _api.get<dynamic>(BolauPaths.minimumWage));
 }
+
+/// Text fields of a portfolio upload (blank ones left out).
+Map<String, String> portfolioFields({String? caption, String? captionNe, String? trade}) => {
+  if (caption != null && caption.trim().isNotEmpty) 'caption': caption.trim(),
+  if (captionNe != null && captionNe.trim().isNotEmpty) 'caption_ne': captionNe.trim(),
+  if (trade != null && trade.isNotEmpty) 'trade': trade,
+};
 
 /// Search filters (`GET /bolau/search`).
 class BolauSearch {
@@ -324,12 +380,46 @@ final mySipaluProvider = FutureProvider.autoDispose<MySipalu>((ref) {
   return ref.watch(bolauRepositoryProvider).mySipalu();
 });
 
-final minimumHourlyProvider = FutureProvider<MinimumHourly>((ref) async {
+/// `GET /bolau/config`, else the contract defaults (Bolau off → 404).
+final bolauConfigProvider = FutureProvider<BolauConfig>((ref) async {
   try {
-    return await ref.watch(bolauRepositoryProvider).minimumHourly();
+    return await ref.watch(bolauRepositoryProvider).config();
+  } catch (_) {
+    return BolauConfig.fallback;
+  }
+});
+
+/// The config while loading/failed → defaults (never blocks a screen).
+final bolauConfigValueProvider = Provider<BolauConfig>(
+  (ref) => ref.watch(bolauConfigProvider).value ?? BolauConfig.fallback,
+);
+
+/// Whether the Ghardhani booking fee is on: `/bolau/config`, else the
+/// `bolau_fee` client flag.
+final bookingFeeEnabledProvider = Provider<bool>(
+  (ref) => ref.watch(bolauConfigValueProvider).bookingFeeEnabled ?? ref.watch(flagsProvider)[FlagKeys.bolauFee] == true,
+);
+
+/// Minimum hourly rate: `/bolau/config` `min_hourly_rate`, then
+/// `/ref/minimum-wage`, then Rs 107.
+final minimumHourlyProvider = FutureProvider<MinimumHourly>((ref) async {
+  final cfg = await ref.watch(bolauConfigProvider.future);
+  return resolveMinimumHourly(cfg, () => ref.read(bolauRepositoryProvider).minimumHourly());
+});
+
+Future<MinimumHourly> resolveMinimumHourly(BolauConfig cfg, Future<MinimumHourly> Function() minimumWage) async {
+  final fromConfig = cfg.minHourlyRate;
+  if (fromConfig != null) return MinimumHourly(fromConfig);
+  try {
+    return await minimumWage();
   } catch (_) {
     return MinimumHourly.fallback;
   }
+}
+
+final portfolioProvider = FutureProvider.autoDispose<List<PortfolioItem>>((ref) {
+  _uid(ref);
+  return ref.watch(bolauRepositoryProvider).portfolio();
 });
 
 final sipaluJobsProvider = FutureProvider.autoDispose<List<Booking>>((ref) {

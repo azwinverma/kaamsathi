@@ -4924,4 +4924,158 @@ class AppLocalizationsEn extends AppLocalizations {
   String blAnswerBy(String when) {
     return 'Answer by $when';
   }
+
+  @override
+  String blFreeCancelHours(String hours) {
+    return 'Free to cancel until $hours hours before the start.';
+  }
+
+  @override
+  String blCancelLateHours(String hours) {
+    return 'The start is less than $hours hours away. You can still cancel, but late cancellations are noted. The Sipalu is never charged.';
+  }
+
+  @override
+  String blCancelLateShortHours(String hours) {
+    return 'Less than $hours hours to go — cancelling now is noted as late.';
+  }
+
+  @override
+  String blWaitingSipaluMin(String minutes) {
+    return 'Waiting for the Sipalu to accept. If there\'s no reply in $minutes minutes, the request closes and you can book someone else.';
+  }
+
+  @override
+  String blRequestNoteMin(String minutes) {
+    return 'The Sipalu has $minutes minutes to accept. You\'ll get an SMS either way.';
+  }
+
+  @override
+  String get blFeeIsKaamSathi =>
+      'The booking fee is KaamSathi\'s own fee. You pay the Sipalu directly — KaamSathi never takes anything from their pay.';
+
+  @override
+  String get blPayFee => 'Pay booking fee';
+
+  @override
+  String get blPayFeeTitle => 'Pay the booking fee';
+
+  @override
+  String blPayFeeBody(String amount) {
+    return '$amount to KaamSathi. This is not the Sipalu\'s pay — you pay them directly.';
+  }
+
+  @override
+  String get blFeeNotConfigured => 'Online payment isn\'t available yet — your booking is still confirmed.';
+
+  @override
+  String blFeePayLink(String provider) {
+    return 'Finish paying with $provider at this link:';
+  }
+
+  @override
+  String get blFeeDue => 'Due';
+
+  @override
+  String get blFeeNotCollected => 'Not collected now';
+
+  @override
+  String get blFeePaid => 'Paid';
+
+  @override
+  String get blFeeRefunded => 'Refunded';
+
+  @override
+  String get blFeeReceipt => 'Booking fee receipt';
+
+  @override
+  String get blFeeOptional => 'The booking is confirmed either way — paying the fee never blocks the work.';
+
+  @override
+  String get blRaiseDispute => 'Raise a dispute';
+
+  @override
+  String get blRaiseDisputeTitle => 'Raise a dispute about this booking';
+
+  @override
+  String get blRaiseDisputeHint =>
+      'Say what went wrong — price, payment, damage or work not done. KaamSathi support looks at both sides. You can add photos after sending.';
+
+  @override
+  String get blRaiseDisputeGharHint =>
+      'Say what went wrong — price, payment, damage or work not done. KaamSathi support looks at both sides and will contact you.';
+
+  @override
+  String get blDisputeWhat => 'What happened?';
+
+  @override
+  String get blDisputeSent => 'Dispute sent. Support will look into it.';
+
+  @override
+  String get blDisputeSupportNote =>
+      'KaamSathi support is looking into this and will contact you. For anything urgent, use “Report a problem”.';
+
+  @override
+  String get blPortfolio => 'Work photos';
+
+  @override
+  String get blPortfolioManage => 'Manage work photos';
+
+  @override
+  String get blPortfolioEmpty => 'No work photos yet. Photos of finished work help households choose you.';
+
+  @override
+  String get blPortfolioAdd => 'Add photo';
+
+  @override
+  String blPortfolioCount(String count, String max) {
+    return '$count of $max photos';
+  }
+
+  @override
+  String blPortfolioFull(String max) {
+    return 'You can show up to $max photos. Delete one to add another.';
+  }
+
+  @override
+  String get blPortfolioCaption => 'Caption (English)';
+
+  @override
+  String get blPortfolioCaptionNe => 'Caption (Nepali)';
+
+  @override
+  String get blPortfolioTrade => 'Trade';
+
+  @override
+  String get blPortfolioAnyTrade => 'Not set';
+
+  @override
+  String get blPortfolioEdit => 'Edit photo';
+
+  @override
+  String get blPortfolioDelete => 'Delete photo';
+
+  @override
+  String get blPortfolioDeleteBody => 'It will no longer show on your profile.';
+
+  @override
+  String get blPortfolioSaved => 'Photo saved';
+
+  @override
+  String get blPortfolioDeleted => 'Photo deleted';
+
+  @override
+  String get blPortfolioTooBig => 'This photo is too large (8 MB at most).';
+
+  @override
+  String get blPortfolioPublic =>
+      'Shown on your public profile. Only your own work — no customers\' faces, house numbers or documents.';
+
+  @override
+  String blPortfolioPhotoAlt(String caption) {
+    return 'Work photo: $caption';
+  }
+
+  @override
+  String get blPortfolioPhoto => 'Work photo';
 }

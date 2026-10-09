@@ -17,6 +17,7 @@ import '../../bolau_logic.dart';
 import '../../bolau_models.dart';
 import '../../bolau_repository.dart';
 import '../bolau_widgets.dart';
+import 'portfolio_screen.dart' show PortfolioPreviewCard;
 
 /// Jobs → Bolau: the Sipalu's bookings, nearby Kaam requests, offers and
 /// earnings, with the "take bookings" switches on top.
@@ -80,6 +81,8 @@ class _SipaluBolauTabState extends ConsumerState<SipaluBolauTab> {
         padding: const EdgeInsets.all(KsSpace.page),
         children: [
           _StatusCard(profile: p),
+          const SizedBox(height: KsSpace.s3),
+          PortfolioPreviewCard(items: p.portfolio),
           const SizedBox(height: KsSpace.s3),
           const _EarningsCard(),
           const SizedBox(height: KsSpace.s3),
@@ -369,7 +372,7 @@ class _BookingsSectionState extends ConsumerState<_BookingsSection> {
                     children: [
                       SipaluBookingSummary(booking: b),
                       const SizedBox(height: KsSpace.s2),
-                      CountdownText(deadline: b.answerBy),
+                      CountdownText(deadline: b.answerWithin(ref.watch(bolauConfigValueProvider).acceptTimeoutMinutes)),
                       const SizedBox(height: KsSpace.s2),
                       Row(
                         children: [

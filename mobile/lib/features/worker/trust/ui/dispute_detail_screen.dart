@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../core/api/api_exception.dart';
 import '../../../../core/flags.dart';
 import '../../../../core/format.dart';
 import '../../../../core/l10n/l10n.dart';
@@ -13,14 +14,31 @@ import '../trust_data.dart';
 import 'disputes_screen.dart';
 
 /// One complaint: details, evidence (list + add photo), appeal.
+///
+/// [initial] is the dispute just raised (e.g. from a Bolau booking), shown
+/// when the list cannot be read. [partyView] is the Ghardhani's view of a
+/// booking dispute: they are not the worker on the case, so evidence and
+/// appeals (worker endpoints) are left to support.
 class DisputeDetailScreen extends ConsumerWidget {
-  const DisputeDetailScreen({super.key, required this.id});
+  const DisputeDetailScreen({super.key, required this.id, this.initial, this.partyView = false});
   final String id;
+  final Dispute? initial;
+  final bool partyView;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
-    final value = ref.watch(disputeProvider(id));
+    final first = initial;
+    final AsyncValue<Dispute> value;
+    if (partyView) {
+      value =
+          first != null
+              ? AsyncData(first)
+              : const AsyncError(ApiException(code: 'not_found', message: '', statusCode: 404), StackTrace.empty);
+    } else {
+      final v = ref.watch(disputeProvider(id));
+      value = v.hasError && first != null ? AsyncData(first) : v;
+    }
     return Scaffold(
       appBar: AppBar(title: Text(l.disputeDetailTitle)),
       body: RefreshIndicator(
@@ -34,7 +52,7 @@ class DisputeDetailScreen extends ConsumerWidget {
         child: FeatureAsyncBody<Dispute>(
           value: value,
           onRetry: () => ref.invalidate(disputesProvider),
-          data: (d) => _Body(dispute: d),
+          data: (d) => _Body(dispute: d, partyView: partyView),
         ),
       ),
     );
@@ -42,8 +60,9 @@ class DisputeDetailScreen extends ConsumerWidget {
 }
 
 class _Body extends ConsumerWidget {
-  const _Body({required this.dispute});
+  const _Body({required this.dispute, this.partyView = false});
   final Dispute dispute;
+  final bool partyView;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -52,8 +71,8 @@ class _Body extends ConsumerWidget {
     final t = Theme.of(context).textTheme;
     final d = dispute;
     final (label, tone) = disputeStatus(l, d);
-    final evidenceOn = ref.watch(flagOnProvider(FlagKeys.disputeEvidence));
-    final appealOn = ref.watch(flagOnProvider(FlagKeys.disputeAppeal));
+    final evidenceOn = !partyView && ref.watch(flagOnProvider(FlagKeys.disputeEvidence));
+    final appealOn = !partyView && ref.watch(flagOnProvider(FlagKeys.disputeAppeal));
     return ListView(
       padding: const EdgeInsets.all(KsSpace.page),
       children: [
@@ -85,6 +104,10 @@ class _Body extends ConsumerWidget {
             ],
           ),
         ),
+        if (partyView) ...[
+          const SizedBox(height: KsSpace.s4),
+          InfoNote(key: const Key('dispute_support_note'), icon: LucideIcons.headset, text: l.blDisputeSupportNote),
+        ],
         if (appealOn && (d.appeal != null || d.canAppeal)) ...[
           const SizedBox(height: KsSpace.s4),
           _AppealCard(dispute: d),

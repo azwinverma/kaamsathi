@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../core/api/api_exception.dart';
+import '../../../../core/api/cached.dart' show isFeatureUnavailable;
+import '../../../../core/api/json.dart';
 import '../../../../core/format.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/router/router.dart';
@@ -118,11 +121,12 @@ class _GharBookingScreenState extends ConsumerState<GharBookingScreen> {
     final lang = context.lang;
     switch (a) {
       case BookingAction.cancel:
-        final free = isFreeCancellation(b);
+        final hours = ref.read(bolauConfigValueProvider).freeCancelHours;
+        final free = isFreeCancellation(b, freeHours: hours);
         final reason = await showDeclineDialog(
           context,
           title: l.blCancelBookingTitle,
-          body: free ? l.blCancelFree : l.blCancelLate,
+          body: free ? l.blCancelFree : l.blCancelLateHours(localizeDigits('$hours', lang)),
         );
         if (reason != null) await _act('cancel', body: {'reason': reason}, done: l.blCancelled);
       case BookingAction.approveQuote:
@@ -218,8 +222,8 @@ class _GharBookingScreenState extends ConsumerState<GharBookingScreen> {
             )
             .toList();
     final s = b.sipalu;
-    final fee = b.bookingFee;
-    final waived = b.bookingFeeStatus == 'waived' || (parsePaisa(fee) ?? 0) == 0;
+    final cfg = ref.watch(bolauConfigValueProvider);
+    final hours = localizeDigits('${cfg.freeCancelHours}', lang);
     return ListView(
       padding: const EdgeInsets.all(KsSpace.page),
       children: [
@@ -255,7 +259,10 @@ class _GharBookingScreenState extends ConsumerState<GharBookingScreen> {
           const SizedBox(height: KsSpace.s3),
         ],
         if (b.status == BookingStatus.requested) ...[
-          InfoNote(icon: LucideIcons.hourglass, text: l.blWaitingSipalu),
+          InfoNote(
+            icon: LucideIcons.hourglass,
+            text: l.blWaitingSipaluMin(localizeDigits('${cfg.acceptTimeoutMinutes}', lang)),
+          ),
           const SizedBox(height: KsSpace.s3),
         ],
         if (b.awaitingQuoteApproval) ...[
@@ -284,7 +291,9 @@ class _GharBookingScreenState extends ConsumerState<GharBookingScreen> {
         ],
         if (actions.contains(BookingAction.cancel))
           Text(
-            isFreeCancellation(b) ? l.blFreeCancel : l.blCancelLateShort,
+            isFreeCancellation(b, freeHours: cfg.freeCancelHours)
+                ? l.blFreeCancelHours(hours)
+                : l.blCancelLateShortHours(hours),
             style: t.bodySmall?.copyWith(color: context.ks.textMuted),
           ),
         const SizedBox(height: KsSpace.s3),
@@ -303,7 +312,7 @@ class _GharBookingScreenState extends ConsumerState<GharBookingScreen> {
                         ? formatMoney(b.finalPrice, lang: lang)
                         : priceText(l, lang, priceType: b.priceType, price: b.quotedPrice, visitFee: b.visitFee),
               ),
-              KeyValueRow(label: l.blBookingFee, value: waived ? l.blFeeWaived : formatMoney(fee, lang: lang)),
+              BookingFeeLine(booking: b),
               if (b.isPaid)
                 KeyValueRow(
                   label: l.blPaid,
@@ -322,7 +331,152 @@ class _GharBookingScreenState extends ConsumerState<GharBookingScreen> {
           SectionCard(title: l.blWhatsNeeded, child: Text(b.description, style: t.bodyLarge)),
         ],
         const SizedBox(height: KsSpace.s4),
+        if (canDisputeBooking(b)) ...[
+          RaiseDisputeButton(booking: b, side: BookingSide.ghardhani),
+          const SizedBox(height: KsSpace.s2),
+        ],
         BolauSafetyCard(booking: b),
+      ],
+    );
+  }
+}
+
+/// The booking-fee line on a Ghardhani booking: waived / due (with "Pay
+/// booking fee" while fees are on) / paid (with the receipt) / refunded.
+/// The fee is KaamSathi's; the Sipalu is always paid directly.
+class BookingFeeLine extends ConsumerStatefulWidget {
+  const BookingFeeLine({super.key, required this.booking});
+  final Booking booking;
+
+  @override
+  ConsumerState<BookingFeeLine> createState() => _BookingFeeLineState();
+}
+
+class _BookingFeeLineState extends ConsumerState<BookingFeeLine> {
+  bool _busy = false;
+
+  /// Set once the gateway answered `provider_not_configured`.
+  bool _notConfigured = false;
+
+  Future<void> _pay() async {
+    final l = context.l10n;
+    final b = widget.booking;
+    final provider = await showModalBottomSheet<String>(
+      context: context,
+      builder:
+          (ctx) => SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(KsSpace.page),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(l.blPayFeeTitle, style: Theme.of(ctx).textTheme.titleLarge),
+                  const SizedBox(height: KsSpace.s1),
+                  Text(l.blPayFeeBody(formatMoney(b.bookingFee, lang: ctx.lang))),
+                  const SizedBox(height: KsSpace.s3),
+                  for (final p in feeProviders) ...[
+                    OutlinedButton(
+                      key: Key('fee_provider_$p'),
+                      onPressed: () => Navigator.pop(ctx, p),
+                      child: Text(paymentMethodLabel(l, p)),
+                    ),
+                    const SizedBox(height: KsSpace.s2),
+                  ],
+                ],
+              ),
+            ),
+          ),
+    );
+    if (provider == null || !mounted) return;
+    setState(() => _busy = true);
+    try {
+      final r = await ref.read(bolauRepositoryProvider).payFee(b.id, provider);
+      ref.invalidate(bookingProvider(b.id));
+      final url = str(r['redirect_url']);
+      if (url != null && url.isNotEmpty && mounted) {
+        await showDialog<void>(
+          context: context,
+          builder:
+              (ctx) => AlertDialog(
+                title: Text(l.blPayFeeTitle),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [Text(l.blFeePayLink(paymentMethodLabel(l, provider))), SelectableText(url)],
+                ),
+                actions: [
+                  TextButton(onPressed: () => copyText(ctx, url), child: Text(l.ecoCopyLink)),
+                  FilledButton(onPressed: () => Navigator.pop(ctx), child: Text(l.commonClose)),
+                ],
+              ),
+        );
+      }
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      if (e.code == 'provider_not_configured' || isFeatureUnavailable(e)) {
+        setState(() => _notConfigured = true);
+        showSnack(context, l.blFeeNotConfigured);
+      } else {
+        showSnack(context, errorText(context, e), error: true);
+      }
+    } catch (e) {
+      if (mounted) showSnack(context, errorText(context, e), error: true);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final lang = context.lang;
+    final t = Theme.of(context).textTheme;
+    final b = widget.booking;
+    final state = feeState(b, feeEnabled: ref.watch(bookingFeeEnabledProvider));
+    final amount = formatMoney(b.bookingFee, lang: lang);
+    final (String value, Color? color) = switch (state) {
+      FeeState.waived => (l.blFeeWaived, null),
+      FeeState.payable => ('$amount · ${l.blFeeDue}', context.ks.warningText),
+      FeeState.pending => ('$amount · ${l.blFeeNotCollected}', null),
+      FeeState.paid => ('$amount · ${l.blFeePaid}', context.ks.successText),
+      FeeState.refunded => ('$amount · ${l.blFeeRefunded}', null),
+    };
+    return Column(
+      key: Key('fee_${state.name}'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        KeyValueRow(label: l.blBookingFee, value: value, valueColor: color),
+        if (state != FeeState.waived) Text(l.blFeeIsKaamSathi, style: t.bodySmall),
+        if (state == FeeState.payable) ...[
+          const SizedBox(height: KsSpace.s2),
+          if (_notConfigured)
+            InfoNote(key: const Key('fee_not_configured'), icon: LucideIcons.info, text: l.blFeeNotConfigured)
+          else ...[
+            OutlinedButton.icon(
+              key: const Key('fee_pay'),
+              onPressed: _busy ? null : _pay,
+              icon:
+                  _busy
+                      ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                      : const Icon(LucideIcons.creditCard),
+              label: Text(l.blPayFee),
+            ),
+            Text(l.blFeeOptional, style: t.bodySmall?.copyWith(color: context.ks.textMuted)),
+          ],
+        ],
+        if (state == FeeState.paid)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              key: const Key('fee_receipt'),
+              onPressed:
+                  () => downloadAndOpen(context, ref, apiPath: feeReceiptPath(b.id), fileName: 'receipt-${b.code}.pdf'),
+              icon: const Icon(LucideIcons.fileText, size: 18),
+              label: Text(l.blFeeReceipt),
+            ),
+          ),
+        const SizedBox(height: KsSpace.s1),
       ],
     );
   }
