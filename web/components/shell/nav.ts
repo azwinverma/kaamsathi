@@ -1,5 +1,6 @@
 import {
   Activity,
+  DoorOpen,
   ListChecks,
   SlidersHorizontal,
   Star,
@@ -57,6 +58,8 @@ export interface NavItem {
   roles?: Role[];
   /** Ops only: staff roles that may open this page (superadmin always can). Unset = any staff. */
   staffRoles?: StaffRole[];
+  /** Client feature flag that must be on for the item to show (e.g. `bolau`). */
+  flag?: string;
   exact?: boolean;
 }
 export interface NavGroup {
@@ -153,6 +156,7 @@ export const OPS_NAV: NavGroup[] = [
       { href: "/ops/verification", label: "nav.ops_verification", icon: ShieldCheck, staffRoles: VERIFIER },
       { href: "/ops/jobs", label: "nav.ops_jobs", icon: Briefcase, staffRoles: VERIFIER_OR_SUPPORT },
       { href: "/ops/organizations", label: "nav.ops_organizations", icon: Building2, staffRoles: VERIFIER_OR_SUPPORT },
+      { href: "/ops/bolau", label: "nav.ops_bolau", icon: DoorOpen, staffRoles: SUPPORT, flag: "bolau" },
     ],
   },
   {
@@ -214,6 +218,13 @@ export function filterNavForStaff(
 ): NavGroup[] {
   return nav
     .map((g) => ({ ...g, items: g.items.filter((i) => canSeeStaffItem(i, staffRoles)) }))
+    .filter((g) => g.items.length > 0);
+}
+
+/** Drop items whose feature flag is off (unknown/missing flags count as off). */
+export function filterNavByFlags(nav: NavGroup[], flags: Record<string, boolean> | null | undefined): NavGroup[] {
+  return nav
+    .map((g) => ({ ...g, items: g.items.filter((i) => !i.flag || !!flags?.[i.flag]) }))
     .filter((g) => g.items.length > 0);
 }
 

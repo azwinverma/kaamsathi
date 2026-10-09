@@ -39,7 +39,8 @@ import { NotificationBell } from "@/components/notifications/notification-bell";
 import { usePendingCorrectionsCount } from "@/lib/api/hooks/corrections";
 import { useOrg } from "@/lib/api/hooks/org";
 import { useOpsDashboard } from "@/lib/api/hooks/ops";
-import { activeHref, canSeeStaffItem, type NavGroup, type NavItem } from "./nav";
+import { activeHref, canSeeStaffItem, filterNavByFlags, type NavGroup, type NavItem } from "./nav";
+import { useClientFlags } from "@/lib/api/hooks/flags";
 
 /** Live queue counts shown next to nav items (href → count). */
 type NavCounts = Record<string, number>;
@@ -162,9 +163,10 @@ function SidebarContents({
   const t = useTranslations();
   const session = useOptionalSession();
   const role = session?.role;
+  const flags = useClientFlags().data?.flags;
   const groups = React.useMemo(
     () =>
-      nav
+      filterNavByFlags(nav, flags)
         .map((g) => ({
           ...g,
           items: g.items.filter((i) =>
@@ -174,7 +176,7 @@ function SidebarContents({
           ),
         }))
         .filter((g) => g.items.length > 0),
-    [nav, variant, session?.me.staff_roles, role],
+    [nav, flags, variant, session?.me.staff_roles, role],
   );
   return (
     <>

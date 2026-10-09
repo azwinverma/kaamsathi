@@ -16,6 +16,8 @@ import {
 import { SiteFooter } from "@/components/marketing/site-footer";
 import { SiteHeader } from "@/components/marketing/site-header";
 import { enableSlotBriefs } from "@/components/signature/slot-briefs";
+import { BolauHomeBand } from "@/components/bolau/home-band";
+import { bolauLive } from "@/lib/bolau/live";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("marketing.meta");
@@ -34,6 +36,7 @@ type Props = { searchParams: Promise<{ slots?: string | string[] }> };
 export default async function Home({ searchParams }: Props) {
   enableSlotBriefs((await searchParams).slots);
   const t = await getTranslations();
+  const bolau = await bolauLive();
   return (
     <div className="bg-bg min-h-dvh">
       <a
@@ -52,6 +55,7 @@ export default async function Home({ searchParams }: Props) {
         <CareerSection />
         <TrustSection />
         <TradesSection />
+        {bolau ? <BolauHomeBand /> : null}
         <AudienceSection />
         <ProofSection />
         <PricingBand />

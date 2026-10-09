@@ -12,5 +12,23 @@ export function siteUrl(raw: string | undefined = process.env.NEXT_PUBLIC_SITE_U
 /** Public, indexable pages (everything else is behind auth or private by design). */
 export const PUBLIC_PATHS = ["/", "/login", "/help", "/privacy", "/terms", "/partners/docs", "/developers"] as const;
 
-/** Never crawl: authenticated areas, the API/BFF, and private Skill Passport share links. */
-export const DISALLOWED_PATHS = ["/app", "/ops", "/onboarding", "/api", "/p/s/"] as const;
+/** Never crawl: authenticated areas (incl. the Ghardhani area), booking forms, the API/BFF, and
+ * private Skill Passport share links. */
+export const DISALLOWED_PATHS = [
+  "/app",
+  "/ops",
+  "/onboarding",
+  "/ghar",
+  "/bolau/book/",
+  "/bolau/request",
+  "/api",
+  "/p/s/",
+] as const;
+
+/** Public Bolau pages, listed in the sitemap only while the `bolau` flag is on. */
+export const BOLAU_PUBLIC_PATHS = ["/bolau", "/sipalu/join"] as const;
+
+/** Sipalu profiles go into the sitemap only when the Sipalu opted in (`indexable`). */
+export function indexableSipaluPaths(cards: { handle: string; indexable?: boolean; public_indexable?: boolean }[]): string[] {
+  return cards.filter((c) => c.indexable === true || c.public_indexable === true).map((c) => `/sipalu/${c.handle}`);
+}

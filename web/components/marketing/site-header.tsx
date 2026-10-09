@@ -4,13 +4,19 @@ import { Menu } from "lucide-react";
 import { Logo } from "@/components/brand";
 import { LanguageToggle, ThemeToggle } from "@/components/providers/preferences";
 import { buttonVariants } from "@/components/ui/button";
+import { bolauLive } from "@/lib/bolau/live";
 import { cn } from "@/lib/utils";
 
-/** Public website header: calm surface bar, one strong CTA, no-JS disclosure menu on phones. */
+/**
+ * Public website header: calm surface bar, one strong CTA, no-JS disclosure menu on phones.
+ * "Bolau a Sipalu" appears only while the `bolau` flag is on.
+ */
 export async function SiteHeader({ home = false }: { home?: boolean }) {
   const t = await getTranslations();
   const base = home ? "" : "/";
+  const bolau = await bolauLive();
   const links = [
+    ...(bolau ? [{ href: "/bolau", label: t("bolau.nav.link") }] : []),
     { href: `${base}#employers`, label: t("marketing.nav.employers") },
     { href: `${base}#workers`, label: t("marketing.nav.workers") },
     { href: `${base}#passport`, label: t("marketing.nav.passport") },
