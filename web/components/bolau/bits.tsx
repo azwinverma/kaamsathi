@@ -76,7 +76,7 @@ export function RatingInline({
       <span aria-hidden className="tabular">
         {f.digits(r)} <span className="text-fg-muted font-normal">({f.digits(count)})</span>
       </span>
-      <span className="sr-only">{t("rating", { rating: f.digits(r), count })}</span>
+      <span className="sr-only">{t("rating", { rating: f.digits(r), count, countText: f.digits(count) })}</span>
     </span>
   );
 }

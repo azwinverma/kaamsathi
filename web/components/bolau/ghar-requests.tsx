@@ -171,7 +171,7 @@ function OffersCompare({ r }: { r: KaamRequest }) {
                   {typeof s.verification_level === "number" ? <RungChip level={s.verification_level} /> : null}
                 </div>
                 {typeof s.jobs_completed === "number" ? (
-                  <p className="text-fg-muted">{t("card.jobs", { count: s.jobs_completed })}</p>
+                  <p className="text-fg-muted">{t("card.jobs", { count: s.jobs_completed, countText: f.digits(s.jobs_completed) })}</p>
                 ) : null}
               </dl>
               {o.message ? (

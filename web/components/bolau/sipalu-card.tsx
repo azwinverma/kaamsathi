@@ -48,7 +48,7 @@ export function SipaluCard({ s, index = 0, headingLevel = 3 }: { s: Card; index?
           {s.top_trade ? <span className="text-fg font-semibold">{f.name(s.top_trade)}</span> : null}
           <RungChip level={s.verification_level} />
           <RatingInline avg={s.rating_avg} count={s.rating_count} />
-          <span className="text-fg-muted">{t("jobs", { count: s.jobs_completed })}</span>
+          <span className="text-fg-muted">{t("jobs", { count: s.jobs_completed, countText: f.digits(s.jobs_completed) })}</span>
         </p>
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 pt-1">
           {s.from_price ? (

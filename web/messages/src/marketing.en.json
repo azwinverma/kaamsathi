@@ -2,7 +2,9 @@
   "marketing": {
     "meta": {
       "title": "KaamSathi — verified skills, hiring and pay for Nepal's workers",
-      "description": "A verified record of every job, certificate and payslip — owned by the worker, trusted by the employer. Hire, run hajiri and pay correctly, in Nepali or English."
+      "description": "A verified record of every job, certificate and payslip — owned by the worker, trusted by the employer. Hire, run hajiri and pay correctly, in Nepali or English.",
+      "bolau_title": "Book verified Sipalu in Kathmandu Valley · KaamSathi Bolau",
+      "bolau_description": "Book an identity-verified electrician, plumber, cook or cleaner in Kathmandu Valley. See the price first, check them in with an arrival code, and pay the Sipalu directly. Businesses: hire, hajiri and payroll."
     },
     "nav": {
       "label": "Main",
@@ -12,7 +14,14 @@
       "help": "Help",
       "login": "Log in",
       "cta": "Hire verified workers",
-      "menu": "Menu"
+      "menu": "Menu",
+      "bolau_short": "Bolau",
+      "become_sipalu": "Become a Sipalu",
+      "businesses": "For businesses",
+      "biz_hire": "Hire verified workers",
+      "biz_hajiri": "Hajiri and payroll",
+      "biz_pricing": "Pricing",
+      "biz_api": "Enterprise API"
     },
     "hero": {
       "kicker": "Kathmandu Valley · Pilot 2083",

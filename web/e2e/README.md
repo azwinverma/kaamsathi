@@ -7,7 +7,9 @@ fails on serious/critical only), and Bolau (skipped while the `bolau` flag is of
 `bolau-join.spec.ts` (Sipalu onboarding wizard as a fresh random 98000009xx phone),
 `bolau.spec.ts` (search → profile → book as Ghardhani 9800000020 → /ghar detail: arrival code,
 free-cancel window, cancel; read-only demo dispute; axe), `ops-bolau.spec.ts` (KPIs, suspend +
-lift an E2E-made Sipalu with a reason, audit rows; axe). They run serially against seeded demo
+lift an E2E-made Sipalu with a reason, audit rows; axe), `home-bolau.spec.ts` (home with Bolau on:
+hero + header CTA + real "Sipalu near you" cards, axe; hero search → /bolau with trade/date params
+and results; read-only). They run serially against seeded demo
 data and clean up after themselves: the booking is cancelled (descriptions start with "E2E:") and
 the suspension lifted, even when a step fails.
 

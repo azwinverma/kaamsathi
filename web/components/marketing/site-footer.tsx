@@ -2,18 +2,29 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Logo } from "@/components/brand";
 import { BrushStroke } from "@/components/signature/brush-stroke";
+import { bolauLive } from "@/lib/bolau/live";
 
-/** Public footer: three short columns, place, and one quiet brush accent. */
+/**
+ * Public footer: three short columns, place, and one quiet brush accent. With Bolau on, the product
+ * column leads with Bolau / Become a Sipalu and groups employers under "For businesses".
+ */
 export async function SiteFooter() {
   const t = await getTranslations();
+  const bolau = await bolauLive();
   const cols = [
     {
       title: t("marketing.footer.product"),
-      links: [
-        { href: "/#employers", label: t("marketing.nav.employers") },
-        { href: "/#workers", label: t("marketing.nav.workers") },
-        { href: "/#passport", label: t("marketing.nav.passport") },
-      ],
+      links: bolau
+        ? [
+            { href: "/bolau", label: t("bolau.nav.link") },
+            { href: "/sipalu/join", label: t("marketing.nav.become_sipalu") },
+            { href: "/#businesses", label: t("marketing.nav.businesses") },
+          ]
+        : [
+            { href: "/#employers", label: t("marketing.nav.employers") },
+            { href: "/#workers", label: t("marketing.nav.workers") },
+            { href: "/#passport", label: t("marketing.nav.passport") },
+          ],
     },
     {
       title: t("marketing.footer.support"),

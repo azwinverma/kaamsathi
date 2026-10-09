@@ -76,9 +76,21 @@ export interface BolauSearchParams {
   page_size?: number;
 }
 
+/** Price stats for one price type; present only when ≥ `k_anonymity` distinct Sipalu price it. */
+export interface TradePriceStats {
+  median: Money;
+  min: Money;
+  max: Money;
+}
+
+/** `GET /bolau/trades` row: a trade with ≥ 1 bookable Sipalu. */
 export interface BolauTrade extends TradeRef {
+  category?: string;
   sipalu_count?: number;
-  typical_services?: { title: string; title_ne?: string | null; price_type: PriceType; median_price: Money | null }[];
+  /** Most common service titles (as the Sipalu wrote them). */
+  typical_services?: string[];
+  price?: { fixed: TradePriceStats | null; hourly: TradePriceStats | null };
+  k_anonymity?: number;
 }
 
 // ---------------------------------------------------------------- public profile

@@ -1,12 +1,18 @@
 import { ImageResponse } from "next/og";
+import { bolauLive } from "@/lib/bolau/live";
 import { MARK } from "@/lib/brand-mark";
+import { ogCopy } from "@/lib/marketing/home-layout";
 
-export const alt = "KaamSathi — Verified workers. On-time pay.";
+export const alt = "KaamSathi — Nepal's verified Sipalu and workers";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+// Flag-aware, so rendered per request (bolauLive() itself is cached for a minute); a build-time
+// prerender would freeze whatever the flag was while building.
+export const dynamic = "force-dynamic";
 
-/** Static Open Graph card (prerendered at build). Latin text only: the bundled OG font has no Devanagari. */
-export default function OpengraphImage() {
+/** Open Graph card. Leads with Bolau while the `bolau` flag is on, else the employer line. */
+export default async function OpengraphImage() {
+  const copy = ogCopy(await bolauLive());
   return new ImageResponse(
     <div
       style={{
@@ -37,15 +43,13 @@ export default function OpengraphImage() {
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
         <div style={{ fontSize: 72, fontWeight: 700, lineHeight: 1.1 }}>
-          Verified workers. On-time pay.
+          {copy.title}
         </div>
-        <div style={{ fontSize: 32, opacity: 0.85 }}>
-          Hire, manage and pay your workforce in Nepal
-        </div>
+        <div style={{ fontSize: 32, opacity: 0.85 }}>{copy.body}</div>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 26, opacity: 0.8 }}>
         <div style={{ width: 14, height: 14, borderRadius: 7, background: "#FF6B6B" }} />
-        Workers never pay a fee
+        {copy.foot}
       </div>
     </div>,
     size,

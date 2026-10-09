@@ -532,3 +532,62 @@ export async function PricingBand() {
     </section>
   );
 }
+
+/*
+ * For businesses (home with Bolau on): the employer story condensed into one band — heading,
+ * three points, the real roster fragment and the employer CTA. Calmer than the Bolau sections
+ * above it (white surface, ledger fragment), so the page changes register on purpose.
+ */
+export async function BusinessesSection() {
+  const t = await getTranslations("bolau.home.business");
+  const tm = await getTranslations("marketing");
+  const points = t.raw("points") as string[];
+  const items = tm.raw("workforce.items") as { title: string; body: string }[];
+  const bars = ["border-brand", "border-teal", "border-coral"];
+  return (
+    <section id="businesses" aria-labelledby="businesses-title" className="border-border bg-surface scroll-mt-20 border-t">
+      <span id="employers" aria-hidden className="block scroll-mt-20" />
+      <div className={cn(WRAP, "grid gap-12 py-16 lg:grid-cols-12 lg:gap-8 lg:py-24")}>
+        <div className="lg:col-span-5">
+          <Kicker className="text-brand-text">{t("kicker")}</Kicker>
+          <h2 id="businesses-title" className="text-fg mt-3 text-3xl leading-tight font-extrabold sm:text-[34px]">
+            {t("title")}
+          </h2>
+          <p className="text-fg-body mt-3 text-lg">{t("body")}</p>
+          <ul className="mt-6 space-y-2.5">
+            {points.map((p) => (
+              <li key={p} className="text-fg flex items-start gap-2.5 text-[15px]">
+                <Check className="text-brand-text mt-0.5 size-4 shrink-0" strokeWidth={3} aria-hidden />
+                {p}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <Link href="/login" className={buttonVariants({ size: "lg" })}>
+              {t("cta")}
+              <ArrowRight aria-hidden />
+            </Link>
+            <Link
+              href="/help"
+              className="text-fg inline-flex min-h-11 items-center px-2 font-semibold underline-offset-4 hover:underline"
+            >
+              {t("secondary")}
+            </Link>
+          </div>
+        </div>
+        <div className="lg:col-span-7">
+          <RosterStrip />
+          <p className="text-fg-muted mt-2 text-xs">{tm("demo.sample")}</p>
+          <ul className="mt-8 grid gap-6 sm:grid-cols-3 sm:gap-4">
+            {items.map((it, i) => (
+              <li key={it.title} className={cn("border-t-[6px] pt-3", bars[i])}>
+                <p className="text-fg font-bold">{it.title}</p>
+                <p className="text-fg-body mt-1 text-sm">{it.body}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}

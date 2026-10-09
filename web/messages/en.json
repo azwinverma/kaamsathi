@@ -560,9 +560,6 @@
       "section_label": "Bolau"
     },
     "landing": {
-      "kicker": "Bolau · Kathmandu Valley pilot",
-      "title": "A verified Sipalu at your door, at a price you saw first.",
-      "body": "Every Sipalu on Bolau has had their citizenship checked by KaamSathi. You book, they accept, and you pay them directly when the work is done.",
       "results_heading": "Sipalu you can book",
       "results_heading_all": "Sipalu free this week",
       "unavailable": "Search isn't working right now. Please try again in a minute."
@@ -608,7 +605,15 @@
       "empty_body": "Try another day or a nearby district — or post a Kaam request, and up to three verified Sipalu can send you an offer.",
       "prev": "Previous",
       "next": "Next",
-      "page": "Page {page}"
+      "page": "Page {page}",
+      "what_label": "What needs doing?",
+      "where_label": "Where?",
+      "when_label": "When?",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "bolau": "Bolau",
+      "hero_form_label": "Bolau a Sipalu",
+      "more_trades": "Other trades"
     },
     "lang": {
       "ne": "Nepali",
@@ -662,19 +667,23 @@
     },
     "how": {
       "kicker": "How Bolau works",
-      "title": "Three things that make a home visit feel safe",
+      "title": "From booking to paying, in four steps",
       "steps": [
         {
-          "title": "You see the price before you book",
-          "body": "Fixed, by the hour, or a visit fee and then a quote you approve. No surprises at the door."
+          "title": "Book a Sipalu, or post a Kaam request",
+          "body": "Pick a person and a time with the price shown up front — or describe the job and get up to three offers within a day."
         },
         {
-          "title": "They check in with your arrival code",
-          "body": "When the Sipalu arrives, you read out a four-digit code. Their phone and your address stay hidden until they accept."
+          "title": "The Sipalu accepts",
+          "body": "Until they do, their phone and your exact address stay hidden. If they don't answer in time, the request lapses and you can book someone else."
         },
         {
-          "title": "You pay them, not us",
-          "body": "Cash, eSewa, Khalti or bank — straight to the Sipalu. Then you both rate each other."
+          "title": "Read out your arrival code at the door",
+          "body": "Your app shows a four-digit code. The Sipalu enters it when they arrive, so you know it is the person you booked."
+        },
+        {
+          "title": "Pay them directly, then rate each other",
+          "body": "Cash, eSewa, Khalti or bank — straight to the Sipalu. KaamSathi never holds their money."
         }
       ]
     },
@@ -694,13 +703,6 @@
       "title": "Are you a Sipalu?",
       "body": "Make your own profile with your skills, areas and price. Households book you directly. You keep everything they pay.",
       "cta": "Make my Sipalu profile"
-    },
-    "home_band": {
-      "kicker": "New · Bolau",
-      "title": "Need someone at home today? Bolau a Sipalu.",
-      "body": "Book an identity-verified electrician, plumber, painter or carpenter near you. See the price first and pay them directly.",
-      "cta": "Find a Sipalu",
-      "cta_join": "I'm a Sipalu"
     },
     "profile": {
       "back": "All Sipalu",
@@ -1232,6 +1234,101 @@
       "enabled": "Taking bookings",
       "late_cancel": "Late cancellation",
       "reports": "Reports"
+    },
+    "home": {
+      "hero": {
+        "kicker": "Bolau · Kathmandu Valley",
+        "title": "A verified Sipalu at your door. Pay them directly — no middleman.",
+        "body": "Electricians, plumbers, cooks and cleaners whose citizenship KaamSathi has checked. See the price before you book, and pay the Sipalu in cash, eSewa or Khalti when the work is done.",
+        "request_lead": "Not sure who to call?",
+        "request": "Post a Kaam request — get up to {max} offers",
+        "trust": [
+          "Identity checked by KaamSathi",
+          "You pay the Sipalu directly",
+          "Arrival code at the door · Police 100"
+        ],
+        "trust_label": "Why it is safe to Bolau",
+        "code_label": "Arrival code",
+        "code_note": "You read it out at the door"
+      },
+      "near": {
+        "kicker": "Bookable now",
+        "title": "Sipalu near you",
+        "body": "Verified Sipalu in Kathmandu Valley — the ones free soonest, closest to the job and best rated by households come first.",
+        "see_all": "See all Sipalu",
+        "empty": "No Sipalu is taking bookings right now. Post a Kaam request and nearby Sipalu will hear about it."
+      },
+      "trades": {
+        "kicker": "Trades on Bolau",
+        "title": "Pick the trade, see who is free",
+        "body": "Only trades with at least one verified Sipalu taking bookings are listed. More join as Sipalu sign up.",
+        "count": "{count, plural, one {# verified Sipalu} other {# verified Sipalu}}",
+        "from_fixed": "Jobs from {price}",
+        "from_hourly": "From {price} an hour",
+        "see": "See {trade} Sipalu"
+      },
+      "trust": {
+        "kicker": "Safety and trust",
+        "title": "Who checks what before anyone comes to your home",
+        "body": "A verified badge only means something if you know who checked it.",
+        "col_what": "What",
+        "col_how": "How it is checked",
+        "col_who": "Who checks",
+        "rows": [
+          {
+            "what": "Phone",
+            "how": "One-time code when the Sipalu first signs in",
+            "who": "Automatic"
+          },
+          {
+            "what": "Citizenship",
+            "how": "Document checked by KaamSathi staff before a Sipalu can be booked; the number is never shown",
+            "who": "KaamSathi verification team"
+          },
+          {
+            "what": "Skills",
+            "how": "NSTB or CTEVT certificates checked where the Sipalu has one, and shown as a rung on their skill ladder",
+            "who": "KaamSathi, with the issuing body"
+          },
+          {
+            "what": "Ratings",
+            "how": "Only from households who finished a booking with them, once per booking; unfair reviews are removed",
+            "who": "Households, moderated by KaamSathi"
+          }
+        ],
+        "masked_title": "Numbers stay hidden until they accept",
+        "masked_body": "Before a booking is accepted you see the Sipalu's number like this, and they see your ward — not your address.",
+        "masked_sample": "98•• ••• •21",
+        "code_title": "The arrival code proves it is them",
+        "code_body": "Your app shows four digits. The Sipalu enters them when they arrive — no code, no start.",
+        "report_title": "Report a problem in confidence",
+        "report_body": "Every booking has a “Report a problem” button. Our team reads safety reports first."
+      },
+      "join": {
+        "kicker": "For Sipalu",
+        "title": "Your skill, your price. KaamSathi never takes a cut from you.",
+        "body": "Make a Sipalu profile with your trades, areas, days and prices. Households book you and pay you directly.",
+        "points": [
+          "No joining fee, no commission, no deduction — ever.",
+          "You set your price, your areas and your working days.",
+          "Every finished job and rating adds to your Skill Passport."
+        ],
+        "cta": "Become a Sipalu",
+        "secondary": "How it works for Sipalu",
+        "sticker": "No commission. Ever."
+      },
+      "business": {
+        "kicker": "For businesses",
+        "title": "Hiring for a hotel, a site or a factory?",
+        "body": "The same verified people, hired for longer: KaamSathi shortlists verified workers, runs hajiri on any phone and works out payroll the way Nepal's labour law asks.",
+        "points": [
+          "Verified workers shortlisted by trade, district and experience",
+          "Hajiri from the supervisor's phone, even without internet",
+          "Wage sheet with minimum wage, SSF, overtime and Dashain allowance"
+        ],
+        "cta": "Hire verified workers",
+        "secondary": "Talk to our team"
+      }
     }
   },
   "compliance": {
@@ -2875,7 +2972,9 @@
   "marketing": {
     "meta": {
       "title": "KaamSathi — verified skills, hiring and pay for Nepal's workers",
-      "description": "A verified record of every job, certificate and payslip — owned by the worker, trusted by the employer. Hire, run hajiri and pay correctly, in Nepali or English."
+      "description": "A verified record of every job, certificate and payslip — owned by the worker, trusted by the employer. Hire, run hajiri and pay correctly, in Nepali or English.",
+      "bolau_title": "Book verified Sipalu in Kathmandu Valley · KaamSathi Bolau",
+      "bolau_description": "Book an identity-verified electrician, plumber, cook or cleaner in Kathmandu Valley. See the price first, check them in with an arrival code, and pay the Sipalu directly. Businesses: hire, hajiri and payroll."
     },
     "nav": {
       "label": "Main",
@@ -2885,7 +2984,14 @@
       "help": "Help",
       "login": "Log in",
       "cta": "Hire verified workers",
-      "menu": "Menu"
+      "menu": "Menu",
+      "bolau_short": "Bolau",
+      "become_sipalu": "Become a Sipalu",
+      "businesses": "For businesses",
+      "biz_hire": "Hire verified workers",
+      "biz_hajiri": "Hajiri and payroll",
+      "biz_pricing": "Pricing",
+      "biz_api": "Enterprise API"
     },
     "hero": {
       "kicker": "Kathmandu Valley · Pilot 2083",
