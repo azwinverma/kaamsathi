@@ -74,6 +74,14 @@ class Charge(models.Model):
         blank=True,
         help_text="Partner/training-provider revenue is billed to the partner — never to a worker.",
     )
+    payer_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="bolau_charges",
+        null=True,
+        blank=True,
+        help_text="Bolau booking fee: the Ghardhani who booked. Sipalu/workers are never payers.",
+    )
     kind = models.CharField(max_length=24, choices=KINDS)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     description = models.CharField(max_length=255)
@@ -97,8 +105,14 @@ class Charge(models.Model):
         ordering = ["-created_at"]
         constraints = [
             models.CheckConstraint(
-                condition=Q(organization__isnull=False) | Q(payer_partner__isnull=False),
+                condition=Q(organization__isnull=False)
+                | Q(payer_partner__isnull=False)
+                | Q(payer_user__isnull=False),
                 name="billing_charge_has_payer",
+            ),
+            models.CheckConstraint(
+                condition=~Q(kind="booking_fee") | Q(payer_user__isnull=False, organization__isnull=True),
+                name="billing_booking_fee_payer_user",
             ),
         ]
 
@@ -107,7 +121,7 @@ class Charge(models.Model):
 
     @property
     def payer(self):
-        return self.organization or self.payer_partner
+        return self.organization or self.payer_partner or self.payer_user
 
 
 class InvoiceSequence(models.Model):

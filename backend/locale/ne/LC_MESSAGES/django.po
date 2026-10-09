@@ -2362,3 +2362,497 @@ msgstr "विवादको निर्णय भयो"
 msgctxt "history1"
 msgid "Advance given"
 msgstr "पेस्की दिइयो"
+
+# --- Bolau (docs/CONTRACT-BOLAU.md) ---
+
+msgctxt "bolau"
+msgid "A dispute is already open for this booking."
+msgstr "यो बुकिङमा विवाद पहिल्यै खुला छ।"
+
+msgctxt "bolau"
+msgid "A receipt is available once the booking fee is paid."
+msgstr "बुकिङ शुल्क तिरेपछि मात्र रसिद पाइन्छ।"
+
+msgctxt "bolau"
+msgid "Abusive or threatening behaviour"
+msgstr "गाली वा धम्कीपूर्ण व्यवहार"
+
+msgctxt "bolau"
+msgid "Accepted"
+msgstr "स्वीकार भयो"
+
+msgctxt "bolau"
+msgid "Add a photo of your work (optional)"
+msgstr "आफ्नो कामको फोटो थप्नुहोस् (ऐच्छिक)"
+
+msgctxt "bolau"
+msgid "Add a profile photo"
+msgstr "प्रोफाइल फोटो थप्नुहोस्"
+
+msgctxt "bolau"
+msgid "Add a visit fee for visit-then-quote services."
+msgstr "भ्रमणपछि मूल्य दिने सेवाका लागि भ्रमण शुल्क थप्नुहोस्।"
+
+msgctxt "bolau"
+msgid "Add at least one service with a price"
+msgstr "कम्तीमा एउटा सेवा मूल्यसहित थप्नुहोस्"
+
+msgctxt "bolau"
+msgid "Add the languages you speak"
+msgstr "तपाईंले बोल्ने भाषाहरू थप्नुहोस्"
+
+msgctxt "bolau"
+msgid "Add up to 4 photos."
+msgstr "बढीमा ४ वटा फोटो थप्नुहोस्।"
+
+msgctxt "bolau"
+msgid "Add your eSewa, Khalti or bank details"
+msgstr "आफ्नो eSewa, Khalti वा बैंक विवरण थप्नुहोस्"
+
+msgctxt "bolau"
+msgid "Add your name"
+msgstr "आफ्नो नाम थप्नुहोस्"
+
+msgctxt "bolau"
+msgid "Add your trade and skills"
+msgstr "आफ्नो पेसा र सीप थप्नुहोस्"
+
+msgctxt "bolau"
+msgid "Agree to show your profile publicly"
+msgstr "प्रोफाइल सार्वजनिक रूपमा देखाउन सहमति दिनुहोस्"
+
+msgctxt "bolau"
+msgid "Another account already uses this phone number for a Sipalu profile."
+msgstr "यो फोन नम्बर अर्को खाताको सिपालु प्रोफाइलमा प्रयोग भइसकेको छ।"
+
+msgctxt "bolau"
+msgid "Arrived"
+msgstr "आइपुग्नुभयो"
+
+msgctxt "bolau"
+msgid "Asked to pay or deal outside KaamSathi"
+msgstr "KaamSathi बाहिर तिर्न वा कारोबार गर्न भनियो"
+
+msgctxt "bolau"
+msgid "Bank transfer"
+msgstr "बैंक ट्रान्सफर"
+
+msgctxt "bolau"
+msgid "Bolau booking"
+msgstr "बोलाउ बुकिङ"
+
+msgctxt "bolau"
+msgid "Bolau is paused on your profile. Contact KaamSathi support."
+msgstr "तपाईंको प्रोफाइलमा बोलाउ रोकिएको छ। KaamSathi सहायतामा सम्पर्क गर्नुहोस्।"
+
+msgctxt "bolau"
+msgid "Book at least 60 minutes ahead."
+msgstr "कम्तीमा ६० मिनेट अगाडि बुक गर्नुहोस्।"
+
+msgctxt "bolau"
+msgid "Booked"
+msgstr "बुक भयो"
+
+msgctxt "bolau"
+msgid "Booked directly"
+msgstr "सिधै बुक गरिएको"
+
+msgctxt "bolau"
+msgid "Cancelled"
+msgstr "रद्द भयो"
+
+msgctxt "bolau"
+msgid "Cash"
+msgstr "नगद"
+
+msgctxt "bolau"
+msgid "Choose one of your saved addresses."
+msgstr "आफ्नो सुरक्षित ठेगानामध्ये एउटा छान्नुहोस्।"
+
+msgctxt "bolau"
+msgid "Choose the areas you work in"
+msgstr "तपाईं काम गर्ने क्षेत्र छान्नुहोस्"
+
+msgctxt "bolau"
+msgid "Clean work"
+msgstr "सफा काम"
+
+msgctxt "bolau"
+msgid "Clear instructions"
+msgstr "स्पष्ट निर्देशन"
+
+msgctxt "bolau"
+msgid "Completed"
+msgstr "सकियो"
+
+msgctxt "bolau"
+msgid "Confirmed"
+msgstr "पुष्टि भयो"
+
+msgctxt "bolau"
+msgid "Consent"
+msgstr "सहमति"
+
+msgctxt "bolau"
+msgid "Declined"
+msgstr "अस्वीकार भयो"
+
+msgctxt "bolau"
+msgid "Disputed"
+msgstr "विवादमा"
+
+msgctxt "bolau"
+msgid "Expired"
+msgstr "समय सकियो"
+
+msgctxt "bolau"
+msgid "Explained the work"
+msgstr "काम बुझाइदिनुभयो"
+
+msgctxt "bolau"
+msgid "Fair price"
+msgstr "उचित मूल्य"
+
+msgctxt "bolau"
+msgid "Fake profile or wrong person"
+msgstr "नक्कली प्रोफाइल वा फरक व्यक्ति"
+
+msgctxt "bolau"
+msgid "Fixed price"
+msgstr "तोकिएको मूल्य"
+
+msgctxt "bolau"
+msgid "Flagged"
+msgstr "रिपोर्ट गरिएको"
+
+msgctxt "bolau"
+msgid "From a Kaam request"
+msgstr "कामको अनुरोधबाट"
+
+msgctxt "bolau"
+msgid "Get your identity verified by KaamSathi"
+msgstr "KaamSathi बाट आफ्नो पहिचान प्रमाणित गराउनुहोस्"
+
+msgctxt "bolau"
+msgid "Ghardhani"
+msgstr "घरधनी"
+
+msgctxt "bolau"
+msgid "Ghardhani account"
+msgstr "घरधनी खाता"
+
+msgctxt "bolau"
+msgid "Headline and about you"
+msgstr "छोटो परिचय र तपाईंको बारेमा"
+
+msgctxt "bolau"
+msgid "Hidden"
+msgstr "लुकाइएको"
+
+msgctxt "bolau"
+msgid "Home"
+msgstr "घर"
+
+msgctxt "bolau"
+msgid "How Ghardhani pay you"
+msgstr "घरधनीले तपाईंलाई कसरी तिर्छन्"
+
+msgctxt "bolau"
+msgid "ID for verification"
+msgstr "प्रमाणीकरणका लागि परिचयपत्र"
+
+msgctxt "bolau"
+msgid "KaamSathi"
+msgstr "KaamSathi"
+
+msgctxt "bolau"
+msgid "Khalti"
+msgstr "Khalti"
+
+msgctxt "bolau"
+msgid "Languages"
+msgstr "भाषाहरू"
+
+msgctxt "bolau"
+msgid "Many booking cancellations or no-shows"
+msgstr "धेरै बुकिङ रद्द वा नआएको"
+
+msgctxt "bolau"
+msgid "No quote yet"
+msgstr "अहिलेसम्म मूल्य दिइएको छैन"
+
+msgctxt "bolau"
+msgid "No-show"
+msgstr "नआएको"
+
+msgctxt "bolau"
+msgid "Not chosen"
+msgstr "छानिएन"
+
+msgctxt "bolau"
+msgid "Off-platform payment solicitation"
+msgstr "प्लेटफर्म बाहिर भुक्तानी माग"
+
+msgctxt "bolau"
+msgid "Offers received"
+msgstr "प्रस्ताव आए"
+
+msgctxt "bolau"
+msgid "Office"
+msgstr "कार्यालय"
+
+msgctxt "bolau"
+msgid "On the way"
+msgstr "आउँदै हुनुहुन्छ"
+
+msgctxt "bolau"
+msgid "On time"
+msgstr "समयमै"
+
+msgctxt "bolau"
+msgid "Open"
+msgstr "खुला"
+
+msgctxt "bolau"
+msgid "Other"
+msgstr "अन्य"
+
+msgctxt "bolau"
+msgid "Paid"
+msgstr "तिरियो"
+
+msgctxt "bolau"
+msgid "Paid as agreed"
+msgstr "सहमति अनुसार तिर्नुभयो"
+
+msgctxt "bolau"
+msgid "Pending"
+msgstr "बाँकी"
+
+msgctxt "bolau"
+msgid "Per hour"
+msgstr "प्रति घण्टा"
+
+msgctxt "bolau"
+msgid "Photo"
+msgstr "फोटो"
+
+msgctxt "bolau"
+msgid "Polite"
+msgstr "नम्र"
+
+msgctxt "bolau"
+msgid "Quote approved"
+msgstr "मूल्य स्वीकृत भयो"
+
+msgctxt "bolau"
+msgid "Quote declined"
+msgstr "मूल्य अस्वीकार भयो"
+
+msgctxt "bolau"
+msgid "Quote waiting for approval"
+msgstr "मूल्य स्वीकृतिको प्रतीक्षामा"
+
+msgctxt "bolau"
+msgid "Refunded"
+msgstr "फिर्ता गरियो"
+
+msgctxt "bolau"
+msgid "Requested"
+msgstr "अनुरोध गरिएको"
+
+msgctxt "bolau"
+msgid "Respectful"
+msgstr "सम्मानजनक"
+
+msgctxt "bolau"
+msgid "Safe place to work"
+msgstr "काम गर्न सुरक्षित ठाउँ"
+
+msgctxt "bolau"
+msgid "Services and prices"
+msgstr "सेवा र मूल्य"
+
+msgctxt "bolau"
+msgid "Set the days and hours you work"
+msgstr "तपाईं काम गर्ने दिन र समय राख्नुहोस्"
+
+msgctxt "bolau"
+msgid "Sipalu"
+msgstr "सिपालु"
+
+msgctxt "bolau"
+msgid "Skilled"
+msgstr "सीपयुक्त"
+
+msgctxt "bolau"
+msgid "Suspicious reviews (same device or address)"
+msgstr "शंकास्पद समीक्षा (एउटै उपकरण वा ठेगाना)"
+
+msgctxt "bolau"
+msgid "The Ghardhani must approve your quote before work starts."
+msgstr "काम सुरु हुनुअघि घरधनीले तपाईंको मूल्य स्वीकृत गर्नुपर्छ।"
+
+msgctxt "bolau"
+msgid "The Sipalu already has a booking at this time."
+msgstr "यो समयमा सिपालुको अर्को बुकिङ छ।"
+
+msgctxt "bolau"
+msgid "The Sipalu does not work at this time. Choose another time."
+msgstr "सिपालु यो समयमा काम गर्नुहुन्न। अर्को समय छान्नुहोस्।"
+
+msgctxt "bolau"
+msgid "The Sipalu is away on this day."
+msgstr "सिपालु यो दिन बिदामा हुनुहुन्छ।"
+
+msgctxt "bolau"
+msgid "The arrival code is wrong."
+msgstr "आगमन कोड मिलेन।"
+
+msgctxt "bolau"
+msgid "The final price cannot be more than the quoted price."
+msgstr "अन्तिम मूल्य दिइएको मूल्यभन्दा बढी हुन सक्दैन।"
+
+msgctxt "bolau"
+msgid "The hourly rate cannot be below the minimum wage (Rs %(minimum)s per hour)."
+msgstr "प्रति घण्टा दर न्यूनतम पारिश्रमिक (प्रति घण्टा रु %(minimum)s) भन्दा कम हुन सक्दैन।"
+
+msgctxt "bolau"
+msgid "The preferred time window is not valid."
+msgstr "रोजेको समय मिलेन।"
+
+msgctxt "bolau"
+msgid "There is no booking fee to pay for this booking."
+msgstr "यो बुकिङमा तिर्नुपर्ने बुकिङ शुल्क छैन।"
+
+msgctxt "bolau"
+msgid "This Sipalu cannot be booked right now."
+msgstr "यो सिपालुलाई अहिले बुक गर्न मिल्दैन।"
+
+msgctxt "bolau"
+msgid "This address is outside the Sipalu's service area."
+msgstr "यो ठेगाना सिपालुको सेवा क्षेत्र बाहिर छ।"
+
+msgctxt "bolau"
+msgid "This booking cannot do that now."
+msgstr "यो बुकिङमा अहिले यो काम गर्न मिल्दैन।"
+
+msgctxt "bolau"
+msgid "This comment cannot be flagged."
+msgstr "यो टिप्पणी रिपोर्ट गर्न मिल्दैन।"
+
+msgctxt "bolau"
+msgid "This handle is already taken."
+msgstr "यो ह्यान्डल पहिल्यै लिइसकिएको छ।"
+
+msgctxt "bolau"
+msgid "This handle is reserved. Choose another one."
+msgstr "यो ह्यान्डल आरक्षित छ। अर्को छान्नुहोस्।"
+
+msgctxt "bolau"
+msgid "This request already has three offers."
+msgstr "यो अनुरोधमा तीनवटा प्रस्ताव आइसकेका छन्।"
+
+msgctxt "bolau"
+msgid "This request is no longer taking offers."
+msgstr "यो अनुरोधमा अब प्रस्ताव लिइँदैन।"
+
+msgctxt "bolau"
+msgid "This request is not in your trade or service area."
+msgstr "यो अनुरोध तपाईंको पेसा वा सेवा क्षेत्रमा पर्दैन।"
+
+msgctxt "bolau"
+msgid "This service is not offered by the Sipalu."
+msgstr "सिपालुले यो सेवा दिनुहुन्न।"
+
+msgctxt "bolau"
+msgid "Too many wrong codes. Ask the Ghardhani to contact KaamSathi support."
+msgstr "धेरै पटक गलत कोड। घरधनीलाई KaamSathi सहायतामा सम्पर्क गर्न भन्नुहोस्।"
+
+msgctxt "bolau"
+msgid "Trade and skills"
+msgstr "पेसा र सीप"
+
+msgctxt "bolau"
+msgid "Upload your citizenship or national ID"
+msgstr "नागरिकता वा राष्ट्रिय परिचयपत्र अपलोड गर्नुहोस्"
+
+msgctxt "bolau"
+msgid "Use 3–30 small letters, numbers or hyphens."
+msgstr "३–३० वटा साना अक्षर, अङ्क वा हाइफन प्रयोग गर्नुहोस्।"
+
+msgctxt "bolau"
+msgid "Visible"
+msgstr "देखिने"
+
+msgctxt "bolau"
+msgid "Visit, then quote"
+msgstr "पहिले हेर्ने, अनि मूल्य"
+
+msgctxt "bolau"
+msgid "Waived"
+msgstr "छुट दिइयो"
+
+msgctxt "bolau"
+msgid "When you work"
+msgstr "तपाईं कहिले काम गर्नुहुन्छ"
+
+msgctxt "bolau"
+msgid "Where you work"
+msgstr "तपाईं कहाँ काम गर्नुहुन्छ"
+
+msgctxt "bolau"
+msgid "Withdrawn"
+msgstr "फिर्ता लिइयो"
+
+msgctxt "bolau"
+msgid "Work in progress"
+msgstr "काम हुँदैछ"
+
+msgctxt "bolau"
+msgid "Write a short headline"
+msgstr "छोटो परिचय लेख्नुहोस्"
+
+msgctxt "bolau"
+msgid "You can add up to 12 portfolio photos."
+msgstr "बढीमा १२ वटा कामका फोटो थप्न सक्नुहुन्छ।"
+
+msgctxt "bolau"
+msgid "You can change your handle once every 30 days."
+msgstr "ह्यान्डल ३० दिनमा एक पटक मात्र फेर्न सकिन्छ।"
+
+msgctxt "bolau"
+msgid "You can rate after the booking is confirmed."
+msgstr "बुकिङ पुष्टि भएपछि मात्र मूल्याङ्कन गर्न सकिन्छ।"
+
+msgctxt "bolau"
+msgid "You can report a no-show only 30 minutes after the start time."
+msgstr "सुरु हुने समयको ३० मिनेटपछि मात्र नआएको रिपोर्ट गर्न सकिन्छ।"
+
+msgctxt "bolau"
+msgid "You cannot book yourself."
+msgstr "तपाईं आफैंलाई बुक गर्न सक्नुहुन्न।"
+
+msgctxt "bolau"
+msgid "You have already rated this booking."
+msgstr "तपाईंले यो बुकिङको मूल्याङ्कन गरिसक्नुभयो।"
+
+msgctxt "bolau"
+msgid "You have already sent an offer for this request."
+msgstr "तपाईंले यो अनुरोधमा प्रस्ताव पठाइसक्नुभयो।"
+
+msgctxt "bolau"
+msgid "Your name"
+msgstr "तपाईंको नाम"
+
+msgctxt "bolau"
+msgid "eSewa"
+msgstr "eSewa"
+
+msgctxt "billing2"
+msgid "Refunded"
+msgstr "फिर्ता गरियो"
+
+msgctxt "billing2"
+msgid "Bolau booking fee"
+msgstr "बोलाउ बुकिङ शुल्क"

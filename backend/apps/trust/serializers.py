@@ -60,6 +60,7 @@ class DisputeSerializer(serializers.ModelSerializer):
                 if slip
                 else None
             ),
+            "booking": {"id": str(d.booking_id), "code": d.booking.code} if d.booking_id else None,
             "attendance_date": d.attendance_date.isoformat() if d.attendance_date else None,
             "attendance_date_bs": bs_str(d.attendance_date),
             "kind": d.kind,
@@ -119,6 +120,10 @@ class DisputeCreateSerializer(serializers.Serializer):
         from apps.workforce.models import Employment
 
         worker = self.context["worker"]
+        if attrs.get("kind") == "booking":  # Bolau disputes are raised from the booking itself
+            raise serializers.ValidationError(
+                {"kind": ["Raise booking disputes from the booking (POST /bolau/bookings/{id}/dispute)."]}
+            )
         employment = payslip = None
         if attrs.get("employment_id"):
             employment = (

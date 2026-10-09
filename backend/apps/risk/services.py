@@ -27,6 +27,8 @@ MODEL_SUBJECT_TYPES = {
     "credentials.credential": "credential",
     "experience.workhistoryentry": "work_history",
     "mobility.traveldocument": "travel_document",
+    "accounts.user": "user",  # Bolau: a Ghardhani account
+    "bolau.booking": "booking",
 }
 SUBJECT_MODELS = {v: k for k, v in MODEL_SUBJECT_TYPES.items()}
 
@@ -141,6 +143,9 @@ def describe_subject(subject_type: str, subject_id: str, cache: dict | None = No
         elif subject_type == "employment":
             worker, org = obj.worker, obj.organization
             out["label"] = f"{obj.worker.full_name} · {obj.organization.name}"
+        elif subject_type == "user":
+            worker = getattr(obj, "worker", None)
+            out["label"] = obj.full_name or obj.phone[:2] + "…"
         elif subject_type == "attendance":
             emp = obj.employment
             worker, org = emp.worker, emp.organization

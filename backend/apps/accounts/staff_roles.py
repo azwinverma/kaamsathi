@@ -38,6 +38,7 @@ ROUTE_ROLES: dict[str, frozenset[str]] = {
     "ops/support": frozenset({SUPPORT}),  # caller lookup, identity checks (ops/support-cases is separate)
     "ops/help": frozenset({SUPPORT}),
     "ops/notifications": frozenset({SUPPORT}),
+    "ops/bolau": frozenset({SUPPORT}),  # Bolau bookings, disputes, suspensions, fee ledger
     # finance
     "ops/finance": frozenset({FINANCE_OPS}),
     "ops/referrals": frozenset({FINANCE_OPS}),

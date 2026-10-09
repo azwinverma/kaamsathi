@@ -80,6 +80,10 @@ class Dispute(models.Model):
         "payroll.Payslip", on_delete=models.SET_NULL, null=True, blank=True, related_name="disputes"
     )
     attendance_date = models.DateField(null=True, blank=True)
+    # Bolau (docs/CONTRACT-BOLAU.md §4): kind=booking disputes point at the booking; ``worker`` is the Sipalu.
+    booking = models.ForeignKey(
+        "bolau.Booking", on_delete=models.SET_NULL, null=True, blank=True, related_name="disputes"
+    )
     kind = models.CharField(max_length=20, choices=KINDS)
     description = models.TextField()
     status = models.CharField(max_length=20, choices=STATUSES, default="open", db_index=True)

@@ -44,7 +44,13 @@ def dispute_queryset():
 
     return (
         Dispute.objects.select_related(
-            "worker", "organization", "employment", "payslip__run", "resolved_by", "appeal_resolved_by"
+            "worker",
+            "organization",
+            "employment",
+            "payslip__run",
+            "resolved_by",
+            "appeal_resolved_by",
+            "booking",
         )
         .annotate(evidence_count=Count("evidence"))
         .order_by("-raised_at")

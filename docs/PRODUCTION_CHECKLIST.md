@@ -132,6 +132,7 @@ staff MFA and roles are enforced (`apps/accounts/mfa.py`, `apps/accounts/staff_r
 | Payroll rules adviser (SSF + TDS) | 🔴 | Confirm: SSF 11% + 20% on basic; `SSF_DUE_DAYS=15`; the 1% slab waiver for SSF contributors; FY 2083/84 slabs; daily-wage basic/DA split; the OT approval rule in timesheets. Each fiscal year, see [RUNBOOK §9](RUNBOOK.md#9-yearly-reference-data-checklist). |
 | Processor DPAs | 🔴 | Hosting, S3, Sparrow, Aakash, Sentry, FCM (if push is enabled), SMTP ([SECURITY §8](SECURITY.md#8-open-items-before-go-live)). Decide whether data may leave Nepal; if not, host in Nepal. |
 | Grievance / privacy officer appointed and published | 🔴 | Name, phone and email on `/privacy` and in the app. |
+| Bolau: Consumer Protection Act 2075 / intermediary status review | 🔴 | Bolau (Sipalu bookings, behind flag `bolau`, [CONTRACT-BOLAU.md](CONTRACT-BOLAU.md), [ADR 0011](adr/0011-bolau-sipalu-ghardhani-bookings.md)) is built: clear price before booking, free cancellation until `BOLAU_FREE_CANCEL_HOURS` (2 h) before start, no hidden fees, fee paid by the Ghardhani only, Sipalu never pay, KaamSathi never holds the Sipalu's money (`backend/tests/test_bolau_*.py`). 🔴 Lawyer: Consumer Protection Act 2075 duties of a platform, KaamSathi's intermediary (not service-provider) status, independent-worker status of Sipalu, booking terms + cancellation policy text, liability for home-visit incidents, review/rating rules. Keep the flag off in prod until signed off. |
 
 ## Deploy and accounts (KaamSathi-specific)
 
@@ -168,6 +169,7 @@ staff MFA and roles are enforced (`apps/accounts/mfa.py`, `apps/accounts/staff_r
 | DoFE-licensed recruitment agencies (licence verified) | phase-5 document sharing | 🔴 sharing is built and limited to verified, unexpired agencies |
 | SSF | e-filing integration (today: we prepare the file, the employer uploads it) | ⬜ not needed for the pilot |
 | IRD | CBMS real-time invoice reporting | 🔴 tax adviser first; adapter disabled |
+| Payment gateway merchant agreement (eSewa ePay / Khalti KPG) | Bolau booking fee (flag `bolau_fee`) | 🔴 none signed. The adapter (`backend/apps/bolau/payments.py`) raises `provider_not_configured` until credentials (`ESEWA_MERCHANT_CODE`/`ESEWA_SECRET_KEY`, `KHALTI_SECRET_KEY`) and `BOLAU_WEBHOOK_SECRETS` are set; webhook HMAC + timestamp + replay protection are tested. While off, every fee is recorded as waived. Also needed: refund API terms (refunds are marked `refund_manual` for ops until then) and VAT treatment of the fee. |
 
 ## Previously in-progress workstreams (re-verified 2026-10-08)
 

@@ -366,6 +366,13 @@ CELERY_BEAT_SCHEDULE = {
         "task": "apps.core.tasks.purge_idempotency_records",
         "schedule": crontab(hour=3, minute=30),
     },
+    # Bolau: expire unanswered bookings / Kaam requests, auto-confirm 24 h after completion,
+    # reminders; nightly risk detectors.
+    "bolau-expire-and-confirm": {
+        "task": "apps.bolau.tasks.expire_and_confirm",
+        "schedule": crontab(minute="*/5"),
+    },
+    "bolau-risk-scan": {"task": "apps.bolau.tasks.risk_scan", "schedule": crontab(hour=4, minute=20)},
     "privacy-retention": {
         "task": "apps.privacy.tasks.process_requests",
         "schedule": crontab(hour=3, minute=0),
@@ -409,6 +416,10 @@ PDF_DEVANAGARI_FONT = env(
 BOLAU_BOOKING_FEE = env("BOLAU_BOOKING_FEE", default="49.00")
 BOLAU_ACCEPT_TIMEOUT_MINUTES = env.int("BOLAU_ACCEPT_TIMEOUT_MINUTES", default=30)
 BOLAU_FREE_CANCEL_HOURS = env.int("BOLAU_FREE_CANCEL_HOURS", default=2)
+# Booking-fee gateway webhooks (apps/bolau/payments.py): {"esewa": "<secret>", "khalti": "<secret>"}.
+BOLAU_WEBHOOK_SECRETS = env.dict("BOLAU_WEBHOOK_SECRETS", default={})
+BOLAU_WEBHOOK_MAX_SKEW_SECONDS = env.int("BOLAU_WEBHOOK_MAX_SKEW_SECONDS", default=300)
+BOLAU_WEBHOOK_REPLAY_TTL_SECONDS = env.int("BOLAU_WEBHOOK_REPLAY_TTL_SECONDS", default=86400)
 
 # Field encryption (apps/core/crypto.py): Fernet keys newest-first, and the blind-index HMAC key.
 FIELD_ENCRYPTION_KEYS = env.list("FIELD_ENCRYPTION_KEYS", default=[])

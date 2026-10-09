@@ -56,6 +56,7 @@ ECOSYSTEM_DEMOS = (
     "partners",
     "finance",
     "mobility",
+    "bolau",
     "billing",
     "telemetry",
     "integrations",
@@ -231,6 +232,8 @@ class Command(BaseCommand):
         # Ecosystem rows that PROTECT workers/payslips must go first (real data keeps them on purpose).
         from django.apps import apps as registry
 
+        if registry.is_installed("apps.bolau"):  # bookings PROTECT the Sipalu (Ram is also a Sipalu)
+            registry.get_model("bolau.Booking").objects.filter(sipalu__phone__in=phones).delete()
         for label, lookup in (
             ("finance.Referral", "worker__phone__in"),
             ("partners.ConsentGrant", "worker__phone__in"),

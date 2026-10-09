@@ -187,7 +187,7 @@ def billable_charges(bs_year: int, bs_month: int):
         | Q(bs_year__isnull=True, created_at__date__lte=end)
     )
     return (
-        Charge.objects.filter(status="unpaid")
+        Charge.objects.filter(status="unpaid", payer_user__isnull=True)  # Bolau fees: receipts, no invoice
         .filter(period)
         .exclude(id__in=_invoiced_charge_ids())
         .select_related("organization", "payer_partner")

@@ -30,6 +30,14 @@ WEIGHTS = {
     "repeat_hiring": Decimal("0.10"),
     "stability": Decimal("0.10"),
 }
+# Bolau bookings component (docs/CONTRACT-BOLAU.md §4) — only applies once a Sipalu has
+# ``BOOKING_MIN_FINISHED`` finished bookings, so scores of workers without bookings are unchanged.
+#   bookings = 0.6 × (completed or confirmed) / finished + 0.4 × (Ghardhani rating avg / 5, neutral 0.8)
+#   finished = completed + confirmed + no-shows + cancellations by the Sipalu after accepting
+# With employments: score = (1 − BOOKING_WEIGHT) × weighted components + BOOKING_WEIGHT × bookings.
+# Bookings only (no employment): score = 0.7 × bookings + 0.3 × skills.
+BOOKING_WEIGHT = Decimal("0.20")
+BOOKING_MIN_FINISHED = 3
 ATTENDANCE_WINDOW_DAYS = 180
 ATTENDANCE_MIN_DAYS = 10
 EMPLOYMENT_VERIFIED_DAYS = 30
@@ -94,6 +102,28 @@ def _optional_exists(app_label: str, model_name: str, **filters) -> bool:
             return model.objects.filter(**filters).exists()
     except (DatabaseError, FieldError, ValueError):
         return False
+
+
+def booking_facts(worker) -> dict | None:
+    """Bolau booking outcomes for the reliability component (None when Bolau is not installed)."""
+    try:
+        booking_model = django_apps.get_model("bolau", "Booking")
+        rating_model = django_apps.get_model("bolau", "BookingRating")
+    except LookupError:
+        return None
+    from django.db.models import Avg, Q
+
+    done_q = Q(status__in=("completed", "confirmed")) | Q(
+        status="disputed", status_before_dispute__in=("completed", "confirmed")
+    )
+    bad_q = Q(status="no_show") | Q(status="cancelled", cancelled_by="sipalu", accepted_at__isnull=False)
+    qs = booking_model.objects.filter(sipalu=worker)
+    done = qs.filter(done_q).count()
+    bad = qs.filter(bad_q).count()
+    avg = rating_model.objects.filter(booking__sipalu=worker, side="ghardhani", voided=False).aggregate(
+        a=Avg("score")
+    )["a"]
+    return {"done": done, "finished": done + bad, "rating_avg": float(avg) if avg is not None else None}
 
 
 def has_verified_credential(worker) -> bool:
@@ -170,6 +200,7 @@ class _Facts:
         self.verified_credential = has_verified_credential(worker)
         self.passed_assessment = has_passed_assessment(worker)
         self.nstb_declared = any(s.nstb_level not in (None, "", "none") for s in worker.skills.all())
+        self.bookings = booking_facts(worker)
 
     # -- components (each 0–1) -------------------------------------------------
     def employer_feedback(self) -> float:
@@ -223,6 +254,13 @@ class _Facts:
     def total_months(self) -> float:
         return sum(_tenure_months(e, self.today) for e in self.employments)
 
+    def bookings_component(self) -> float | None:
+        b = self.bookings
+        if b is None or b["finished"] < BOOKING_MIN_FINISHED:
+            return None
+        rating = b["rating_avg"] / 5 if b["rating_avg"] is not None else 0.8
+        return 0.6 * (b["done"] / b["finished"]) + 0.4 * rating
+
     # -- level helpers -----------------------------------------------------------
     def employment_verified(self) -> bool:
         if self.external_months:  # a verified reference / employer confirmation of past work
@@ -245,9 +283,20 @@ def compute_reliability(facts: _Facts) -> tuple[int | None, dict]:
         "repeat_hiring": _q(facts.repeat_hiring()),
         "stability": _q(facts.stability()),
     }
+    booking = facts.bookings_component()
+    if booking is not None:
+        breakdown["bookings"] = _q(booking)
     if not facts.employments:
-        return None, breakdown
-    total = sum(WEIGHTS[k] * Decimal(str(v)) for k, v in breakdown.items()) * 100
+        if booking is None:
+            return None, breakdown
+        total = (
+            Decimal("0.7") * Decimal(str(breakdown["bookings"]))
+            + Decimal("0.3") * Decimal(str(breakdown["skills"]))
+        ) * 100
+        return int(total.quantize(Decimal("1"), ROUND_HALF_UP)), breakdown
+    total = sum(WEIGHTS[k] * Decimal(str(breakdown[k])) for k in WEIGHTS) * 100
+    if booking is not None:
+        total = (1 - BOOKING_WEIGHT) * total + BOOKING_WEIGHT * Decimal(str(breakdown["bookings"])) * 100
     return int(total.quantize(Decimal("1"), ROUND_HALF_UP)), breakdown
 
 
@@ -321,7 +370,8 @@ def trust_payload(worker, trust: WorkerTrust) -> dict:
         "verification_level": trust.verification_level,
         "verification_level_label": labels.level_label(trust.verification_level),
         "reliability_score": trust.reliability_score,
-        "breakdown": {k: b.get(k) for k in BREAKDOWN_KEYS},
+        "breakdown": {k: b.get(k) for k in BREAKDOWN_KEYS}
+        | ({"bookings": b["bookings"]} if b.get("bookings") is not None else {}),
         "next_steps": next_steps(worker, trust),
         "computed_at": timezone.localtime(trust.computed_at).isoformat() if trust.computed_at else None,
     }

@@ -17,6 +17,8 @@ SUBJECT_TYPE = {
     "credential": _("Credential"),
     "work_history": _("Work history entry"),
     "travel_document": _("Travel document"),
+    "user": pgettext_lazy("bolau", "Ghardhani account"),
+    "booking": pgettext_lazy("bolau", "Bolau booking"),
 }
 
 KIND = {
@@ -27,6 +29,10 @@ KIND = {
     "geo_anomaly": _("Location anomaly"),
     "velocity": _("Unusual onboarding speed"),
     "reference_mismatch": _("Reference mismatch"),
+    # Bolau detectors (apps/bolau/risk.py)
+    "booking_cancellations": pgettext_lazy("bolau", "Many booking cancellations or no-shows"),
+    "off_platform_payment": pgettext_lazy("bolau", "Off-platform payment solicitation"),
+    "review_fraud": pgettext_lazy("bolau", "Suspicious reviews (same device or address)"),
     "manual": _("Raised by staff"),
 }
 

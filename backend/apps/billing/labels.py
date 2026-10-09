@@ -10,14 +10,23 @@ def b(text):
     return pgettext_lazy("billing2", text)
 
 
-CHARGE_STATUS = {"unpaid": _("Unpaid"), "paid": _("Paid"), "waived": _("Waived")}
+CHARGE_STATUS = {
+    "unpaid": _("Unpaid"),
+    "paid": _("Paid"),
+    "waived": _("Waived"),
+    "refunded": b("Refunded"),
+}
 CHARGE_KIND = {
     "placement": _("Placement fee"),
     "subscription": _("Subscription"),
     "verification_fee": b("Verification service fee"),
     "training_commission": b("Training commission"),
     "partner_referral_fee": b("Partner referral fee"),
+    # Bolau: paid by the Ghardhani (``payer_user``) only — never by a Sipalu/worker.
+    "booking_fee": b("Bolau booking fee"),
 }
+# Kinds billed to an individual user (``payer_user``); never invoiced (a receipt PDF per paid fee).
+USER_KINDS = frozenset({"booking_fee"})
 # Kinds that may only be billed to a partner / training provider (never a worker, never an org).
 PARTNER_KINDS = frozenset({"training_commission", "partner_referral_fee"})
 

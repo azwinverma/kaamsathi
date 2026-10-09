@@ -85,6 +85,8 @@ def can_view_dispute(user, dispute: Dispute) -> bool:
         return True
     if dispute.worker.user_id and dispute.worker.user_id == user.pk:
         return True
+    if dispute.booking_id and dispute.booking.ghardhani_id == user.pk:  # Bolau: the Ghardhani party
+        return True
     if dispute.organization_id:
         from apps.core.permissions import MANAGERS
         from apps.orgs.models import Membership

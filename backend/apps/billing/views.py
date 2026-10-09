@@ -206,6 +206,12 @@ class OpsSubscriptionView(APIView):
         return Response(subscription_dict(org))
 
 
+def _payer_type(charge) -> str:
+    if charge.organization_id:
+        return "organization"
+    return "partner" if charge.payer_partner_id else "user"
+
+
 class OpsChargesView(APIView):
     """Ops-raised charges: verification fees (employer) and partner/training revenue (partner)."""
 
@@ -213,7 +219,9 @@ class OpsChargesView(APIView):
 
     @extend_schema(responses=dict)
     def get(self, request):
-        qs = Charge.objects.select_related("organization", "payer_partner").order_by("-created_at")
+        qs = Charge.objects.select_related("organization", "payer_partner", "payer_user").order_by(
+            "-created_at"
+        )
         params = request.query_params
         if params.get("status"):
             qs = qs.filter(status=params["status"])
@@ -223,10 +231,12 @@ class OpsChargesView(APIView):
             qs = qs.filter(payer_partner__isnull=False)
         elif params.get("payer") == "organization":
             qs = qs.filter(organization__isnull=False)
+        elif params.get("payer") == "user":
+            qs = qs.filter(payer_user__isnull=False)
 
         def row(c):
             data = ChargeSerializer(c).data
-            data["payer_type"] = "organization" if c.organization_id else "partner"
+            data["payer_type"] = _payer_type(c)
             data["payer_name"] = str(c.payer)
             return data
 
@@ -257,7 +267,7 @@ class OpsChargesView(APIView):
             changes=snapshot(charge),
         )
         data = ChargeSerializer(charge).data
-        data["payer_type"] = "organization" if charge.organization_id else "partner"
+        data["payer_type"] = _payer_type(charge)
         data["payer_name"] = str(charge.payer)
         return Response(data, status=201)
 

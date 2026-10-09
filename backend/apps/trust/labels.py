@@ -33,6 +33,7 @@ DISPUTE_KIND = {
     "employment_dates": _("Employment dates"),
     "rating": _("Rating"),
     "identity": _("Identity details"),
+    "booking": pgettext_lazy("bolau", "Bolau booking"),
     "other": _("Other"),
 }
 
