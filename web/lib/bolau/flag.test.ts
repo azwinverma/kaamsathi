@@ -53,7 +53,8 @@ describe("crawling", () => {
         { handle: "ram-electric", indexable: true },
         { handle: "sita-plumber", indexable: false },
         { handle: "hari" },
-        { handle: "maya", public_indexable: true },
+        { handle: "maya", indexable: true },
+        { handle: "maya", indexable: true },
       ]),
     ).toEqual(["/sipalu/ram-electric", "/sipalu/maya"]);
   });

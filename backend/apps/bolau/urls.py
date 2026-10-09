@@ -2,6 +2,8 @@
 
 from django.urls import re_path
 
+from apps.core.routers import Router
+
 from . import ops_views as ops
 from . import views as v
 
@@ -29,6 +31,7 @@ urlpatterns = [
     p(rf"public/sipalu/(?P<handle>{HANDLE})", v.PublicSipaluView, "public-sipalu"),
     p("bolau/search", v.SearchView, "bolau-search"),
     p("bolau/trades", v.TradesView, "bolau-trades"),
+    p("bolau/config", v.ConfigView, "bolau-config"),
     # Ghardhani
     p("me/ghardhani", v.MeGhardhaniView, "me-ghardhani"),
     p("me/addresses", v.MeAddressesView, "me-addresses"),
@@ -38,6 +41,7 @@ urlpatterns = [
     # Bookings
     p("bolau/bookings", v.BookingsView, "bolau-bookings"),
     p(rf"bolau/bookings/(?P<booking_id>{UUID})", v.BookingDetailView, "bolau-booking"),
+    p(rf"bolau/bookings/(?P<booking_id>{UUID})/dispute", v.BookingDisputeView, "bolau-booking-dispute"),
     p(rf"bolau/bookings/(?P<booking_id>{UUID})/contact", v.BookingContactView, "bolau-booking-contact"),
     p(rf"bolau/bookings/(?P<booking_id>{UUID})/fee/pay", v.BookingFeePayView, "bolau-booking-fee-pay"),
     p(rf"bolau/bookings/(?P<booking_id>{UUID})/receipt\.pdf", v.BookingReceiptView, "bolau-booking-receipt"),
@@ -102,3 +106,8 @@ urlpatterns = [
     p("ops/bolau/kpis", ops.OpsKpisView, "ops-bolau-kpis"),
     p("ops/bolau/fees", ops.OpsFeesView, "ops-bolau-fees"),
 ]
+
+# Ghardhani side of booking disputes: list, detail, evidence, appeal.
+_router = Router()
+_router.register("me/booking-disputes", v.MeBookingDisputeViewSet, basename="me-booking-disputes")
+urlpatterns += _router.urls

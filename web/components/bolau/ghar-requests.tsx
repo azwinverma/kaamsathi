@@ -9,11 +9,11 @@ import { Badge, type BadgeTone } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState, ErrorState, Skeleton, errorMessage } from "@/components/ui/feedback";
-import { useAcceptOffer, useCancelRequest, useKaamRequest, useMyRequests } from "@/lib/api/hooks/bolau";
+import { useAcceptOffer, useBolauConfig, useCancelRequest, useKaamRequest, useMyRequests } from "@/lib/api/hooks/bolau";
 import type { KaamRequest, Offer, OfferStatus, RequestStatus } from "@/lib/api/types-bolau";
 import { mediaSrc } from "@/lib/media";
 import { useFormat } from "@/lib/use-format";
-import { PriceText, RatingInline, RungChip, SipaluPortrait, useWhenText } from "./bits";
+import { FeeLine, PriceText, RatingInline, RungChip, SipaluPortrait, useWhenText } from "./bits";
 
 const REQUEST_TONE: Record<RequestStatus, BadgeTone> = {
   open: "warning",
@@ -108,6 +108,7 @@ function OffersCompare({ r }: { r: KaamRequest }) {
   const when = useWhenText();
   const router = useRouter();
   const accept = useAcceptOffer();
+  const config = useBolauConfig().data;
   const [picked, setPicked] = React.useState<Offer | null>(null);
   const offers = (r.offers ?? []).slice(0, 3);
   const canAccept = r.status === "open" || r.status === "offers_received";
@@ -208,7 +209,15 @@ function OffersCompare({ r }: { r: KaamRequest }) {
             },
           );
         }}
-      />
+      >
+        {config ? (
+          <FeeLine
+            fee={config.booking_fee}
+            status={config.booking_fee_enabled ? "enabled" : "disabled"}
+            className="border-yellow bg-yellow-subtle rounded-dense border-l-4 px-4 py-3"
+          />
+        ) : null}
+      </ConfirmDialog>
     </>
   );
 }

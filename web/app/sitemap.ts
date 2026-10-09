@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
 import { BOLAU_PUBLIC_PATHS, PUBLIC_PATHS, indexableSipaluPaths, siteUrl } from "@/lib/site";
-import { bolauLive, fetchBolauSearch, fetchPublicSipalu } from "@/lib/bolau/live";
+import { bolauLive, fetchBolauSearch } from "@/lib/bolau/live";
 
 export const revalidate = 3600;
 
-const MAX_PROFILES = 100;
+const PAGE_SIZE = 100; // API max page size
+const MAX_PAGES = 10;
 
 /**
  * Static public pages, plus — only while the `bolau` flag is on — /bolau, /sipalu/join and the
@@ -22,12 +23,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const path of BOLAU_PUBLIC_PATHS) {
     out.push({ url: `${base}${path}`, changeFrequency: "daily", priority: path === "/bolau" ? 0.8 : 0.5 });
   }
-  // Search cards don't carry the opt-in, so check each profile (bounded, cached for an hour).
-  const { data } = await fetchBolauSearch({ page_size: String(MAX_PROFILES) }, "en");
-  const profiles = await Promise.all(
-    data.results.slice(0, MAX_PROFILES).map((c) => fetchPublicSipalu(c.handle, "en")),
-  );
-  for (const path of indexableSipaluPaths(profiles.filter((p) => p !== null))) {
+  // Search cards carry the Sipalu's opt-in (`indexable`), so no per-profile fetch is needed.
+  const cards = [];
+  for (let page = 1; page <= MAX_PAGES; page++) {
+    const { ok, data } = await fetchBolauSearch({ page_size: String(PAGE_SIZE), page: String(page) }, "en");
+    if (!ok) break;
+    cards.push(...data.results);
+    if (!data.next) break;
+  }
+  for (const path of indexableSipaluPaths(cards)) {
     out.push({ url: `${base}${path}`, changeFrequency: "weekly", priority: 0.4 });
   }
   return out;

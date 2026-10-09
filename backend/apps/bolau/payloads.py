@@ -324,6 +324,7 @@ def card(profile: SipaluProfile, request=None, *, next_slot=None, distance_band=
         "next_available": iso(next_slot),
         "distance_band": distance_band,
         "instant_booking": profile.instant_booking,
+        "indexable": bool(profile.public_indexable),
     }
 
 

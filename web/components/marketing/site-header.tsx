@@ -1,20 +1,26 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { Menu } from "lucide-react";
 import { Logo } from "@/components/brand";
 import { LanguageToggle, ThemeToggle } from "@/components/providers/preferences";
 import { buttonVariants } from "@/components/ui/button";
 import { bolauLive } from "@/lib/bolau/live";
+import { ACCESS_COOKIE, REFRESH_COOKIE } from "@/lib/cookies";
 import { cn } from "@/lib/utils";
+import { SiteAccountMenu } from "./site-account-menu";
 
 /**
  * Public website header: calm surface bar, one strong CTA, no-JS disclosure menu on phones.
- * "Bolau a Sipalu" appears only while the `bolau` flag is on.
+ * "Bolau a Sipalu" appears only while the `bolau` flag is on. With a session cookie the "Log in"
+ * links give way to the signed-in user's menu (bookings / employer app / ops / account).
  */
 export async function SiteHeader({ home = false }: { home?: boolean }) {
   const t = await getTranslations();
   const base = home ? "" : "/";
   const bolau = await bolauLive();
+  const store = await cookies();
+  const hasSession = store.has(ACCESS_COOKIE) || store.has(REFRESH_COOKIE);
   const links = [
     ...(bolau ? [{ href: "/bolau", label: t("bolau.nav.link") }] : []),
     { href: `${base}#employers`, label: t("marketing.nav.employers") },
@@ -22,6 +28,19 @@ export async function SiteHeader({ home = false }: { home?: boolean }) {
     { href: `${base}#passport`, label: t("marketing.nav.passport") },
     { href: "/help", label: t("marketing.nav.help") },
   ];
+  const loginLinks = (
+    <>
+      <Link
+        href="/login"
+        className={cn(buttonVariants({ variant: "ghost" }), "hidden sm:inline-flex")}
+      >
+        {t("marketing.nav.login")}
+      </Link>
+      <Link href="/login" className={cn(buttonVariants(), "hidden md:inline-flex")}>
+        {t("marketing.nav.cta")}
+      </Link>
+    </>
+  );
   return (
     <header className="border-border bg-surface/90 sticky top-0 z-30 border-b backdrop-blur print:hidden">
       <div className="mx-auto flex h-16 max-w-[1240px] items-center gap-3 px-4 sm:px-8">
@@ -36,15 +55,7 @@ export async function SiteHeader({ home = false }: { home?: boolean }) {
         <div className="ml-auto flex items-center gap-1.5">
           <LanguageToggle compact />
           <ThemeToggle />
-          <Link
-            href="/login"
-            className={cn(buttonVariants({ variant: "ghost" }), "hidden sm:inline-flex")}
-          >
-            {t("marketing.nav.login")}
-          </Link>
-          <Link href="/login" className={cn(buttonVariants(), "hidden md:inline-flex")}>
-            {t("marketing.nav.cta")}
-          </Link>
+          {hasSession ? <SiteAccountMenu bolau={bolau} fallback={loginLinks} /> : loginLinks}
           <details className="group relative lg:hidden">
             <summary
               className={cn(
@@ -66,15 +77,19 @@ export async function SiteHeader({ home = false }: { home?: boolean }) {
                     {l.label}
                   </Link>
                 ))}
-                <Link
-                  href="/login"
-                  className="text-fg hover:bg-surface-hover flex min-h-11 items-center rounded-sm px-3 text-[15px] font-medium"
-                >
-                  {t("marketing.nav.login")}
-                </Link>
-                <Link href="/login" className={cn(buttonVariants(), "mt-1 min-h-11")}>
-                  {t("marketing.nav.cta")}
-                </Link>
+                {hasSession ? null : (
+                  <>
+                    <Link
+                      href="/login"
+                      className="text-fg hover:bg-surface-hover flex min-h-11 items-center rounded-sm px-3 text-[15px] font-medium"
+                    >
+                      {t("marketing.nav.login")}
+                    </Link>
+                    <Link href="/login" className={cn(buttonVariants(), "mt-1 min-h-11")}>
+                      {t("marketing.nav.cta")}
+                    </Link>
+                  </>
+                )}
               </nav>
             </div>
           </details>

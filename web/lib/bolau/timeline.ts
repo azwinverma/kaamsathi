@@ -107,3 +107,16 @@ export function canReportNoShow(status: BookingStatus, scheduledStart: string, n
 export function canMarkPaid(status: BookingStatus, paidAt: string | null | undefined): boolean {
   return !paidAt && (status === "completed" || status === "confirmed");
 }
+
+/**
+ * The Ghardhani may raise a dispute once something has happened on the job (the API also allows
+ * it from acceptance and keeps a 14-day window for finished bookings; one open dispute at a time).
+ */
+export function canDispute(status: BookingStatus): boolean {
+  return ["arrived", "in_progress", "completed", "confirmed", "no_show", "cancelled"].includes(status);
+}
+
+/** Booking-dispute descriptions are stored as "[BK-XXXX · raised by …] text": show just the text. */
+export function disputeText(description: string): string {
+  return description.replace(/^\[[^\]]*\]\s*/, "");
+}

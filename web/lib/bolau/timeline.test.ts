@@ -4,9 +4,11 @@ import {
   MAIN_PATH,
   bookingTimeline,
   canCancel,
+  canDispute,
   canMarkPaid,
   canReportNoShow,
   contactWindow,
+  disputeText,
   showArrivalCode,
 } from "./timeline";
 
@@ -84,5 +86,18 @@ describe("Ghardhani rules", () => {
     expect(canMarkPaid("completed", null)).toBe(true);
     expect(canMarkPaid("confirmed", "2026-10-09T08:00:00Z")).toBe(false);
     expect(canMarkPaid("in_progress", null)).toBe(false);
+  });
+});
+
+describe("booking disputes", () => {
+  it("can be raised once the job has started or ended, not while only requested / disputed", () => {
+    expect(canDispute("completed")).toBe(true);
+    expect(canDispute("no_show")).toBe(true);
+    expect(canDispute("requested")).toBe(false);
+    expect(canDispute("disputed")).toBe(false);
+  });
+  it("strips the stored booking prefix", () => {
+    expect(disputeText("[BK-AB12 · raised by ghardhani] Charged more")).toBe("Charged more");
+    expect(disputeText("Plain")).toBe("Plain");
   });
 });

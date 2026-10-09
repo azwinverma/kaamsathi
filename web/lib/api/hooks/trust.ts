@@ -25,18 +25,31 @@ export const trustKeys = {
   meProfileViews: (q?: QueryParams) => ["me", "profile-views", q ?? {}] as const,
   meDisputes: ["me", "disputes"] as const,
   evidence: (scope: DisputeScope, id: string) => [scope, "disputes", "evidence", id] as const,
+  /** Ghardhani side of Bolau booking disputes (`/me/booking-disputes`). */
+  gharDisputes: ["me", "bolau", "booking-dispute"] as const,
 };
 
-/** Which side of the API a dispute screen talks to. */
-export type DisputeScope = "me" | "org" | "ops";
+/** Which side of the API a dispute screen talks to ("ghar" = the Ghardhani on a Bolau booking). */
+export type DisputeScope = "me" | "org" | "ops" | "ghar";
 const listKey = (scope: DisputeScope) =>
-  scope === "org" ? trustKeys.orgDisputesAll : scope === "ops" ? trustKeys.opsDisputesAll : trustKeys.meDisputes;
+  scope === "org"
+    ? trustKeys.orgDisputesAll
+    : scope === "ops"
+      ? trustKeys.opsDisputesAll
+      : scope === "ghar"
+        ? trustKeys.gharDisputes
+        : trustKeys.meDisputes;
+
+/** API base of one dispute for a scope. */
+export function disputePath(scope: DisputeScope, id: string): string {
+  return scope === "ghar" ? `/me/booking-disputes/${id}` : `/${scope}/disputes/${id}`;
+}
 
 // ---------------------------------------------------------------- evidence (N006) · appeals (N008)
 export function useDisputeEvidence(scope: DisputeScope, id: string, enabled = true) {
   return useQuery({
     queryKey: trustKeys.evidence(scope, id),
-    queryFn: () => api.get<DisputeEvidence[]>(`/${scope}/disputes/${id}/evidence`),
+    queryFn: () => api.get<DisputeEvidence[]>(`${disputePath(scope, id)}/evidence`),
     enabled,
   });
 }
@@ -48,7 +61,7 @@ export function useUploadDisputeEvidence(scope: DisputeScope) {
       const form = new FormData();
       form.append("file", file);
       if (note) form.append("note", note);
-      return api.upload<DisputeEvidence>(`/${scope}/disputes/${id}/evidence`, form);
+      return api.upload<DisputeEvidence>(`${disputePath(scope, id)}/evidence`, form);
     },
     onSuccess: (_ev, { id }) => {
       qc.invalidateQueries({ queryKey: trustKeys.evidence(scope, id) });
@@ -57,12 +70,12 @@ export function useUploadDisputeEvidence(scope: DisputeScope) {
   });
 }
 
-/** Employer (managers) appeal of a resolved/rejected decision. */
-export function useAppealDispute(scope: Extract<DisputeScope, "me" | "org"> = "org") {
+/** Employer (managers), worker or Ghardhani appeal of a resolved/rejected decision. */
+export function useAppealDispute(scope: Extract<DisputeScope, "me" | "org" | "ghar"> = "org") {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, reason }: { id: string; reason: string }) =>
-      api.post<Dispute>(`/${scope}/disputes/${id}/appeal`, { reason }),
+      api.post<Dispute>(`${disputePath(scope, id)}/appeal`, { reason }),
     onSuccess: () => qc.invalidateQueries({ queryKey: listKey(scope) }),
   });
 }

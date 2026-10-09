@@ -6,7 +6,7 @@ import { ArrowRight, CalendarClock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EmptyState, ErrorState, Skeleton } from "@/components/ui/feedback";
 import { Pagination } from "@/components/ui/pagination";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMyBookings } from "@/lib/api/hooks/bolau";
 import type { Booking } from "@/lib/api/types-bolau";
 import { useFormat } from "@/lib/use-format";
@@ -91,40 +91,40 @@ export function GharBookings() {
             </TabsTrigger>
           ))}
         </TabsList>
+        <TabsContent value={tab} className="mt-2 pt-0">
+          {q.isLoading ? (
+            <div className="space-y-3 pt-3" aria-busy>
+              {[0, 1, 2].map((i) => (
+                <Skeleton key={i} className="h-20 rounded-dense" />
+              ))}
+            </div>
+          ) : q.isError ? (
+            <ErrorState error={q.error} onRetry={() => q.refetch()} />
+          ) : rows.length === 0 ? (
+            <EmptyState
+              icon={CalendarClock}
+              title={t("ghar.empty_bookings")}
+              description={t("ghar.empty_bookings_body")}
+              action={
+                <Button asChild>
+                  <Link href="/bolau">{t("ghar.find")}</Link>
+                </Button>
+              }
+            />
+          ) : (
+            <ul className="divide-border divide-y">
+              {rows.map((b) => (
+                <li key={b.id}>
+                  <BookingRow b={b} />
+                </li>
+              ))}
+            </ul>
+          )}
+          {q.data && q.data.count > PAGE_SIZE ? (
+            <Pagination page={page} pageSize={PAGE_SIZE} count={q.data.count} onPageChange={setPage} />
+          ) : null}
+        </TabsContent>
       </Tabs>
-      <div className="mt-2">
-        {q.isLoading ? (
-          <div className="space-y-3 pt-3" aria-busy>
-            {[0, 1, 2].map((i) => (
-              <Skeleton key={i} className="h-20 rounded-dense" />
-            ))}
-          </div>
-        ) : q.isError ? (
-          <ErrorState error={q.error} onRetry={() => q.refetch()} />
-        ) : rows.length === 0 ? (
-          <EmptyState
-            icon={CalendarClock}
-            title={t("ghar.empty_bookings")}
-            description={t("ghar.empty_bookings_body")}
-            action={
-              <Button asChild>
-                <Link href="/bolau">{t("ghar.find")}</Link>
-              </Button>
-            }
-          />
-        ) : (
-          <ul className="divide-border divide-y">
-            {rows.map((b) => (
-              <li key={b.id}>
-                <BookingRow b={b} />
-              </li>
-            ))}
-          </ul>
-        )}
-        {q.data && q.data.count > PAGE_SIZE ? (
-          <Pagination page={page} pageSize={PAGE_SIZE} count={q.data.count} onPageChange={setPage} />
-        ) : null}
-      </div>
     </div>
   );
 }

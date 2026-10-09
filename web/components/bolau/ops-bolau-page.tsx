@@ -17,7 +17,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { SearchInput } from "@/components/ui/search-input";
 import { NativeSelect } from "@/components/ui/select";
 import { RowHeader, TBody, THead, Table, TableContainer, Td, Th, Tr } from "@/components/ui/table";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { hasStaffRole } from "@/components/security/helpers";
 import { useFlag } from "@/lib/api/hooks/flags";
 import {
@@ -131,12 +131,15 @@ function OpsBolau() {
             </TabsTrigger>
           ))}
         </TabsList>
+        {/* One panel for the active tab, so the tab's aria-controls points at a real tabpanel. */}
+        <TabsContent value={tab} className="pt-0">
+          {tab === "bookings" ? <BookingsTable onOpen={setOpenId} /> : null}
+          {tab === "queue" ? <BookingsTable onOpen={setOpenId} queue /> : null}
+          {tab === "requests" ? <RequestsTable /> : null}
+          {tab === "fees" ? <FeesTable /> : null}
+          {tab === "sipalu" ? <SipaluTable /> : null}
+        </TabsContent>
       </Tabs>
-      {tab === "bookings" ? <BookingsTable onOpen={setOpenId} /> : null}
-      {tab === "queue" ? <BookingsTable onOpen={setOpenId} queue /> : null}
-      {tab === "requests" ? <RequestsTable /> : null}
-      {tab === "fees" ? <FeesTable /> : null}
-      {tab === "sipalu" ? <SipaluTable /> : null}
       <BookingSheet id={openId} onClose={() => setOpenId(null)} />
     </div>
   );
@@ -200,7 +203,7 @@ function BookingsTable({ onOpen, queue = false }: { onOpen: (id: string) => void
                   <RowHeader>
                     <button
                       type="button"
-                      className="font-mono text-sm font-semibold hover:underline"
+                      className="font-mono text-sm font-semibold whitespace-nowrap hover:underline"
                       onClick={(e) => {
                         e.stopPropagation();
                         onOpen(b.id);
@@ -247,6 +250,9 @@ function BookingSheet({ id, onClose }: { id: string | null; onClose: () => void 
   const [suspendFor, setSuspendFor] = React.useState<{ handle: string; name: string } | null>(null);
   const [cancelReason, setCancelReason] = React.useState("");
   const b = q.data as OpsBooking | undefined;
+  // Event log: localized labels, never raw codes (fall back to the code only for an unknown value).
+  const statusText = (s: string) => (t.has(`status.${s}`) ? t(`status.${s}`) : s);
+  const partyText = (p: string) => (t.has(`ops.party.${p}`) ? t(`ops.party.${p}`) : p);
   return (
     <Sheet open={!!id} onOpenChange={(o) => !o && onClose()}>
       <SheetContent closeLabel={tAll("common.close")} aria-describedby={undefined}>
@@ -292,7 +298,7 @@ function BookingSheet({ id, onClose }: { id: string | null; onClose: () => void 
                   <>
                     <dt className="text-fg-muted">{t("ghar.cancel_reason")}</dt>
                     <dd>
-                      {b.cancel_reason} {b.cancelled_by ? <span className="text-fg-muted">({b.cancelled_by})</span> : null}
+                      {b.cancel_reason} {b.cancelled_by ? <span className="text-fg-muted">({partyText(b.cancelled_by)})</span> : null}
                     </dd>
                   </>
                 ) : null}
@@ -306,10 +312,10 @@ function BookingSheet({ id, onClose }: { id: string | null; onClose: () => void 
                       <li key={i} className="flex flex-wrap gap-x-2 text-xs">
                         <span className="text-fg-muted tabular">{f.dateTime(e.at)}</span>
                         <span className="text-fg font-medium">
-                          {e.from_status ? `${e.from_status} → ` : ""}
-                          {e.to_status}
+                          {e.from_status ? `${statusText(e.from_status)} → ` : ""}
+                          {statusText(e.to_status)}
                         </span>
-                        {e.by_party ? <span className="text-fg-muted">{t("ops.by", { who: e.by_party })}</span> : null}
+                        {e.by_party ? <span className="text-fg-muted">{t("ops.by", { who: partyText(e.by_party) })}</span> : null}
                         {e.note ? <span className="text-fg-body w-full">{e.note}</span> : null}
                       </li>
                     ))}
@@ -477,7 +483,7 @@ function RequestsTable() {
             <TBody>
               {rows.map((r) => (
                 <Tr key={r.id}>
-                  <RowHeader className="font-mono text-sm">{r.code}</RowHeader>
+                  <RowHeader className="font-mono text-sm whitespace-nowrap">{r.code}</RowHeader>
                   <Td className="text-fg">{r.title}</Td>
                   <Td>
                     <Badge tone={r.status === "booked" ? "success" : r.status === "open" || r.status === "offers_received" ? "brand" : "neutral"}>
@@ -559,7 +565,7 @@ function FeesTable() {
             <TBody>
               {rows.map((r) => (
                 <Tr key={r.booking_id}>
-                  <RowHeader className="font-mono text-sm">{r.code}</RowHeader>
+                  <RowHeader className="font-mono text-sm whitespace-nowrap">{r.code}</RowHeader>
                   <Td>{r.payer?.name ?? "—"}</Td>
                   <Td numeric>{f.money(r.amount)}</Td>
                   <Td>{t(`fee_status.${r.status}`)}</Td>
@@ -581,6 +587,7 @@ function FeesTable() {
 function SipaluTable() {
   const t = useTranslations("bolau.ops");
   const tc = useTranslations("common");
+  const ts = useTranslations("status");
   const [q, setQ] = React.useState("");
   const [onlySuspended, setOnlySuspended] = React.useState(false);
   const [page, setPage] = React.useState(1);
@@ -595,7 +602,7 @@ function SipaluTable() {
         <SearchInput value={q} onChange={setQ} placeholder={t("handle")} label={t("handle")} className="sm:w-72" />
         <label className="inline-flex min-h-10 items-center gap-2 text-sm">
           <input type="checkbox" checked={onlySuspended} onChange={(e) => setOnlySuspended(e.target.checked)} className="accent-brand size-4" />
-          {t("suspended")}
+          {t("only_suspended")}
         </label>
       </FilterBar>
       {query.isLoading ? (
@@ -621,15 +628,15 @@ function SipaluTable() {
             <TBody>
               {rows.map((r) => (
                 <Tr key={r.handle}>
-                  <RowHeader>{r.name}</RowHeader>
+                  <RowHeader>{r.name || <span className="text-fg-muted">{t("no_name")}</span>}</RowHeader>
                   <Td className="font-mono text-sm">@{r.handle}</Td>
                   <Td>
                     {r.suspended_at ? (
-                      <Badge tone="danger">{t("suspended")}</Badge>
+                      <Badge tone="danger">{t("badge_suspended")}</Badge>
                     ) : r.bolau_enabled ? (
                       <Badge tone="success">{t("enabled")}</Badge>
                     ) : (
-                      <Badge tone="neutral">{r.verification_status}</Badge>
+                      <Badge tone="neutral">{ts.has(r.verification_status) ? ts(r.verification_status) : r.verification_status}</Badge>
                     )}
                   </Td>
                   <Td className="text-fg-body max-w-xs truncate">{r.suspension_reason ?? "—"}</Td>
@@ -640,7 +647,7 @@ function SipaluTable() {
                       onClick={() => setTarget({ row: r, lift: !!r.suspended_at })}
                     >
                       {r.suspended_at ? t("unsuspend") : t("suspend")}
-                      <span className="sr-only"> {r.name}</span>
+                      <span className="sr-only"> {r.name || `@${r.handle}`}</span>
                     </Button>
                   </Td>
                 </Tr>

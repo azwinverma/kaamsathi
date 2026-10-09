@@ -28,7 +28,16 @@ export function EvidenceCountBadge({ count }: { count: number | null | undefined
   );
 }
 
-export function EvidencePanel({ dispute, scope }: { dispute: Dispute; scope: DisputeScope }) {
+export function EvidencePanel({
+  dispute,
+  scope,
+  partyLabel,
+}: {
+  dispute: Dispute;
+  scope: DisputeScope;
+  /** Override party names (Bolau: "worker" evidence comes from the Sipalu). */
+  partyLabel?: (party: DisputeEvidence["party"]) => string;
+}) {
   const te = useTranslations("moderation.evidence");
   const query = useDisputeEvidence(scope, dispute.id);
   const rows = query.data ?? [];
@@ -52,7 +61,7 @@ export function EvidencePanel({ dispute, scope }: { dispute: Dispute; scope: Dis
         <ul className="grid gap-2 sm:grid-cols-2">
           {rows.map((ev) => (
             <li key={ev.id}>
-              <EvidenceItem evidence={ev} />
+              <EvidenceItem evidence={ev} partyLabel={partyLabel} />
             </li>
           ))}
         </ul>
@@ -68,7 +77,13 @@ export function EvidencePanel({ dispute, scope }: { dispute: Dispute; scope: Dis
   );
 }
 
-function EvidenceItem({ evidence: ev }: { evidence: DisputeEvidence }) {
+function EvidenceItem({
+  evidence: ev,
+  partyLabel,
+}: {
+  evidence: DisputeEvidence;
+  partyLabel?: (party: DisputeEvidence["party"]) => string;
+}) {
   const te = useTranslations("moderation.evidence");
   const f = useFormat();
   const src = mediaSrc(ev.file_url) ?? ev.file_url;
@@ -80,7 +95,7 @@ function EvidenceItem({ evidence: ev }: { evidence: DisputeEvidence }) {
         target="_blank"
         rel="noreferrer"
         className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded border border-border bg-surface focus-visible:outline-2 focus-visible:outline-ring"
-        aria-label={`${label} — ${ev.party_label}`}
+        aria-label={`${label} — ${partyLabel ? partyLabel(ev.party) : ev.party_label}`}
       >
         {ev.file_type === "image" ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -91,8 +106,8 @@ function EvidenceItem({ evidence: ev }: { evidence: DisputeEvidence }) {
       </a>
       <div className="min-w-0 flex-1 space-y-0.5 text-sm">
         <div className="flex flex-wrap items-center gap-1.5">
-          <Badge tone={ev.party === "ops" ? "brand" : ev.party === "employer" ? "accent" : "outline"}>
-            {ev.party_label || te(`party.${ev.party}`)}
+          <Badge tone={ev.party === "ops" ? "brand" : ev.party === "employer" || ev.party === "ghardhani" ? "accent" : "outline"}>
+            {partyLabel ? partyLabel(ev.party) : ev.party_label || te(`party.${ev.party}`)}
           </Badge>
           <span className="text-xs text-fg-muted">{f.dateTime(ev.created_at)}</span>
         </div>

@@ -5,10 +5,10 @@ import { useTranslations } from "next-intl";
 import { ArrowLeft, ArrowRight, Check, CheckCircle2, Lock, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, FormError } from "@/components/ui/field";
-import { errorMessage } from "@/components/ui/feedback";
+import { Skeleton, errorMessage } from "@/components/ui/feedback";
 import { Textarea } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/select";
-import { BOLAU_DEFAULTS, newIdempotencyKey, useAddresses, useBolauConfig, useCreateBooking } from "@/lib/api/hooks/bolau";
+import { BOLAU_LEAD_MINUTES, newIdempotencyKey, useAddresses, useBolauConfig, useCreateBooking } from "@/lib/api/hooks/bolau";
 import { isApiError } from "@/lib/api/errors";
 import type { Address, Booking, PublicSipalu, SipaluService } from "@/lib/api/types-bolau";
 import { buildSlots, summaryRules, type SlotDay } from "@/lib/bolau/slots";
@@ -76,7 +76,7 @@ export function BookingFlow({ p, initialService }: { p: PublicSipalu; initialSer
   const tAll = useTranslations();
   const f = useFormat();
   const when = useWhenText();
-  const config = useBolauConfig().data ?? BOLAU_DEFAULTS;
+  const config = useBolauConfig().data;
   const create = useCreateBooking();
   const services = p.services.filter((s) => s.is_active !== false);
   const name = f.locale === "ne" && p.name_ne ? p.name_ne : p.name;
@@ -130,10 +130,10 @@ export function BookingFlow({ p, initialService }: { p: PublicSipalu; initialSer
             now,
             days: 14,
             durationMinutes: Math.min(minutes, 240),
-            leadMinutes: config.lead_time_minutes,
+            leadMinutes: BOLAU_LEAD_MINUTES,
           })
         : [],
-    [p.availability_summary, now, minutes, config.lead_time_minutes],
+    [p.availability_summary, now, minutes],
   );
   const openDays = days.filter((d) => d.slots.length);
   const activeDay = openDays.find((d) => d.date === day) ?? openDays[0] ?? null;
@@ -193,7 +193,11 @@ export function BookingFlow({ p, initialService }: { p: PublicSipalu; initialSer
           {t("book.done_title")}
         </h2>
         <p className="text-fg-body mt-2">
-          {accepted ? t("book.done_accepted", { name: firstName }) : t("book.done_requested", { name: firstName })}
+          {accepted
+            ? t("book.done_accepted", { name: firstName })
+            : config
+              ? t("book.done_requested", { name: firstName, minutes: f.digits(config.accept_timeout_minutes) })
+              : t("book.done_requested_plain", { name: firstName })}
         </p>
         <p className="text-fg-muted mt-1 text-sm">{t("ghar.booking_code", { code: done.code })}</p>
         <Link
@@ -319,9 +323,11 @@ export function BookingFlow({ p, initialService }: { p: PublicSipalu; initialSer
           <>
             {p.instant_booking ? (
               <p className="text-fg-body mt-2 text-sm">{t("book.instant_note", { name: firstName })}</p>
-            ) : (
-              <p className="text-fg-body mt-2 text-sm">{t("book.request_note", { name: firstName })}</p>
-            )}
+            ) : config ? (
+              <p className="text-fg-body mt-2 text-sm">
+                {t("book.request_note", { name: firstName, minutes: f.digits(config.accept_timeout_minutes) })}
+              </p>
+            ) : null}
             {openDays.length === 0 ? (
               <div className="mt-4">
                 <p className="text-fg">{t("book.time_none", { name: firstName })}</p>
@@ -472,13 +478,17 @@ export function BookingFlow({ p, initialService }: { p: PublicSipalu; initialSer
                 </dd>
               </div>
             </dl>
-            <FeeLine
-              fee={config.booking_fee}
-              status={config.fee_enabled ? "enabled" : "disabled"}
-              className="border-yellow bg-yellow-subtle mt-2 rounded-dense border-l-4 px-4 py-3"
-            />
+            {config ? (
+              <FeeLine
+                fee={config.booking_fee}
+                status={config.booking_fee_enabled ? "enabled" : "disabled"}
+                className="border-yellow bg-yellow-subtle mt-2 rounded-dense border-l-4 px-4 py-3"
+              />
+            ) : (
+              <Skeleton className="mt-2 h-16 rounded-dense" />
+            )}
             <p className="text-fg-muted mt-4 text-xs">
-              {t("book.terms", { hours: f.digits(config.free_cancel_hours) })}{" "}
+              {config ? t("book.terms", { hours: f.digits(config.free_cancel_hours) }) : t("book.terms_plain")}{" "}
               <Link href="/terms" className="underline underline-offset-2">
                 {tAll("marketing.footer.terms")}
               </Link>

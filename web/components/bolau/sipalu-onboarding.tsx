@@ -389,13 +389,20 @@ function SkillsStep({ me, save, saving, fieldErrors }: StepProps) {
 
 function LanguagesStep({ me, save, saving }: StepProps) {
   const t = useTranslations("bolau");
-  const [langs, setLangs] = React.useState<string[]>(me.languages?.map((l) => l.language) ?? ["ne"]);
+  // A fresh profile has `languages: []` — start with Nepali ticked rather than nothing.
+  const [langs, setLangs] = React.useState<string[]>(me.languages?.length ? me.languages.map((l) => l.language) : ["ne"]);
+  const [err, setErr] = React.useState<string | null>(null);
   return (
     <form
       className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
-        if (langs.length) save({ languages: langs.map((language) => ({ language, proficiency: "conversational" })) });
+        if (!langs.length) {
+          setErr(t("join.languages_required"));
+          return;
+        }
+        setErr(null);
+        save({ languages: langs.map((language) => ({ language, proficiency: "conversational" })) });
       }}
     >
       <fieldset>
@@ -413,6 +420,7 @@ function LanguagesStep({ me, save, saving }: StepProps) {
           ))}
         </div>
       </fieldset>
+      <FormError message={err} />
       <SaveButton saving={saving} />
     </form>
   );

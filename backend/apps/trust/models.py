@@ -106,7 +106,7 @@ class Dispute(models.Model):
     appealed_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
     )
-    appealed_by_party = models.CharField(max_length=10, blank=True, null=True)  # worker | employer
+    appealed_by_party = models.CharField(max_length=10, blank=True, null=True)  # worker|employer|ghardhani
     appealed_at = models.DateTimeField(null=True, blank=True)
     appeal_outcome = models.CharField(max_length=12, choices=APPEAL_OUTCOMES, blank=True, null=True)
     appeal_resolution_note = models.TextField(blank=True, null=True)

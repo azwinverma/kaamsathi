@@ -9,13 +9,14 @@ import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader } from "@
 import { ErrorState, Skeleton, errorMessage } from "@/components/ui/feedback";
 import { Field, FormError } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/input";
-import { BOLAU_DEFAULTS, useBolauConfig, useBooking, useBookingAction, useBookingContact } from "@/lib/api/hooks/bolau";
+import { useBolauConfig, useBooking, useBookingAction, useBookingContact } from "@/lib/api/hooks/bolau";
 import { PAY_METHODS, RATING_TAGS, type Booking, type PayMethod } from "@/lib/api/types-bolau";
 import { SAFETY_KINDS, type SafetyKind } from "@/lib/api/types-support";
-import { freeCancelUntil, insideFreeWindow } from "@/lib/bolau/price";
+import { freeCancelUntil } from "@/lib/bolau/price";
 import {
   canCancel,
   canConfirm,
+  canDispute,
   canMarkPaid,
   canReportNoShow,
   contactWindow,
@@ -26,6 +27,7 @@ import { cn } from "@/lib/utils";
 import { addressText } from "./address-form";
 import { BookingStatusBadge, FeeLine, PriceText, SipaluPortrait, useWhenText } from "./bits";
 import { bookingTitle } from "./ghar-bookings";
+import { BookingDisputeBox, RaiseDispute } from "./booking-dispute";
 import { StatusTimeline } from "./status-timeline";
 
 const BOX = "border-border bg-surface rounded-card border p-5";
@@ -72,7 +74,8 @@ function ContactBox({ b, name }: { b: Booking; name: string }) {
       {!open ? (
         <p className="text-fg-body mt-2 flex items-start gap-2 text-sm">
           <Lock className="text-fg-muted mt-0.5 size-4 shrink-0" aria-hidden />
-          {t("contact_hidden", { name })}
+          {/* Never accepted → "shared after they accept"; accepted once but past the window → ended. */}
+          {b.accepted_at ? t("contact_ended") : t("contact_hidden", { name })}
         </p>
       ) : contact.data && !contact.data.visible ? (
         <p className="text-fg-muted mt-2 text-sm">{t("contact_closed")}</p>
@@ -333,7 +336,7 @@ export function BookingDetail({ id }: { id: string }) {
   const f = useFormat();
   const when = useWhenText();
   const q = useBooking(id);
-  const config = useBolauConfig().data ?? BOLAU_DEFAULTS;
+  const config = useBolauConfig().data;
   const act = useBookingAction(id);
   const [cancelOpen, setCancelOpen] = React.useState(false);
   const [noShowOpen, setNoShowOpen] = React.useState(false);
@@ -353,11 +356,14 @@ export function BookingDetail({ id }: { id: string }) {
   const b = q.data;
   const name = f.locale === "ne" && b.sipalu.name_ne ? b.sipalu.name_ne : b.sipalu.name;
   const firstName = name.split(/\s+/)[0] ?? name;
-  const freeUntil = b.free_cancel_until ? new Date(b.free_cancel_until) : freeCancelUntil(b.scheduled_start, config.free_cancel_hours);
-  // Free while still "requested"; once accepted, free until the window closes (2 h before start).
-  const free =
-    b.status === "requested" ||
-    (now ? (b.free_cancel_until ? now <= freeUntil : insideFreeWindow(b.scheduled_start, now, config.free_cancel_hours)) : true);
+  // The booking's own `free_cancel_until` is authoritative; else derive it from /bolau/config.
+  const freeUntil: Date | null = b.free_cancel_until
+    ? new Date(b.free_cancel_until)
+    : config
+      ? freeCancelUntil(b.scheduled_start, config.free_cancel_hours)
+      : null;
+  // Free while still "requested"; once accepted, free until the window closes (N h before start).
+  const free = b.status === "requested" || !now || !freeUntil || now <= freeUntil;
   const quoteWaiting = b.price_type === "visit_then_quote" && b.quote_status === "proposed" && b.quote_amount;
   const toastErr = (e: unknown) => toast.error(errorMessage(e, tAll));
 
@@ -424,6 +430,8 @@ export function BookingDetail({ id }: { id: string }) {
         </section>
       ) : null}
 
+      <BookingDisputeBox b={b} name={firstName} />
+
       <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
         <section aria-labelledby="progress-title" className={BOX}>
           <h2 id="progress-title" className="text-fg mb-4 text-base font-bold">
@@ -484,13 +492,21 @@ export function BookingDetail({ id }: { id: string }) {
 
       {b.status === "confirmed" && b.can_rate !== false ? <RateBox b={b} name={firstName} /> : null}
 
-      {canCancel(b.status) || (now && canReportNoShow(b.status, b.scheduled_start, now)) ? (
-        <div className="flex flex-wrap gap-3">
+      {canCancel(b.status) || canDispute(b.status) || (now && canReportNoShow(b.status, b.scheduled_start, now)) ? (
+        <div className="flex flex-wrap items-center gap-3">
           {canCancel(b.status) ? (
             <Button variant="danger-outline" onClick={() => setCancelOpen(true)}>
               {t("ghar.cancel")}
             </Button>
           ) : null}
+          {canCancel(b.status) && freeUntil && now ? (
+            <p className="text-fg-muted text-sm" data-testid="free-cancel-note" suppressHydrationWarning>
+              {free
+                ? t("ghar.cancel_free", { when: f.dateTime(freeUntil.toISOString()) })
+                : t("ghar.cancel_window_over")}
+            </p>
+          ) : null}
+          {canDispute(b.status) ? <RaiseDispute b={b} name={firstName} /> : null}
           {now && canReportNoShow(b.status, b.scheduled_start, now) ? (
             <Button variant="secondary" onClick={() => setNoShowOpen(true)}>
               {t("ghar.no_show", { name: firstName })}
@@ -506,9 +522,11 @@ export function BookingDetail({ id }: { id: string }) {
           <DialogHeader
             title={t("ghar.cancel_title")}
             description={
-              free
-                ? t("ghar.cancel_free", { when: f.dateTime(freeUntil.toISOString()) })
-                : t("ghar.cancel_late", { when: f.dateTime(freeUntil.toISOString()), name: firstName })
+              !freeUntil
+                ? undefined
+                : free
+                  ? t("ghar.cancel_free", { when: f.dateTime(freeUntil.toISOString()) })
+                  : t("ghar.cancel_late", { when: f.dateTime(freeUntil.toISOString()), name: firstName })
             }
           />
           <DialogBody>

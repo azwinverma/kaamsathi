@@ -57,7 +57,8 @@ export interface SipaluCard {
   instant_booking: boolean;
   languages?: string[];
   districts?: DistrictRef[];
-  public_indexable?: boolean;
+  /** The Sipalu opted in to search-engine indexing (sitemap). */
+  indexable?: boolean;
 }
 
 export interface BolauSearchParams {
@@ -251,6 +252,7 @@ export interface Booking {
   cancel_reason?: string | null;
   /** Shown only to the Ghardhani while the Sipalu is on the way. */
   arrival_code?: string | null;
+  accepted_at?: ISODateTime | null;
   arrival_verified_at?: ISODateTime | null;
   started_at?: ISODateTime | null;
   completed_at?: ISODateTime | null;
@@ -406,12 +408,15 @@ export interface SipaluServiceInput {
 }
 
 // ---------------------------------------------------------------- config / ops
+/** `GET /bolau/config` (public, flag-gated). */
 export interface BolauConfig {
   booking_fee: Money;
-  fee_enabled: boolean;
+  booking_fee_enabled: boolean;
   free_cancel_hours: number;
-  lead_time_minutes: number;
-  min_hourly?: Money;
+  accept_timeout_minutes: number;
+  min_hourly_rate: Money | null;
+  max_offers: number;
+  emergency_line: string;
 }
 
 export interface OpsBolauKpis {

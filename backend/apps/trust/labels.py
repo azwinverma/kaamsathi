@@ -55,6 +55,7 @@ EVIDENCE_PARTY = {
     "worker": pgettext_lazy("complete1", "Worker"),
     "employer": pgettext_lazy("complete1", "Employer"),
     "ops": pgettext_lazy("complete1", "KaamSathi staff"),
+    "ghardhani": pgettext_lazy("bolau", "Ghardhani"),  # Bolau booking disputes (the household party)
 }
 
 NEXT_STEPS = {

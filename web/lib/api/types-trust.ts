@@ -56,7 +56,7 @@ export type AppealOutcome = "upheld" | "overturned";
 /** N008 — one appeal per dispute, within 14 days of the first decision. */
 export interface DisputeAppeal {
   reason: string;
-  party: "worker" | "employer";
+  party: "worker" | "employer" | "ghardhani";
   appealed_at: ISODateTime;
   outcome: AppealOutcome | null;
   outcome_label: string | null;
@@ -71,7 +71,7 @@ export interface DisputeEvidence {
   dispute_id: UUID;
   file_url: string;
   file_type: "image" | "pdf";
-  party: "worker" | "employer" | "ops";
+  party: "worker" | "employer" | "ops" | "ghardhani";
   party_label: string;
   uploaded_by: { id: UUID; full_name: string } | null;
   note: string | null;
@@ -83,6 +83,8 @@ export interface Dispute {
   worker: { id: UUID; full_name: string; phone_masked: string };
   organization: { id: UUID; name: string } | null;
   employment: { id: UUID; designation: string } | null;
+  /** Bolau booking disputes (kind "booking"); `worker` is then the Sipalu. */
+  booking?: { id: UUID; code: string } | null;
   payslip: { id: UUID; bs_year: number; bs_month: number } | null;
   attendance_date: ISODate | null;
   attendance_date_bs: string | null;

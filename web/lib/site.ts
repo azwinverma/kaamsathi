@@ -29,6 +29,7 @@ export const DISALLOWED_PATHS = [
 export const BOLAU_PUBLIC_PATHS = ["/bolau", "/sipalu/join"] as const;
 
 /** Sipalu profiles go into the sitemap only when the Sipalu opted in (`indexable`). */
-export function indexableSipaluPaths(cards: { handle: string; indexable?: boolean; public_indexable?: boolean }[]): string[] {
-  return cards.filter((c) => c.indexable === true || c.public_indexable === true).map((c) => `/sipalu/${c.handle}`);
+export function indexableSipaluPaths(cards: { handle: string; indexable?: boolean }[]): string[] {
+  return [...new Set(cards.filter((c) => c.indexable === true).map((c) => c.handle))]
+    .map((handle) => `/sipalu/${handle}`);
 }

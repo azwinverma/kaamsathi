@@ -14,7 +14,7 @@ from django.db import transaction
 from django.db.models import Prefetch
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
-from rest_framework import serializers
+from rest_framework import mixins, serializers, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -24,9 +24,11 @@ from apps.core.exceptions import APIError
 from apps.core.idempotency import idempotent
 from apps.core.pagination import StandardPagination
 from apps.core.uploads import validate_upload
+from apps.trust.serializers import DisputeSerializer
+from apps.trust.views import AppealMixin, EvidenceMixin, _filter_status, dispute_queryset
 
 from . import bookings, kaam, labels, onboarding, payloads, payments, profiles, search
-from .common import error, require_bolau
+from .common import accept_timeout, error, free_cancel_window, min_hourly, money, require_bolau
 from .models import (
     Address,
     Booking,
@@ -503,6 +505,23 @@ class SearchView(_Public):
         )  # fmt: skip
 
 
+class ConfigView(_Public):
+    """Public Bolau settings the clients show before booking (fee line, free-cancel copy, limits)."""
+
+    def get(self, request):
+        return Response(
+            {
+                "booking_fee": money(payments.fee_amount()),
+                "booking_fee_enabled": payments.fee_enabled(),
+                "free_cancel_hours": int(free_cancel_window().total_seconds() // 3600),
+                "accept_timeout_minutes": int(accept_timeout().total_seconds() // 60),
+                "min_hourly_rate": money(min_hourly()),
+                "max_offers": Offer.MAX_PER_REQUEST,
+                "emergency_line": labels.EMERGENCY["line"],
+            }
+        )
+
+
 class TradesView(_Public):
     def get(self, request):
         return Response(search.trades_summary())
@@ -714,8 +733,6 @@ class BookingActionView(APIView):
             log(request, "bolau.booking.rate", b, organization=None, changes={"side": who, "score": r.score})
             return Response(payloads.rating_dict(r), status=201)
         elif action == "dispute":
-            from apps.trust.serializers import DisputeSerializer
-
             dispute = bookings.raise_dispute(b, user, who, valid(DisputeIn, request.data)["description"])
             log(
                 request,
@@ -763,6 +780,21 @@ class BookingActionView(APIView):
             },
             status=201,
         )
+
+
+class BookingDisputeView(APIView):
+    """``GET /bolau/bookings/{id}/dispute`` — the booking's latest dispute, for either party (404 if
+    none); ``POST`` raises one (same as the other booking actions)."""
+
+    def post(self, request, booking_id):
+        return BookingActionView().post(request, booking_id, "dispute")
+
+    def get(self, request, booking_id):
+        b, _who = party_booking(request, booking_id)
+        dispute = dispute_queryset().filter(booking=b).first()
+        if dispute is None:
+            raise Http404
+        return Response(DisputeSerializer(dispute).data)
 
 
 class BookingFeePayView(APIView):
@@ -1022,3 +1054,26 @@ class FeeWebhookView(APIView):
             raise
         log(None, "bolau.fee.webhook", None, object_type="booking", changes={"provider": provider, **result})
         return Response(result)
+
+
+# =========================================================================== Ghardhani booking disputes
+
+
+class MeBookingDisputeViewSet(
+    EvidenceMixin, AppealMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet
+):
+    """The Ghardhani's side of Bolau booking disputes (the dispute's ``worker`` is the Sipalu, so
+    ``/me/disputes`` can't serve them): ``GET /me/booking-disputes?status=``, ``GET …/{id}``,
+    ``GET|POST …/{id}/evidence`` (party ``ghardhani``) and ``POST …/{id}/appeal {reason}``. Only
+    disputes on bookings where the caller is the Ghardhani — anything else 404s. Not flag-gated, so
+    a household can always follow up on its own dispute."""
+
+    evidence_party = "ghardhani"
+    appeal_party = "ghardhani"
+    pagination_class = StandardPagination
+
+    serializer_class = DisputeSerializer
+
+    def get_queryset(self):
+        qs = dispute_queryset().filter(kind="booking", booking__ghardhani=self.request.user)
+        return _filter_status(qs, self.request)

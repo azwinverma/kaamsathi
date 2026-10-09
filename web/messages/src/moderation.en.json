@@ -118,7 +118,9 @@
       "party": {
         "worker": "Worker",
         "employer": "Employer",
-        "ops": "KaamSathi team"
+        "ops": "KaamSathi team",
+        "ghardhani": "Ghardhani",
+        "sipalu": "Sipalu"
       }
     },
     "appeal": {
@@ -127,7 +129,9 @@
       "block_title": "Appeal by {party}",
       "party": {
         "worker": "worker",
-        "employer": "employer"
+        "employer": "employer",
+        "ghardhani": "Ghardhani",
+        "sipalu": "Sipalu"
       },
       "outcome": "Outcome",
       "outcomes": {

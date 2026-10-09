@@ -5,7 +5,8 @@
  */
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, request, type QueryParams } from "../client";
-import { useFlag } from "./flags";
+import { ApiError } from "../errors";
+import type { Dispute } from "../types-trust";
 import type { Paginated } from "../types";
 import type {
   Address,
@@ -40,6 +41,7 @@ export const bk = {
   all: ["bolau"] as const,
   search: (q: BolauSearchParams) => ["bolau", "search", q] as const,
   trades: ["bolau", "trades"] as const,
+  config: ["bolau", "config"] as const,
   sipalu: (handle: string) => ["bolau", "sipalu", handle] as const,
   // Ghardhani (signed-in user)
   me: ["me", "bolau"] as const,
@@ -100,22 +102,40 @@ export function useBolauTrades() {
   });
 }
 
-/**
- * Fee + cancellation settings. The API has no public config endpoint yet, so the amount and the
- * free-cancellation window are the contract defaults (BOLAU_BOOKING_FEE Rs 49, 2 h) and the fee
- * is shown as charged only when the client-visible `bolau_fee` flag is on (else "waived"). The
- * booking itself always carries the authoritative `booking_fee` + `booking_fee_status`.
- */
-export const BOLAU_DEFAULTS: BolauConfig = {
-  booking_fee: "49.00",
-  fee_enabled: false,
-  free_cancel_hours: 2,
-  lead_time_minutes: 60,
-};
+/** Client-side lead time before the earliest bookable slot (the API re-checks; contract LEAD_TIME). */
+export const BOLAU_LEAD_MINUTES = 60;
 
-export function useBolauConfig(): { data: BolauConfig } {
-  const feeOn = useFlag("bolau_fee");
-  return { data: { ...BOLAU_DEFAULTS, fee_enabled: feeOn } };
+/**
+ * Public Bolau settings (`GET /bolau/config`): booking fee + whether it is charged (`bolau_fee`),
+ * free-cancellation window, accept timeout, minimum hourly rate, offer cap, emergency line. No
+ * client-side defaults for money or windows — callers render those lines only once this has loaded;
+ * a booking itself always carries the authoritative `booking_fee` + `booking_fee_status`.
+ */
+export function useBolauConfig() {
+  return useQuery({
+    queryKey: bk.config,
+    queryFn: () => api.get<BolauConfig>("/bolau/config"),
+    staleTime: 5 * 60_000,
+  });
+}
+
+/**
+ * The booking's dispute (`GET /bolau/bookings/{id}/dispute`, either party); `null` when there is
+ * none (404). Key sits under trustKeys.gharDisputes so evidence uploads / appeals refresh it.
+ */
+export function useBookingDispute(bookingId: string, enabled = true) {
+  return useQuery({
+    queryKey: ["me", "bolau", "booking-dispute", "booking", bookingId] as const,
+    queryFn: async () => {
+      try {
+        return await api.get<Dispute>(`/bolau/bookings/${bookingId}/dispute`);
+      } catch (e) {
+        if (e instanceof ApiError && e.status === 404) return null;
+        throw e;
+      }
+    },
+    enabled,
+  });
 }
 
 export function usePublicSipalu(handle: string | undefined, initial?: PublicSipalu) {
@@ -244,6 +264,7 @@ type BookingAction =
   | { action: "reject-quote" }
   | { action: "paid"; method: PayMethod }
   | { action: "rate"; rating: RatingInput }
+  | { action: "dispute"; description: string }
   | {
       action: "safety-report";
       report: { safety_kind: string; description: string; emergency?: boolean; anonymous?: boolean };
@@ -265,14 +286,18 @@ export function useBookingAction(id: string) {
           return api.post<Booking>(path, { reason: a.reason ?? "" });
         case "safety-report":
           return api.post<Booking>(path, a.report);
+        case "dispute":
+          return api.post<Booking>(path, { description: a.description });
         default:
           return api.post<Booking>(path);
       }
     },
     onSuccess: (b) => {
-      if (b && typeof b === "object" && "id" in b && "status" in b) qc.setQueryData(bk.booking(id), b);
+      // Only a booking payload replaces the cache (dispute / safety-report answer other shapes).
+      if (b && typeof b === "object" && "code" in b && "sipalu" in b && "status" in b) qc.setQueryData(bk.booking(id), b);
       qc.invalidateQueries({ queryKey: bk.booking(id) });
       qc.invalidateQueries({ queryKey: bk.bookingsAll });
+      qc.invalidateQueries({ queryKey: ["me", "bolau", "booking-dispute"] });
     },
   });
 }

@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, type BrowserContext, type Page } from "@playwright/test";
+import { expect, type BrowserContext, type Locator, type Page } from "@playwright/test";
 
 /** Seeded demo accounts (backend `manage.py seed_demo`). */
 export const PHONES = {
@@ -138,4 +138,31 @@ export async function expectNoSeriousA11yViolations(page: Page, context: string)
     serious.map((v) => v.id),
     `Serious/critical a11y violations on ${context}:\n${report}`,
   ).toEqual([]);
+}
+
+/** Bolau is on when its public pages answer 200 (flag `bolau` on + backend with apps.bolau). */
+export async function bolauAvailable(page: Page): Promise<boolean> {
+  const res = await page.request.get("/bolau");
+  return res.status() === 200;
+}
+
+/** Pin the UI language (demo Ghardhani prefer Nepali; a login must not switch it mid-test). */
+export async function pinEnglish(page: Page) {
+  const origin = new URL(process.env.BASE_URL || "http://localhost:3000").origin;
+  await page.context().addCookies([{ name: "NEXT_LOCALE", value: "en", url: origin }]);
+}
+
+/** Inline (in-page) phone + OTP login used by Bolau pages, incl. the legal step for new users. */
+export async function inlineOtpLogin(page: Page, phone: string, ready: Locator) {
+  await page.getByLabel("Mobile number").fill(phone);
+  await page.getByRole("button", { name: "Send code" }).click();
+  await page.getByRole("textbox", { name: "Digit 1 of 6" }).fill(OTP_CODE);
+  const legal = page.getByRole("button", { name: "Accept and continue" });
+  await expect(legal.or(ready)).toBeVisible({ timeout: 30_000 });
+  if (await legal.isVisible()) {
+    const boxes = page.getByRole("checkbox", { name: /^I have read and accept/ });
+    for (let i = 0; i < (await boxes.count()); i++) await boxes.nth(i).click();
+    await legal.click();
+  }
+  await expect(ready).toBeVisible();
 }

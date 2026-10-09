@@ -187,8 +187,12 @@ def test_search_ranking_alias_and_card_shape(api):
         "next_available",
         "distance_band",
         "instant_booking",
+        "indexable",
     ):
         assert key in card
+    assert card["indexable"] is False
+    SipaluProfile.objects.filter(pk=top.pk).update(public_indexable=True)
+    assert api.get("/api/v1/bolau/search?q=dhara").json()["results"][0]["indexable"] is True
     assert "phone" not in json.dumps(res.json())
     assert api.get("/api/v1/bolau/search?trade=cook").json()["count"] == 1
     assert api.get("/api/v1/bolau/search?trade=plumber&max_price=100").json()["count"] == 0
@@ -203,6 +207,28 @@ def test_search_ranking_alias_and_card_shape(api):
         for r in api.get(f"/api/v1/bolau/search?trade=plumber&date={day}&time=10:00").json()["results"]
     ]
     assert handles[0] == "new-plumber"
+
+
+def test_public_config(api, settings):
+    from tests.bolau_helpers import flag_off
+
+    settings.BOLAU_BOOKING_FEE = "49"
+    settings.BOLAU_FREE_CANCEL_HOURS = 2
+    settings.BOLAU_ACCEPT_TIMEOUT_MINUTES = 30
+    res = api.get("/api/v1/bolau/config")
+    assert res.status_code == 200, res.content
+    body = res.json()
+    assert body["booking_fee"] == "49.00" and body["booking_fee_enabled"] is False
+    assert body["free_cancel_hours"] == 2 and body["accept_timeout_minutes"] == 30
+    assert body["max_offers"] == 3 and body["emergency_line"] == "100"
+    assert body["min_hourly_rate"] is not None
+    flag_on("bolau_fee")
+    settings.BOLAU_FREE_CANCEL_HOURS = 3
+    body = api.get("/api/v1/bolau/config/").json()
+    assert body["booking_fee_enabled"] is True and body["free_cancel_hours"] == 3
+    flag_off()
+    cache.clear()
+    assert api.get("/api/v1/bolau/config").status_code == 404
 
 
 def test_trades_k_anonymity(api):

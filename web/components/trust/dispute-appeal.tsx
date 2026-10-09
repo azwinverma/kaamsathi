@@ -16,13 +16,20 @@ import type { AppealOutcome, Dispute, DisputeAppeal } from "@/lib/api/types-trus
 import { useFormat } from "@/lib/use-format";
 import { daysUntil } from "./moderation";
 
-export function AppealBlock({ appeal }: { appeal: DisputeAppeal }) {
+export function AppealBlock({
+  appeal,
+  partyLabel,
+}: {
+  appeal: DisputeAppeal;
+  /** Override the party's name (Bolau: the dispute's "worker" is the Sipalu). */
+  partyLabel?: (party: DisputeAppeal["party"]) => string;
+}) {
   const ta = useTranslations("moderation.appeal");
   const f = useFormat();
   return (
     <div className="mt-3 space-y-2 rounded-md border border-accent/30 bg-accent-subtle/40 px-3 py-2">
       <p className="text-xs font-medium text-fg-muted">
-        {ta("block_title", { party: ta(`party.${appeal.party}`) })}
+        {ta("block_title", { party: partyLabel ? partyLabel(appeal.party) : ta(`party.${appeal.party}`) })}
         <span className="font-normal"> · {f.dateTime(appeal.appealed_at)}</span>
       </p>
       <p className="text-sm whitespace-pre-line text-fg">{appeal.reason}</p>
@@ -47,11 +54,19 @@ export function AppealBlock({ appeal }: { appeal: DisputeAppeal }) {
   );
 }
 
-export function AppealDialog({ dispute, onClose }: { dispute: Dispute | null; onClose: () => void }) {
+export function AppealDialog({
+  dispute,
+  onClose,
+  scope = "org",
+}: {
+  dispute: Dispute | null;
+  onClose: () => void;
+  scope?: "me" | "org" | "ghar";
+}) {
   const t = useTranslations();
   const ta = useTranslations("moderation.appeal");
   const f = useFormat();
-  const appeal = useAppealDispute("org");
+  const appeal = useAppealDispute(scope);
   const [reason, setReason] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
   React.useEffect(() => {

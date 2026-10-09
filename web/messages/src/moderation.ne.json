@@ -118,7 +118,9 @@
       "party": {
         "worker": "कामदार",
         "employer": "रोजगारदाता",
-        "ops": "कामसाथी टोली"
+        "ops": "कामसाथी टोली",
+        "ghardhani": "घरधनी",
+        "sipalu": "सिपालु"
       }
     },
     "appeal": {
@@ -127,7 +129,9 @@
       "block_title": "{party} द्वारा पुनरावेदन",
       "party": {
         "worker": "कामदार",
-        "employer": "रोजगारदाता"
+        "employer": "रोजगारदाता",
+        "ghardhani": "घरधनी",
+        "sipalu": "सिपालु"
       },
       "outcome": "नतिजा",
       "outcomes": {
