@@ -55,6 +55,9 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   typedRoutes: false,
+  // The OG card reads its pre-shaped Nepali lines from disk (app/opengraph-image.tsx); make sure
+  // the standalone output carries them.
+  outputFileTracingIncludes: { "/opengraph-image": ["./assets/og/**"] },
   async headers() {
     // "/:path*" also matches "/" and metadata routes (robots.txt, sitemap.xml, icons, OG image).
     return [{ source: "/:path*", headers: securityHeaders }];

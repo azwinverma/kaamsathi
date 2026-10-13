@@ -3418,6 +3418,19 @@
     },
     "notfound": {
       "kicker": "Page not found"
+    },
+    "og": {
+      "brand": "KaamSathi",
+      "bolau": {
+        "title": "Bolau a verified Sipalu.",
+        "body": "Electricians, plumbers, cooks and cleaners in Kathmandu Valley. Pay them directly.",
+        "foot": "Sipalu never pay a fee or commission"
+      },
+      "employer": {
+        "title": "Verified workers. On-time pay.",
+        "body": "Hire, manage and pay your workforce in Nepal",
+        "foot": "Workers never pay a fee"
+      }
     }
   },
   "mobility": {

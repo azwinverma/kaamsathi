@@ -91,18 +91,3 @@ export function headerNav(bolau: boolean, base: string): HeaderNav {
     employerCta: false,
   };
 }
-
-/** Open Graph card copy per the `bolau` flag (Latin only: the bundled OG font has no Devanagari). */
-export function ogCopy(bolau: boolean) {
-  return bolau
-    ? {
-        title: "Bolau a verified Sipalu.",
-        body: "Electricians, plumbers, cooks and cleaners in Kathmandu Valley. Pay them directly.",
-        foot: "Sipalu never pay a fee or commission",
-      }
-    : {
-        title: "Verified workers. On-time pay.",
-        body: "Hire, manage and pay your workforce in Nepal",
-        foot: "Workers never pay a fee",
-      };
-}

@@ -392,3 +392,35 @@ A gitleaks hit that is not a secret goes into `.gitleaks.toml` with a comment; a
 ### E2E locally
 See `web/e2e/README.md` (backend :8000 with `OTP_DEV_CODE=123456`, web :3000, `make seed`, then
 `pnpm e2e:install && pnpm e2e`).
+
+## 14. Local development
+
+Never on staging or production — these commands refuse to run there.
+
+### Cleaning up E2E test data (dev DB)
+The Playwright suite runs against the seeded dev database and leaves a little behind: the Bolau
+booking it makes (description `E2E: …`, cancelled at the end of the run) and the brand-new Sipalu
+that `bolau-join.spec.ts` onboards with a random `98000009xx` phone (pending, Bolau off). There is no
+API to delete either, so use the management command — a dry run unless `--apply`:
+
+```bash
+cd backend
+DJANGO_SETTINGS_MODULE=config.settings.dev .venv/bin/python manage.py cleanup_dev_test_data          # list only
+DJANGO_SETTINGS_MODULE=config.settings.dev .venv/bin/python manage.py cleanup_dev_test_data --apply  # delete
+```
+
+It removes bookings whose description starts with `E2E:` with their events, ratings, reports,
+booking-fee charges (unless already on an invoice) and the notifications that point at them, and
+the test Sipalu (Worker + Sipalu profile, services, availability, portfolio, consents + the User)
+whose phone is `98000009xx`, not a seeded demo phone, not `verified`, Bolau off and not indexable,
+with no bookings on either side, no offers and no employments. Anything else is listed as kept with
+the reason; a booking with a dispute is skipped. The command refuses to run unless `DEBUG` is on or
+the settings module is `config.settings.dev` (`apps/bolau/management/commands/cleanup_dev_test_data.py`,
+`tests/test_bolau_cleanup.py`). Run it after a local E2E session; `ops-bolau.spec.ts` needs one
+E2E-made Sipalu, which `bolau-join.spec.ts` creates earlier in the same run.
+
+### Nepali text on the Open Graph card
+next/og cannot shape Devanagari, so the Nepali lines of `/opengraph-image` are pre-rendered PNGs in
+`web/assets/og/` (Chromium + Noto Sans Devanagari Bold from `mobile/assets/fonts/`). After changing
+any `marketing.og.*` Nepali string: `cd web && pnpm og:text` (needs `pnpm e2e:install` once) and
+commit the images; `lib/marketing/og.test.ts` fails until they match.

@@ -1,4 +1,4 @@
-import { BOLAU_HOME, EMPLOYER_HOME, headerNav, homeMetaKeys, homeSections, ogCopy } from "./home-layout";
+import { BOLAU_HOME, EMPLOYER_HOME, headerNav, homeMetaKeys, homeSections } from "./home-layout";
 
 describe("home layout by the bolau flag", () => {
   it("flag off keeps the employer-first page exactly as before", () => {
@@ -30,11 +30,9 @@ describe("home layout by the bolau flag", () => {
     expect(EMPLOYER_HOME).not.toContain("bolau-hero");
   });
 
-  it("metadata and OG copy follow the flag", () => {
+  it("metadata follows the flag", () => {
     expect(homeMetaKeys(false)).toEqual({ title: "title", description: "description" });
     expect(homeMetaKeys(true)).toEqual({ title: "bolau_title", description: "bolau_description" });
-    expect(ogCopy(true).title).toMatch(/Bolau/);
-    expect(ogCopy(false).title).not.toMatch(/Bolau|Sipalu/);
   });
 
   it("header: classic employer nav when off", () => {

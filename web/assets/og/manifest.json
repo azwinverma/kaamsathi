@@ -1,0 +1,55 @@
+{
+  "font": "NotoSansDevanagari-Bold.ttf",
+  "scale": 2,
+  "items": {
+    "brand": {
+      "file": "ne-brand.png",
+      "text": "कामसाथी",
+      "sha1": "be8686ec0ff0",
+      "width": 245,
+      "height": 84
+    },
+    "bolau.title": {
+      "file": "ne-bolau-title.png",
+      "text": "प्रमाणित सिपालु बोलाउनुहोस्।",
+      "sha1": "44b29353b4da",
+      "width": 744,
+      "height": 87
+    },
+    "bolau.body": {
+      "file": "ne-bolau-body.png",
+      "text": "काठमाडौं उपत्यकाका इलेक्ट्रिसियन, प्लम्बर, भान्से र सरसफाइ गर्ने सिपालु। पैसा सिधै उहाँलाई तिर्नुहोस्।",
+      "sha1": "5e6ffabde3ee",
+      "width": 1040,
+      "height": 93
+    },
+    "bolau.foot": {
+      "file": "ne-bolau-foot.png",
+      "text": "सिपालुले कुनै शुल्क वा कमिसन तिर्नु पर्दैन",
+      "sha1": "17838a3e9bd8",
+      "width": 412,
+      "height": 37
+    },
+    "employer.title": {
+      "file": "ne-employer-title.png",
+      "text": "भरपर्दो कामदार, समयमै तलब",
+      "sha1": "11bae2a30e2a",
+      "width": 736,
+      "height": 87
+    },
+    "employer.body": {
+      "file": "ne-employer-body.png",
+      "text": "नेपालमा आफ्ना कामदारको भर्ना, व्यवस्थापन र तलब",
+      "sha1": "dc47066e5ba5",
+      "width": 649,
+      "height": 47
+    },
+    "employer.foot": {
+      "file": "ne-employer-foot.png",
+      "text": "कामदारले कुनै शुल्क तिर्नु पर्दैन",
+      "sha1": "282722fdc59d",
+      "width": 304,
+      "height": 37
+    }
+  }
+}

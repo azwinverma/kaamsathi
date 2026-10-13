@@ -5,7 +5,7 @@
 | Owner | Ops lead |
 | Used by | `support` role, field agents, anyone answering the KaamSathi phone |
 | Tools | Support cases `/ops/support` → `GET /ops/support-cases`, `PATCH /ops/support-cases/{id}`, messages with an `internal` flag (**in progress**, `apps.support`). Until it ships, log every call in the shared support sheet *without personal data* (case number, org, category, outcome). Worker lookup: `/ops/workers`. Employer lookup: `/ops/organizations`. |
-| Related | [dispute-handling-sla.md](dispute-handling-sla.md), [data-protection-requests.md](data-protection-requests.md), [fraud-escalation.md](fraud-escalation.md), [incident-communications.md](incident-communications.md) |
+| Related | [dispute-handling-sla.md](dispute-handling-sla.md), [data-protection-requests.md](data-protection-requests.md), [fraud-escalation.md](fraud-escalation.md), [incident-communications.md](incident-communications.md), [bolau-home-visit-safety.md](bolau-home-visit-safety.md) |
 
 ## Service levels (support cases)
 

@@ -31,6 +31,29 @@ test.describe("home · Bolau leads", () => {
     await expectNoSeriousA11yViolations(page, "home / (bolau on)");
   });
 
+  test("hero collage captions are never covered or clipped (desktop)", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    const captions = page.locator("#bolau-hero-title").locator("xpath=ancestor::section[1]").locator("figcaption");
+    await expect(captions.first()).toBeVisible();
+    for (const cap of await captions.all()) {
+      const hidden = await cap.evaluate((el) => {
+        if (el.scrollWidth > el.clientWidth + 1) return "overflow";
+        // Probe both ends of every text line: the topmost element there must be the caption itself.
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        for (const r of Array.from(range.getClientRects())) {
+          for (const x of [r.left + 2, r.right - 2]) {
+            const top = document.elementFromPoint(x, r.top + r.height / 2);
+            if (top && !el.contains(top)) return `covered at ${Math.round(x)} by <${top.tagName.toLowerCase()}>`;
+          }
+        }
+        return null;
+      });
+      expect(hidden, `caption "${await cap.textContent()}"`).toBeNull();
+    }
+  });
+
   test("hero search → /bolau with trade, day and results", async ({ page }) => {
     await page.goto("/");
     const search = page.getByRole("search", { name: "Bolau a Sipalu" });

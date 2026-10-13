@@ -37,6 +37,28 @@ All 19 Celery beat entries resolve to registered tasks. Every CONTRACT-EXTENSION
    [.github/workflows/ci.yml](../.github/workflows/ci.yml) doesn't fill them, so the job fails.
    Add `-e 's/^FIELD_ENCRYPTION_KEYS=.*/FIELD_ENCRYPTION_KEYS=x/' -e 's/^FIELD_HASH_KEY=.*/FIELD_HASH_KEY=x/'`.
 
+### Bolau launch blockers (only if the `bolau` flag is switched on)
+
+Bolau (Sipalu home-visit bookings, [CONTRACT-BOLAU.md](CONTRACT-BOLAU.md),
+[ADR 0011](adr/0011-bolau-sipalu-ghardhani-bookings.md)) is built and **off** by default. Leave it
+off in production until every item below is done. The employer product doesn't depend on any of them.
+
+1. 🔴 **Legal review for Bolau**: Consumer Protection Act 2075 duties, intermediary status,
+   Sipalu independent-worker status, booking/cancellation terms, liability for home-visit incidents
+   (row "Bolau: Consumer Protection Act…" under Legal and finance).
+2. 🔴 **Payment gateway merchant agreement**, only if `bolau_fee` will be on: eSewa ePay / Khalti KPG
+   credentials + `BOLAU_WEBHOOK_SECRETS` (Partner agreements below). With the fee flag off, fees
+   are recorded as waived and nothing is collected.
+3. 🔴 **Home-visit safety SOP adopted and staff trained**:
+   [ops/bolau-home-visit-safety.md](ops/bolau-home-visit-safety.md) covers the pre-launch gate, extra
+   Sipalu checks before verification, safety reports and emergencies (100), no-shows,
+   off-platform payment and suspension rules. Staff must have drilled it.
+4. 🔴 **Ops staffing for no-shows, safety reports and disputes**: at least two `support` staff
+   on the rota for every hour bookings can start, plus an ops-lead escalation phone. Urgent safety
+   cases have a 4 h SLA and alert every support user.
+5. 🔴 **Native Nepali review** of the Bolau screens (web `messages/src/bolau.ne.json`, mobile
+   `app_ne.arb` `bl*` keys), notifications/SMS and the SOP's Nepali scripts.
+
 ✅ Resolved since the last review: the production compose now forwards `FIELD_ENCRYPTION_KEYS` and
 `FIELD_HASH_KEY` as required variables (`deploy/docker-compose.prod.yml` `x-backend-env`), and
 staff MFA and roles are enforced (`apps/accounts/mfa.py`, `apps/accounts/staff_roles.py`,
@@ -115,6 +137,8 @@ staff MFA and roles are enforced (`apps/accounts/mfa.py`, `apps/accounts/staff_r
 | Foreign-employment document guidance | ✅ | [ops/foreign-employment-documents.md](ops/foreign-employment-documents.md). Tooling ✅: `apps/mobility`, `/ops/mobility` (`tests/test_mobility.py`, [ADR 0007](adr/0007-foreign-employment-document-vault-only.md)) |
 | Data-protection requests | ✅ | [ops/data-protection-requests.md](ops/data-protection-requests.md); `apps/privacy` (`tests/test_privacy.py`) |
 | Incident communications | ✅ | [ops/incident-communications.md](ops/incident-communications.md) |
+| Bolau home-visit safety SOP | ✅ written / 🔴 trained | [ops/bolau-home-visit-safety.md](ops/bolau-home-visit-safety.md). Tooling ✅: safety report → confidential `safety` support case with emergency escalation (`tests/test_bolau_bookings.py::test_dispute_and_safety_report`), `/ops/bolau` suspend/lift audited (`tests/test_bolau_ops_payments.py::test_ops_suspend_audited_and_blocks_booking`), risk detectors (`test_risk_cancellation_abuse_and_off_platform_reports`, `test_risk_review_fraud_same_device`), no-show refunds (`tests/test_bolau_bookings.py::test_no_show_after_grace_refunds`). Launch blocker 3 above. |
+| Bolau ops staffing (no-shows, safety, disputes) | 🔴 | Only if `bolau` is switched on: two `support` staff per booking hour + ops-lead escalation phone (launch blocker 4 above). KPIs and queues: `/ops/bolau` (`web/e2e/ops-bolau.spec.ts`). |
 | Yearly reference data (tax slabs, minimum wage, holidays, SSF) | 🟡 | Process in [RUNBOOK §9](RUNBOOK.md#9-yearly-reference-data-checklist). 🔴 Holidays for 2083 are seeded as **approximate** (`apps/core/reference_data.py`): confirm them against the government calendar before the pilot. |
 
 ## Legal and finance

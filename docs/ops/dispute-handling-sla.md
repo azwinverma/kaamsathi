@@ -6,6 +6,7 @@
 | Performed by | `support` role |
 | Tools | Worker: app → disputes (`GET|POST /me/disputes`). Employer: `/app/disputes` (`GET /org/disputes`, `POST /org/disputes/{id}/respond {note}`). Ops: `/ops/disputes` (`GET /ops/disputes?status=`, `POST /ops/disputes/{id}/resolve {status: resolved|rejected, note}`). |
 | Code | [apps/trust](../../backend/apps/trust) (`Dispute`); `sla_due_at` and escalation **in progress** |
+| Related | Bolau booking disputes (Sipalu ↔ Ghardhani), safety reports, no-shows and suspensions: [bolau-home-visit-safety.md](bolau-home-visit-safety.md) |
 
 ## Purpose
 

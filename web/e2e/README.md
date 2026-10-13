@@ -8,8 +8,8 @@ fails on serious/critical only), and Bolau (skipped while the `bolau` flag is of
 `bolau.spec.ts` (search → profile → book as Ghardhani 9800000020 → /ghar detail: arrival code,
 free-cancel window, cancel; read-only demo dispute; axe), `ops-bolau.spec.ts` (KPIs, suspend +
 lift an E2E-made Sipalu with a reason, audit rows; axe), `home-bolau.spec.ts` (home with Bolau on:
-hero + header CTA + real "Sipalu near you" cards, axe; hero search → /bolau with trade/date params
-and results; read-only). They run serially against seeded demo
+hero + header CTA + real "Sipalu near you" cards, axe; hero collage captions never covered or
+clipped at 1440 px; hero search → /bolau with trade/date params and results; read-only). They run serially against seeded demo
 data and clean up after themselves: the booking is cancelled (descriptions start with "E2E:") and
 the suspension lifted, even when a step fails.
 
@@ -27,4 +27,12 @@ cd web && pnpm e2e:install && pnpm e2e            # BASE_URL=http://localhost:30
 
 Or the whole stack in Docker: `make up && make seed`, then `pnpm e2e`. The OTP rate limit is
 5 codes per phone per hour — rerunning many times in a row may need `seed_demo` or a Redis flush.
+Local runs against the dev database leave the cancelled `E2E:` bookings and the pending
+`98000009xx` Sipalu from `bolau-join.spec.ts` behind (CI starts from a fresh database). Remove them
+after a session — dry run first, then `--apply` (dev settings only; see docs/RUNBOOK.md §14):
+
+```bash
+cd backend && DJANGO_SETTINGS_MODULE=config.settings.dev .venv/bin/python manage.py cleanup_dev_test_data [--apply]
+```
+
 CI runs the same suite in the `e2e` job of `.github/workflows/ci.yml` (report uploaded as an artifact).

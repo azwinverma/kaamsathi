@@ -5,7 +5,7 @@
 | Owner | Ops lead |
 | Performed by | Staff with the `verifier` role (until staff roles ship: named ops staff only) |
 | Tools | Ops console `/ops/verification`, `/ops/workers/[id]`; API `POST /ops/workers/{id}/verify` |
-| Related | [fraud-escalation.md](fraud-escalation.md), [worker-registration-camps.md](worker-registration-camps.md), [SECURITY.md](../SECURITY.md) |
+| Related | [bolau-home-visit-safety.md](bolau-home-visit-safety.md) §1 (extra checks before a Sipalu becomes bookable), [fraud-escalation.md](fraud-escalation.md), [worker-registration-camps.md](worker-registration-camps.md), [SECURITY.md](../SECURITY.md) |
 
 ## Purpose
 

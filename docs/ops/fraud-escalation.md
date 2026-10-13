@@ -5,7 +5,7 @@
 | Owner | Ops lead. A founder is the decision-maker for high-severity cases. |
 | Performed by | `risk_analyst` role (until roles ship: ops lead), with verifiers and support raising flags |
 | Tools | `/ops/risk` → API `GET /ops/risk/flags?status=&kind=&severity=`, `POST /ops/risk/flags` (manual), `POST /ops/risk/flags/{id}/resolve {status: confirmed|dismissed, note}`, `GET /ops/risk/summary` (**in progress**, `apps.risk`); the nightly `apps.risk.tasks.scan` at 04:00 |
-| Related | [kyc-identity-verification.md](kyc-identity-verification.md), [employer-verification-kyb.md](employer-verification-kyb.md), [incident-communications.md](incident-communications.md), [SECURITY.md §6](../SECURITY.md#6-breach-response) |
+| Related | [kyc-identity-verification.md](kyc-identity-verification.md), [employer-verification-kyb.md](employer-verification-kyb.md), [incident-communications.md](incident-communications.md), [SECURITY.md §6](../SECURITY.md#6-breach-response), [bolau-home-visit-safety.md](bolau-home-visit-safety.md) |
 
 ## Purpose
 

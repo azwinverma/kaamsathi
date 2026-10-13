@@ -9,7 +9,8 @@ const TAPE = {
 /**
  * White-bordered print "taped" to a wall, rotated a few degrees. Only for real, consented portraits
  * or clearly labelled illustration placeholders (docs/design/DIRECTION.md §4). The paper stays white
- * in dark mode, so the caption uses the fixed ink colour.
+ * in dark mode, so the caption uses the fixed ink colour. The caption always wraps (never truncates);
+ * where frames overlap in a collage, the frame whose caption would be covered sits on top (z-10).
  */
 export function CutPaperFrame({
   children,
@@ -42,7 +43,7 @@ export function CutPaperFrame({
     >
       {children}
       {caption ? (
-        <figcaption className="text-on-accent pt-2 text-[13px] leading-snug font-semibold">
+        <figcaption className="text-on-accent pt-2 text-[13px] leading-snug font-semibold break-words">
           {tag ? (
             <span className="text-on-accent/80 mr-1.5 text-[11px] font-medium tracking-wide uppercase">
               {tag} ·

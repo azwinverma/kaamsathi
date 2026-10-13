@@ -449,3 +449,27 @@ def test_dispute_and_safety_report(setup):
     assert (
         case.category == "safety" and case.confidential and Booking.objects.get(pk=bid).code in case.subject
     )
+
+
+# --------------------------------------------------------------------------- telemetry
+def test_booking_telemetry_events_carry_no_pii(setup):
+    from apps.telemetry.models import Event
+
+    profile, service, sc, user, addr, gc = setup
+    bid = run_to_completed(setup)
+    go(gc, bid, "confirm")
+    assert go(gc, bid, "rate", {"score": 5}).status_code == 201
+    names = list(Event.objects.filter(name__startswith="bolau_").values_list("name", flat=True))
+    assert "bolau_booking_requested" in names and "bolau_rating_submitted" in names
+    moves = Event.objects.filter(name="bolau_booking_status_changed", properties__booking_id=bid)
+    assert [e.properties["to_status"] for e in moves.order_by("id")] == [
+        "accepted",
+        "on_the_way",
+        "arrived",
+        "in_progress",
+        "completed",
+        "confirmed",
+    ]
+    blob = str(list(Event.objects.filter(name__startswith="bolau_").values_list("properties", flat=True)))
+    for secret in (user.phone, profile.worker.phone, addr.line, addr.landmark, "Fan is not working"):
+        assert secret not in blob

@@ -110,7 +110,7 @@ export async function BolauHero({
             tag={a.tag}
             tape="yellow"
             rotate={-4}
-            className="absolute top-6 left-[4%] w-[58%] max-w-[270px]"
+            className="absolute top-6 left-[4%] z-10 w-[58%] max-w-[270px]"
           >
             <ImageSlot slot={a.slot} alt={a.alt} priority sizes="270px" />
           </CutPaperFrame>

@@ -104,6 +104,7 @@ only through short-lived signed links, workers can export or delete their data
   - [dispute handling SLA](docs/ops/dispute-handling-sla.md)
   - [data-protection requests](docs/ops/data-protection-requests.md)
   - [foreign-employment documents](docs/ops/foreign-employment-documents.md)
+  - [Bolau home-visit safety](docs/ops/bolau-home-visit-safety.md): verifying Sipalu before Bolau goes on, safety reports and emergencies (100), no-shows, off-platform payment, suspensions
 - Field and customers:
   - [support scripts](docs/ops/support-scripts.md)
   - [employer onboarding playbook](docs/ops/employer-onboarding-playbook.md)

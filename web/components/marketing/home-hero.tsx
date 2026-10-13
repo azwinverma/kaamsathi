@@ -67,7 +67,7 @@ export async function HomeHero() {
             tag={a.tag}
             tape="yellow"
             rotate={-5}
-            className="absolute top-2 left-[2%] w-[52%] max-w-[250px] sm:left-[6%]"
+            className="absolute top-2 left-[2%] z-10 w-[52%] max-w-[250px] sm:left-[6%]"
           >
             <ImageSlot slot={a.slot} alt={a.alt} priority sizes="(min-width: 1024px) 250px, 52vw" />
           </CutPaperFrame>
