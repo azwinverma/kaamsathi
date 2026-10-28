@@ -1,6 +1,7 @@
 # Deploy: web on Vercel, backend on Railway
 
-The managed-hosting path. The self-hosted alternative (one VPS, `deploy/docker-compose.prod.yml`)
+The managed-hosting path (about $15–20/month on Railway). Free alternative for demos and a free
+pilot: [VERCEL_FREE.md](VERCEL_FREE.md). The self-hosted alternative (one VPS, `deploy/docker-compose.prod.yml`)
 stays in [RUNBOOK §1](../RUNBOOK.md#1-first-deploy). Both use the same images and settings.
 
 ```

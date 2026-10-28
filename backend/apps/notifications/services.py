@@ -10,8 +10,14 @@ logger = logging.getLogger("kaamsathi.notifications")
 
 
 def enqueue(task, *args, eta=None, **kwargs):
-    # Eager mode (dev/tests) can't defer, so a future reminder would go out immediately.
+    # Eager mode can't defer, so a future reminder would go out immediately. Serverless hosting
+    # stores it for the HTTP scheduler (apps/core/cron.py); dev/tests just skip it.
     if eta is not None and settings.CELERY_TASK_ALWAYS_EAGER and eta > timezone.now():
+        if getattr(settings, "SERVERLESS", False):
+            from apps.core.cron import defer
+
+            transaction.on_commit(lambda: defer(task, args, kwargs, eta))
+            return
         logger.info("Eager Celery: skipping %s scheduled for %s", task.name, eta)
         return
 

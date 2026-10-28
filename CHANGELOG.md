@@ -12,6 +12,14 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
   beat, Postgres 16, Redis, private media bucket). Walkthrough: `docs/deploy/RAILWAY_VERCEL.md`.
   Gunicorn binds `$PORT`. New `AWS_S3_ADDRESSING_STYLE` setting for virtual-hosted buckets.
 
+- **Free deploy path** (`docs/deploy/VERCEL_FREE.md`): API on Vercel Hobby (`backend/vercel.json`,
+  build step `scripts/vercel_build.py` migrates on production deploys only) with Neon, Upstash and
+  Cloudflare R2. New `SERVERLESS` mode: Celery tasks run inline after commit (failures go to
+  FailedTask, not the request); future-dated tasks become `DeferredTask` rows; the beat schedule is
+  driven by `GET|POST /api/v1/internal/cron` (`CRON_SECRET`, `apps/core/cron.py`, `manage.py
+  run_cron`), timed by cron-job.org, `.github/workflows/cron.yml` and a daily Vercel Cron.
+  `DB_DISABLE_SERVER_SIDE_CURSORS` for pooled Postgres; `RELEASE` falls back to the Vercel commit.
+
 ### Fixed
 - The web BFF now relays each user's IP to the API (`X-KaamSathi-Client-IP`, trusted only with the
   shared `BFF_PROXY_SECRET`; `apps/core/proxy_ip.py`). Previously, web OTP requests, logins and

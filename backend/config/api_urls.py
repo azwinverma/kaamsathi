@@ -44,6 +44,8 @@ def p(route, view, name):
 urlpatterns = [
     p("health", ref.HealthView, "health"),
     p("readiness", core.ReadinessView, "readiness"),
+    # serverless scheduler: runs due beat jobs + deferred tasks (apps.core.cron)
+    p("internal/cron", core.CronView, "internal-cron"),
     # private documents via short-lived signed tokens (apps.core.files)
     re_path(r"^files/(?P<token>[A-Za-z0-9_\-:.]+)/?$", core.FileDownloadView.as_view(), name="file-download"),
     # reference data

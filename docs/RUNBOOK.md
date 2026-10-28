@@ -23,8 +23,13 @@ All `make` targets below accept `ENV_FILE=deploy/.env.staging PROJECT=kaamsathi-
 
 ## 1. First deploy
 
-Managed hosting instead (web on Vercel, API + Celery + Postgres + Redis on Railway):
-[docs/deploy/RAILWAY_VERCEL.md](deploy/RAILWAY_VERCEL.md). The steps below are the single-VPS path.
+Other hosting paths, each with its own walkthrough:
+- **Free** (demos, free pilot): web + API on Vercel Hobby, Neon, Upstash, Cloudflare R2, with an
+  HTTP timer instead of Celery: [docs/deploy/VERCEL_FREE.md](deploy/VERCEL_FREE.md).
+- **Managed, paid** (web on Vercel; API + Celery + Postgres + Redis on Railway):
+  [docs/deploy/RAILWAY_VERCEL.md](deploy/RAILWAY_VERCEL.md).
+
+The steps below are the single-VPS path.
 
 1. Host: Ubuntu 24.04 LTS, ≥ 2 vCPU / 4 GB RAM / 40 GB SSD, Docker Engine + compose plugin,
    firewall open on 80/443 only (plus SSH). Enable unattended security upgrades.

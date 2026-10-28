@@ -54,6 +54,43 @@ class FailedTask(models.Model):
         return f"{self.task_name} @ {self.created_at:%Y-%m-%d %H:%M}"
 
 
+class ScheduledJobRun(models.Model):
+    """Last run of each ``CELERY_BEAT_SCHEDULE`` entry when the HTTP scheduler drives them
+    (``apps/core/cron.py``, serverless hosting without ``celery beat``)."""
+
+    name = models.CharField(max_length=100, primary_key=True)
+    last_run_at = models.DateTimeField()
+    last_status = models.CharField(max_length=20, blank=True, default="")
+
+    def __str__(self):
+        return f"{self.name} @ {self.last_run_at:%Y-%m-%d %H:%M}"
+
+
+class DeferredTask(models.Model):
+    """A Celery task queued with a future ``eta`` while tasks run inline (``SERVERLESS``).
+    ``apps/core/cron.py`` runs it once it is due."""
+
+    PENDING, RUNNING, DONE, FAILED = "pending", "running", "done", "failed"
+    STATUSES = [(PENDING, "Pending"), (RUNNING, "Running"), (DONE, "Done"), (FAILED, "Failed")]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    task_name = models.CharField(max_length=200)
+    args = models.JSONField(default=list, blank=True)
+    kwargs = models.JSONField(default=dict, blank=True)
+    run_at = models.DateTimeField()
+    status = models.CharField(max_length=10, choices=STATUSES, default=PENDING)
+    created_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField(null=True, blank=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["run_at"]
+        indexes = [models.Index(fields=["status", "run_at"])]
+
+    def __str__(self):
+        return f"{self.task_name} at {self.run_at:%Y-%m-%d %H:%M} ({self.status})"
+
+
 class FeatureFlag(models.Model):
     """Runtime feature flag (``apps/core/flags.py``). Overrides the matching settings boolean."""
 

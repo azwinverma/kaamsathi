@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hmac
 import logging
 
 from django.conf import settings
@@ -103,6 +104,36 @@ class FileDownloadView(APIView):
             changes={"field": field},
             ip=client_ip(request),
         )
+
+
+class CronView(APIView):
+    """GET|POST /internal/cron — serverless scheduler tick (``apps/core/cron.py``).
+
+    ``Authorization: Bearer <CRON_SECRET>`` (Vercel Cron sends exactly this). 404 when unset.
+    """
+
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
+    throttle_classes = []
+
+    def _tick(self, request):
+        secret = getattr(settings, "CRON_SECRET", "")
+        if not secret:
+            raise APIError("not_found", status_code=404)
+        presented = request.META.get("HTTP_AUTHORIZATION", "")
+        if not hmac.compare_digest(presented.encode(), f"Bearer {secret}".encode()):
+            raise APIError("not_authenticated", status_code=401)
+        from .cron import run_due
+
+        return Response(run_due())
+
+    @extend_schema(exclude=True)
+    def get(self, request):
+        return self._tick(request)
+
+    @extend_schema(exclude=True)
+    def post(self, request):
+        return self._tick(request)
 
 
 class ReadinessView(APIView):

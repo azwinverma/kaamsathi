@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "regions": ["sin1"],
+  "buildCommand": "python scripts/vercel_build.py",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- .",
+  "functions": {
+    "config/wsgi.py": {
+      "maxDuration": 300,
+      "excludeFiles": "{tests/**,media/**,**/__pycache__/**,requirements-dev.txt,pytest.ini,ruff.toml,Dockerfile,entrypoint.sh,gunicorn.conf.py}"
+    }
+  },
+  "crons": [{ "path": "/api/v1/internal/cron", "schedule": "15 0 * * *" }]
+}

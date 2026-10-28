@@ -4,6 +4,10 @@ from .base import LOGGING, RELEASE, env
 DEBUG = False
 SECRET_KEY = env("DJANGO_SECRET_KEY")  # required in production
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
+# Vercel system variables: this deployment's own URL and the project's production domain.
+ALLOWED_HOSTS += [
+    h for h in (env("VERCEL_URL", default=""), env("VERCEL_PROJECT_PRODUCTION_URL", default="")) if h
+]
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 OTP_DEV_CODE = ""  # never in production

@@ -92,7 +92,7 @@ ROOT_URLCONF = "config.urls"
 # Django admin lives at a non-default path in production (e.g. "ks-ops-7f3a/"); staff only.
 DJANGO_ADMIN_URL = env("DJANGO_ADMIN_URL", default="admin/").strip("/") + "/"
 # Release identifier (git SHA / tag) — set by the deploy; shown in /readiness and Sentry.
-RELEASE = env("RELEASE", default="")
+RELEASE = env("RELEASE", default="") or env("VERCEL_GIT_COMMIT_SHA", default="")[:12]
 
 TEMPLATES = [
     {
@@ -116,6 +116,10 @@ DATABASES = {
 }
 DATABASES["default"]["CONN_MAX_AGE"] = env.int("DB_CONN_MAX_AGE", default=60)
 DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
+# Required behind a transaction-mode pooler (Neon "-pooler" host, PgBouncer).
+DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = env.bool(
+    "DB_DISABLE_SERVER_SIDE_CURSORS", default=False
+)
 
 AUTH_USER_MODEL = "accounts.User"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -295,6 +299,15 @@ CELERY_TASK_IGNORE_RESULT = True
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_ALWAYS_EAGER = env.bool("CELERY_TASK_ALWAYS_EAGER", default=False)
 CELERY_TASK_EAGER_PROPAGATES = True
+# Serverless hosting (Vercel): no broker, worker or beat. Tasks run inline after the request's
+# transaction commits (a failure is recorded as a FailedTask instead of failing the request);
+# future-dated tasks become DeferredTask rows; CELERY_BEAT_SCHEDULE is driven over HTTP by
+# POST /api/v1/internal/cron (apps/core/cron.py) with Authorization: Bearer CRON_SECRET.
+SERVERLESS = env.bool("SERVERLESS", default=False)
+CRON_SECRET = env("CRON_SECRET", default="")  # empty = the cron endpoint is disabled (404)
+if SERVERLESS:
+    CELERY_TASK_ALWAYS_EAGER = True
+    CELERY_TASK_EAGER_PROPAGATES = False
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_BEAT_SCHEDULE = {
