@@ -17,7 +17,8 @@ def _int(name, default):
         return default
 
 
-bind = os.environ.get("GUNICORN_BIND", "0.0.0.0:8000")
+# PaaS hosts (Railway, Render, …) inject PORT; Docker/compose keep 8000.
+bind = os.environ.get("GUNICORN_BIND", f"0.0.0.0:{os.environ.get('PORT', '8000')}")
 workers = _int("GUNICORN_WORKERS", min(multiprocessing.cpu_count() * 2 + 1, 9))
 worker_class = "gthread"
 threads = _int("GUNICORN_THREADS", 2)

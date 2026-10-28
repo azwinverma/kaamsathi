@@ -9,6 +9,7 @@ import {
   refreshTokens,
   setAuthCookies,
 } from "@/lib/server/session";
+import { clientIpRelayHeaders } from "@/lib/server/client-ip";
 import { rejectCrossSite, resolveRequestId } from "@/lib/server/origin";
 
 export const dynamic = "force-dynamic";
@@ -91,6 +92,7 @@ async function handle(req: NextRequest, ctx: Ctx): Promise<Response> {
     headers.set("Accept-Language", locale === "ne" ? "ne" : "en");
     const fwd = req.headers.get("x-forwarded-for");
     if (fwd) headers.set("X-Forwarded-For", fwd);
+    for (const [k, v] of Object.entries(clientIpRelayHeaders(req.headers))) headers.set(k, v);
     headers.set("X-Request-ID", requestId);
     const idem = req.headers.get("idempotency-key");
     if (idem && hasBody && IDEMPOTENCY_KEY_RE.test(idem)) headers.set("Idempotency-Key", idem);

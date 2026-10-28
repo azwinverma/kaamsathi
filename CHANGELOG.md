@@ -7,6 +7,17 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
 ## [Unreleased]
 
 ### Added
+- **Managed deploy path**: web on Vercel (`web/vercel.json`, region `sin1`) and backend on Railway,
+  defined as code in `.railway/railway.ts` (api with pre-deploy migrations, Celery worker, single
+  beat, Postgres 16, Redis, private media bucket). Walkthrough: `docs/deploy/RAILWAY_VERCEL.md`.
+  Gunicorn binds `$PORT`. New `AWS_S3_ADDRESSING_STYLE` setting for virtual-hosted buckets.
+
+### Fixed
+- The web BFF now relays each user's IP to the API (`X-KaamSathi-Client-IP`, trusted only with the
+  shared `BFF_PROXY_SECRET`; `apps/core/proxy_ip.py`). Previously, web OTP requests, logins and
+  sessions were throttled and audited under the web server's address. `BFF_PROXY_SECRET` is now
+  required in `deploy/.env.prod`.
+
 - **Billing** (`apps/billing`): price plans (pilot, starter, growth, business, enterprise) with
   per-organization subscriptions; subscription charges priced from the org's plan (pilot keeps the
   phase-1 terms: Rs 150/active worker, minimum Rs 3,000, placement Rs 5,000).

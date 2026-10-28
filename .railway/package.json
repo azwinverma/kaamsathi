@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "type": "module",
+  "description": "Types for .railway/railway.ts (Railway Infrastructure as Code). Not deployed.",
+  "devDependencies": {
+    "railway": "3.16.0",
+    "typescript": "5.9.3"
+  }
+}

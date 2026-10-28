@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
     method: "POST",
     body: payload,
     lang: req.cookies.get(LOCALE_COOKIE)?.value,
+    from: req.headers,
   });
   if (status !== 200 || !hasTokens(data)) {
     return NextResponse.json(data, { status: status === 200 ? 502 : status });

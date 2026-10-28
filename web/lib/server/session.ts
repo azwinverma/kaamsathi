@@ -4,6 +4,7 @@ import type { NextResponse } from "next/server";
 /** Cookie names shared with middleware (keep in sync with lib/cookies.ts). */
 export { ACCESS_COOKIE, REFRESH_COOKIE, ORG_COOKIE, LOCALE_COOKIE } from "@/lib/cookies";
 import { ACCESS_COOKIE, REFRESH_COOKIE, ORG_COOKIE } from "@/lib/cookies";
+import { clientIpRelayHeaders } from "./client-ip";
 
 export const API_BASE_URL = (process.env.API_BASE_URL || "http://localhost:8000/api/v1").replace(
   /\/+$/,
@@ -45,9 +46,19 @@ export function setOrgCookie(res: NextResponse, orgId: string) {
 /** Call the backend with JSON; never throws on HTTP errors. */
 export async function backendJson(
   path: string,
-  init: { method?: string; body?: unknown; access?: string; lang?: string } = {},
+  init: {
+    method?: string;
+    body?: unknown;
+    access?: string;
+    lang?: string;
+    /** Incoming browser request headers: relays the user's IP (OTP throttles, audit log). */
+    from?: Headers;
+  } = {},
 ): Promise<{ status: number; data: unknown }> {
-  const headers: Record<string, string> = { Accept: "application/json" };
+  const headers: Record<string, string> = {
+    Accept: "application/json",
+    ...(init.from ? clientIpRelayHeaders(init.from) : {}),
+  };
   if (init.body !== undefined) headers["Content-Type"] = "application/json";
   if (init.access) headers.Authorization = `Bearer ${init.access}`;
   if (init.lang) headers["Accept-Language"] = init.lang;

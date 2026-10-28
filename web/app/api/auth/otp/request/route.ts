@@ -11,6 +11,7 @@ export async function POST(req: NextRequest) {
     method: "POST",
     body: { phone },
     lang: req.cookies.get(LOCALE_COOKIE)?.value,
+    from: req.headers,
   });
   return NextResponse.json(data, { status });
 }

@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   const access = req.cookies.get(ACCESS_COOKIE)?.value;
   if (refresh) {
     // Best effort blacklist; we clear cookies regardless.
-    await backendJson("/auth/logout", { method: "POST", body: { refresh }, access });
+    await backendJson("/auth/logout", { method: "POST", body: { refresh }, access, from: req.headers });
   }
   const res = NextResponse.json({ ok: true });
   clearAuthCookies(res);

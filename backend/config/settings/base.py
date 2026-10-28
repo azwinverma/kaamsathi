@@ -72,6 +72,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # First: everything below (throttling, audit, metrics) must see the end user's IP.
+    "apps.core.proxy_ip.TrustedProxyClientIPMiddleware",
     "apps.core.request_id.RequestIDMiddleware",
     "apps.core.maintenance.MaintenanceMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -169,6 +171,8 @@ if AWS_STORAGE_BUCKET_NAME:
     AWS_QUERYSTRING_EXPIRE = FILE_URL_TTL_SECONDS
     AWS_S3_FILE_OVERWRITE = False
     AWS_S3_SIGNATURE_VERSION = "s3v4"
+    # "virtual" for Railway Buckets / Cloudflare R2 style endpoints; None = boto3 default.
+    AWS_S3_ADDRESSING_STYLE = env("AWS_S3_ADDRESSING_STYLE", default=None)
     STORAGES["default"] = {"BACKEND": "storages.backends.s3.S3Storage"}
     STORAGES["private"] = {
         "BACKEND": "storages.backends.s3.S3Storage",
@@ -186,6 +190,10 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
 
 # --- DRF --------------------------------------------------------------------
+# Shared with the web BFF (web env BFF_PROXY_SECRET): lets it relay the end user's IP
+# (apps/core/proxy_ip.py). Empty = relayed IPs are ignored.
+BFF_PROXY_SECRET = env("BFF_PROXY_SECRET", default="")
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         # JWT + refuses access tokens of signed-out sessions (apps/accounts/sessions.py).

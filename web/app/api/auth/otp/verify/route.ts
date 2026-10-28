@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
     method: "POST",
     body: { phone: String(body.phone ?? ""), code: String(body.code ?? "") },
     lang: req.cookies.get(LOCALE_COOKIE)?.value,
+    from: req.headers,
   });
   // Staff with MFA enabled: no tokens yet — pass the short-lived challenge through, set no cookies.
   if (status === 200 && isMfaChallenge(data)) {
