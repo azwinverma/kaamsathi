@@ -32,6 +32,8 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
   VPS. The free deploy no longer needs Cloudflare R2.
 
 ### Changed
+- Web: **light is the default theme** for everyone (no longer follows the OS dark setting); dark
+  only when chosen with the toggle (remembered per browser).
 - Backups refuse to run without `BACKUP_PASSPHRASE` (prod compose `:?` + `backup.sh`); dumps hold
   ID photos and personal data and are never written unencrypted.
 - `docs/PRODUCTION_CHECKLIST.md` re-verified: stale "known gaps" moved to resolved; hosting added

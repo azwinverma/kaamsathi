@@ -5,7 +5,7 @@
  * Runtime semantic variables (--ks-*) switch between light and dark; @theme maps them to
  * Tailwind utilities (bg-surface, text-fg-muted, bg-success-subtle, …).
  * Tailwind's default palette is disabled on purpose: feature code uses semantic tokens only.
- * Default theme = system preference; [data-theme] on <html> pins a choice.
+ * Default theme = light (whatever the OS setting); [data-theme="dark"] on <html> = user chose dark.
  */
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
@@ -213,53 +213,8 @@
   --ks-ease: cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* Dark (tokens.json color.dark; values not in tokens.json were derived and AA-checked, see DESIGN.md). */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --ks-bg: #020617;
-    --ks-surface: #0f172a;
-    --ks-surface-muted: #1e293b;
-    --ks-surface-hover: #273449;
-    --ks-border: #1e293b;
-    --ks-border-strong: #334155;
-    --ks-fg: #f1f5f9;
-    --ks-fg-body: #cbd5e1;
-    --ks-fg-muted: #94a3b8;
-    --ks-fg-subtle: #94a3b8;
-    --ks-fg-inverse: #0f172a;
-    --ks-brand: #3b82f6;
-    --ks-brand-hover: #60a5fa;
-    --ks-brand-fg: #0b1220;
-    /* action.primary #3B82F6 is 3.98:1 on surface.muted, so text/links use the lighter hover hue. */
-    --ks-brand-text: #60a5fa;
-    --ks-brand-subtle: #172554;
-    --ks-brand-subtle-hover: #1e3a8a;
-    --ks-brand-subtle-fg: #bfdbfe;
-    --ks-indigo: #a5b4fc;
-    --ks-indigo-subtle: rgba(79, 70, 229, 0.2);
-    --ks-ring: #3b82f6;
-    --ks-coral-text: #ff8a8a;
-    --ks-coral-subtle: rgba(255, 107, 107, 0.14);
-    --ks-yellow-subtle: rgba(251, 191, 36, 0.14);
-    --ks-teal-text: #2dd4bf;
-    --ks-teal-subtle: rgba(20, 184, 166, 0.14);
-    --ks-success: #4ade80;
-    --ks-success-subtle: rgba(22, 163, 74, 0.16);
-    --ks-warning: #fbbf24;
-    --ks-warning-subtle: rgba(217, 119, 6, 0.18);
-    --ks-danger: #f87171;
-    --ks-danger-subtle: rgba(220, 38, 38, 0.18);
-    --ks-info: #38bdf8;
-    --ks-info-subtle: rgba(2, 132, 199, 0.18);
-    --ks-verified: #2dd4bf;
-    --ks-verified-hue: #14b8a6;
-    --ks-verified-subtle: rgba(15, 118, 110, 0.24);
-    --ks-danger-on-inverse: #b91c1c;
-    --ks-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 18px rgba(0, 0, 0, 0.3);
-    --ks-shadow-floating: 0 12px 32px rgba(0, 0, 0, 0.5);
-  }
-}
-
+/* Dark (tokens.json color.dark; values not in tokens.json were derived and AA-checked, see DESIGN.md).
+ * Light is the default for everyone; dark applies only when chosen with the toggle. */
 :root[data-theme="dark"] {
   color-scheme: dark;
   --ks-bg: #020617;

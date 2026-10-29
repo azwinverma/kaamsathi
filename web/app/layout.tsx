@@ -49,16 +49,13 @@ export async function generateMetadata(): Promise<Metadata> {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: [
-    // surface.default (light) / surface.canvas (dark) from design/tokens.json
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#020617" },
-  ],
-  colorScheme: "light dark",
+  // surface.default from design/tokens.json: light is the default theme (dark only by choice).
+  themeColor: "#ffffff",
+  colorScheme: "light",
 };
 
-// Pins a user-chosen theme before first paint (avoids a flash). Default follows the OS.
-const themeScript = `try{var t=localStorage.getItem("${THEME_STORAGE_KEY}");if(t==="light"||t==="dark"){document.documentElement.dataset.theme=t;var m=document.querySelector('meta[name="color-scheme"]');if(m)m.content=t}}catch(e){}`;
+// Applies a user-chosen dark theme before first paint (avoids a flash). Default is light.
+const themeScript = `try{if(localStorage.getItem("${THEME_STORAGE_KEY}")==="dark"){document.documentElement.dataset.theme="dark";var m=document.querySelector('meta[name="color-scheme"]');if(m)m.content="dark"}}catch(e){}`;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();

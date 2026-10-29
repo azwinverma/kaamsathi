@@ -57,42 +57,27 @@ export function LanguageToggle({ className, compact }: { className?: string; com
   );
 }
 
-function systemPrefersDark() {
-  return typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches;
-}
-
-/**
- * Two-state theme toggle (system ↔ opposite), per modern-web-guidance dark-mode:
- * pins the exact opposite scheme; choosing the system scheme again clears the pin.
- */
+/** Light is the default theme; the toggle pins dark (and back to light clears the pin). */
 export function ThemeToggle({ className }: { className?: string }) {
   const t = useTranslations("common");
   const [dark, setDark] = React.useState<boolean | null>(null);
 
   React.useEffect(() => {
-    const read = () => {
-      const pinned = document.documentElement.dataset.theme;
-      setDark(pinned ? pinned === "dark" : systemPrefersDark());
-    };
-    read();
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    mq.addEventListener("change", read);
-    return () => mq.removeEventListener("change", read);
+    setDark(document.documentElement.dataset.theme === "dark");
   }, []);
 
   const toggle = () => {
     const nextDark = !dark;
     const meta = document.querySelector('meta[name="color-scheme"]');
     try {
-      if (nextDark === systemPrefersDark()) {
+      if (nextDark) {
+        document.documentElement.dataset.theme = "dark";
+        localStorage.setItem(THEME_STORAGE_KEY, "dark");
+        meta?.setAttribute("content", "dark");
+      } else {
         delete document.documentElement.dataset.theme;
         localStorage.removeItem(THEME_STORAGE_KEY);
-        meta?.setAttribute("content", "light dark");
-      } else {
-        const v = nextDark ? "dark" : "light";
-        document.documentElement.dataset.theme = v;
-        localStorage.setItem(THEME_STORAGE_KEY, v);
-        meta?.setAttribute("content", v);
+        meta?.setAttribute("content", "light");
       }
     } catch {
       /* storage unavailable */
