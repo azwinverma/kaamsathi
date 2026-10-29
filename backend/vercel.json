@@ -2,7 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "regions": ["sin1"],
   "buildCommand": "python scripts/vercel_build.py",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- .",
   "functions": {
     "config/wsgi.py": {
       "maxDuration": 300,

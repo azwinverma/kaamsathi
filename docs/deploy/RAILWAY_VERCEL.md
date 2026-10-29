@@ -96,8 +96,9 @@ never paste them into chat or issues.
    | `BFF_PROXY_SECRET` | the same value as on Railway |
    | `COOKIE_SECURE` | `true` |
 
-3. Deploy. `web/vercel.json` pins functions to `sin1` (Singapore, next to the API) and skips builds
-   when a commit does not touch `web/`.
+3. Deploy. `web/vercel.json` pins functions to `sin1` (Singapore, next to the API). To skip web
+   builds for backend-only commits, use Vercel → Settings → Git → Ignored Build Step, and check it
+   on a real commit first.
 4. Back on Railway, set the shared variable `PUBLIC_WEB_URL` to the final Vercel URL if it differs.
 
 ## 3. Smoke test (same as RUNBOOK §1.6)
@@ -121,7 +122,7 @@ never paste them into chat or issues.
 ## 5. Day-2 notes
 
 - **Deploys:** pushing to `main` redeploys whatever changed (Railway watches `backend/**`, Vercel
-  watches `web/**`). The SSH jobs in `.github/workflows/deploy.yml` stay skipped while no SSH
+  rebuilds the web on every push). The SSH jobs in `.github/workflows/deploy.yml` stay skipped while no SSH
   secrets are set.
 - **Migrations** run in the api pre-deploy step. A failing migration stops the deploy and the old
   version keeps serving. Write backwards-compatible migrations (RUNBOOK §4), because worker/beat
