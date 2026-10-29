@@ -8,6 +8,7 @@ previous deployment keeps serving. Preview deploys never touch the database.
 import os
 import subprocess
 import sys
+from urllib.parse import urlsplit
 
 
 def manage(*args: str) -> None:
@@ -51,6 +52,14 @@ def check_env() -> None:
         sys.exit("DATABASE_URL points at localhost; paste the Neon pooled connection string instead.")
     if not db.startswith(("postgres://", "postgresql://")):
         sys.exit("DATABASE_URL must start with postgresql:// (copy it from Neon → Connect).")
+    for name in ("DATABASE_URL", "REDIS_URL"):
+        value = os.environ[name].strip()
+        if value.count("://") != 1:
+            sys.exit(f"{name} contains more than one URL (two values pasted together?). Paste exactly one.")
+        try:
+            urlsplit(value).port  # raises on a cut-off or glued port such as ':637rediss:'
+        except ValueError:
+            sys.exit(f"{name} has an invalid port (cut off or glued to something). Copy it again in full.")
     if not os.environ["REDIS_URL"].startswith(("redis://", "rediss://")):
         sys.exit("REDIS_URL must start with rediss:// (copy it from Upstash).")
 
