@@ -98,6 +98,7 @@ nightly encrypted backup.
    | `MEDIA_STORAGE` | `database` |
    | `NUM_PROXIES` | `1` |
    | `SMS_BACKEND` | `console` (OTP codes appear in Vercel → Logs) until Sparrow is approved |
+   | `OTP_SHOW_CODE` | `true` **only while testing with demo data**: shows the login code on screen. Remove before real users sign up. |
 
 3. Deploy. The build runs `check --deploy`, `migrate` and `seed_reference` against Neon, then
    collects static files to Vercel's CDN. Function settings are in `backend/vercel.json`: Singapore,

@@ -273,7 +273,7 @@
       "code_sent": "Sent to {phone}",
       "verify": "Verify",
       "change": "Change number",
-      "dev_hint": "Dev code:",
+      "dev_hint": "Test code (tap to use):",
       "signed_in_as": "Signed in as {phone}",
       "mfa_needed": "Your account needs the full sign-in.",
       "mfa_link": "Continue on the login page"

@@ -346,3 +346,21 @@ def test_validation_envelope_fields(owner_client):
     err = assert_error(owner_client.post("/api/v1/org/jobs", {}, format="json"), 400, "validation_error")
     assert {"title", "trade", "wage_amount"} <= set(err["fields"])
     assert all(isinstance(v, list) for v in err["fields"].values())
+
+
+# --------------------------------------------------------------------------- OTP_SHOW_CODE (test sites)
+def test_otp_code_hidden_by_default(api):
+    res = api.post("/api/v1/auth/otp/request", {"phone": "9800000555"}, format="json")
+    assert res.status_code == 200 and "dev_code" not in res.json()
+
+
+def test_otp_show_code_returns_the_real_code(api, settings):
+    from django.core import checks
+
+    settings.OTP_SHOW_CODE = True
+    res = api.post("/api/v1/auth/otp/request", {"phone": "9800000556"}, format="json")
+    code = res.json()["dev_code"]
+    assert len(code) == 6 and code.isdigit()
+    ok = api.post("/api/v1/auth/otp/verify", {"phone": "9800000556", "code": code}, format="json")
+    assert ok.status_code == 200 and ok.json()["access"]
+    assert any(m.id == "kaamsathi.W001" for m in checks.run_checks(include_deployment_checks=True))

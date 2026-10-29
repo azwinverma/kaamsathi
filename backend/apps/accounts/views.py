@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.cache import cache
 from django.db import transaction
 from django.http import HttpResponse
@@ -65,6 +66,8 @@ class OTPRequestView(APIView):
         data = {"sent": True, "expires_in": 300}
         if otp.dev_code():
             data["dev_code"] = otp.dev_code()
+        elif getattr(settings, "OTP_SHOW_CODE", False):
+            data["dev_code"] = code  # test sites only (settings.OTP_SHOW_CODE)
         return Response(data)
 
 

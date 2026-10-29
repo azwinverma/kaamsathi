@@ -32,6 +32,9 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
   VPS. The free deploy no longer needs Cloudflare R2.
 
 ### Changed
+- `OTP_SHOW_CODE=true` (test sites only): the OTP request returns the real random code, and the web
+  and mobile login screens show it as a tap-to-use "Test code". `check --deploy` warns
+  (`kaamsathi.W001`) while it is on.
 - Web: **light is the default theme** for everyone (no longer follows the OS dark setting); dark
   only when chosen with the toggle (remembered per browser).
 - Backups refuse to run without `BACKUP_PASSPHRASE` (prod compose `:?` + `backup.sh`); dumps hold

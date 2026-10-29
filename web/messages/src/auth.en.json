@@ -14,7 +14,7 @@
     "resend": "Resend code",
     "resend_in": "Resend code in {seconds}s",
     "change_number": "Change number",
-    "dev_hint": "Development code:",
+    "dev_hint": "Test code (tap to use):",
     "terms": "By continuing you agree to KaamSathi's terms of service and privacy policy. Standard SMS rates may apply.",
     "choose_title": "Welcome back, {name}",
     "choose_body": "Your account has access to both workspaces. Where would you like to go?",

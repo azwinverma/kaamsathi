@@ -412,6 +412,10 @@ CELERY_BEAT_SCHEDULE = {
 
 # --- KaamSathi domain settings ----------------------------------------------
 OTP_DEV_CODE = env("OTP_DEV_CODE", default="")
+# TEST SITES ONLY (e.g. the free Vercel preview before SMS works): the OTP request response carries
+# the real, random code so the login screen can show it. Anyone could then sign in as any phone
+# number, so never enable it where real people have accounts. `check --deploy` warns while it's on.
+OTP_SHOW_CODE = env.bool("OTP_SHOW_CODE", default=False)
 OTP_TTL_SECONDS = 300
 OTP_MAX_ATTEMPTS = 5
 OTP_MAX_PER_HOUR = env.int("OTP_MAX_PER_HOUR", default=5)

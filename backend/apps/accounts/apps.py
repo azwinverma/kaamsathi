@@ -7,4 +7,4 @@ class AccountsConfig(AppConfig):
     label = "accounts"
 
     def ready(self):
-        from . import schema  # noqa: F401  (registers the OpenAPI auth extension)
+        from . import checks, schema  # noqa: F401  (system checks; OpenAPI auth extension)
