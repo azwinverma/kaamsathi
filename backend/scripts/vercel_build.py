@@ -57,7 +57,7 @@ def check_env() -> None:
         if value.count("://") != 1:
             sys.exit(f"{name} contains more than one URL (two values pasted together?). Paste exactly one.")
         try:
-            urlsplit(value).port  # raises on a cut-off or glued port such as ':637rediss:'
+            _ = urlsplit(value).port  # raises on a cut-off or glued port such as ':637rediss:'
         except ValueError:
             sys.exit(f"{name} has an invalid port (cut off or glued to something). Copy it again in full.")
     if not os.environ["REDIS_URL"].startswith(("redis://", "rediss://")):
