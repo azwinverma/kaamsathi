@@ -1,4 +1,4 @@
-# Deploy for free: Vercel + Neon + Upstash + Cloudflare R2
+# Deploy for free: Vercel + Neon + Upstash
 
 The $0 path for demos and a free pilot. Everything runs on free tiers:
 
@@ -8,7 +8,7 @@ The $0 path for demos and a free pilot. Everything runs on free tiers:
 | API (`backend/`) | Vercel Hobby, project **kaamsathi-api** | Django as one serverless function (Singapore) |
 | Postgres | Neon Free | the database |
 | Redis | Upstash Free | cache, OTP limits, rate limits |
-| Files | Cloudflare R2 Free | ID photos, documents, payslips (private) |
+| Files | stored in Neon (`MEDIA_STORAGE=database`); optional: Cloudflare R2 | ID photos, documents, payslips (private) |
 | Timer | cron-job.org (every 5 min) + GitHub Actions (backup) | the scheduled jobs |
 
 How it differs from the server setups: there is no Celery worker or beat. With `SERVERLESS=true`:
@@ -25,6 +25,9 @@ How it differs from the server setups: there is no Celery worker or beat. With `
 - There is no virus scanner. Uploads are still checked for type, size and file signature.
 - Upstash Free allows 500K Redis commands/month, enough for roughly 100K API requests.
 - Neon Free sleeps when idle; the first request after a quiet spell is ~1 s slower.
+- Uploads live in the database (Vercel has no writable disk), so they count toward Neon's free
+  storage (a few thousand phone photos). Vercel also rejects uploads over 4.5 MB per request; the
+  mobile app shrinks photos to ~0.5 MB, but very large PDFs from the web will fail.
 
 **Secrets rule:** you paste every secret into the provider dashboards yourself. Never commit them
 or send them in chat.
@@ -58,13 +61,17 @@ first**: losing them makes every stored citizenship/NID/PAN/bank number unrecove
    (Singapore)**, TLS on.
 2. Copy the **Redis URL** that starts with `rediss://` (two s). This is `REDIS_URL`.
 
-## 3. Cloudflare R2 (files)
+## 3. Files (nothing to set up)
 
-1. dash.cloudflare.com → R2 → enable the free plan. Create a bucket `kaamsathi-media`, location
-   hint **Asia-Pacific**. Leave **Public access OFF**.
-2. R2 → **Manage API tokens** → Create token: *Object Read & Write*, limited to
-   `kaamsathi-media`. Copy the **Access Key ID**, **Secret Access Key**, and the S3 endpoint
-   `https://<account-id>.r2.cloudflarestorage.com`.
+Uploads are stored in the Neon database (`MEDIA_STORAGE=database`, `backend/apps/core/db_storage.py`),
+with the same signed, expiring links as every other storage option. Only if you outgrow Neon's free
+storage: create a private Cloudflare R2 bucket and set `AWS_STORAGE_BUCKET_NAME`,
+`AWS_S3_ENDPOINT_URL`, `AWS_S3_REGION_NAME=auto`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`
+and `FILES_S3_REDIRECT=true`. They take priority over `MEDIA_STORAGE`. Existing files must then
+be copied across.
+
+On a VPS later (RUNBOOK §1), leave `MEDIA_STORAGE` unset: uploads go to the server's disk and into the
+nightly encrypted backup.
 
 ## 4. Vercel: API project (`kaamsathi-api`)
 
@@ -88,11 +95,7 @@ first**: losing them makes every stored citizenship/NID/PAN/bank number unrecove
    | `DB_CONN_MAX_AGE` | `0` |
    | `DB_DISABLE_SERVER_SIDE_CURSORS` | `true` |
    | `REDIS_URL` | Upstash `rediss://…` (step 2) |
-   | `AWS_STORAGE_BUCKET_NAME` | `kaamsathi-media` |
-   | `AWS_S3_ENDPOINT_URL` | R2 endpoint (step 3) |
-   | `AWS_S3_REGION_NAME` | `auto` |
-   | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` | R2 token (step 3) |
-   | `FILES_S3_REDIRECT` | `true` |
+   | `MEDIA_STORAGE` | `database` |
    | `NUM_PROXIES` | `1` |
    | `SMS_BACKEND` | `console` (OTP codes appear in Vercel → Logs) until Sparrow is approved |
 
@@ -159,7 +162,8 @@ claimed before it runs.
 3. Check:
    - `/ops/system/health` shows the beat heartbeat as fresh (the timer works).
    - Your session list shows **your** IP, which proves `BFF_PROXY_SECRET` matches.
-   - An uploaded ID photo opens in the app, but its raw R2 URL is denied.
+   - An uploaded ID photo opens in the app through its signed link, and the link stops working
+     after 10 minutes.
 4. Bolau stays off until you switch the `bolau` flag on in `/ops/flags`.
 
 ## 8. When to leave the free tier
@@ -170,5 +174,10 @@ Move when **any** of these happen:
 - you need jobs to the minute;
 - you need virus scanning.
 
-Railway setup: [RAILWAY_VERCEL.md](RAILWAY_VERCEL.md). To move, point Railway at a `pg_dump` of
-Neon and copy the R2 files across. `SERVERLESS` stays unset there, so Celery takes over again.
+To move to a VPS (RUNBOOK §1) or Railway ([RAILWAY_VERCEL.md](RAILWAY_VERCEL.md)):
+1. Restore a `pg_dump` of Neon into the new database.
+2. Leave `MEDIA_STORAGE` and `SERVERLESS` unset there, so disk (or S3) storage and Celery take over.
+3. Run `python manage.py export_db_media` (dry run), then `export_db_media --apply`. It copies every
+   uploaded file out of the database into the new storage under the same name, so existing links
+   keep working.
+4. Once a few documents open correctly, delete the database copies (`StoredFile` rows).

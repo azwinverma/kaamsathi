@@ -46,7 +46,15 @@ urlpatterns = [
 # Media is private (apps.core.files): ID photos, worker photos, certificates and exports are only
 # reachable through signed /api/v1/files/<token> URLs. Local storage serves just the explicitly
 # public prefixes (org logos); S3 storage presigns every URL itself.
-if not getattr(settings, "AWS_STORAGE_BUCKET_NAME", ""):
+if getattr(settings, "AWS_STORAGE_BUCKET_NAME", ""):
+    pass
+elif getattr(settings, "MEDIA_STORAGE", "local") == "database":
+    from apps.core.views import PublicMediaView
+
+    urlpatterns.append(
+        re_path(rf"^{settings.MEDIA_URL.strip('/')}/(?P<path>[^\x00\\]+)$", PublicMediaView.as_view())
+    )
+else:
     for _prefix in settings.PUBLIC_MEDIA_PREFIXES:
         _p = _prefix.strip("/")
         urlpatterns.append(

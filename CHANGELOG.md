@@ -26,6 +26,11 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
   screen views, `otp_requested`, `login_success` and Bolau search. Draft privacy policy discloses
   first-party usage statistics (en/ne).
 
+- `MEDIA_STORAGE=database` (`apps/core/db_storage.py`, `StoredFile`): uploads kept in Postgres for
+  hosts without a writable disk (Vercel free tier), same signed links; public logos via
+  `PublicMediaView`. `manage.py export_db_media [--apply]` copies them to disk/S3 when moving to a
+  VPS. The free deploy no longer needs Cloudflare R2.
+
 ### Changed
 - Backups refuse to run without `BACKUP_PASSPHRASE` (prod compose `:?` + `backup.sh`); dumps hold
   ID photos and personal data and are never written unencrypted.

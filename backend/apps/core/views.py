@@ -106,6 +106,25 @@ class FileDownloadView(APIView):
         )
 
 
+class PublicMediaView(APIView):
+    """GET /media/<path> with database storage: only ``PUBLIC_MEDIA_PREFIXES`` (org logos)."""
+
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
+
+    @extend_schema(exclude=True)
+    def get(self, request, path: str):
+        from .files import is_public_name
+
+        storage = storages["default"]
+        if ".." in path or not is_public_name(path) or not storage.exists(path):
+            raise APIError("not_found", status_code=404)
+        resp = FileResponse(storage.open(path), content_type=content_type_for(path))
+        resp["Cache-Control"] = "public, max-age=3600"
+        resp["X-Content-Type-Options"] = "nosniff"
+        return resp
+
+
 class CronView(APIView):
     """GET|POST /internal/cron — serverless scheduler tick (``apps/core/cron.py``).
 

@@ -54,6 +54,22 @@ class FailedTask(models.Model):
         return f"{self.task_name} @ {self.created_at:%Y-%m-%d %H:%M}"
 
 
+class StoredFile(models.Model):
+    """An uploaded file kept in Postgres (``MEDIA_STORAGE=database``, ``apps/core/db_storage.py``).
+
+    For hosting without a writable disk or object storage (Vercel free tier). Same names, same
+    signed-URL access rules as disk/S3 storage; switch back by migrating rows to files.
+    """
+
+    name = models.CharField(max_length=500, primary_key=True)
+    content = models.BinaryField()
+    size = models.PositiveIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.size} bytes)"
+
+
 class ScheduledJobRun(models.Model):
     """Last run of each ``CELERY_BEAT_SCHEDULE`` entry when the HTTP scheduler drives them
     (``apps/core/cron.py``, serverless hosting without ``celery beat``)."""

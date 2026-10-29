@@ -161,6 +161,16 @@ STORAGES = {
     },
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
 }
+# Where uploads live. "local" (default): MEDIA_ROOT on disk (VPS / docker volume, backed up nightly).
+# "database": Postgres via apps/core/db_storage.py, for hosts without a writable disk (Vercel free).
+# Setting AWS_STORAGE_BUCKET_NAME switches to S3-compatible storage below and wins over both.
+MEDIA_STORAGE = env("MEDIA_STORAGE", default="local")
+if MEDIA_STORAGE == "database":
+    STORAGES["default"] = {"BACKEND": "apps.core.db_storage.DatabaseStorage"}
+    STORAGES["private"] = {
+        "BACKEND": "apps.core.db_storage.DatabaseStorage",
+        "OPTIONS": {"location": "private"},
+    }
 # Optional S3-compatible media storage (e.g. AWS S3, DigitalOcean Spaces, MinIO).
 # The bucket must be PRIVATE (block all public access). Objects are written without an ACL
 # (bucket-owner only) and every URL boto3 generates is a presigned, expiring URL.
