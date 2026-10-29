@@ -36,6 +36,17 @@ def check_env() -> None:
             + ", ".join(missing)
         )
     db = os.environ["DATABASE_URL"]
+    # Common copy/paste slips from Neon's Connect dialog (reported by shape, never by value).
+    hints = [
+        (db != db.strip(), "it has spaces or line breaks around it"),
+        (db.lstrip().startswith("psql"), "it starts with `psql` (copy only the postgresql://… part)"),
+        (db.lstrip()[:1] in "'\"", "it is wrapped in quotes"),
+        (db.lstrip().upper().startswith("DATABASE_URL="), "it repeats `DATABASE_URL=` (value only)"),
+        (db.lstrip().upper().startswith("PG"), "it is PGHOST/PGUSER lines (choose 'Connection string')"),
+    ]
+    found = [msg for bad, msg in hints if bad]
+    if found:
+        sys.exit("DATABASE_URL looks wrong: " + "; ".join(found) + ".")
     if "localhost" in db or "127.0.0.1" in db:
         sys.exit("DATABASE_URL points at localhost; paste the Neon pooled connection string instead.")
     if not db.startswith(("postgres://", "postgresql://")):
