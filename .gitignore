@@ -8,3 +8,8 @@
 deploy/.env.*
 !deploy/.env.*.example
 deploy/backups/
+# Vercel CLI (`vercel link` / `vercel env pull`): project link + pulled env files, never committed
+.vercel/
+.env.local
+.env.*.local
+.env.production.local
