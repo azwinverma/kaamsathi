@@ -5,7 +5,6 @@ from pathlib import Path
 
 import environ
 from celery.schedules import crontab
-from django.utils.translation import gettext_lazy as _
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -130,7 +129,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # --- i18n -------------------------------------------------------------------
 LANGUAGE_CODE = "en"
-LANGUAGES = [("en", _("English")), ("ne", _("Nepali"))]
+# Plain strings, not gettext_lazy: hosts (Vercel) serialise settings before Django is set up.
+LANGUAGES = [("en", "English"), ("ne", "नेपाली")]
 LOCALE_PATHS = [BASE_DIR / "locale"]
 TIME_ZONE = "Asia/Kathmandu"
 USE_I18N = True
