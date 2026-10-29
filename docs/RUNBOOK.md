@@ -78,7 +78,7 @@ peaks (first 3 days of a BS month) and never during an SSF filing deadline.
 ## 5. Backups and restore
 
 * `backup` service runs nightly at `BACKUP_HOUR` (Asia/Kathmandu): `pg_dump | gzip` plus a
-  tarball of the local `media` volume, encrypted with `BACKUP_PASSPHRASE` (GPG AES-256) when set,
+  tarball of the local `media` volume, encrypted with `BACKUP_PASSPHRASE` (GPG AES-256; required: the job refuses to write plaintext),
   kept 14 days in the `backups` volume and optionally copied to `BACKUP_S3_BUCKET`
   (set a bucket lifecycle rule, e.g. 90 days; enable object lock/versioning if available).
 * Manual: `make backup-now`, `make backup-list`.

@@ -6,6 +6,7 @@ import '../api/api_exception.dart';
 import '../api/json.dart';
 import '../format.dart';
 import '../providers.dart';
+import '../telemetry.dart';
 import 'me.dart';
 import 'token_store.dart';
 
@@ -106,6 +107,7 @@ class SessionController extends Notifier<Session> {
     final data = await ref
         .read(apiClientProvider)
         .post<Map<String, dynamic>>('/auth/otp/request', data: {'phone': normalizePhone(phone)});
+    ref.read(telemetryProvider).track('otp_requested', {'channel': 'sms'});
     return OtpRequestResult(expiresIn: intOf(data['expires_in']) ?? 300, devCode: str(data['dev_code']));
   }
 
@@ -116,7 +118,12 @@ class SessionController extends Notifier<Session> {
     await _tokens.save(Tokens(access: strOr(data['access']), refresh: strOr(data['refresh'])));
     final meJson = asJson(data['user']);
     await ref.read(prefsProvider).setCachedMe(meJson);
-    _applyMe(Me.fromJson(meJson));
+    final me = Me.fromJson(meJson);
+    _applyMe(me);
+    ref.read(telemetryProvider).track('login_success', {
+      'method': 'otp',
+      'role': me.canSupervise ? 'supervisor' : (me.isWorker ? 'worker' : 'user'),
+    });
   }
 
   /// Re-fetches `GET /auth/me`.

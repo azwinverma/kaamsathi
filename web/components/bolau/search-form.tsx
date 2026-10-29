@@ -12,6 +12,7 @@ import { useFormat } from "@/lib/use-format";
 import { cn } from "@/lib/utils";
 import { SEARCH_LANGS, TIME_BANDS, activeFilterCount, searchHref, type SearchValues } from "@/lib/bolau/search";
 import { TradeIcon } from "./trade-icon";
+import { track } from "@/lib/telemetry";
 
 export type { SearchValues };
 
@@ -83,7 +84,11 @@ export function BolauSearchForm({
   React.useEffect(() => setV(initial), [initial]);
   const full = variant === "full";
 
-  const go = (next: SearchValues) => router.push(searchHref(next), { scroll: !full });
+  const go = (next: SearchValues) => {
+    // Never the free-text query: only the trade code and how many filters are set.
+    track("search_performed", { source: "bolau", trade: next.trade || null, count: activeFilterCount(next) });
+    router.push(searchHref(next), { scroll: !full });
+  };
   const set = (k: keyof SearchValues, val: string, submit = false) => {
     const next = { ...v, [k]: val };
     setV(next);

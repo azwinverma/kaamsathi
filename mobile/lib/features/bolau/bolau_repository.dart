@@ -10,6 +10,7 @@ import '../../core/api/json.dart';
 import '../../core/auth/session.dart';
 import '../../core/flags.dart';
 import '../../core/providers.dart';
+import '../../core/telemetry.dart';
 import '../worker/trust/trust_data.dart' show Dispute;
 import 'bolau_models.dart';
 
@@ -465,6 +466,10 @@ final bolauTradesProvider = FutureProvider.autoDispose<List<BolauTrade>>((ref) {
 });
 
 final bolauSearchProvider = FutureProvider.autoDispose.family<List<SipaluCard>, BolauSearch>((ref, q) {
+  // Never the free-text query: only the trade code and how many filters are set.
+  final filters =
+      [q.district, q.q, q.minRating].where((v) => v != null && '$v'.isNotEmpty).length + (q.instant ? 1 : 0);
+  ref.read(telemetryProvider).track('search_performed', {'source': 'bolau', 'trade': q.trade, 'count': filters});
   return ref.watch(bolauRepositoryProvider).search(q);
 });
 

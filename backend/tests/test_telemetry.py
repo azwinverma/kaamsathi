@@ -46,6 +46,23 @@ def test_anonymous_batch_is_accepted(api):
     assert page.user is None and page.subject == "anon:anon-12345678"
 
 
+def test_client_event_shapes_are_accepted(api):
+    """Contract with mobile `lib/core/telemetry.dart` and web `lib/telemetry.ts` / `telemetry-page.ts`."""
+    mobile = {"platform": "android", "anonymous_id": "3f2b8c1e1d2a4b5c9d8e7f6a5b4c3d2e"}
+    events = [
+        {**mobile, "name": "app_open", "properties": {"app_version": "1.0.0", "lang": "ne"}},
+        {**mobile, "name": "page_view", "properties": {"app_version": "1.0.0", "screen": "/w/jobs/:id"}},
+        {**mobile, "name": "otp_requested", "properties": {"app_version": "1.0.0", "channel": "sms"}},
+        {**mobile, "name": "login_success", "properties": {"method": "otp", "role": "supervisor"}},
+        {**mobile, "name": "search_performed", "properties": {"source": "bolau", "trade": None, "count": 2}},
+        _ev(properties={"page": "/sipalu/:handle"}),
+        _ev("onboarding_step", properties={"step": "org_created", "industry": "construction"}),
+        _ev("search_performed", properties={"source": "bolau", "trade": "electrician", "count": 1}),
+    ]
+    res = api.post(URL, {"events": events}, format="json")
+    assert res.status_code == 202 and res.json() == {"accepted": len(events)}
+
+
 def test_authenticated_batch_links_user_and_member_org(owner, org):
     client = auth_client(owner, org)
     res = client.post(URL, [_ev("login_success", properties={"method": "otp"})], format="json")

@@ -2722,7 +2722,7 @@
             "Work records: job applications, employment details, attendance (hajiri), leave, advances (peski), payslips and Social Security Fund (SSF) details, ratings and disputes.",
             "Location: only at the moment of an attendance check-in, to confirm you are at the work site. We do not track your location in the background.",
             "Employers: organisation name, PAN, address, work sites, and the names and phone numbers of the people who use the portal.",
-            "Technical information: basic device and log data needed for security, and cookies that keep you signed in and remember your language and theme. We do not use advertising trackers."
+            "Technical information: basic device and log data needed for security; first-party usage statistics (which screens are opened and which features are used — never names, phone numbers or what you type) to improve the service; and cookies that keep you signed in and remember your language and theme. We do not use advertising or third-party trackers."
           ]
         },
         {

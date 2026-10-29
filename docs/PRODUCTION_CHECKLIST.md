@@ -8,8 +8,9 @@ plus KaamSathi's own launch items. The engineering task tracker is
 - 🟡 **partial**: partly built, or built but not yet exercised outside tests
 - 🔴 **needs you**: a decision, account, agreement, secret, review or human test that code can't provide
 
-Last reviewed: 2026-10-08 (Ashwin 2083), against branch `phase-1`. Backend suite: **720 tests pass**.
-All 19 Celery beat entries resolve to registered tasks. Every CONTRACT-EXTENSIONS workstream that was
+Last reviewed: 2026-10-29 (Kartik 2083), against branch `main`. Suites: backend **896**, web **225**
+unit, mobile **607** pass; Playwright 16/16 at the last full run (2026-10-13). All beat entries resolve to registered tasks (also verified
+through the serverless scheduler, `apps/core/cron.py`). Every CONTRACT-EXTENSIONS workstream that was
 "in progress" at the last review has since landed and was re-verified (see the bottom of this file).
 
 ## Launch blockers (do these first)
@@ -31,11 +32,11 @@ All 19 Celery beat entries resolve to registered tasks. Every CONTRACT-EXTENSION
    unencrypted.
 6. 🔴 **Human acceptance pass on staging** with real Android phones (offline hajiri, QR check-in,
    payslip, bank file, SSF file), plus a Nepali-language review.
-7. 🟡 **Fix the CI production-compose validation.** `deploy/docker-compose.prod.yml` now requires
-   `FIELD_ENCRYPTION_KEYS` and `FIELD_HASH_KEY` (`${…:?}`), and both are empty in
-   `deploy/.env.prod.example`. The `docker` job's "Validate production compose file" `sed` in
-   [.github/workflows/ci.yml](../.github/workflows/ci.yml) doesn't fill them, so the job fails.
-   Add `-e 's/^FIELD_ENCRYPTION_KEYS=.*/FIELD_ENCRYPTION_KEYS=x/' -e 's/^FIELD_HASH_KEY=.*/FIELD_HASH_KEY=x/'`.
+7. ✅ ~~Fix the CI production-compose validation~~: the `docker` job fills every required value
+   (`FIELD_*`, `BFF_PROXY_SECRET`, `BACKUP_PASSPHRASE`) before `docker compose config`.
+8. 🔴 **Pick a hosting path and deploy it once**: free ([deploy/VERCEL_FREE.md](deploy/VERCEL_FREE.md),
+   non-commercial only), Railway ([deploy/RAILWAY_VERCEL.md](deploy/RAILWAY_VERCEL.md)) or a VPS (RUNBOOK §1).
+   None has been run against real accounts yet; the first deploy is also the first real test.
 
 ### Bolau launch blockers (only if the `bolau` flag is switched on)
 
@@ -226,24 +227,34 @@ Every item that was 🟡 "in progress" at the 2026-10-07 review is now in the re
 
 ## Known gaps (code vs docs)
 
-- **CI:** the `docker` job's prod-compose validation doesn't fill `FIELD_ENCRYPTION_KEYS` /
-  `FIELD_HASH_KEY`, so it fails (launch blocker 7).
-- **Payout webhooks:** inbound payout-provider webhooks (`X-Signature`) have no timestamp or replay
-  protection. Partner and enterprise webhooks do.
-- **Backups:** they are only encrypted if `BACKUP_PASSPHRASE` is set, but the README says "nightly
-  encrypted backup job". Either make the passphrase required in prod compose or fix the README.
-- **KYC second reviewer:** the second-reviewer (four-eyes) check on identity verification exists
-  only in the SOP, not in code. The ID number and document are now enforced in code.
-- **Design tokens:** [design-tokens.json](design-tokens.json) holds the reference palette
-  (#2563EB + coral/yellow/teal), while the shipped KaamSathi tokens are in [DESIGN.md](DESIGN.md),
-  `web/app/globals.css` and `mobile/lib/core/theme/tokens.dart` (#2647C4 + crimson #DC2B4B).
-  Regenerate the JSON from DESIGN.md or mark it as the reference palette.
-- **Client telemetry:** the web sends only login events and the mobile app sends none, so client
-  funnels are thin until more screens call `track()`.
-- **OTP resend cooldown:** the 30 s cooldown is enforced only on the client. The server enforces
-  5/phone/hour.
+- **Hosting not exercised:** the Vercel-free, Railway and VPS paths are built and locally smoke-tested
+  (production settings, migrations, readiness, OTP, scheduler), but not yet deployed for real.
+- **Free tier trade-offs** (`SERVERLESS=true`): scheduled jobs run at the timer's granularity
+  (5 min), tasks run inside the request, no virus scanner. Fine for a pilot, not for paid traffic.
+- **Remaining 🟡 partial features** (DETAILED_TASK_CHECKLIST): no sub-skills under trades (F003), no
+  branch tier separate from sites (I010), local levels (municipalities) not seeded, only provinces and
+  districts (E003), no shared abstract base model (C012),
+  no BI warehouse feed (Y008), partial training analytics (Y006).
+- **Privacy text changed:** the draft policy now discloses first-party usage statistics (web +
+  mobile). It is still a draft for the lawyer; the acceptance version was not bumped.
 
 ### Resolved since the last review
+
+Re-verified 2026-10-29:
+- CI prod-compose validation fills every required variable (was launch blocker 7).
+- Payout webhooks have timestamp + replay protection (`apps/payouts/views.py`, 409 `webhook_replayed`).
+- KYC four-eyes is in code behind the `kyc_four_eyes` flag (`apps/workers/ops_views.py`, `apps/risk`).
+- OTP resend cooldown is enforced on the server (`apps/accounts/otp.py`, `OTP_RESEND_COOLDOWN_SECONDS`).
+- Backups refuse to run without `BACKUP_PASSPHRASE` (compose `:?` + `deploy/backup/backup.sh`).
+- Design tokens: `design/tokens.json` v2 is the single source; web and mobile ship `#2563EB`; the
+  old `#2647C4`/crimson are retired (DESIGN.md).
+- Client telemetry: web sends page views (route templates), OTP, search, onboarding, job, payroll and
+  feature events; mobile sends app open, screen views, OTP, login and Bolau search
+  (`mobile/lib/core/telemetry.dart`, release builds only).
+- The web BFF relays each user's IP to the API (`BFF_PROXY_SECRET`), so OTP throttles, sessions
+  and the audit log see real users.
+
+Earlier:
 
 - The prod compose now forwards the field-encryption keys.
 - RUNBOOK and SECURITY now document `FIELD_ENCRYPTION_KEYS`, `FIELD_HASH_KEY` and `rotate_field_keys`.

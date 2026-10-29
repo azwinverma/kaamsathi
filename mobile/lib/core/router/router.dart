@@ -75,6 +75,7 @@ import '../../features/worker/trust/ui/profile_views_screen.dart';
 import '../../features/worker/worker_shell.dart';
 import '../auth/session.dart';
 import '../providers.dart';
+import '../telemetry.dart';
 
 abstract final class Routes {
   static const splash = '/splash';
@@ -307,7 +308,7 @@ String? resolveRedirect({
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = _RouterRefresh(ref);
   ref.onDispose(refresh.dispose);
-  return GoRouter(
+  final router = GoRouter(
     initialLocation: Routes.splash,
     refreshListenable: refresh,
     redirect:
@@ -538,4 +539,23 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
+  _trackScreens(ref, router);
+  return router;
 });
+
+/// `app_open` once, then one `page_view` per screen change (route template, no ids).
+void _trackScreens(Ref ref, GoRouter router) {
+  final telemetry = ref.read(telemetryProvider);
+  if (!telemetry.enabled) return;
+  telemetry.track('app_open', {'lang': ref.read(languageProvider) ?? 'en'});
+  String? last;
+  void onChange() {
+    final screen = screenTemplate(router.routerDelegate.currentConfiguration.fullPath);
+    if (screen == last || screen == '/') return;
+    last = screen;
+    telemetry.track('page_view', {'screen': screen});
+  }
+
+  router.routerDelegate.addListener(onChange);
+  ref.onDispose(() => router.routerDelegate.removeListener(onChange));
+}

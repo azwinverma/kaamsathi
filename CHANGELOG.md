@@ -20,6 +20,18 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
   run_cron`), timed by cron-job.org, `.github/workflows/cron.yml` and a daily Vercel Cron.
   `DB_DISABLE_SERVER_SIDE_CURSORS` for pooled Postgres; `RELEASE` falls back to the Vercel commit.
 
+- **Client analytics**: web `page_view` (route templates only: ids and person handles masked,
+  `lib/telemetry-page.ts`), `otp_requested`, Bolau `search_performed` (never the free-text query),
+  employer `onboarding_step`; mobile `lib/core/telemetry.dart` (release builds) sends `app_open`,
+  screen views, `otp_requested`, `login_success` and Bolau search. Draft privacy policy discloses
+  first-party usage statistics (en/ne).
+
+### Changed
+- Backups refuse to run without `BACKUP_PASSPHRASE` (prod compose `:?` + `backup.sh`); dumps hold
+  ID photos and personal data and are never written unencrypted.
+- `docs/PRODUCTION_CHECKLIST.md` re-verified: stale "known gaps" moved to resolved; hosting added
+  as a launch blocker. B007 (monochrome logo) marked done; it had shipped in `web/public/brand`.
+
 ### Fixed
 - The web BFF now relays each user's IP to the API (`X-KaamSathi-Client-IP`, trusted only with the
   shared `BFF_PROXY_SECRET`; `apps/core/proxy_ip.py`). Previously, web OTP requests, logins and

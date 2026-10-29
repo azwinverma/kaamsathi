@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import { ApiError } from "@/lib/api/errors";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { PageViewTracker } from "./page-view-tracker";
 
 function makeClient() {
   return new QueryClient({
@@ -26,6 +27,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={client}>
       <TooltipProvider delayDuration={200}>
+        <PageViewTracker />
         {children}
         <Toaster
           position="top-right"

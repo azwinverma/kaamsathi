@@ -4,6 +4,7 @@ import { api, request } from "../client";
 import { ApiError, parseApiError } from "../errors";
 import { qk } from "../keys";
 import type { Me, OtpRequestResponse } from "../types";
+import { track } from "@/lib/telemetry";
 
 /** Current user via the proxy (/auth/me). */
 export function useMe(enabled = true) {
@@ -51,6 +52,7 @@ async function bff<T>(path: string, body?: unknown): Promise<T> {
 export function useRequestOtp() {
   return useMutation({
     mutationFn: (phone: string) => bff<OtpRequestResponse>("/api/auth/otp/request", { phone }),
+    onSuccess: () => track("otp_requested", { channel: "sms" }),
   });
 }
 

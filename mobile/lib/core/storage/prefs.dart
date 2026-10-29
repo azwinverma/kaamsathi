@@ -18,9 +18,14 @@ class Prefs {
   static const _kSite = 'site_id';
   static const _kMe = 'me_json';
   static const _kCheckIn = 'check_in_state';
+  static const _kAnalytics = 'analytics_id';
 
   String? get language => _p.getString(_kLang);
   Future<void> setLanguage(String lang) => _p.setString(_kLang, lang);
+
+  /// Random install id for product analytics (`core/telemetry.dart`); not tied to the account.
+  String? get analyticsId => _p.getString(_kAnalytics);
+  Future<void> setAnalyticsId(String v) => _p.setString(_kAnalytics, v);
 
   String? get mode => _p.getString(_kMode);
   Future<void> setMode(String? v) => _set(_kMode, v);

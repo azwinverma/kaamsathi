@@ -23,6 +23,7 @@ import { qk } from "@/lib/api/keys";
 import type { Industry } from "@/lib/api/types";
 import { handleFormError, zPhone } from "@/lib/forms";
 import { toLatinDigits } from "@/lib/format";
+import { track } from "@/lib/telemetry";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -101,8 +102,11 @@ export function OnboardingForm() {
     if (me?.phone && !form.getValues("phone")) setValue("phone", me.phone);
   }, [me, setValue, form]);
 
+  React.useEffect(() => track("onboarding_step", { step: "org_form_opened" }), []);
+
   const onSubmit = handleSubmit((v) => {
     setFormError(null);
+    track("onboarding_step", { step: "org_form_submitted", industry: v.industry });
     createOrg.mutate(
       {
         name: v.name,
@@ -124,6 +128,7 @@ export function OnboardingForm() {
           });
           await qc.invalidateQueries({ queryKey: qk.me });
           qc.removeQueries({ queryKey: ["org"] });
+          track("onboarding_step", { step: "org_created", industry: v.industry });
           toast.success(t("onboarding.created", { name: org.name }));
           router.replace("/app");
         },

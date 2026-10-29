@@ -26,7 +26,7 @@ Paths are relative to the repo root. `tests/…` means `backend/tests/…`.
 | Section | Items | ✅ Done | 🟡 Partial | ⛔ By decision | 🔴 Needs owner | ❌ Not built |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | A. Repository & Foundation | 20 | 20 | 0 | 0 | 0 | 0 |
-| B. Brand & Design System | 20 | 17 | 1 | 0 | 2 | 0 |
+| B. Brand & Design System | 20 | 18 | 0 | 0 | 2 | 0 |
 | C. Backend Core | 15 | 14 | 1 | 0 | 0 | 0 |
 | D. Authentication & Security | 20 | 19 | 0 | 1 | 0 | 0 |
 | E. Worker Identity & Passport | 15 | 14 | 1 | 0 | 0 | 0 |
@@ -52,7 +52,7 @@ Paths are relative to the repo root. `tests/…` means `backend/tests/…`.
 | Y. Analytics | 8 | 6 | 2 | 0 | 0 | 0 |
 | Z. Production Readiness | 20 | 8 | 3 | 0 | 9 | 0 |
 | BL. Bolau (Sipalu bookings) — ADR 0011 | 37 | 33 | 0 | 0 | 4 | 0 |
-| **Total** | **346** | **314** | **10** | **7** | **15** | **0** |
+| **Total** | **346** | **315** | **9** | **7** | **15** | **0** |
 
 Counts are taken from the item markers below. Z012, Z014 and Z016 are 🟡 partial items that also
 need a staging host (🔴); they're counted as partial.
@@ -86,7 +86,7 @@ need a staging host (🔴); they're counted as partial.
 - [x] B004 Define brand values. — ✅ `docs/BRAND_GUIDELINES_V2.md` §2 (personality), `docs/BRAND_GUIDELINES.md` (personality)
 - [x] B005 Create primary logo. — ✅ code-drawn logomark + wordmark `web/components/brand.tsx` (`Logo`, `LogoMark`), `web/public/icon.svg`, `mobile/assets/logo.png`; a designer-finished logo is optional
 - [x] B006 Create icon-only logo. — ✅ `LogoMark` in `web/components/brand.tsx`, `web/app/apple-icon.tsx`, `web/public/icon.svg`
-- [ ] B007 Create monochrome logo. — 🟡 partial: only the Android adaptive-icon monochrome layer exists (`mobile/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml`); there's no monochrome logo file for print or documents
+- [x] B007 Create monochrome logo. — ✅ `web/public/brand/logo-mono-light.svg`, `logo-mono-dark.svg`, `logo-mark-mono-light.svg`, `logo-mark-mono-dark.svg` (print/documents) + the Android adaptive-icon monochrome layer
 - [x] B008 Create app icon. — ✅ Android adaptive icon (`mobile/android/app/src/main/res/mipmap-*`), iOS `AppIcon.appiconset`
 - [x] B009 Define color tokens. — ✅ `docs/DESIGN.md` (Colour), `web/app/globals.css`, `mobile/lib/core/theme/tokens.dart`. ⚠ `docs/design-tokens.json` holds the reference palette (#2563EB + coral/yellow/teal), not the shipped KaamSathi palette (#2647C4 + crimson #DC2B4B)
 - [x] B010 Define typography. — ✅ `docs/DESIGN.md` (Inter + Noto Sans Devanagari, scale), `mobile/assets/fonts/`

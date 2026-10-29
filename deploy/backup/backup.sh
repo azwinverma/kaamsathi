@@ -8,7 +8,10 @@ DIR=/backups
 STAMP=$(date +%Y%m%d-%H%M%S)
 RETENTION="${BACKUP_RETENTION_DAYS:-14}"
 
-encrypt() {  # $1 = file; replaces it with $1.gpg when BACKUP_PASSPHRASE is set
+# Backups hold ID photos and personal data: never write them unencrypted.
+[ -n "${BACKUP_PASSPHRASE:-}" ] || { echo "BACKUP_PASSPHRASE is not set; refusing to write unencrypted backups" >&2; exit 1; }
+
+encrypt() {  # $1 = file; replaces it with $1.gpg
   if [ -n "${BACKUP_PASSPHRASE:-}" ]; then
     printf '%s' "$BACKUP_PASSPHRASE" | gpg --batch --yes --quiet --pinentry-mode loopback \
       --passphrase-fd 0 --symmetric --cipher-algo AES256 -o "$1.gpg" "$1"

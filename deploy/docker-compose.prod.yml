@@ -254,7 +254,8 @@ services:
       BACKUP_HOUR: ${BACKUP_HOUR:-2}
       BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
       BACKUP_MEDIA: ${BACKUP_MEDIA:-true}
-      BACKUP_PASSPHRASE: ${BACKUP_PASSPHRASE:-}
+      # Dumps contain ID photos and encrypted ID numbers: refuse to start without encryption.
+      BACKUP_PASSPHRASE: ${BACKUP_PASSPHRASE:?set BACKUP_PASSPHRASE}
       BACKUP_S3_BUCKET: ${BACKUP_S3_BUCKET:-}
       BACKUP_S3_PREFIX: ${BACKUP_S3_PREFIX:-kaamsathi}
       BACKUP_S3_ENDPOINT: ${BACKUP_S3_ENDPOINT:-}
