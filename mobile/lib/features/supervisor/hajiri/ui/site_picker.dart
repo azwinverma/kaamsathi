@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/auth/session.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/skeleton.dart';
 import '../hajiri_providers.dart';
 
 /// App-bar button showing the current site; opens a picker sheet.
@@ -79,9 +80,7 @@ Future<void> showSitePicker(BuildContext context, WidgetRef ref) {
                     AsyncError(:final error) => [
                       Padding(padding: const EdgeInsets.all(16), child: Text(errorText(ctx, error))),
                     ],
-                    _ => [
-                      const Padding(padding: EdgeInsets.all(16), child: Center(child: CircularProgressIndicator())),
-                    ],
+                    _ => [const SkeletonList(count: 3, avatar: false)],
                   },
                   const SizedBox(height: 16),
                 ],

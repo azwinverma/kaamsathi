@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'api/api_activity.dart';
 import 'api/api_client.dart';
 import 'auth/session.dart';
 import 'auth/token_store.dart';
@@ -37,8 +38,16 @@ final languageProvider = NotifierProvider<LanguageController, String?>(LanguageC
 /// Language code to format with (defaults to English before the choice).
 final langCodeProvider = Provider<String>((ref) => ref.watch(languageProvider) ?? 'en');
 
+/// In-flight API requests, for the app-wide slow-network hint.
+final apiActivityProvider = Provider<ApiActivity>((ref) {
+  final a = ApiActivity();
+  ref.onDispose(a.dispose);
+  return a;
+});
+
 final apiClientProvider = Provider<ApiClient>((ref) {
   return ApiClient(
+    activity: ref.watch(apiActivityProvider),
     tokens: ref.watch(tokenStoreProvider),
     orgId: () => ref.read(sessionProvider).orgId,
     language: () => ref.read(languageProvider) ?? 'en',

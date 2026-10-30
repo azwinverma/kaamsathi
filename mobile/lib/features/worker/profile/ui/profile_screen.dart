@@ -45,7 +45,7 @@ class ProfileScreen extends ConsumerWidget {
             switch (value) {
               AsyncData(:final value) => _ProfileBody(profile: value),
               AsyncError(:final error) => ErrorView(error: error, onRetry: () => ref.invalidate(workerProfileProvider)),
-              _ => const Padding(padding: EdgeInsets.all(48), child: Center(child: CircularProgressIndicator())),
+              _ => const SkeletonDetail(padding: EdgeInsets.zero),
             },
             const SizedBox(height: KsSpace.s4),
             const TrustCard(),

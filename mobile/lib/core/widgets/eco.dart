@@ -28,6 +28,7 @@ class FeatureAsyncBody<T> extends StatelessWidget {
     this.onRetry,
     this.unavailableIcon = LucideIcons.hourglass,
     this.unavailableMessage,
+    this.loading,
   });
 
   final AsyncValue<T> value;
@@ -36,18 +37,27 @@ class FeatureAsyncBody<T> extends StatelessWidget {
   final IconData unavailableIcon;
   final String? unavailableMessage;
 
+  /// Placeholder while there is no data yet; defaults to [SkeletonList].
+  final Widget? loading;
+
   @override
   Widget build(BuildContext context) {
     final v = value;
-    if (v.hasValue) return data(v.requireValue);
-    if (v.hasError) {
-      final Widget child =
+    final Widget child;
+    if (v.hasValue) {
+      child = data(v.requireValue);
+    } else if (v.hasError) {
+      child = ListView(
+        children: [
           isFeatureUnavailable(v.error)
               ? EmptyState(icon: unavailableIcon, message: unavailableMessage ?? context.l10n.ecoComingSoon)
-              : ErrorView(error: v.error, onRetry: onRetry);
-      return ListView(children: [child]);
+              : ErrorView(error: v.error, onRetry: onRetry),
+        ],
+      );
+    } else {
+      child = loading ?? const SkeletonList();
     }
-    return const Center(child: CircularProgressIndicator());
+    return SkeletonSwitcher(loading: !v.hasValue && !v.hasError, child: child);
   }
 }
 
@@ -366,21 +376,29 @@ class InfoNote extends StatelessWidget {
 /// Non-scrolling variant of [FeatureAsyncBody] for a section inside a list,
 /// so content above it (e.g. safety guidance) stays visible in every state.
 class FeatureAsyncSection<T> extends StatelessWidget {
-  const FeatureAsyncSection({super.key, required this.value, required this.data, this.onRetry});
+  const FeatureAsyncSection({super.key, required this.value, required this.data, this.onRetry, this.loading});
 
   final AsyncValue<T> value;
   final Widget Function(T data) data;
   final VoidCallback? onRetry;
 
+  /// Placeholder while there is no data yet; defaults to [SkeletonSection].
+  final Widget? loading;
+
   @override
   Widget build(BuildContext context) {
     final v = value;
-    if (v.hasValue) return data(v.requireValue);
-    if (v.hasError) {
-      return isFeatureUnavailable(v.error)
-          ? EmptyState(icon: LucideIcons.hourglass, message: context.l10n.ecoComingSoon)
-          : ErrorView(error: v.error, onRetry: onRetry);
+    final Widget child;
+    if (v.hasValue) {
+      child = data(v.requireValue);
+    } else if (v.hasError) {
+      child =
+          isFeatureUnavailable(v.error)
+              ? EmptyState(icon: LucideIcons.hourglass, message: context.l10n.ecoComingSoon)
+              : ErrorView(error: v.error, onRetry: onRetry);
+    } else {
+      child = loading ?? const SkeletonSection();
     }
-    return const Padding(padding: EdgeInsets.all(KsSpace.s8), child: Center(child: CircularProgressIndicator()));
+    return SkeletonSwitcher(loading: !v.hasValue && !v.hasError, child: child);
   }
 }

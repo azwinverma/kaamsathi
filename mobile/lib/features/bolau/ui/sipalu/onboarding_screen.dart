@@ -64,7 +64,7 @@ class SipaluOnboardingScreen extends ConsumerWidget {
               ? ErrorView(error: e, onRetry: () => ref.invalidate(mySipaluProvider))
               : const _Wizard(initial: MySipalu());
     } else {
-      body = const Center(child: CircularProgressIndicator());
+      body = const SkeletonDetail();
     }
     return Scaffold(appBar: AppBar(title: Text(l.blBecomeSipalu)), body: body);
   }

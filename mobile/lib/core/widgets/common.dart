@@ -7,6 +7,9 @@ import '../format.dart';
 import '../l10n/l10n.dart';
 import '../theme/tokens.dart';
 import 'signature/illustration.dart';
+import 'skeleton.dart';
+
+export 'skeleton.dart';
 
 enum Tone { success, warning, danger, info, verified, neutral }
 
@@ -215,19 +218,32 @@ class ErrorView extends StatelessWidget {
 }
 
 /// Renders an [AsyncValue] with consistent loading / error states.
+///
+/// Loading shows a skeleton ([SkeletonList] unless [loading] picks another
+/// layout) that cross-fades into the content. A refresh that already has
+/// data keeps showing the data.
 class AsyncBody<T> extends StatelessWidget {
-  const AsyncBody({super.key, required this.value, required this.data, this.onRetry});
+  const AsyncBody({super.key, required this.value, required this.data, this.onRetry, this.loading});
 
   final AsyncValue<T> value;
   final Widget Function(T data) data;
   final VoidCallback? onRetry;
 
+  /// Placeholder while there is no data yet; defaults to [SkeletonList].
+  final Widget? loading;
+
   @override
   Widget build(BuildContext context) {
     final v = value;
-    if (v.hasValue) return data(v.requireValue);
-    if (v.hasError) return ErrorView(error: v.error, onRetry: onRetry);
-    return const Center(child: CircularProgressIndicator());
+    final Widget child;
+    if (v.hasValue) {
+      child = data(v.requireValue);
+    } else if (v.hasError) {
+      child = ErrorView(error: v.error, onRetry: onRetry);
+    } else {
+      child = loading ?? const SkeletonList();
+    }
+    return SkeletonSwitcher(loading: !v.hasValue && !v.hasError, child: child);
   }
 }
 

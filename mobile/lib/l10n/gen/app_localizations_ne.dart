@@ -231,6 +231,15 @@ class AppLocalizationsNe extends AppLocalizations {
   String get statusShortWeeklyOff => 'सा.बि';
 
   @override
+  String get commonLoading => 'लोड हुँदैछ…';
+
+  @override
+  String get commonSlowNetwork => 'इन्टरनेट ढिलो छ…';
+
+  @override
+  String get commonNoConnection => 'इन्टरनेट जडान छैन';
+
+  @override
   String get commonRetry => 'फेरि प्रयास गर्नुहोस्';
 
   @override

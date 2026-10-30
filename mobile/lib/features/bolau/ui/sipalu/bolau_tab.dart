@@ -61,7 +61,7 @@ class _SipaluBolauTabState extends ConsumerState<SipaluBolauTab> {
                 : ErrorView(error: error, onRetry: () => ref.invalidate(mySipaluProvider)),
           ],
         ),
-        _ => const Center(child: CircularProgressIndicator()),
+        _ => const SkeletonDetail(),
       },
     );
   }

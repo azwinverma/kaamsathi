@@ -7,6 +7,7 @@ import 'core/l10n/l10n.dart';
 import 'core/providers.dart';
 import 'core/router/router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/widgets/network_activity.dart';
 import 'features/bolau/bolau_repository.dart';
 
 class KaamSathiApp extends ConsumerWidget {
@@ -26,6 +27,7 @@ class KaamSathiApp extends ConsumerWidget {
       title: 'KaamSathi',
       debugShowCheckedModeBanner: false,
       routerConfig: router,
+      builder: (context, child) => NetworkActivityIndicator(child: child ?? const SizedBox.shrink()),
       locale: Locale(lang),
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: const [

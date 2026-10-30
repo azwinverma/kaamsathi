@@ -536,6 +536,24 @@ abstract class AppLocalizations {
   /// **'WO'**
   String get statusShortWeeklyOff;
 
+  /// No description provided for @commonLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading…'**
+  String get commonLoading;
+
+  /// No description provided for @commonSlowNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow connection…'**
+  String get commonSlowNetwork;
+
+  /// No description provided for @commonNoConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get commonNoConnection;
+
   /// No description provided for @commonRetry.
   ///
   /// In en, this message translates to:

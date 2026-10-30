@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 
 import '../auth/token_store.dart';
 import '../config.dart';
+import 'api_activity.dart';
 import 'api_exception.dart';
 
 /// Thin wrapper around [Dio] wired with the contract conventions:
@@ -16,6 +17,7 @@ class ApiClient {
     required this.orgId,
     required this.language,
     this.onSessionExpired,
+    ApiActivity? activity,
     String? baseUrl,
     Dio? dio,
     HttpClientAdapter? adapter,
@@ -39,6 +41,8 @@ class ApiClient {
       this.dio.httpClientAdapter = adapter;
       _refreshDio.httpClientAdapter = adapter;
     }
+    // Activity first, so it sees every request (401 retries too) start and end.
+    if (activity != null) this.dio.interceptors.add(activity.interceptor);
     this.dio.interceptors.add(InterceptorsWrapper(onRequest: _onRequest, onError: _onError));
   }
 

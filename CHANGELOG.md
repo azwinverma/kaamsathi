@@ -13,6 +13,12 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
   (`components/providers/network-status.tsx`); mural-style `loading.tsx` screens for Sipalu
   profiles, Passport, help and the Bolau booking/request forms (`components/signature/page-skeleton.tsx`);
   the Bolau button shows "Searching…" until the new results render, and jumps to them on `/bolau`.
+- **Mobile loading feedback**: themed shimmer skeletons (`lib/core/widgets/skeleton.dart`: card
+  list, detail, compact section; static under reduced motion, one localized "Loading…" announcement)
+  replace the content spinners in `AsyncBody`, `FeatureAsyncBody`, `FeatureAsyncSection` and five
+  screens, fading into the data. A slow-network hint (`lib/core/api/api_activity.dart` +
+  `NetworkActivityIndicator`): thin top line and "Slow connection…" pill after 1.5 s in flight,
+  "No internet connection" when a request cannot reach the server. Button/submit spinners stay.
 
 - **Managed deploy path**: web on Vercel (`web/vercel.json`, region `sin1`) and backend on Railway,
   defined as code in `.railway/railway.ts` (api with pre-deploy migrations, Celery worker, single

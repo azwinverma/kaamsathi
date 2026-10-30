@@ -86,7 +86,7 @@ class _MyHajiriScreenState extends ConsumerState<MyHajiriScreen> {
                 error: error,
                 onRetry: () => ref.invalidate(myAttendanceProvider(key)),
               ),
-              _ => const Padding(padding: EdgeInsets.all(48), child: Center(child: CircularProgressIndicator())),
+              _ => const SkeletonList(count: 5, avatar: false, padding: EdgeInsets.zero),
             },
           ],
         ),

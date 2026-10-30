@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kaamsathi/core/api/api_exception.dart';
 import 'package:kaamsathi/core/api/cached.dart';
 import 'package:kaamsathi/core/api/json.dart';
+import 'package:kaamsathi/core/widgets/skeleton.dart';
 import 'package:kaamsathi/features/common/inbox/inbox_data.dart';
 import 'package:kaamsathi/features/common/inbox/inbox_screen.dart';
 import 'package:kaamsathi/features/common/legal/legal_screen.dart';
@@ -266,7 +267,8 @@ void main() {
         lang: 'ne',
         settle: false,
       );
-      expect(find.byType(CircularProgressIndicator), findsWidgets);
+      expect(find.byType(Skeleton), findsWidgets);
+      expect(find.bySemanticsLabel('लोड हुँदैछ…'), findsWidgets);
       expect(find.byKey(const Key('mobility_safety')), findsOneWidget);
       expect(find.text('रसिद नलिई आफ्नो सक्कल राहदानी कसैलाई नदिनुहोस्।'), findsOneWidget);
       await tester.tap(find.text('एजेन्सी र सेयरिङ'));

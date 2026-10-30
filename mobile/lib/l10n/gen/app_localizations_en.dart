@@ -231,6 +231,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statusShortWeeklyOff => 'WO';
 
   @override
+  String get commonLoading => 'Loading…';
+
+  @override
+  String get commonSlowNetwork => 'Slow connection…';
+
+  @override
+  String get commonNoConnection => 'No internet connection';
+
+  @override
   String get commonRetry => 'Try again';
 
   @override
