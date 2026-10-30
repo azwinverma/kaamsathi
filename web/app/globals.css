@@ -391,6 +391,35 @@ html[lang="ne"] {
   border-radius: var(--radius-sm);
 }
 
+/* The same shimmer for placeholders on the blue hero band (loading.tsx of public pages). */
+@utility skeleton-on-hero {
+  background: linear-gradient(
+    90deg,
+    rgb(255 255 255 / 0.14) 0%,
+    rgb(255 255 255 / 0.32) 50%,
+    rgb(255 255 255 / 0.14) 100%
+  );
+  background-size: 200% 100%;
+  animation: ks-shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* "Still working" dots in the slow-network pill (components/providers/network-status.tsx). */
+.ks-working-dot {
+  animation: ks-working 1s ease-in-out infinite;
+}
+@keyframes ks-working {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
 @keyframes ks-shimmer {
   0% {
     background-position: 200% 0;
@@ -468,7 +497,8 @@ html[lang="ne"] {
     animation-duration: 1s !important;
     animation-iteration-count: infinite !important;
   }
-  .skeleton {
+  .skeleton,
+  .skeleton-on-hero {
     animation: none !important;
   }
 }

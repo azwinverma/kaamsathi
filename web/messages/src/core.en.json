@@ -308,7 +308,11 @@
     "error_loading": "We couldn't load this.",
     "nothing_here": "Nothing here yet",
     "no_results": "No results match your filters.",
-    "ad_secondary": "A.D. {date}"
+    "ad_secondary": "A.D. {date}",
+    "offline": "You're offline. We'll carry on when the connection is back.",
+    "back_online": "Back online",
+    "slow_network": "Slow connection, still working…",
+    "searching": "Searching…"
   },
   "errors": {
     "validation_error": "Please fix the highlighted fields.",

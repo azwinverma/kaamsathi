@@ -51,14 +51,15 @@ first**: losing them makes every stored citizenship/NID/PAN/bank number unrecove
 ## 1. Neon (Postgres)
 
 1. neon.tech → sign up → **New project** `kaamsathi`, Postgres **16**, region
-   **AWS Asia Pacific (Singapore)**.
+   **AWS Asia Pacific (Singapore)**. The region matters: the API runs in Singapore (`sin1`), and a
+   database in the USA adds ~0.25 s to every query and ~1.5 s to every new connection.
 2. Dashboard → **Connect** → turn **Connection pooling ON** → copy the connection string. The host
    contains `-pooler`, and the string ends with `?sslmode=require`. This is `DATABASE_URL`.
 
 ## 2. Upstash (Redis)
 
 1. upstash.com → **Create database** `kaamsathi`, type Regional, region **ap-southeast-1
-   (Singapore)**, TLS on.
+   (Singapore)**, TLS on. Same reason as Neon: it must sit next to the API.
 2. Copy the **Redis URL** that starts with `rediss://` (two s). This is `REDIS_URL`.
 
 ## 3. Files (nothing to set up)
@@ -92,7 +93,7 @@ nightly encrypted backup.
    | `PUBLIC_WEB_URL` | `https://kaamsathi.vercel.app` (the web project's domain, step 5) |
    | `DJANGO_ADMIN_URL` | a private path, e.g. `ks-admin-7f3a/` |
    | `DATABASE_URL` | Neon pooled string (step 1) |
-   | `DB_CONN_MAX_AGE` | `0` |
+   | `DB_CONN_MAX_AGE` | `60` (a warm function reuses its connection; health checks drop dead ones) |
    | `DB_DISABLE_SERVER_SIDE_CURSORS` | `true` |
    | `REDIS_URL` | Upstash `rediss://…` (step 2) |
    | `MEDIA_STORAGE` | `database` |

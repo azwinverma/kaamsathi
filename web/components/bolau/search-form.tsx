@@ -2,7 +2,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { ArrowRight, Search, SlidersHorizontal } from "lucide-react";
+import { ArrowRight, Loader2, Search, SlidersHorizontal } from "lucide-react";
 import { DistrictSelect } from "@/components/shared/selects";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input, PrefixInput } from "@/components/ui/input";
@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { SEARCH_LANGS, TIME_BANDS, activeFilterCount, searchHref, type SearchValues } from "@/lib/bolau/search";
 import { TradeIcon } from "./trade-icon";
 import { track } from "@/lib/telemetry";
+import { startNavProgress } from "@/lib/nav-progress";
 
 export type { SearchValues };
 
@@ -77,19 +78,29 @@ export function BolauSearchForm({
   maxTrades?: number;
 }) {
   const t = useTranslations("bolau.search");
+  const tc = useTranslations("common");
   const tl = useTranslations("bolau.lang");
   const f = useFormat();
   const router = useRouter();
   const [v, setV] = React.useState<SearchValues>(initial);
   React.useEffect(() => setV(initial), [initial]);
   const full = variant === "full";
+  // Pending until the new results have rendered (the page re-renders on the server).
+  const [searching, startSearch] = React.useTransition();
 
   // Chips and selects on /bolau refresh the results in place; the Bolau button (submit) always
   // jumps to #results, otherwise on /bolau the update happens below the fold and looks like nothing.
   const go = (next: SearchValues, jump = !full) => {
     // Never the free-text query: only the trade code and how many filters are set.
     track("search_performed", { source: "bolau", trade: next.trade || null, count: activeFilterCount(next) });
-    router.push(searchHref(next), { scroll: jump });
+    const href = searchHref(next);
+    if (href.split("#")[0] === window.location.pathname + window.location.search) {
+      // Same search again: nothing to load, just show the results.
+      if (jump) document.getElementById("results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    startNavProgress();
+    startSearch(() => router.push(href, { scroll: jump }));
   };
   const set = (k: keyof SearchValues, val: string, submit = false) => {
     const next = { ...v, [k]: val };
@@ -115,6 +126,7 @@ export function BolauSearchForm({
       method="get"
       role="search"
       aria-label={full ? t("form_label") : t("hero_form_label")}
+      aria-busy={searching || undefined}
       onSubmit={(e) => {
         e.preventDefault();
         go(v, true);
@@ -195,10 +207,15 @@ export function BolauSearchForm({
         </div>
         <button
           type="submit"
-          className="bg-yellow text-on-accent border-on-accent col-span-2 inline-flex min-h-12 items-center justify-center gap-2 rounded-control border-2 px-7 text-lg font-extrabold sm:col-span-1 transition-[filter,transform] hover:brightness-95 active:translate-y-px"
+          className="bg-yellow text-on-accent border-on-accent col-span-2 inline-flex min-h-12 items-center justify-center gap-2 rounded-control border-2 px-7 text-lg font-extrabold sm:col-span-1 transition-[filter,transform] hover:brightness-95 active:translate-y-px aria-busy:cursor-progress"
+          aria-busy={searching || undefined}
         >
-          {t("bolau")}
-          <ArrowRight className="size-5" aria-hidden />
+          {searching ? tc("searching") : t("bolau")}
+          {searching ? (
+            <Loader2 className="size-5 animate-spin" aria-hidden />
+          ) : (
+            <ArrowRight className="size-5" aria-hidden />
+          )}
         </button>
       </div>
 
@@ -321,7 +338,7 @@ export function BolauSearchForm({
                 className="text-fg-body min-h-11 px-2 text-sm font-medium underline-offset-4 hover:underline"
                 onClick={() => {
                   setV({});
-                  router.push("/bolau#results", { scroll: false });
+                  go({}, false);
                 }}
               >
                 {t("clear")}

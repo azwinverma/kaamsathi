@@ -7,6 +7,13 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
 ## [Unreleased]
 
 ### Added
+- **Web loading feedback**: a brand-blue → yellow progress bar along the top while the next page
+  loads (`components/providers/nav-progress.tsx`, `lib/nav-progress.ts`); a bilingual pill when the
+  browser is offline, back online, or a request/page change takes over 4 s
+  (`components/providers/network-status.tsx`); mural-style `loading.tsx` screens for Sipalu
+  profiles, Passport, help and the Bolau booking/request forms (`components/signature/page-skeleton.tsx`);
+  the Bolau button shows "Searching…" until the new results render, and jumps to them on `/bolau`.
+
 - **Managed deploy path**: web on Vercel (`web/vercel.json`, region `sin1`) and backend on Railway,
   defined as code in `.railway/railway.ts` (api with pre-deploy migrations, Celery worker, single
   beat, Postgres 16, Redis, private media bucket). Walkthrough: `docs/deploy/RAILWAY_VERCEL.md`.
