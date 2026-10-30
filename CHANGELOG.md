@@ -7,6 +7,8 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
 ## [Unreleased]
 
 ### Added
+- **Browse Sipalus**: header link (desktop and phone menu, Bolau on) to the full list on
+  `/bolau#results`; `/sipalu` now opens that list instead of a 404.
 - **Web loading feedback**: a brand-blue → yellow progress bar along the top while the next page
   loads (`components/providers/nav-progress.tsx`, `lib/nav-progress.ts`); a bilingual pill when the
   browser is offline, back online, or a request/page change takes over 4 s

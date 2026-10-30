@@ -47,7 +47,7 @@ describe("home layout by the bolau flag", () => {
     const n = headerNav(true, "/");
     expect(n.primary).toEqual({ href: "/bolau", label: "bolau.nav.link" });
     expect(n.employerCta).toBe(false);
-    expect(n.links.map((l) => l.href)).toContain("/sipalu/join");
+    expect(n.links.map((l) => l.href)).toEqual(["/bolau#results", "/sipalu/join", "/help"]);
     expect(n.links.map((l) => l.href)).not.toContain("/#employers");
     expect(n.business.map((l) => l.href)).toEqual(["/login", "/#businesses", "/#pricing", "/developers"]);
   });

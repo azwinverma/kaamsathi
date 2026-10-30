@@ -79,6 +79,7 @@ export function headerNav(bolau: boolean, base: string): HeaderNav {
   return {
     primary: { href: "/bolau", label: "bolau.nav.link" },
     links: [
+      { href: "/bolau#results", label: "marketing.nav.browse_sipalu" },
       { href: "/sipalu/join", label: "marketing.nav.become_sipalu" },
       { href: "/help", label: "marketing.nav.help" },
     ],
