@@ -84,10 +84,12 @@ export function BolauSearchForm({
   React.useEffect(() => setV(initial), [initial]);
   const full = variant === "full";
 
-  const go = (next: SearchValues) => {
+  // Chips and selects on /bolau refresh the results in place; the Bolau button (submit) always
+  // jumps to #results, otherwise on /bolau the update happens below the fold and looks like nothing.
+  const go = (next: SearchValues, jump = !full) => {
     // Never the free-text query: only the trade code and how many filters are set.
     track("search_performed", { source: "bolau", trade: next.trade || null, count: activeFilterCount(next) });
-    router.push(searchHref(next), { scroll: !full });
+    router.push(searchHref(next), { scroll: jump });
   };
   const set = (k: keyof SearchValues, val: string, submit = false) => {
     const next = { ...v, [k]: val };
@@ -115,7 +117,7 @@ export function BolauSearchForm({
       aria-label={full ? t("form_label") : t("hero_form_label")}
       onSubmit={(e) => {
         e.preventDefault();
-        go(v);
+        go(v, true);
       }}
       className="bg-surface text-fg space-y-5 rounded-card p-4 shadow-[6px_8px_0_0_var(--color-yellow)] sm:p-6"
     >
