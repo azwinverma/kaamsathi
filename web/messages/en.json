@@ -645,7 +645,8 @@
       "photo_alt": "Photo of {name}",
       "initials_label": "{name} has not added a photo yet",
       "favourite": "Save {name}",
-      "unfavourite": "Remove {name} from saved"
+      "unfavourite": "Remove {name} from saved",
+      "book": "Book"
     },
     "when": {
       "today": "today, {time}",
@@ -1253,7 +1254,8 @@
         ],
         "trust_label": "Why it is safe to Bolau",
         "code_label": "Arrival code",
-        "code_note": "You read it out at the door"
+        "code_note": "You read it out at the door",
+        "browse": "Browse all verified Sipalu"
       },
       "near": {
         "kicker": "Bookable now",

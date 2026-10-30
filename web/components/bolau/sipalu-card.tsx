@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { CalendarClock } from "lucide-react";
+import { ArrowRight, CalendarClock } from "lucide-react";
 import type { SipaluCard as Card } from "@/lib/api/types-bolau";
 import { useFormat } from "@/lib/use-format";
 import { cn } from "@/lib/utils";
@@ -13,7 +13,8 @@ const TAPE = ["yellow", "teal", "coral", "yellow"] as const;
 /**
  * Sipalu result row (B · street mural): a cut-paper portrait beside the facts a household needs to
  * decide — trade, ladder rung, rating, jobs done, starting price and the next free slot. Rows are
- * split by hairlines instead of floating cards; the whole row is one link (name is the label).
+ * split by hairlines instead of floating cards; the whole row is one link (name is the label), and a
+ * Book button above it goes straight to the booking form.
  */
 export function SipaluCard({ s, index = 0, headingLevel = 3 }: { s: Card; index?: number; headingLevel?: 2 | 3 }) {
   const t = useTranslations("bolau.card");
@@ -63,6 +64,14 @@ export function SipaluCard({ s, index = 0, headingLevel = 3 }: { s: Card; index?
             </span>
           </p>
         </div>
+        <Link
+          href={`/bolau/book/${s.handle}`}
+          className="bg-yellow text-on-accent border-on-accent relative z-10 mt-2 inline-flex min-h-10 items-center gap-1.5 rounded-control border-2 px-4 text-sm font-extrabold transition-[filter,transform] hover:brightness-95 active:translate-y-px"
+        >
+          {t("book")}
+          <span className="sr-only"> {name}</span>
+          <ArrowRight className="size-4" aria-hidden />
+        </Link>
       </div>
     </article>
   );

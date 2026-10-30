@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
-import { ArrowRight, Banknote, KeyRound, ShieldCheck } from "lucide-react";
+import { ArrowRight, Banknote, KeyRound, ShieldCheck, Users } from "lucide-react";
 import { BrushStroke } from "@/components/signature/brush-stroke";
 import { CutPaperFrame } from "@/components/signature/cut-paper-frame";
 import { DotTexture } from "@/components/signature/dot-texture";
@@ -79,7 +79,19 @@ export async function BolauHero({
             <BolauSearchForm trades={trades} initial={initial} variant={variant} />
           </div>
 
-          <p className="mt-6 text-[15px] leading-7 sm:text-base">
+          {variant === "hero" ? (
+            // The list is the other way in: people who want to look around before searching.
+            <Link
+              href="/bolau#results"
+              className="text-hero-fg mt-5 bg-white/10 hover:bg-white/20 inline-flex min-h-11 items-center gap-2 rounded-pill border-2 border-white/70 px-5 font-bold transition-colors"
+            >
+              <Users className="text-yellow size-[18px]" aria-hidden />
+              {t("browse")}
+              <ArrowRight className="size-4" aria-hidden />
+            </Link>
+          ) : null}
+
+          <p className="mt-5 text-[15px] leading-7 sm:text-base">
             <span className="text-white/90">{t("request_lead")} </span>
             <Link
               href="/bolau/request"
