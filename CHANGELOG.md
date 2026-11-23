@@ -7,6 +7,26 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
 ## [Unreleased]
 
 ### Fixed
+- **Payroll:** an edit that would make net pay negative is refused, and a negative-net payslip can't
+  be approved; TDS taxes the festival (Dashain) allowance and overtime once at the marginal rate
+  instead of annualising them (Dashain-month example: 4,417 → 1,600); a run can be drafted any time
+  but approved only after its month ends (web "New run" defaults to the last completed month);
+  Recalculate refreshes payment methods (the bank file was empty); peski recovery respects each
+  advance's monthly amount.
+- **Billing:** charges for organisations on the pilot plan are recorded as waived (free pilot, as
+  promised in GO_TO_MARKET); no subscription charge in a month with no active workers; moving an org
+  to a paid plan ends the pilot.
+- **Hajiri and hiring:** attendance for future dates is refused on every write path; OT above the
+  weekly cap can't be approved and payroll never pays beyond it; offers carry SSF enrolment into the
+  employment; employments can't be ended with a future date; a new team member is notified; the
+  onboarding form asks for the owner's name when the account has none.
+- **Bolau and privacy:** erasing a Sipalu takes them off Bolau (handle replaced, profile scrubbed,
+  open bookings cancelled and households told); privacy export and deletion cover Bolau data for
+  households and Sipalu; a verified Sipalu's name and ID details are locked (contact support);
+  suspension cancels unanswered booking requests and withdraws offers, and accepting re-checks the
+  Sipalu can still take work; deciding a booking dispute restores the booking and tells both parties
+  without naming staff; search understands everyday words (bijuli, बिजुली, dhara, bhanse …, seeded by
+  `seed_reference`); the web Sipalu wizard ends with a "Take bookings" switch.
 - Web login: people with no organization (households, Sipalu, new businesses) choose where to go
   (book a Sipalu, Sipalu profile, set up a business) instead of always landing on business setup;
   while Bolau is off they go straight to business setup as before.
