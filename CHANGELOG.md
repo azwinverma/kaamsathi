@@ -47,6 +47,10 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
   plain list.
 - Sipalu service area: a base point straight from a phone's GPS (more than 6 decimals) was
   rejected; it is now rounded to the 2 decimals that are stored (onboarding and `PATCH /me/sipalu`).
+- Bolau KPI `time_to_accept_minutes_median` leaves out instant bookings (accepted by the system at
+  0 minutes, which halved the median).
+- Bolau booking-fee gateways that aren't set up answer "Khalti booking-fee payments are not set up
+  yet." (in Nepali too) instead of the payouts wording "This payout provider is not configured."
 
 ### Fixed
 - **Payroll:** an edit that would make net pay negative is refused, and a negative-net payslip can't

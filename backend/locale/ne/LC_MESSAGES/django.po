@@ -2943,3 +2943,7 @@ msgctxt "harden"
 msgid "Explain why the earlier decision is being changed."
 msgstr "पहिलेको निर्णय किन बदलिँदैछ, लेख्नुहोस्।"
 
+msgctxt "harden"
+msgid "{label} booking-fee payments are not set up yet."
+msgstr "{label} बुकिङ शुल्क भुक्तानी अझै सुरु भएको छैन।"
+

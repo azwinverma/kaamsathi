@@ -98,6 +98,18 @@ def test_ops_lists_kpis_fees(staff_client):
     assert r.json()["status"] == "cancelled" and r.json()["cancelled_by"] == "ops"
 
 
+def test_time_to_accept_median_ignores_instant_bookings():
+    from apps.bolau.ops import kpis
+
+    b, *_ = accepted_booking()  # Sipalu accepted by hand
+    Booking.objects.filter(pk=b.pk).update(accepted_at=b.created_at + dt.timedelta(minutes=12))
+    profile, service, _sc = make_sipalu("instant-hari", instant=True)
+    user, addr, gc = make_ghardhani()
+    instant = Booking.objects.get(pk=book(gc, profile, addr, service).json()["id"])
+    assert instant.status == "accepted"  # 0 minutes: would halve the median
+    assert kpis(30)["time_to_accept_minutes_median"] == 12.0
+
+
 # --------------------------------------------------------------------------- gateway + webhook
 def signed(secret, body: bytes, ts=None):
     ts = str(int(ts if ts is not None else time.time()))
@@ -114,6 +126,19 @@ def test_gateway_stub_not_configured():
         sc.post(f"/api/v1/bolau/bookings/{b.id}/fee/pay", {"provider": "esewa"}, format="json").status_code
         == 404
     )
+
+
+def test_unconfigured_webhook_names_the_booking_fee_gateway(api, settings):
+    settings.BOLAU_WEBHOOK_SECRETS = {}
+    r = api.post("/api/v1/webhooks/bolau/khalti", b"{}", content_type="application/json")
+    err = r.json()["error"]
+    assert r.status_code == 400 and err["code"] == "provider_not_configured"
+    assert "payout" not in err["message"].lower()
+    assert err["message"] == "Khalti booking-fee payments are not set up yet."
+    ne = api.post(
+        "/api/v1/webhooks/bolau/khalti", b"{}", content_type="application/json", HTTP_ACCEPT_LANGUAGE="ne"
+    )
+    assert ne.json()["error"]["message"] == "Khalti बुकिङ शुल्क भुक्तानी अझै सुरु भएको छैन।"
 
 
 def test_webhook_signature_replay_and_receipt(api, settings):

@@ -14,7 +14,7 @@ from apps.core.money import D
 
 from . import notify
 from .common import money
-from .models import Booking, BookingRating, SipaluProfile
+from .models import Booking, BookingEvent, BookingRating, SipaluProfile
 
 
 def kpis(days: int = 30) -> dict:
@@ -24,9 +24,13 @@ def kpis(days: int = 30) -> dict:
     direct = qs.filter(source="direct")
     answered = direct.filter(Q(accepted_at__isnull=False) | Q(status__in=("declined", "expired")))
     accepted = direct.filter(accepted_at__isnull=False).count()
+    # Instant bookings are accepted by the system at once (0 min): they'd drag the median down.
+    instant = BookingEvent.objects.filter(to_status="accepted", by_party="system").values("booking_id")
     times = [
         (a - c).total_seconds() / 60
-        for c, a in direct.filter(accepted_at__isnull=False).values_list("created_at", "accepted_at")
+        for c, a in direct.filter(accepted_at__isnull=False)
+        .exclude(pk__in=instant)
+        .values_list("created_at", "accepted_at")
     ]
     ever_accepted = qs.filter(accepted_at__isnull=False)
     done = ever_accepted.filter(
