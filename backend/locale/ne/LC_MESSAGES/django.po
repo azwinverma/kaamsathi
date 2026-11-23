@@ -2878,3 +2878,7 @@ msgctxt "fixpay"
 msgid "End date cannot be in the future. End the employment on the day it ends."
 msgstr "अन्त्य मिति भविष्यको हुन सक्दैन। रोजगारी सकिएकै दिन अन्त्य गर्नुहोस्।"
 
+msgctxt "fixpay"
+msgid "Overtime can't go above the weekly limit of %(hours)s hours. At most %(minutes)s minutes can be approved for this week."
+msgstr "ओभरटाइम हप्ताको %(hours)s घण्टाको सीमाभन्दा बढी हुन सक्दैन। यो हप्ताका लागि बढीमा %(minutes)s मिनेट मात्र स्वीकृत गर्न सकिन्छ।"
+
