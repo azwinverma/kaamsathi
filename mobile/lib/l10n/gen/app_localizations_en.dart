@@ -5138,4 +5138,70 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gharDisputesEmpty => 'No disputes about your bookings.';
+
+  @override
+  String get workLeave => 'Leave';
+
+  @override
+  String get myLeaveTitle => 'My leave';
+
+  @override
+  String get myLeaveSubtitle => 'Ask for bida and follow your requests';
+
+  @override
+  String get myLeaveRequest => 'Request leave';
+
+  @override
+  String get myLeaveEmpty => 'You haven\'t asked for leave yet.';
+
+  @override
+  String get myLeaveStatusPending => 'Waiting';
+
+  @override
+  String get myLeaveStatusApproved => 'Approved';
+
+  @override
+  String get myLeaveStatusRejected => 'Rejected';
+
+  @override
+  String get myLeaveStatusCancelled => 'Cancelled';
+
+  @override
+  String get myLeaveCancel => 'Cancel request';
+
+  @override
+  String get myLeaveCancelTitle => 'Cancel this leave request?';
+
+  @override
+  String get myLeaveCancelBody => 'Your supervisor will no longer see it. You can ask again later.';
+
+  @override
+  String get myLeaveKeep => 'Keep it';
+
+  @override
+  String get myLeaveCancelled => 'Leave request cancelled.';
+
+  @override
+  String get myLeaveType => 'Type of leave';
+
+  @override
+  String get myLeaveFrom => 'First day';
+
+  @override
+  String get myLeaveTo => 'Last day';
+
+  @override
+  String get myLeaveReason => 'Reason';
+
+  @override
+  String get myLeaveReasonHint => 'e.g. Going home for Dashain';
+
+  @override
+  String get myLeaveSent => 'Request sent to your supervisor.';
+
+  @override
+  String get myLeaveNoJob => 'You need an active job to ask for leave.';
+
+  @override
+  String get leaveRequestedByWorker => 'Requested by worker';
 }

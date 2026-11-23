@@ -144,6 +144,15 @@ class _LeaveCardState extends ConsumerState<_LeaveCard> {
                     children: [
                       Text(it.workerName, style: t.titleSmall),
                       if (it.designation != null) Text(it.designation!, style: t.bodySmall),
+                      if (it.isWorkerRequested) ...[
+                        const SizedBox(height: KsSpace.s1),
+                        StatusBadge(
+                          key: Key('leave_by_worker_${it.id}'),
+                          label: l.leaveRequestedByWorker,
+                          tone: Tone.verified,
+                          icon: LucideIcons.smartphone,
+                        ),
+                      ],
                     ],
                   ),
                 ),

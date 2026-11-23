@@ -52,6 +52,7 @@ import '../../features/worker/home/ui/worker_home_screen.dart';
 import '../../features/worker/jobs/ui/job_alerts_screen.dart';
 import '../../features/worker/jobs/ui/jobs_screen.dart';
 import '../../features/worker/learn/learn_screen.dart';
+import '../../features/worker/leave/ui/my_leave_screen.dart';
 import '../../features/worker/mobility/ui/mobility_screen.dart';
 import '../../features/worker/money/ui/consent_screen.dart';
 import '../../features/worker/money/ui/money_screen.dart';
@@ -150,6 +151,9 @@ abstract final class Routes {
   static const workerRatings = '/w/ratings';
   static String workerDispute(String id) => '$workerDisputes/$id';
   static const workerCorrections = '/w/corrections';
+
+  /// Worker's own leave (बिदा) requests (`/me/leaves`).
+  static const workerLeave = '/w/leave';
   static const supCorrections = '/s/corrections';
 
   // Bolau (CONTRACT-BOLAU; only while the `bolau` flag is on).
@@ -445,6 +449,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.workerLanguages, builder: (_, _) => const LanguagesScreen()),
       GoRoute(path: Routes.workerRatings, builder: (_, _) => const MyRatingsScreen()),
       GoRoute(path: Routes.workerCorrections, builder: (_, _) => const MyCorrectionsScreen()),
+      GoRoute(path: Routes.workerLeave, builder: (_, _) => const MyLeaveScreen()),
       GoRoute(path: Routes.supCorrections, builder: (_, _) => const CorrectionsQueueScreen()),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => GhardhaniShell(shell: shell),
