@@ -114,6 +114,24 @@ def test_offer_lifecycle_accept_and_join_prefill(owner_client, client, app, work
     assert emp.basic_salary == D("13000.00") and emp.designation == "Line cook"
 
 
+def test_offer_ssf_enrolled_carries_into_employment(owner_client, client, app):
+    body = offer_body(ssf_enrolled=True)
+    res = owner_client.post(f"/api/v1/org/applications/{app.id}/offer", body, format="json")
+    assert res.status_code == 201, res.json()
+    offer = res.json()
+    assert offer["ssf_enrolled"] is True
+    assert client.get("/api/v1/me/job-offers").json()["results"][0]["ssf_enrolled"] is True
+    client.post(f"/api/v1/me/job-offers/{offer['id']}/accept")
+    res = owner_client.post(f"/api/v1/org/applications/{app.id}/move", {"stage": "joined"}, format="json")
+    assert res.status_code == 200, res.json()
+    assert Employment.objects.get(pk=res.json()["employment_id"]).ssf_enrolled is True
+
+
+def test_offer_without_ssf_defaults_to_not_enrolled(owner_client, app):
+    res = owner_client.post(f"/api/v1/org/applications/{app.id}/offer", offer_body(), format="json")
+    assert res.json()["ssf_enrolled"] is False
+
+
 def test_join_without_offer_still_needs_terms(owner_client, app):
     res = owner_client.post(f"/api/v1/org/applications/{app.id}/move", {"stage": "joined"}, format="json")
     assert res.status_code == 400 and "employment" in res.json()["error"]["fields"]

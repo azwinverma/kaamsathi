@@ -299,6 +299,7 @@ class OfferInputSerializer(serializers.Serializer):
         choices=list(hiring_labels.CONTRACT_TYPE), required=False, default="permanent"
     )
     ends_on = serializers.DateField(required=False, allow_null=True)
+    ssf_enrolled = serializers.BooleanField(required=False, default=False)
     expires_in_days = serializers.IntegerField(required=False, min_value=1, max_value=14, default=3)
 
     def validate(self, attrs):
@@ -341,6 +342,7 @@ def offer_payload(offer) -> dict:
         "contract_type_label": labels.label(hiring_labels.CONTRACT_TYPE, offer.contract_type),
         "ends_on": offer.ends_on.isoformat() if offer.ends_on else None,
         "ends_on_bs": bs_str(offer.ends_on),
+        "ssf_enrolled": offer.ssf_enrolled,
         "expires_at": offer.expires_at.isoformat(),
         "created_at": offer.created_at.isoformat(),
         "responded_at": offer.responded_at.isoformat() if offer.responded_at else None,

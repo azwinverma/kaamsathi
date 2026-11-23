@@ -713,6 +713,7 @@ def send_offer(application: Application, data: dict, user):
         designation=data.get("designation") or application.job.title,
         contract_type=data.get("contract_type") or ("daily" if wage_type == "daily" else "permanent"),
         ends_on=data.get("ends_on"),
+        ssf_enrolled=bool(data.get("ssf_enrolled")),
         expires_at=timezone.now() + dt.timedelta(days=days),
         sent_by=user,
     )
@@ -830,6 +831,7 @@ def employment_from_offer(offer) -> dict:
         "dearness_allowance": offer.dearness_allowance,
         "daily_wage": offer.daily_wage,
         "hourly_wage": offer.hourly_wage,
+        "ssf_enrolled": offer.ssf_enrolled,
     }
 
 
