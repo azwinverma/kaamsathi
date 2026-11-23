@@ -25,6 +25,11 @@ urlpatterns = [
         views.OpsSubscriptionView,
         "ops-billing-subscription",
     ),
+    p(
+        rf"ops/billing/subscriptions/(?P<org_id>{UUID})/extend-pilot",
+        views.OpsExtendPilotView,
+        "ops-billing-extend-pilot",
+    ),
     p("ops/billing/charges", views.OpsChargesView, "ops-billing-charges"),
     p("ops/billing/invoices", views.OpsInvoiceListView, "ops-billing-invoices"),
     p("ops/billing/invoices/generate", views.OpsInvoiceGenerateView, "ops-billing-invoices-generate"),

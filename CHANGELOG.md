@@ -15,6 +15,52 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
   leave page and the supervisor app mark worker-requested items "Requested by worker"; the worker
   app's Work tab has a Leave shortcut with my requests, a request form and cancel.
 
+### Added (launch hardening)
+- **Automatic SMS failover** (RUNBOOK §7): with `SMS_FAILOVER_BACKEND=aakash`, an SMS whose primary
+  gateway errors or times out is sent through Aakash in the same attempt (OTP login included, also
+  in `SERVERLESS` mode). After `SMS_CIRCUIT_THRESHOLD` (3) primary failures in a row, new messages go
+  straight to the failover for `SMS_CIRCUIT_SECONDS` (300). Each message is one `SMSMessage` row with
+  the delivering gateway, `failed_over` and `attempts` (Celery retries used to add a row per try).
+  Ops → System shows the gateways, circuit state and failovers in the last 24 h.
+- **The free pilot ends after 90 days.** `Organization.pilot_started_on` / `pilot_ends_on` (set when
+  an org gets `plan=pilot`; existing pilots backfilled from their creation date with at least 14
+  days' notice). A daily beat task (`billing-pilot-expiry`, also run by the serverless cron) reminds
+  owners/admins (inbox + SMS) and finance ops 14 days ahead, then moves the org to the standard
+  plan (audited, everyone notified). Ops can extend a pilot (Billing → Subscriptions, audited with a
+  note). The web billing page shows "Free pilot — N days left"; after the pilot the default price
+  list reads "Standard" instead of "Pilot".
+
+### Fixed (launch hardening)
+- **Ops matching** lists only workers with a skill in the job's trade (algorithm `v2.2`): a
+  non-cook with district and verified points no longer appears for a cook job.
+- **Job openings filled** count only hires from the job who are still employed (`filled`; `left`
+  counts hires who already ended): a job no longer shows "2 of 2" or flips to filled when one of the
+  two has left. Web job list, detail and dashboard show "N of M filled · K left".
+- Web leave page: a pending leave that overlaps an approved/paid payroll month no longer offers
+  "Approve" (which then failed); it says the month's payroll is approved. Reject still works.
+- **Free replacement** has rules: the leaver must have resigned, absconded or been dismissed for
+  cause (`terminated`); an employer ending it without fault (`contract_end`, `other`) is charged.
+  The replacement must join within `REPLACEMENT_HIRE_DAYS` (30) of the leaver's last day (it had no
+  deadline). Web shows the conditions in the end-employment dialog; "Terminated" reads "Dismissed
+  (for cause)".
+- **Credential decisions** can't be flipped silently: changing an already verified/rejected
+  credential needs a note and another staff member (or a superadmin), and is audited as
+  `ops.credential.redecide` with the previous decider. The web review form asks for the reason.
+- `GET /ops/audit` items carry `prev_hash` next to `hash`, as CONTRACT-EXTENSIONS promised.
+- Bolau: the party who confirms a booking or raises a dispute no longer gets an inbox item/SMS
+  about their own action (only the other side does; auto-confirm still tells both). Marking the
+  payment already only told the other side. Suspending a Sipalu already withdraws their pending
+  offers (verified, covered by a test).
+- `GET /me/addresses` and `GET /me/favourites` are paginated like every other list (they returned
+  bare arrays). Web and mobile read the envelope and ask for `page_size=100`; both still accept a
+  plain list.
+- Sipalu service area: a base point straight from a phone's GPS (more than 6 decimals) was
+  rejected; it is now rounded to the 2 decimals that are stored (onboarding and `PATCH /me/sipalu`).
+- Bolau KPI `time_to_accept_minutes_median` leaves out instant bookings (accepted by the system at
+  0 minutes, which halved the median).
+- Bolau booking-fee gateways that aren't set up answer "Khalti booking-fee payments are not set up
+  yet." (in Nepali too) instead of the payouts wording "This payout provider is not configured."
+
 ### Fixed
 - **Payroll:** an edit that would make net pay negative is refused, and a negative-net payslip can't
   be approved; TDS taxes the festival (Dashain) allowance and overtime once at the marginal rate

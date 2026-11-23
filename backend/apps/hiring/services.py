@@ -27,8 +27,11 @@ def validate_job_wage(wage_type: str, amount):
 
 
 def refresh_job_fill_status(job: JobOpening):
-    joined = job.applications.filter(stage="joined").count()
-    if job.status == "open" and joined >= job.openings_count:
+    # Openings are filled by hires still employed: a hire who already left frees the opening.
+    from apps.workforce.models import Employment
+
+    filled = Employment.objects.filter(application__job=job, status="active").count()
+    if job.status == "open" and filled >= job.openings_count:
         job.status = "filled"
         job.save(update_fields=["status"])
 
@@ -54,19 +57,31 @@ def _track(name, *, user=None, organization=None, **props):
     track(name, user=user, organization=organization, **props)
 
 
+# Free replacement (CONTRACT §billing): only when the placed worker left through their own doing:
+# resigned, absconded or dismissed for cause ("terminated", as trust/credentials also read it).
+# An employer ending it without fault (contract_end) or "other" is charged as a new placement.
+REPLACEMENT_END_REASONS = ("resigned", "absconded", "terminated")
+
+
 def create_placement_charge(application: Application, employment):
+    """Placement charge on join; waived as a free replacement when an earlier hire of the same trade
+    left within ``REPLACEMENT_WINDOW_DAYS`` of starting, for a reason in ``REPLACEMENT_END_REASONS``,
+    and this hire joins within ``REPLACEMENT_HIRE_DAYS`` of that worker's last day."""
     from apps.billing.models import Charge
     from apps.billing.services import PILOT_WAIVER, on_pilot
     from apps.workforce.models import Employment
 
     org = application.job.organization
     fee = placement_fee(org)
+    hire_by = employment.start_date - dt.timedelta(days=settings.REPLACEMENT_HIRE_DAYS)
     replaced = (
         Employment.objects.filter(
             organization=org,
             status="ended",
             replacement_eligible_until__isnull=False,
             end_date__isnull=False,
+            end_date__gte=hire_by,
+            end_reason__in=REPLACEMENT_END_REASONS,
             trade=application.job.trade,
             replacement_charges__isnull=True,
         )
@@ -288,7 +303,7 @@ def shortlist_workers(job: JobOpening, workers, user) -> list[Application]:
     return created
 
 
-# --------------------------------------------------------------------------- matching (v2.1)
+# --------------------------------------------------------------------------- matching (v2.2)
 NSTB_RANK = {"none": 0, "elementary": 0, "level1": 1, "level2": 2, "level3": 3}
 NSTB_POINTS = {"none": 0, "elementary": 0, "level1": 5, "level2": 10, "level3": 15}  # default weights
 NSTB_LABEL = {"level1": "NSTB Level 1", "level2": "NSTB Level 2", "level3": "NSTB Level 3"}
@@ -477,8 +492,10 @@ def match_score(job: JobOpening, worker) -> tuple[int, list[str]]:
 
 
 def score_candidates(job: JobOpening) -> list[dict]:
-    """All eligible candidates scored and ranked (unpersisted). Workers failing a *required* job
-    requirement are excluded. Each item: {worker, score, reasons, explain, requirements}."""
+    """All eligible candidates scored and ranked (unpersisted). Only workers with a skill in the job's
+    trade are candidates (v2.2: a strong worker of another trade used to rank on district/verified
+    points alone); workers failing a *required* job requirement are excluded too.
+    Each item: {worker, score, reasons, explain, requirements}."""
     from apps.workers.models import Worker
     from apps.workers.serializers import card_queryset
 
@@ -488,7 +505,9 @@ def score_candidates(job: JobOpening) -> list[dict]:
     busy = Worker.objects.filter(employments__organization=job.organization, employments__status="active")
     candidates = list(
         card_queryset(
-            Worker.objects.filter(is_available=True).exclude(id__in=in_pipeline).exclude(id__in=busy)
+            Worker.objects.filter(is_available=True, skills__trade_id=job.trade_id)
+            .exclude(id__in=in_pipeline)
+            .exclude(id__in=busy)
         )
         .prefetch_related("preferred_districts")
         .distinct()

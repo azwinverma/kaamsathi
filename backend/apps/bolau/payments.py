@@ -23,6 +23,7 @@ import logging
 from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
+from django.utils.translation import pgettext
 
 from apps.core.exceptions import APIError
 from apps.core.money import D, format_npr, q2
@@ -59,16 +60,21 @@ class Gateway:
     def is_enabled(self) -> bool:
         return fee_enabled() and self.has_credentials()
 
+    def not_configured(self) -> NotConfigured:
+        # Own wording: the shared NotConfigured default talks about payout providers.
+        msg = pgettext("harden", "{label} booking-fee payments are not set up yet.")
+        return NotConfigured(msg.format(label=self.label))
+
     def ensure_enabled(self):
         if not self.is_enabled():
-            raise NotConfigured(f"{self.label} payments are not enabled yet.")
+            raise self.not_configured()
 
     def initiate(self, booking: Booking) -> dict:
         """Start a payment for the booking fee → ``{redirect_url, reference}``."""
         self.ensure_enabled()
         # Live API call (eSewa ePay v2 form / Khalti KPG initiate) goes here once the merchant
         # agreement and sandbox credentials exist.
-        raise NotConfigured(f"{self.label} payments are not enabled yet.")  # pragma: no cover
+        raise self.not_configured()  # pragma: no cover
 
     def refund(self, booking: Booking) -> bool:
         """Ask the gateway to refund; False = not possible automatically (ops refund manually)."""
@@ -86,7 +92,7 @@ class Gateway:
         """
         secret = self.webhook_secret()
         if not secret:
-            raise NotConfigured()
+            raise self.not_configured()
         ts = (request.headers.get("X-Timestamp") or "").strip()
         try:
             ts_value = int(ts)

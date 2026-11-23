@@ -112,7 +112,7 @@ Recompute on: attendance bulk save (debounced via Celery), employment end, ratin
 - Worker: `GET|POST /me/credentials` (multipart document), `DELETE /me/credentials/{id}` (pending only); `GET /me/passport`, `PATCH /me/passport {is_public, show_contact}`; `GET|POST /me/passport/shares {audience_label, purpose, days, include_contact}` → `{..., url: PUBLIC_WEB_URL + "/p/s/<token>"}`; `POST /me/passport/shares/{id}/revoke`; `GET /me/passport.pdf` (bilingual, QR to verify_url).
 - Public (no auth, throttled `anon`): `GET /public/passport/{public_code}` (404 unless `is_public`), `GET /public/passport/s/{token}` (404 if expired/revoked; increments views; logs ProfileView context=passport).
 - Employer: `GET /org/credentials/expiring?days=30` → credentials of the org's active workers expiring within N days.
-- Ops: `GET /ops/credentials?status=pending`, `POST /ops/credentials/{id}/verify {status: verified|rejected, method, note?}`, `GET|POST /ops/assessments`, `GET /ops/workers/{id}/credentials`.
+- Ops: `GET /ops/credentials?status=pending`, `POST /ops/credentials/{id}/verify {status: verified|rejected, method, note?}` (changing an already-decided credential needs a `note` and a different staff member or a `superadmin` — else 400 / 403 `permission_denied`; audited as `ops.credential.redecide` with the previous decider), `GET|POST /ops/assessments`, `GET /ops/workers/{id}/credentials`.
 - Daily `apps.credentials.tasks.expiry_reminders`: mark past-expiry `expired`; SMS worker 30 and 7 days before expiry.
 - After any verify/assessment change call `apps.trust.services.recompute_trust`.
 

@@ -345,7 +345,25 @@ class OpsCredentialViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, vie
         cred = self.get_object()
         s = VerifyCredentialSerializer(data=request.data)
         s.is_valid(raise_exception=True)
-        old = cred.status
+        old, previous_by = cred.status, cred.verified_by_id
+        note = (s.validated_data.get("note") or "").strip()
+        redecision = old != "pending"
+        if redecision:
+            # Changing a decision (e.g. rejected → verified) needs a second pair of eyes: another
+            # staff member, or a superadmin, and always a written reason. Audited separately.
+            from apps.accounts.staff_roles import SUPERADMIN, user_roles
+
+            if previous_by == request.user.pk and SUPERADMIN not in user_roles(request.user):
+                raise APIError(
+                    "permission_denied",
+                    message=pgettext(
+                        "harden", "Another staff member or a superadmin must change your own decision."
+                    ),
+                    status_code=403,
+                )
+            if not note:
+                msg = pgettext("harden", "Explain why the earlier decision is being changed.")
+                raise APIError("validation_error", message=msg, fields={"note": [msg]})
         try:
             services.verify_credential(
                 cred,
@@ -360,12 +378,15 @@ class OpsCredentialViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, vie
                     "Registry verification is not available yet. Verify by document or a call to the issuer."
                 )
             ) from exc
+        changes = {"status": {"from": old, "to": cred.status}, "method": cred.verification_method}
+        if redecision:
+            changes.update(previous_decided_by=str(previous_by) if previous_by else None, note=note)
         log(
             request,
-            "ops.credential.verify",
+            "ops.credential.redecide" if redecision else "ops.credential.verify",
             cred,
             organization=None,
-            changes={"status": {"from": old, "to": cred.status}, "method": cred.verification_method},
+            changes=changes,
         )
         return Response(self.get_serializer(cred).data)
 

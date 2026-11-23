@@ -188,8 +188,11 @@ class BolauRepository {
   Future<GhardhaniProfile> myGhardhani() async =>
       GhardhaniProfile.fromJson(await _api.get<dynamic>(BolauPaths.myGhardhani));
 
+  /// Paginated like every list; one page of 100 covers any household's saved addresses.
   Future<List<BolauAddress>> addresses() async =>
-      resultsOf(await _api.get<dynamic>(BolauPaths.addresses)).map(BolauAddress.fromJson).toList();
+      resultsOf(
+        await _api.get<dynamic>(BolauPaths.addresses, query: {'page_size': 100}),
+      ).map(BolauAddress.fromJson).toList();
 
   Future<BolauAddress> saveAddress(BolauAddress a) async {
     final data =
@@ -201,9 +204,9 @@ class BolauRepository {
 
   Future<void> deleteAddress(String id) => _api.delete(BolauPaths.address(id));
 
-  /// Favourite Sipalu handles.
+  /// Favourite Sipalu (a page of cards, newest first).
   Future<List<SipaluCard>> favourites() async {
-    final data = await _api.get<dynamic>(BolauPaths.favourites);
+    final data = await _api.get<dynamic>(BolauPaths.favourites, query: {'page_size': 100});
     return [
       for (final x in (data is List ? data : (asJson(data)['results'] as List?) ?? const []))
         if (x is Map) SipaluCard.fromJson(asJson(x['sipalu'] ?? x)) else SipaluCard(handle: '$x', name: '$x'),

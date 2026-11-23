@@ -7,7 +7,7 @@ from rest_framework import serializers
 from apps.core.bs import bs_str
 from apps.core.money import money_str
 
-from . import labels, services
+from . import labels, pilot, services
 from .models import Charge, Plan
 
 
@@ -58,6 +58,7 @@ def subscription_dict(org) -> dict:
         "is_default": sub is None,
         "active_workers": workers,
         "monthly_estimate": money_str(services.estimate(workers, plan)),
+        "pilot": pilot.pilot_dict(org),  # {started_on, ends_on, days_left} or null
     }
 
 
@@ -181,6 +182,11 @@ class CreditNoteInput(serializers.Serializer):
 class SubscriptionInput(serializers.Serializer):
     plan = serializers.CharField(max_length=20)
     status = serializers.ChoiceField(choices=list(labels.SUBSCRIPTION_STATUS), default="active")
+
+
+class ExtendPilotInput(serializers.Serializer):
+    days = serializers.IntegerField(min_value=1, max_value=180)
+    note = serializers.CharField(max_length=1000)
 
 
 class ChargeInput(serializers.Serializer):

@@ -118,6 +118,20 @@ function SystemHealth() {
             value={num(h?.sms_failed_24h)}
           />
           <StatCard
+            label={t("sms_failovers_24h")}
+            icon={MessageSquareWarning}
+            loading={loading}
+            tone={h?.sms?.circuit_open ? "warning" : "neutral"}
+            value={num(h?.sms?.failovers_24h)}
+            hint={
+              !h?.sms?.failover
+                ? t("sms_failover_off")
+                : h.sms.circuit_open
+                  ? t("sms_circuit_open", { failover: h.sms.failover })
+                  : t("sms_failover_route", { primary: h.sms.primary, failover: h.sms.failover })
+            }
+          />
+          <StatCard
             label={t("version_label")}
             icon={Tag}
             loading={loading}

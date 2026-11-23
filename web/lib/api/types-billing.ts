@@ -41,6 +41,8 @@ export interface BillingSubscription {
   is_default: boolean;
   active_workers: number;
   monthly_estimate: Money;
+  /** Free pilot window; null when the org is not on the pilot. */
+  pilot?: { started_on: ISODate | null; ends_on: ISODate | null; ends_on_bs: string | null; days_left: number | null } | null;
 }
 
 export interface InvoiceLine {

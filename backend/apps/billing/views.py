@@ -19,13 +19,14 @@ from apps.core.exceptions import APIError
 from apps.core.pagination import StandardPagination
 from apps.core.permissions import ADMINS, IsOpsStaff, OrgScopedMixin
 
-from . import services
+from . import pilot, services
 from .models import Charge, Invoice, Plan
 from .pdf import invoice_pdf
 from .serializers import (
     ChargeInput,
     ChargeSerializer,
     CreditNoteInput,
+    ExtendPilotInput,
     GenerateInput,
     PaymentInput,
     PlanInput,
@@ -76,6 +77,10 @@ class BillingSummaryView(OrgScopedMixin, APIView):
                 "plan": plan.code,
                 "plan_name": plan.name,
                 "pilot": services.on_pilot(org),  # charges recorded but waived
+                "pilot_days_left": pilot.days_left(org),  # null when not on the pilot
+                "pilot_ends_on": org.pilot_ends_on.isoformat()
+                if services.on_pilot(org) and org.pilot_ends_on
+                else None,
                 "active_workers": services.active_worker_count(org),
                 "monthly_estimate": f"{services.monthly_estimate(org):.2f}",
                 "unpaid_total": f"{services.unpaid_total(org):.2f}",
@@ -204,6 +209,22 @@ class OpsSubscriptionView(APIView):
                 "status": {"from": before.status if before else None, "to": sub.status},
             },
         )
+        return Response(subscription_dict(org))
+
+
+class OpsExtendPilotView(APIView):
+    """POST /ops/billing/subscriptions/{org_id}/extend-pilot {days 1–180, note} (audited)."""
+
+    permission_classes = OPS_PERMS
+
+    @extend_schema(request=ExtendPilotInput, responses=dict)
+    def post(self, request, org_id):
+        from apps.orgs.models import Organization
+
+        org = get_object_or_404(Organization, pk=org_id)
+        s = ExtendPilotInput(data=request.data)
+        s.is_valid(raise_exception=True)
+        pilot.extend(org, s.validated_data["days"], s.validated_data["note"], request)
         return Response(subscription_dict(org))
 
 

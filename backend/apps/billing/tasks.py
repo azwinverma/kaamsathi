@@ -27,3 +27,11 @@ def generate_monthly_invoices(bs_year: int | None = None, bs_month: int | None =
     if bs_year is None or bs_month is None:
         bs_year, bs_month = previous_bs_month()
     return len(generate_invoices(bs_year, bs_month))
+
+
+@shared_task
+def pilot_expiry():
+    """Daily (beat / serverless cron): pilot reminders 14 days ahead, end pilots on day 90."""
+    from .pilot import run
+
+    return run()

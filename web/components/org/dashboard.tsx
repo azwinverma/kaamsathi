@@ -43,7 +43,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { AttentionList, DenseStatRow, TodayStrip, type AttentionItem } from "@/components/ledger";
 import type { Dashboard, Job } from "@/lib/api/types";
-import { JobWage } from "@/components/hiring/job-bits";
+import { JobWage, filledCount } from "@/components/hiring/job-bits";
 import { AttendanceChart } from "./attendance-chart";
 
 /**
@@ -238,7 +238,7 @@ function OpenJobs({ data, className }: { data: Dashboard; className?: string }) 
                 </div>
                 <p className="mt-0.5 text-xs text-fg-muted">
                   <JobWage job={j} className="[&>span:first-child]:font-normal [&>span:first-child]:text-fg-muted" /> ·{" "}
-                  {tl("filled_of", { joined: f.digits(j.counts?.joined ?? 0), total: f.digits(j.openings_count) })}{" "}
+                  {tl("filled_of", { joined: f.digits(filledCount(j)), total: f.digits(j.openings_count) })}{" "}
                   {tl("col_filled").toLowerCase()} · {f.digits(j.counts?.shortlisted ?? 0)} {tl("col_shortlisted").toLowerCase()}
                 </p>
               </li>
@@ -276,7 +276,7 @@ function OpenJobs({ data, className }: { data: Dashboard; className?: string }) 
                     <td className="px-2 py-3 text-right tabular">{f.digits(c?.shortlisted ?? 0)}</td>
                     <td className="px-2 py-3 text-right tabular">{f.digits(c?.interview ?? 0)}</td>
                     <td className="px-2 py-3 text-right whitespace-nowrap tabular">
-                      {tl("filled_of", { joined: f.digits(c?.joined ?? 0), total: f.digits(j.openings_count) })}
+                      {tl("filled_of", { joined: f.digits(filledCount(j)), total: f.digits(j.openings_count) })}
                     </td>
                     <td className="px-5 py-3">
                       <Badge tone={s.tone}>

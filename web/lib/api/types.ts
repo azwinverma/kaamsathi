@@ -399,6 +399,9 @@ export interface Job {
   published_at: ISODateTime | null;
   first_shortlist_at?: ISODateTime | null;
   counts: StageCounts;
+  /** Openings filled = hires from this job still employed; `left` = hires whose employment ended. */
+  filled?: number;
+  left?: number;
   /** J002 extra requirements. */
   requirements?: JobRequirement[];
   /** J006: set while the job is paused. */
@@ -762,6 +765,10 @@ export interface PayslipUpdate {
 // ---------------------------------------------------------------- billing
 export interface BillingSummary {
   plan: Plan;
+  /** Free pilot: charges are recorded but waived until `pilot_ends_on`. */
+  pilot?: boolean;
+  pilot_days_left?: number | null;
+  pilot_ends_on?: ISODate | null;
   active_workers: number;
   monthly_estimate: Money;
   unpaid_total: Money;

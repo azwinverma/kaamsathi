@@ -524,7 +524,8 @@ def confirm(booking: Booking, user=None, *, auto: bool = False) -> Booking:
         note="auto-confirmed after 24 h" if auto else "",
         fields=("confirmed_at",),
     )
-    notify.to_ghardhani(booking, "booking_confirmed")
+    if auto:  # the household confirmed it themselves: only the Sipalu needs to hear about it
+        notify.to_ghardhani(booking, "booking_confirmed")
     notify.to_sipalu(booking, "booking_confirmed")
     _refresh_sipalu(booking)
     return booking
@@ -678,8 +679,11 @@ def raise_dispute(booking: Booking, user, party: str, description: str):
         note="dispute raised",
         fields=("status_before_dispute",),
     )
-    notify.to_ghardhani(booking, "booking_disputed")
-    notify.to_sipalu(booking, "booking_disputed")
+    # Tell the other party; whoever raised it doesn't get an inbox item for their own action.
+    if party != "ghardhani":
+        notify.to_ghardhani(booking, "booking_disputed")
+    if party != "sipalu":
+        notify.to_sipalu(booking, "booking_disputed")
     return dispute
 
 

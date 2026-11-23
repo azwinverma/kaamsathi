@@ -168,7 +168,8 @@ export function useUpdateGhardhani() {
 export function useAddresses(enabled = true) {
   return useQuery({
     queryKey: bk.addresses,
-    queryFn: async () => rows(await api.get<Paginated<Address> | Address[]>("/me/addresses")),
+    // Paginated like every list; one page of 100 covers any household's saved addresses.
+    queryFn: async () => rows(await api.get<Paginated<Address> | Address[]>("/me/addresses", { page_size: 100 })),
     enabled,
   });
 }
@@ -193,7 +194,8 @@ export function useDeleteAddress() {
 export function useFavourites(enabled = true) {
   return useQuery({
     queryKey: bk.favourites,
-    queryFn: async () => rows(await api.get<Paginated<Favourite> | Favourite[]>("/me/favourites")),
+    queryFn: async () =>
+      rows(await api.get<Paginated<Favourite> | Favourite[]>("/me/favourites", { page_size: 100 })),
     retry: false,
     enabled,
   });

@@ -294,3 +294,47 @@ def test_payment_agreed_only_when_methods_match():
     assert payment_state(b)["agreed"] is True
     b.paid_marked_by_sipalu_at = None
     assert payment_state(b)["agreed"] is False
+
+
+# ------------------------------------------------------------------- actor not notified (launch hardening)
+def _kinds(user):
+    return set(Notification.objects.filter(user=user).values_list("kind", flat=True))
+
+
+def _completed_booking():
+    profile, service, sc = make_sipalu()
+    user, addr, gc = make_ghardhani()
+    bid = _accepted(sc, gc, profile, addr, service)
+    Booking.objects.filter(pk=bid).update(status="completed")
+    Notification.objects.all().delete()
+    return Booking.objects.get(pk=bid), user, profile.worker.user
+
+
+def test_household_is_not_notified_of_its_own_confirm_payment_or_dispute():
+    from apps.bolau import bookings
+
+    booking, user, sipalu_user = _completed_booking()
+    booking = bookings.confirm(booking, user)
+    bookings.mark_paid(booking, user, "ghardhani", "cash")
+    bookings.raise_dispute(booking, user, "ghardhani", "Left a mess")
+    events = {"bolau_booking_confirmed", "bolau_booking_paid", "bolau_booking_disputed"}
+    assert not _kinds(user) & events
+    assert _kinds(sipalu_user) >= events
+
+
+def test_sipalu_raising_a_dispute_is_not_notified_but_the_household_is():
+    from apps.bolau import bookings
+
+    booking, user, sipalu_user = _completed_booking()
+    bookings.raise_dispute(booking, sipalu_user, "sipalu", "Not paid")
+    assert "bolau_booking_disputed" not in _kinds(sipalu_user)
+    assert "bolau_booking_disputed" in _kinds(user)
+
+
+def test_auto_confirm_still_tells_both_sides():
+    from apps.bolau import bookings
+
+    booking, user, sipalu_user = _completed_booking()
+    bookings.confirm(booking, auto=True)
+    assert "bolau_booking_confirmed" in _kinds(user)
+    assert "bolau_booking_confirmed" in _kinds(sipalu_user)

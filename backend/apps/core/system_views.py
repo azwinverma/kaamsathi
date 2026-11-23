@@ -84,6 +84,24 @@ def _beat() -> dict:
     }
 
 
+def _sms_gateways(since) -> dict:
+    """Primary/failover gateways, breaker state and recent failovers (no phone numbers)."""
+    from apps.notifications import sms
+    from apps.notifications.models import SMSMessage
+
+    failover = sms.get_failover_backend()
+    failed_over = SMSMessage.objects.filter(failed_over=True, created_at__gte=since)
+    return {
+        "primary": settings.SMS_BACKEND,
+        "failover": failover.name if failover else None,
+        "circuit_open": failover is not None and sms.circuit_open(),
+        "failovers_24h": failed_over.count(),
+        "recent_failovers": list(
+            failed_over.order_by("-created_at").values("id", "kind", "backend", "attempts", "created_at")[:10]
+        ),
+    }
+
+
 class SystemHealthView(APIView):
     """GET /ops/system/health."""
 
@@ -102,6 +120,7 @@ class SystemHealthView(APIView):
                 "beat": _beat(),
                 "failed_tasks_24h": FailedTask.objects.filter(created_at__gte=since).count(),
                 "sms_failed_24h": SMSMessage.objects.filter(status="failed", created_at__gte=since).count(),
+                "sms": _sms_gateways(since),
                 "version": getattr(settings, "RELEASE", "") or "dev",
             }
         )

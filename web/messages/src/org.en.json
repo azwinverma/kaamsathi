@@ -165,6 +165,8 @@
     "plan": "Plan",
     "plan_pilot": "Pilot",
     "plan_standard": "Standard",
+    "pilot_free": "Free pilot",
+    "pilot_days_left": "{count, plural, =0 {Ends today} one {# day left} other {# days left}} · until {date}",
     "active_workers": "Active workers",
     "monthly_estimate": "This month's estimate",
     "estimate_formula": "{workers} workers × {rate}",

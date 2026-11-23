@@ -1,4 +1,5 @@
-from django.db.models import Count, Q
+from django.db.models import Count, IntegerField, OuterRef, Q, Subquery
+from django.db.models.functions import Coalesce
 from rest_framework import serializers
 
 from apps.core import labels
@@ -17,11 +18,37 @@ STAGES = [k for k in labels.STAGE]
 _INTEREST = Q(applications__stage="sourced", applications__source="worker_interest")
 
 
+def _employments_from_job(status: str):
+    from apps.workforce.models import Employment
+
+    return Subquery(
+        Employment.objects.filter(application__job=OuterRef("pk"), status=status)
+        .order_by()
+        .values("application__job")
+        .annotate(n=Count("id"))
+        .values("n")[:1],
+        output_field=IntegerField(),
+    )
+
+
 def annotate_counts(qs):
     return qs.annotate(
         **{f"n_{s}": Count("applications", filter=Q(applications__stage=s) & ~_INTEREST) for s in STAGES},
         n_interested=Count("applications", filter=_INTEREST),
+        n_filled=Coalesce(_employments_from_job("active"), 0),
+        n_left=Coalesce(_employments_from_job("ended"), 0),
     )
+
+
+def fill_counts(job) -> tuple[int, int]:
+    """(filled, left): hires from this job still employed, and those whose employment ended.
+    ``counts.joined`` is pipeline history; openings are filled only by active employments."""
+    if hasattr(job, "n_filled"):
+        return job.n_filled, job.n_left
+    from apps.workforce.models import Employment
+
+    rows = dict(Employment.objects.filter(application__job=job).values_list("status").annotate(n=Count("id")))
+    return rows.get("active", 0), rows.get("ended", 0)
 
 
 class RequirementInputSerializer(serializers.Serializer):
@@ -153,6 +180,7 @@ class JobSerializer(BSModelSerializer):
                 .annotate(n=Count("id"))
             )
             data["counts"] = {s: counts.get(s, 0) for s in STAGES}
+        data["filled"], data["left"] = fill_counts(instance)
         return data
 
 

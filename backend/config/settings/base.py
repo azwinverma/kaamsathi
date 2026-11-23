@@ -326,6 +326,11 @@ CELERY_BEAT_SCHEDULE = {
         "task": "apps.billing.tasks.generate_monthly_invoices",
         "schedule": crontab(hour=1, minute=45),
     },
+    # Free pilot: reminder 14 days before day 90, then the org moves to the standard plan.
+    "billing-pilot-expiry": {
+        "task": "apps.billing.tasks.pilot_expiry",
+        "schedule": crontab(hour=2, minute=15),
+    },
     "telemetry-purge": {
         "task": "apps.telemetry.tasks.purge_old_events",
         "schedule": crontab(hour=3, minute=30, day_of_week=1),
@@ -423,6 +428,12 @@ OTP_MAX_PER_HOUR = env.int("OTP_MAX_PER_HOUR", default=5)
 OTP_RESEND_COOLDOWN_SECONDS = env.int("OTP_RESEND_COOLDOWN_SECONDS", default=30)
 
 SMS_BACKEND = env("SMS_BACKEND", default="console")  # console | sparrow | aakash
+# Automatic failover (RUNBOOK §7): when the primary gateway errors or times out, the same message
+# goes through this one in the same attempt. Empty = off. After SMS_CIRCUIT_THRESHOLD consecutive
+# primary failures, new messages go straight to the failover for SMS_CIRCUIT_SECONDS.
+SMS_FAILOVER_BACKEND = env("SMS_FAILOVER_BACKEND", default="")  # "" | sparrow | aakash
+SMS_CIRCUIT_THRESHOLD = env.int("SMS_CIRCUIT_THRESHOLD", default=3)
+SMS_CIRCUIT_SECONDS = env.int("SMS_CIRCUIT_SECONDS", default=300)
 SMS_SENDER_ID = env("SMS_SENDER_ID", default="KaamSathi")
 SPARROW_SMS_TOKEN = env("SPARROW_SMS_TOKEN", default="")
 SPARROW_SMS_FROM = env("SPARROW_SMS_FROM", default="InfoSMS")
@@ -434,6 +445,12 @@ PLACEMENT_FEE = env("PLACEMENT_FEE", default="5000.00")
 SUBSCRIPTION_PER_WORKER = env("SUBSCRIPTION_PER_WORKER", default="150.00")
 SUBSCRIPTION_MINIMUM = env("SUBSCRIPTION_MINIMUM", default="3000.00")
 REPLACEMENT_WINDOW_DAYS = 30
+# A free replacement must join within this many days of the leaver's last day (hiring grace).
+REPLACEMENT_HIRE_DAYS = 30
+# Free pilot (Organization.plan="pilot"): its length, and how many days before the end the org's
+# owners/admins and finance ops are reminded (apps/billing/pilot.py, daily beat task).
+PILOT_DAYS = env.int("PILOT_DAYS", default=90)
+PILOT_REMINDER_DAYS = env.int("PILOT_REMINDER_DAYS", default=14)
 
 # --- Ecosystem (docs/CONTRACT-ECOSYSTEM.md) -----------------------------------
 NAIKE_REFERRAL_FEE = env("NAIKE_REFERRAL_FEE", default="500.00")

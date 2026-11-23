@@ -31,7 +31,7 @@ notify(), consent, encryption). The whole module is behind feature flag **`bolau
 
 Any user can become a Sipalu from the app or web (`/sipalu/join`), not only via employers/ops. Progressive onboarding (save-and-resume): phone OTP → name (en + ne) → photo → primary trade + other skills (multi, years, NSTB level) → languages → district/municipality + service area → availability → rates & services → payment details (own eSewa/Khalti/bank) → ID upload for verification → consent. Existing `Worker` model is reused (one person = one Worker); new fields live in `bolau.SipaluProfile`.
 
-**`SipaluProfile(worker OneToOne, handle unique slug [a-z0-9-]{3,30} (auto from name, editable once/30 days), headline (≤80), headline_ne, bio (≤600), bio_ne, bolau_enabled bool, instant_booking bool, service_districts M2M District, service_radius_km, base_lat/lng? (coarse, 2 decimals; never shown), gender_visible bool (default False), years_total, response_time_minutes (computed), jobs_completed (computed), rating_avg/rating_count (computed from bolau ratings), created_at, updated_at)`**.
+**`SipaluProfile(worker OneToOne, handle unique slug [a-z0-9-]{3,30} (auto from name, editable once/30 days), headline (≤80), headline_ne, bio (≤600), bio_ne, bolau_enabled bool, instant_booking bool, service_districts M2M District, service_radius_km, base_lat/lng? (coarse, 2 decimals; never shown; input of any precision is rounded to 2 decimals, not rejected), gender_visible bool (default False), years_total, response_time_minutes (computed), jobs_completed (computed), rating_avg/rating_count (computed from bolau ratings), created_at, updated_at)`**.
 **`SipaluService(id, profile, trade, title, title_ne, description?, price_type fixed|hourly|visit_then_quote, price (fixed or hourly ≥ min hourly), visit_fee? (for visit_then_quote), estimated_minutes?, is_active, order)`** — e.g. electrician: "Ceiling fan installation — Rs 600 fixed".
 **`AvailabilityRule(profile, weekday 0–6, start_time, end_time)`** + **`TimeOff(profile, from_date, to_date, note?)`**.
 **`PortfolioItem(profile, image (private storage, validate_upload, served via signed/public-thumbnail per consent), caption, caption_ne, trade?, created_at)`** — max 12; worker consents to public display.
@@ -46,7 +46,7 @@ Public (no auth, throttled `public`, flag `bolau`): `GET /public/sipalu/{handle}
 ## 2. Ghardhani
 
 Any user can act as a Ghardhani (no organization needed). **`GhardhaniProfile(user OneToOne, display_name, preferred_language, created_at)`**; **`Address(id, ghardhani, label home|office|other, line, ward, municipality, district, landmark?, lat?, lng?, is_default)`** — address lines EncryptedCharField; lat/lng stored, shared only per rule 4.
-Endpoints: `GET|PATCH /me/ghardhani` · CRUD `/me/addresses` · `GET|POST|DELETE /me/favourites` (Sipalu handles).
+Endpoints: `GET|PATCH /me/ghardhani` · CRUD `/me/addresses` · `GET|POST|DELETE /me/favourites` (Sipalu handles). Both `GET` lists are paginated (`{count, next, previous, results}`, `page_size` ≤ 100) like every other list; favourites are Sipalu cards, newest first.
 
 ## 3. Discovery
 

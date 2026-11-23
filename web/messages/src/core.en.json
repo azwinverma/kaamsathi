@@ -208,7 +208,7 @@
   },
   "end_reason": {
     "resigned": "Resigned",
-    "terminated": "Terminated",
+    "terminated": "Dismissed (for cause)",
     "contract_end": "Contract ended",
     "absconded": "Absconded",
     "other": "Other"

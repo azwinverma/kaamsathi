@@ -261,6 +261,32 @@ def test_join_creates_employment_charge_and_fills_job(owner_client, org, site):
     assert job.status == "filled"
 
 
+def test_job_filled_counts_only_hires_still_employed(owner_client, org):
+    job = f.JobFactory(organization=org, openings_count=2)
+    stayed, left = (f.ApplicationFactory(job=job, stage="joined") for _ in range(2))
+    f.EmploymentFactory(organization=org, worker=stayed.worker, application=stayed)
+    f.EmploymentFactory(
+        organization=org,
+        worker=left.worker,
+        application=left,
+        status="ended",
+        end_date=dt.date(2025, 3, 1),
+        end_reason="resigned",
+    )
+    for body in (
+        owner_client.get(f"/api/v1/org/jobs/{job.id}").json(),
+        owner_client.get("/api/v1/org/jobs").json()["results"][0],
+    ):
+        assert body["counts"]["joined"] == 2  # pipeline history is unchanged
+        assert body["filled"] == 1 and body["left"] == 1
+    # one opening is free again: a new join must not count the leaver
+    from apps.hiring.services import refresh_job_fill_status
+
+    refresh_job_fill_status(job)
+    job.refresh_from_db()
+    assert job.status == "open"
+
+
 def test_replacement_within_window_is_waived(owner_client, org):
     job = f.JobFactory(organization=org, openings_count=1)
     first = f.ApplicationFactory(job=job, stage="selected")
@@ -284,6 +310,42 @@ def test_replacement_within_window_is_waived(owner_client, org):
     third = f.ApplicationFactory(job=job3, stage="selected")
     move(owner_client, third, "joined", employment={**JOIN_MONTHLY, "start_date": "2026-08-26"})
     assert Charge.objects.get(application=third).status == "unpaid"
+
+
+def _leaver_then_hire(owner_client, org, *, end_reason, end_date="2026-08-20", hire_start="2026-08-25"):
+    first = f.ApplicationFactory(job=f.JobFactory(organization=org), stage="selected")
+    emp_id = move(owner_client, first, "joined", employment=JOIN_MONTHLY).json()["employment_id"]
+    res = owner_client.post(
+        f"/api/v1/org/employments/{emp_id}/end",
+        {"end_date": end_date, "end_reason": end_reason},
+        format="json",
+    )
+    assert res.status_code == 200, res.json()
+    second = f.ApplicationFactory(job=f.JobFactory(organization=org), stage="selected")
+    move(owner_client, second, "joined", employment={**JOIN_MONTHLY, "start_date": hire_start})
+    return Charge.objects.get(application=second)
+
+
+@pytest.mark.parametrize(
+    "reason,free",
+    [
+        ("resigned", True),
+        ("absconded", True),
+        ("terminated", True),  # dismissed for cause
+        ("contract_end", False),  # the employer ended it (no fault): no free replacement
+        ("other", False),
+    ],
+)
+def test_free_replacement_depends_on_why_the_worker_left(owner_client, org, reason, free):
+    charge = _leaver_then_hire(owner_client, org, end_reason=reason)
+    assert charge.status == ("waived" if free else "unpaid")
+
+
+@pytest.mark.parametrize("hire_start,free", [("2026-09-19", True), ("2026-09-20", False)])
+def test_replacement_must_join_within_30_days_of_the_leaver_leaving(owner_client, org, hire_start, free):
+    charge = _leaver_then_hire(owner_client, org, end_reason="resigned", hire_start=hire_start)
+    assert charge.status == ("waived" if free else "unpaid")
+    assert (charge.replaces_employment_id is not None) is free
 
 
 def test_replacement_after_window_is_charged(owner_client, org):

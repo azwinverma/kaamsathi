@@ -21,6 +21,7 @@ import { isApiError } from "@/lib/api/errors";
 import {
   useBillingPlans,
   useCreateCreditNote,
+  useExtendPilot,
   useGenerateInvoices,
   useIssueInvoice,
   useOpsInvoice,
@@ -72,6 +73,7 @@ export function OpsBillingPage() {
         </TabsContent>
         <TabsContent value="subscriptions">
           <Subscriptions />
+          <ExtendPilot />
         </TabsContent>
       </Tabs>
     </>
@@ -660,6 +662,51 @@ function Subscriptions() {
       </Field>
       <Button type="submit" disabled={!orgId || !plan} loading={setSub.isPending}>
         {t("set_plan")}
+      </Button>
+    </form>
+  );
+}
+
+/** Push a free pilot's end date out (POST …/extend-pilot; audited, needs a note). */
+function ExtendPilot() {
+  const t = useTranslations("ops_billing");
+  const tc = useTranslations("common");
+  const orgs = useOpsOrganizations({ page_size: 100 });
+  const extend = useExtendPilot();
+  const [orgId, setOrgId] = React.useState("");
+  const [days, setDays] = React.useState("30");
+  const [note, setNote] = React.useState("");
+  const { error, submit, err } = useSubmit(extend.mutateAsync, t("pilot_extended"), () => setNote(""));
+  return (
+    <form
+      className="mt-8 max-w-xl space-y-3 border-t border-border pt-6"
+      noValidate
+      onSubmit={(e) => {
+        e.preventDefault();
+        void submit({ orgId, days: Number(days), note });
+      }}
+    >
+      <h3 className="font-medium text-fg">{t("extend_pilot")}</h3>
+      <p className="text-sm text-fg-muted">{t("extend_pilot_hint")}</p>
+      {isApiError(error) && !Object.keys(error.fields).length ? <FormError message={error.message} /> : null}
+      <Field id="pilot-org" label={t("organization")}>
+        <NativeSelect
+          value={orgId}
+          onChange={(e) => setOrgId(e.target.value)}
+          placeholder={tc("select")}
+          options={listResults(orgs.data).map((o) => ({ value: o.id, label: o.name }))}
+        />
+      </Field>
+      <div className="grid gap-3 sm:grid-cols-[8rem_1fr]">
+        <Field id="pilot-days" label={t("extend_days")} error={err("days")}>
+          <Input type="number" min={1} max={180} inputMode="numeric" value={days} onChange={(e) => setDays(e.target.value)} />
+        </Field>
+        <Field id="pilot-note" label={t("reason")} error={err("note")}>
+          <Input value={note} onChange={(e) => setNote(e.target.value)} maxLength={1000} />
+        </Field>
+      </div>
+      <Button type="submit" disabled={!orgId || !note.trim()} loading={extend.isPending}>
+        {t("extend_pilot")}
       </Button>
     </form>
   );

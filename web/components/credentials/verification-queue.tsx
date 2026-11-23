@@ -428,7 +428,9 @@ function DecisionForm({
   const [method, setMethod] = React.useState<VerificationMethod>(
     c.document_url ? "document" : "ops_call",
   );
-  const [note, setNote] = React.useState(c.note ?? "");
+  // Changing an earlier decision needs a fresh reason (and another staff member or a superadmin).
+  const redecide = c.status !== "pending";
+  const [note, setNote] = React.useState(redecide ? "" : (c.note ?? ""));
   const [noteError, setNoteError] = React.useState<string | null>(null);
   const [pending, setPending] = React.useState<"verified" | "rejected" | null>(null);
   const noteRef = React.useRef<HTMLTextAreaElement>(null);
@@ -437,8 +439,8 @@ function DecisionForm({
     (status: "verified" | "rejected") => {
       if (verify.isPending) return;
       const trimmed = note.trim();
-      if (status === "rejected" && !trimmed) {
-        setNoteError(t("note_required"));
+      if ((status === "rejected" || redecide) && !trimmed) {
+        setNoteError(t(redecide ? "note_required_change" : "note_required"));
         noteRef.current?.focus();
         return;
       }
@@ -460,7 +462,7 @@ function DecisionForm({
         },
       );
     },
-    [verify, note, method, c.id, c.title, t, tRoot, onDone],
+    [verify, note, method, redecide, c.id, c.title, t, tRoot, onDone],
   );
 
   React.useEffect(() => {
@@ -490,7 +492,8 @@ function DecisionForm({
       </Field>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor={noteId}>
-          {t("note_label")} <span className="text-fg-muted font-normal">({t("note_hint")})</span>
+          {t("note_label")}{" "}
+          <span className="text-fg-muted font-normal">({t(redecide ? "note_hint_change" : "note_hint")})</span>
         </Label>
         <Textarea
           id={noteId}

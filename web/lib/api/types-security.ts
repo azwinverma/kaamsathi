@@ -74,6 +74,7 @@ export interface AuditEntry {
   object_id: string;
   changes: Record<string, unknown> | null;
   ip: string | null;
+  prev_hash: string;
   hash: string;
 }
 export type AuditPage = Paginated<AuditEntry>;
@@ -125,6 +126,14 @@ export interface SystemHealth {
   beat: { last_heartbeat: ISODateTime | null; stale: boolean };
   failed_tasks_24h: number;
   sms_failed_24h: number;
+  /** Gateway failover (RUNBOOK §7); `failover` null = off. */
+  sms?: {
+    primary: string;
+    failover: string | null;
+    circuit_open: boolean;
+    failovers_24h: number;
+    recent_failovers: { id: number; kind: string; backend: string; attempts: number; created_at: ISODateTime }[];
+  };
   version: string;
 }
 export const FAILED_TASK_STATUSES = ["open", "retried", "dismissed", "all"] as const;

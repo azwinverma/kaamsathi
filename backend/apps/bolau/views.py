@@ -28,7 +28,15 @@ from apps.trust.serializers import DisputeSerializer
 from apps.trust.views import AppealMixin, EvidenceMixin, _filter_status, dispute_queryset
 
 from . import bookings, kaam, labels, onboarding, payloads, payments, profiles, search
-from .common import accept_timeout, error, free_cancel_window, min_hourly, money, require_bolau
+from .common import (
+    CoarseCoordinate,
+    accept_timeout,
+    error,
+    free_cancel_window,
+    min_hourly,
+    money,
+    require_bolau,
+)
 from .models import (
     Address,
     Booking,
@@ -84,8 +92,8 @@ class SipaluPatch(serializers.Serializer):
     service_districts = serializers.ListField(child=serializers.SlugField(), required=False)
     service_municipality = serializers.CharField(max_length=120, required=False, allow_blank=True)
     service_radius_km = serializers.IntegerField(min_value=1, max_value=100, required=False, allow_null=True)
-    base_lat = serializers.DecimalField(max_digits=9, decimal_places=6, required=False, allow_null=True)
-    base_lng = serializers.DecimalField(max_digits=9, decimal_places=6, required=False, allow_null=True)
+    base_lat = CoarseCoordinate(limit=90)
+    base_lng = CoarseCoordinate(limit=180)
     gender_visible = serializers.BooleanField(required=False)
     public_indexable = serializers.BooleanField(required=False)
     years_total = serializers.IntegerField(min_value=0, max_value=60, required=False)
@@ -559,8 +567,12 @@ def _set_default(user, address):
 
 class MeAddressesView(APIView):
     def get(self, request):
-        qs = Address.objects.filter(ghardhani=request.user, is_active=True).select_related("district")
-        return Response([payloads.address_dict(a) for a in qs])
+        qs = (
+            Address.objects.filter(ghardhani=request.user, is_active=True)
+            .select_related("district")
+            .order_by("-is_default", "created_at")
+        )
+        return paginate(self, request, qs, payloads.address_dict)
 
     def post(self, request):
         d = valid(AddressIn, request.data)
@@ -621,7 +633,8 @@ class MeFavouritesView(APIView):
             .select_related("profile__worker")
             .prefetch_related("profile__services", "profile__worker__skills__trade")
         )
-        return Response([payloads.card(f.profile, request) for f in qs if profiles.is_public(f.profile)])
+        public = [f.profile for f in qs.order_by("-created_at") if profiles.is_public(f.profile)]
+        return paginate(self, request, public, lambda p: payloads.card(p, request))
 
     def post(self, request):
         handle = valid(HandleIn, request.data)["handle"].lower()
