@@ -129,6 +129,71 @@ TRADES = [
     ("loader", "Loader", "लोडर", "general"),
 ]
 
+# Everyday search words for each trade (CONTRACT-BOLAU §3: Nepali + romanised), (code, [(alias, language)]).
+# Seeded idempotently by ``seed_reference``; ops can add more in /ops/taxonomy.
+TRADE_ALIASES = {
+    "mason": [
+        ("dakarmi", "ne_rom"),
+        ("डकर्मी", "ne"),
+        ("mistri", "ne_rom"),
+        ("मिस्त्री", "ne"),
+        ("gaaro", "ne_rom"),
+    ],
+    "carpenter": [("sikarmi", "ne_rom"), ("सिकर्मी", "ne"), ("kath mistri", "ne_rom"), ("furniture", "en")],
+    "electrician": [
+        ("bijuli", "ne_rom"),
+        ("bijuli mistri", "ne_rom"),
+        ("बिजुली", "ne"),
+        ("बिजुली मिस्त्री", "ne"),
+        ("electric", "en"),
+        ("wiring", "en"),
+    ],
+    "plumber": [
+        ("plumber", "en"),
+        ("dhara", "ne_rom"),
+        ("dhara mistri", "ne_rom"),
+        ("धारा", "ne"),
+        ("पाइप", "ne"),
+        ("pipe", "en"),
+        ("प्लम्बर", "ne"),
+    ],
+    "rebar_worker": [("rod bainder", "ne_rom"), ("rod", "en"), ("रड", "ne")],
+    "painter": [
+        ("rang", "ne_rom"),
+        ("rangrogan", "ne_rom"),
+        ("रङ", "ne"),
+        ("रंग", "ne"),
+        ("पेन्टर", "ne"),
+        ("paint", "en"),
+    ],
+    "welder": [("welding", "en"), ("वेल्डिङ", "ne"), ("grill", "en")],
+    "helper": [("jyami", "ne_rom"), ("ज्यामी", "ne"), ("labour", "en")],
+    "machine_operator": [("operator", "en"), ("अपरेटर", "ne")],
+    "driver": [("chalak", "ne_rom"), ("चालक", "ne"), ("ड्राइभर", "ne")],
+    "heavy_driver": [("truck", "en"), ("tipper", "en"), ("ट्रक", "ne")],
+    "security_guard": [("guard", "en"), ("chaukidar", "ne_rom"), ("चौकीदार", "ne"), ("गार्ड", "ne")],
+    "cook": [("bhanse", "ne_rom"), ("भान्से", "ne"), ("cook", "en"), ("khana", "ne_rom"), ("खाना", "ne")],
+    "kitchen_helper": [("bhansa sahayogi", "ne_rom"), ("dishwasher", "en"), ("भाँडा", "ne")],
+    "waiter": [("waiter", "en"), ("वेटर", "ne")],
+    "housekeeping": [("ghar safai", "ne_rom"), ("घर सफाई", "ne"), ("housemaid", "en")],
+    "cleaner": [("safai", "ne_rom"), ("सफाई", "ne"), ("सरसफाइ", "ne"), ("cleaning", "en")],
+    "ward_attendant": [("hospital", "en"), ("caretaker", "en"), ("हेरचाह", "ne")],
+    "tailor": [("darji", "ne_rom"), ("दर्जी", "ne"), ("silai", "ne_rom"), ("सिलाई", "ne")],
+    "technician": [("repair", "en"), ("marmat", "ne_rom"), ("मर्मत", "ne")],
+    "hvac_technician": [
+        ("ac", "en"),
+        ("fridge", "en"),
+        ("फ्रिज", "ne"),
+        ("एसी", "ne"),
+        ("refrigerator", "en"),
+    ],
+    "maintenance_technician": [("maintenance", "en"), ("marmat sambhar", "ne_rom"), ("मर्मतसम्भार", "ne")],
+    "solar_technician": [("solar", "en"), ("सोलार", "ne"), ("solar panel", "en")],
+    "ev_technician": [("ev", "en"), ("electric vehicle", "en"), ("scooter", "en")],
+    "store_keeper": [("store", "en"), ("godam", "ne_rom"), ("गोदाम", "ne")],
+    "loader": [("bhariya", "ne_rom"), ("भरिया", "ne"), ("loading", "en")],
+}
+
 MINIMUM_WAGES = [
     # effective_from (AD), basic, DA, total, daily, hourly, hourly part-time
     ("2025-07-17", "12170.00", "7380.00", "19550.00", "754.00", "101.00", "107.00"),
