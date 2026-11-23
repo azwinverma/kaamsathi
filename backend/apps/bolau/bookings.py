@@ -316,6 +316,10 @@ def accept(booking: Booking, user) -> Booking:
     if booking.status == "requested" and booking.expires_at and booking.expires_at <= timezone.now():
         _expire(booking)
         raise invalid()
+    if booking.status == "requested":  # suspended / no longer verified: never share the address
+        profiles.check_can_take_work(
+            SipaluProfile.objects.select_related("worker").filter(worker=booking.sipalu).first()
+        )
     _accept(booking, by=user, party="sipalu")
     notify.to_ghardhani(booking, "booking_accepted")
     _refresh_sipalu(booking)
@@ -752,6 +756,19 @@ def report(booking: Booking, user, party: str, reason: str, note: str = "") -> B
     if created:
         risk.check_report(obj)
     return obj
+
+
+def close_open_work(worker, *, by=None, reason: str, statuses=("requested",)) -> int:
+    """Ops-cancel the Sipalu's bookings in ``statuses`` (suspension, data deletion); each household
+    is told through the normal cancellation notice. Returns how many were cancelled."""
+    n = 0
+    for pk in Booking.objects.filter(sipalu=worker, status__in=statuses).values_list("pk", flat=True):
+        try:
+            cancel(Booking(pk=pk), by, "ops", reason)
+            n += 1
+        except InvalidState:  # moved on concurrently
+            continue
+    return n
 
 
 # --------------------------------------------------------------------------- periodic

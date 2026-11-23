@@ -170,6 +170,13 @@ TEMPLATES: dict[str, tuple[str, str, str, str, bool]] = {
         "घरधनीले अनुरोध {code} का लागि अर्को प्रस्ताव छान्नुभयो।",
         False,
     ),
+    "offer_withdrawn": (
+        "Offer withdrawn",
+        "प्रस्ताव फिर्ता लिइयो",
+        "An offer on your request {code} is no longer available. Other offers stay open.",
+        "तपाईंको अनुरोध {code} मा आएको एउटा प्रस्ताव अब उपलब्ध छैन। अरू प्रस्ताव खुलै छन्।",
+        False,
+    ),
     "request_expired": (
         "Kaam request expired",
         "कामको अनुरोधको समय सकियो",

@@ -2864,3 +2864,7 @@ msgstr "तपाईंको परिचय प्रमाणित भइस
 msgctxt "trust"
 msgid "KaamSathi team"
 msgstr "कामसाथी टोली"
+
+msgctxt "bolau"
+msgid "Your identity must be verified by KaamSathi before you can take bookings."
+msgstr "बुकिङ लिनुअघि KaamSathi ले तपाईंको परिचय प्रमाणित गर्नुपर्छ।"

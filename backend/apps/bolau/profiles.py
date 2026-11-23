@@ -224,6 +224,15 @@ def bookable_problems(profile: SipaluProfile) -> list[str]:
     return problems
 
 
+def check_can_take_work(profile: SipaluProfile | None) -> None:
+    """Accepting a booking / offer (which shares the household's address) needs a verified,
+    not-suspended Sipalu. Turning Bolau off or editing services does not block pending work."""
+    if profile is None or profile.suspended_at:
+        raise InvalidState(message=labels.message("suspended"))
+    if profile.worker.verification_status != "verified":
+        raise InvalidState(message=labels.message("not_verified"))
+
+
 def is_bookable(profile: SipaluProfile) -> bool:
     return not bookable_problems(profile)
 

@@ -218,6 +218,25 @@ def withdraw_offer(offer: Offer) -> Offer:
     return offer
 
 
+def withdraw_pending_offers(worker) -> int:
+    """Withdraw all the Sipalu's pending offers (suspension, data deletion) and tell each household."""
+    n = 0
+    for offer in Offer.objects.filter(sipalu=worker, status="pending").select_related("request__ghardhani"):
+        if Offer.objects.filter(pk=offer.pk, status="pending").update(
+            status="withdrawn", updated_at=timezone.now()
+        ):
+            n += 1
+            req = offer.request
+            notify.send(
+                req.ghardhani,
+                "offer_withdrawn",
+                link=f"/ghar/requests/{req.id}",
+                data={"request_id": str(req.id), "offer_id": str(offer.id)},
+                code=req.code,
+            )
+    return n
+
+
 @transaction.atomic
 def accept_offer(user, req: KaamRequest, offer: Offer) -> Booking:
     req = (
