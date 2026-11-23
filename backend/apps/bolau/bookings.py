@@ -632,7 +632,8 @@ def payment_state(booking: Booking) -> dict:
         "ghardhani_method": booking.paid_method_ghardhani,
         "sipalu_marked_at": s.isoformat() if s else None,
         "sipalu_method": booking.paid_method_sipalu,
-        "agreed": bool(g and s),
+        # Both sides marked it *and* name the same method (a mismatch is for the parties / ops to sort out).
+        "agreed": bool(g and s and booking.paid_method_ghardhani == booking.paid_method_sipalu),
     }
 
 
