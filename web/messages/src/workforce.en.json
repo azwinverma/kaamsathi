@@ -234,7 +234,9 @@
       "create_submit": "Create request",
       "created": "Leave request created",
       "to_before_from": "End date can't be before the start date.",
-      "total_days": "{count, plural, one {{n} day} other {{n} days}}"
+      "total_days": "{count, plural, one {{n} day} other {{n} days}}",
+      "requested_by_worker": "Requested by worker",
+      "requested_by_worker_hint": "{name} asked for this leave from the KaamSathi app."
     }
   }
 }

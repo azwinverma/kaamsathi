@@ -81,6 +81,7 @@ export const STATUS_TONE: Record<string, BadgeTone> = {
   pending: "warning",
   approved: "brand",
   rejected: "danger",
+  cancelled: "neutral",
   // payroll / charges
   paid: "success",
   unpaid: "warning",

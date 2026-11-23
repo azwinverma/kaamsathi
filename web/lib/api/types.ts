@@ -75,7 +75,9 @@ export type AttendanceStatus =
 export type AttendanceMethod = "qr" | "manual" | "supervisor" | "self";
 export type RegisterCell = "P" | "A" | "H" | "L" | "PH" | "WO" | null;
 export type LeaveType = "home" | "sick" | "maternity" | "paternity" | "mourning" | "unpaid";
-export type LeaveStatus = "pending" | "approved" | "rejected";
+export type LeaveStatus = "pending" | "approved" | "rejected" | "cancelled";
+/** Who raised a leave request: entered by the employer/supervisor, or asked for by the worker (/me/leaves). */
+export type LeaveSource = "employer" | "worker";
 export type PayrollStatus = "draft" | "approved" | "paid";
 export type PaymentStatus = "pending" | "paid";
 export type Plan = "pilot" | "standard";
@@ -632,8 +634,11 @@ export interface LeaveRequest {
   reason: string | null;
   status: LeaveStatus;
   status_label?: string;
+  source?: LeaveSource;
+  requested_by?: { id: UUID; full_name: string } | null;
   decided_by?: unknown;
   decided_at: ISODateTime | null;
+  decision_note?: string | null;
 }
 export interface LeaveInput {
   employment: UUID;

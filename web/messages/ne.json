@@ -154,7 +154,8 @@
     "verified": "प्रमाणित",
     "unpaid": "भुक्तानी बाँकी",
     "paid": "भुक्तानी भयो",
-    "waived": "छुट"
+    "waived": "छुट",
+    "cancelled": "रद्द"
   },
   "stage": {
     "sourced": "खोजिएको",
@@ -6649,7 +6650,9 @@
       "create_submit": "अनुरोध बनाउनुहोस्",
       "created": "बिदा अनुरोध बन्यो",
       "to_before_from": "अन्त्य मिति सुरु मितिभन्दा अघि हुन सक्दैन।",
-      "total_days": "{count, plural, one {{n} दिन} other {{n} दिन}}"
+      "total_days": "{count, plural, one {{n} दिन} other {{n} दिन}}",
+      "requested_by_worker": "कामदारले माग गरेको",
+      "requested_by_worker_hint": "{name} ले कामसाथी एपबाट यो बिदा माग्नुभएको हो।"
     }
   }
 }
