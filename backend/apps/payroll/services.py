@@ -8,9 +8,10 @@ from decimal import Decimal
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
+from django.utils.translation import pgettext
 
-from apps.core.bs import BSMonth, fiscal_year
-from apps.core.exceptions import Duplicate, InvalidState
+from apps.core.bs import BSMonth, fiscal_year, today_ad
+from apps.core.exceptions import APIError, Duplicate, InvalidState
 from apps.core.money import D, q2
 from apps.hiring.models import MinimumWage
 from apps.workforce.models import Advance, Attendance, Employment, Holiday, LeaveRequest
@@ -252,6 +253,8 @@ def compute_run(run: PayrollRun) -> PayrollRun:
         if prev:
             for k, v in values.items():
                 setattr(prev, k, v)
+            # Pick up bank/wallet details the worker added since the run was created.
+            prev.payment_method = emp.worker.payment_method
             prev.save()
         else:
             Payslip.objects.create(
@@ -291,11 +294,25 @@ def create_run(
 
 
 def recompute_payslip(slip: Payslip) -> Payslip:
-    """Recompute net after a manual edit of other_deductions (draft only)."""
+    """Recompute net after a manual edit of other_deductions (draft only). Refuses a deduction that
+    would make net pay negative (the caller's transaction rolls the edit back)."""
     if slip.run.status != "draft":
         raise InvalidState()
     meta = _run_meta(slip.run)
     result = engine.calculate(build_input(slip.employment, meta, slip.other_deductions))
+    if result.net_pay < 0:
+        most = q2(max(result.gross_pay - result.ssf_employee - result.tds, Decimal("0")))
+        raise APIError(
+            "validation_error",
+            fields={
+                "other_deductions": [
+                    pgettext(
+                        "fixpay", "This would make net pay negative. At most Rs. %(amount)s can be deducted."
+                    )
+                    % {"amount": f"{most:.2f}"}
+                ]
+            },
+        )
     for k in RESULT_FIELDS:
         setattr(slip, k, getattr(result, k))
     slip.save()
@@ -305,6 +322,18 @@ def recompute_payslip(slip: Payslip) -> Payslip:
 def approve_run(run: PayrollRun, user) -> PayrollRun:
     if run.status != "draft":
         raise InvalidState()
+    # Approval locks hajiri for the month, so the month must be over (drafts can be made any time).
+    if run.period_end >= today_ad():
+        raise InvalidState(
+            message=pgettext(
+                "fixpay", "This month isn't over yet. You can approve the payroll from %(date)s."
+            )
+            % {"date": (run.period_end + dt.timedelta(days=1)).isoformat()}
+        )
+    if run.payslips.filter(net_pay__lt=0).exists():
+        raise InvalidState(
+            message=pgettext("fixpay", "Some payslips have negative net pay. Reduce their deductions first.")
+        )
     run.status = "approved"
     run.approved_by = user
     run.approved_at = timezone.now()
@@ -318,21 +347,26 @@ def mark_paid(run: PayrollRun, paid_on: dt.date, method: str | None = None) -> P
         raise InvalidState()
     paid_at = timezone.make_aware(dt.datetime.combine(paid_on, dt.time(12, 0)))
     for slip in run.payslips.select_related("employment").select_for_update():
-        remaining = slip.advance_recovery
-        for adv in (
+        advances = list(
             Advance.objects.select_for_update()
             .filter(employment=slip.employment, given_on__lte=run.period_end)
             .order_by("given_on")
-        ):
-            if remaining <= 0:
-                break
-            balance = adv.amount - adv.recovered_amount
-            if balance <= 0:
-                continue
-            take = min(balance, remaining)
-            adv.recovered_amount = q2(adv.recovered_amount + take)
+        )
+        remaining = slip.advance_recovery
+        # Each open advance takes up to its own recover_per_month (oldest first); anything left over
+        # (shouldn't happen, the engine sums the same caps) then goes oldest first up to the balance.
+        for capped in (True, False):
+            for adv in advances:
+                if remaining <= 0:
+                    break
+                balance = adv.amount - adv.recovered_amount
+                if balance <= 0:
+                    continue
+                take = min(balance, remaining, adv.recover_per_month) if capped else min(balance, remaining)
+                adv.recovered_amount = q2(adv.recovered_amount + take)
+                remaining -= take
+        for adv in advances:
             adv.save(update_fields=["recovered_amount"])
-            remaining -= take
         slip.payment_status = "paid"
         slip.paid_at = paid_at
         if method:

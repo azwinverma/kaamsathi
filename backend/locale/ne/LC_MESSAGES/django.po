@@ -2856,3 +2856,17 @@ msgstr "फिर्ता गरियो"
 msgctxt "billing2"
 msgid "Bolau booking fee"
 msgstr "बोलाउ बुकिङ शुल्क"
+
+# --- fixpay: e2e verification fixes (payroll, billing, hajiri, OT cap, offers, members)
+msgctxt "fixpay"
+msgid "This would make net pay negative. At most Rs. %(amount)s can be deducted."
+msgstr "यसले खुद तलब ऋणात्मक बनाउँछ। बढीमा रु. %(amount)s मात्र कट्टा गर्न सकिन्छ।"
+
+msgctxt "fixpay"
+msgid "This month isn't over yet. You can approve the payroll from %(date)s."
+msgstr "यो महिना अझै सकिएको छैन। %(date)s देखि तलब स्वीकृत गर्न सकिन्छ।"
+
+msgctxt "fixpay"
+msgid "Some payslips have negative net pay. Reduce their deductions first."
+msgstr "केही तलब पर्चीमा खुद तलब ऋणात्मक छ। पहिले कट्टी घटाउनुहोस्।"
+

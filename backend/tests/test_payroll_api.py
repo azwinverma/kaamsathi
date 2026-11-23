@@ -241,3 +241,87 @@ def test_exports(owner_client, org):
     slip = Payslip.objects.get(employment=emp)
     res = owner_client.get(f"/api/v1/org/payslips/{slip.id}/payslip.pdf")
     assert res.status_code == 200 and res["Content-Type"] == "application/pdf"
+
+
+def test_other_deductions_cannot_make_net_negative(owner_client, org):
+    emp = f.EmploymentFactory(organization=org)
+    mark_present(emp, working_days())
+    f.AdvanceFactory(employment=emp, amount=D("5000"), recover_per_month=D("2000"))
+    run_id = create_run(owner_client).json()["id"]
+    slip = Payslip.objects.get(employment=emp)
+    res = owner_client.patch(
+        f"/api/v1/org/payslips/{slip.id}", {"other_deductions": "999999.00"}, format="json"
+    )
+    assert res.status_code == 400, res.json()
+    err = res.json()["error"]
+    assert err["code"] == "validation_error"
+    assert "19354.00" in err["fields"]["other_deductions"][0]  # 19550 gross − 196 TDS
+    slip.refresh_from_db()
+    assert slip.other_deductions == 0 and slip.net_pay == D("17354.00")
+    # deducting exactly the most allowed is fine (advance recovery gives way: net 0)
+    res = owner_client.patch(
+        f"/api/v1/org/payslips/{slip.id}", {"other_deductions": "19354.00"}, format="json"
+    )
+    assert res.status_code == 200, res.json()
+    slip.refresh_from_db()
+    assert slip.net_pay == 0 and slip.advance_recovery == 0
+    # a negative net that got in some other way can never be approved
+    Payslip.objects.filter(id=slip.id).update(net_pay=D("-5.00"))
+    res = owner_client.post(f"/api/v1/org/payroll-runs/{run_id}/approve")
+    assert res.status_code == 400 and res.json()["error"]["code"] == "invalid_state"
+    assert PayrollRun.objects.get(id=run_id).status == "draft"
+
+
+def test_current_month_run_can_be_drafted_but_not_approved(owner_client, org):
+    from apps.core.bs import BSMonth, ad_to_bs, today_ad
+
+    bs = ad_to_bs(today_ad())
+    f.EmploymentFactory(organization=org)
+    res = owner_client.post(
+        "/api/v1/org/payroll-runs", {"bs_year": bs.year, "bs_month": bs.month}, format="json"
+    )
+    assert res.status_code == 201, res.json()
+    run_id = res.json()["id"]
+    res = owner_client.post(f"/api/v1/org/payroll-runs/{run_id}/approve")
+    assert res.status_code == 400
+    err = res.json()["error"]
+    assert err["code"] == "invalid_state"
+    assert (BSMonth(bs.year, bs.month).end + dt.timedelta(days=1)).isoformat() in err["message"]
+    assert PayrollRun.objects.get(id=run_id).status == "draft"
+
+
+def test_recalculate_refreshes_payment_method(owner_client, org):
+    emp = f.EmploymentFactory(organization=org)
+    mark_present(emp, working_days())
+    run_id = create_run(owner_client).json()["id"]
+    assert Payslip.objects.get(employment=emp).payment_method == "cash"
+    csv_url = f"/api/v1/org/payroll-runs/{run_id}/bank-transfer.csv"
+    assert "1234567890" not in owner_client.get(csv_url).content.decode("utf-8-sig")
+    w = emp.worker
+    w.payment_method, w.bank_name, w.bank_account_no = "bank", "Nabil Bank", "1234567890"
+    w.save()
+    assert owner_client.post(f"/api/v1/org/payroll-runs/{run_id}/recalculate").status_code == 200
+    assert Payslip.objects.get(employment=emp).payment_method == "bank"
+    text = owner_client.get(csv_url).content.decode("utf-8-sig")
+    assert "1234567890" in text and "Nabil Bank" in text
+
+
+def test_mark_paid_respects_each_advance_recover_per_month(owner_client, org):
+    emp = f.EmploymentFactory(organization=org)
+    mark_present(emp, working_days())
+    a1 = f.AdvanceFactory(
+        employment=emp, amount=D("3000"), recover_per_month=D("1000"), given_on=dt.date(2026, 6, 1)
+    )
+    a2 = f.AdvanceFactory(
+        employment=emp, amount=D("3000"), recover_per_month=D("500"), given_on=dt.date(2026, 7, 1)
+    )
+    run_id = create_run(owner_client).json()["id"]
+    assert Payslip.objects.get(employment=emp).advance_recovery == D("1500.00")
+    owner_client.post(f"/api/v1/org/payroll-runs/{run_id}/approve")
+    owner_client.post(
+        f"/api/v1/org/payroll-runs/{run_id}/mark-paid", {"paid_on": "2026-08-20"}, format="json"
+    )
+    a1.refresh_from_db()
+    a2.refresh_from_db()
+    assert a1.recovered_amount == D("1000.00")  # was 1500: the oldest advance took everything
+    assert a2.recovered_amount == D("500.00")
