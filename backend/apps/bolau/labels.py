@@ -164,6 +164,10 @@ MESSAGES = {
     "visit_fee_required": b("Add a visit fee for visit-then-quote services."),
     "portfolio_full": b("You can add up to 12 portfolio photos."),
     "suspended": b("Bolau is paused on your profile. Contact KaamSathi support."),
+    "identity_locked": b(
+        "Your identity is verified, so your name and ID details cannot be changed here. "
+        "Contact KaamSathi support to correct them."
+    ),
     "phone_in_use": b("Another account already uses this phone number for a Sipalu profile."),
     "fee_not_payable": b("There is no booking fee to pay for this booking."),
     "receipt_unavailable": b("A receipt is available once the booking fee is paid."),

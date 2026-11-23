@@ -370,6 +370,19 @@ class SelfWorkerSerializer(WorkerDetailSerializer):
         fields = [*WorkerDetailSerializer.Meta.fields, "preferred_districts", "service_radius_km"]
         read_only_fields = [f for f in fields if f not in SELF_EDITABLE]
 
+    def validate_full_name_ne(self, value):
+        # The English name is read-only here; once verified the Nepali name is locked too (support fixes it).
+        w = self.instance
+        if (
+            w is not None
+            and w.verification_status == "verified"
+            and (value or None) != (w.full_name_ne or None)
+        ):
+            from apps.bolau.labels import message
+
+            raise serializers.ValidationError(message("identity_locked"))
+        return value
+
     def validate_preferred_districts(self, value):
         if len(value) > 10:
             raise serializers.ValidationError("Choose at most 10 districts.")

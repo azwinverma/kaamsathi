@@ -167,6 +167,7 @@ def apply_step(profile: SipaluProfile, step: str, data, files) -> None:
     w = profile.worker
     if step == "name":
         d = _valid(NameStep, data)
+        profiles.check_identity_change(w, full_name=d["full_name"], full_name_ne=d.get("full_name_ne"))
         w.full_name = d["full_name"].strip()
         if "full_name_ne" in d:
             w.full_name_ne = d["full_name_ne"].strip() or None
@@ -260,6 +261,13 @@ def apply_step(profile: SipaluProfile, step: str, data, files) -> None:
         d = _valid(IdentityStep, data)
         front = files.get("id_front")
         back = files.get("id_back")
+        profiles.check_identity_change(
+            w,
+            citizenship_no=d.get("citizenship_no") or None,
+            nid_no=d.get("nid_no") or None,
+            id_front=front,
+            id_back=back,
+        )
         if front is None and not w.id_front:
             raise APIError("validation_error", fields={"id_front": ["Add a photo of the front of your ID."]})
         if d.get("citizenship_no"):

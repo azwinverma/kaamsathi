@@ -2856,3 +2856,7 @@ msgstr "फिर्ता गरियो"
 msgctxt "billing2"
 msgid "Bolau booking fee"
 msgstr "बोलाउ बुकिङ शुल्क"
+
+msgctxt "bolau"
+msgid "Your identity is verified, so your name and ID details cannot be changed here. Contact KaamSathi support to correct them."
+msgstr "तपाईंको परिचय प्रमाणित भइसकेकाले नाम र परिचयपत्रको विवरण यहाँबाट बदल्न मिल्दैन। सच्याउन KaamSathi सहायतामा सम्पर्क गर्नुहोस्।"

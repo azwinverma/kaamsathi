@@ -191,6 +191,22 @@ def set_bolau_enabled(profile: SipaluProfile, enabled: bool) -> None:
     profile.bolau_enabled = bool(enabled)
 
 
+# --------------------------------------------------------------------------- verified identity lock
+def check_identity_change(worker, **changes) -> None:
+    """Once KaamSathi has verified the worker, name (en/ne) and ID numbers / photos are locked, as on
+    ``/me/worker``: a real change is refused (400) and the person is pointed to support. Repeating the
+    stored value is not a change, so idempotent onboarding steps keep working."""
+    if worker.verification_status != "verified":
+        return
+    for field, value in changes.items():
+        if value is None:
+            continue
+        if field in ("id_front", "id_back") or (str(value).strip() or None) != (
+            getattr(worker, field) or None
+        ):
+            raise error("validation_error", "identity_locked", field)
+
+
 # --------------------------------------------------------------------------- bookability
 def bookable_problems(profile: SipaluProfile) -> list[str]:
     """Reasons the Sipalu cannot be booked (empty = bookable)."""
