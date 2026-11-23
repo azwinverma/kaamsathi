@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { FileSignature, Send, Undo2 } from "lucide-react";
 import { Badge, type BadgeTone } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SwitchField } from "@/components/ui/checkbox";
 import { BsDatePicker } from "@/components/ui/date";
 import {
   Dialog,
@@ -136,6 +137,7 @@ export function OfferDialog({
   const [contract, setContract] = React.useState<ContractType>("permanent");
   const [endsOn, setEndsOn] = React.useState("");
   const [days, setDays] = React.useState("3");
+  const [ssf, setSsf] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
@@ -181,6 +183,7 @@ export function OfferDialog({
         designation: designation.trim(),
         contract_type: contract,
         ends_on: needsEnd ? endsOn : null,
+        ssf_enrolled: ssf,
         expires_in_days: Number(days) || 3,
       },
       {
@@ -281,6 +284,13 @@ export function OfferDialog({
               />
             </Field>
           </div>
+          <SwitchField
+            id="of-ssf"
+            label={tRoot("term.ssf")}
+            description={t("ssf_hint")}
+            checked={ssf}
+            onCheckedChange={setSsf}
+          />
           <FormError message={error ?? below} />
         </DialogBody>
         <DialogFooter>
@@ -308,6 +318,7 @@ export function offerDefaults(offer: JobOfferSummary | null | undefined) {
     basic_salary: offer.basic_salary ?? "",
     dearness_allowance: offer.dearness_allowance ?? "",
     daily_wage: offer.daily_wage ?? "",
+    ssf_enrolled: offer.ssf_enrolled ?? false,
   };
 }
 

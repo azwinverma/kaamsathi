@@ -167,7 +167,8 @@
         "fixed_term": "Fixed term",
         "daily": "Daily wage",
         "probation": "Probation"
-      }
+      },
+      "ssf_hint": "Enrol in SSF from the first day: 11% from basic salary, plus 20% employer contribution. Carried into the employment when they join."
     }
   }
 }
