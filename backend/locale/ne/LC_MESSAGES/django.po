@@ -2898,3 +2898,24 @@ msgctxt "fixpay"
 msgid "Overtime can't go above the weekly limit of %(hours)s hours. At most %(minutes)s minutes can be approved for this week."
 msgstr "ओभरटाइम हप्ताको %(hours)s घण्टाको सीमाभन्दा बढी हुन सक्दैन। यो हप्ताका लागि बढीमा %(minutes)s मिनेट मात्र स्वीकृत गर्न सकिन्छ।"
 
+
+# --- leave: worker-requested leave (/me/leaves)
+msgctxt "leave"
+msgid "The last day must be on or after the first day."
+msgstr "अन्तिम दिन पहिलो दिनभन्दा अघि हुन सक्दैन।"
+
+msgctxt "leave"
+msgid "Ask your employer directly for leave this long."
+msgstr "यति लामो बिदाका लागि आफ्नो रोजगारदातासँग सिधै कुरा गर्नुहोस्।"
+
+msgctxt "leave"
+msgid "You are not employed here for these dates."
+msgstr "यी मितिहरूमा तपाईं यहाँ कार्यरत हुनुहुन्न।"
+
+msgctxt "leave"
+msgid "You already have leave on some of these days."
+msgstr "यीमध्ये केही दिनमा तपाईंको बिदा पहिले नै छ।"
+
+msgctxt "leave"
+msgid "Only a pending request can be cancelled."
+msgstr "विचाराधीन अनुरोध मात्र रद्द गर्न मिल्छ।"
