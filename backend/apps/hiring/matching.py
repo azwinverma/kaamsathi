@@ -19,7 +19,7 @@ from apps.core.exceptions import APIError
 
 from .models import Application, MatchCandidate, MatchConfig, MatchRun
 
-ALGORITHM_VERSION = "v2.1"
+ALGORITHM_VERSION = "v2.2"  # v2.2: candidates must have a skill in the job's trade
 RUN_REUSE_MINUTES = 10
 MAX_PERSISTED = 100
 

@@ -162,7 +162,7 @@ Payroll calculation (per active employment overlapping the BS month, prorated by
 - `GET /ops/workers?q=&trade=&district=&verification_status=&is_available=` · `POST /ops/workers` · `GET|PATCH /ops/workers/{id}`
 - `POST /ops/workers/{id}/verify {status: verified|rejected, note?}`
 - `GET /ops/jobs?status=open` (all orgs, includes `organization: {id, name}`, `hours_open`)
-- `GET /ops/jobs/{id}/matches?limit=20` → `[{worker: WorkerCard, score 0–100, reasons: ["Trade match", "Same district", "Verified", "NSTB Level 2"]}]` — score: trade 50 + district 20 + verified 10 + NSTB 5/level (max 15) + experience 1/yr (max 10) − 10 if expected wage > offer; only `is_available` workers not already in pipeline.
+- `GET /ops/jobs/{id}/matches?limit=20` → `[{worker: WorkerCard, score 0–100, reasons: ["Trade match", "Same district", "Verified", "NSTB Level 2"]}]` — score: trade 50 + district 20 + verified 10 + NSTB 5/level (max 15) + experience 1/yr (max 10) − 10 if expected wage > offer; only `is_available` workers not already in pipeline who have a skill in the job's trade (matching v2.2: a worker of another trade is never listed, however high their district/verified points).
 - `POST /ops/jobs/{id}/shortlist {worker_ids: []}` → creates Applications at `shortlisted` (sets job.first_shortlist_at), notifies employer
 - `GET /ops/organizations` · `GET /ops/organizations/{id}`
 

@@ -21,6 +21,10 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
   note). The web billing page shows "Free pilot — N days left"; after the pilot the default price
   list reads "Standard" instead of "Pilot".
 
+### Fixed (launch hardening)
+- **Ops matching** lists only workers with a skill in the job's trade (algorithm `v2.2`): a
+  non-cook with district and verified points no longer appears for a cook job.
+
 ### Fixed
 - **Payroll:** an edit that would make net pay negative is refused, and a negative-net payslip can't
   be approved; TDS taxes the festival (Dashain) allowance and overtime once at the marginal rate

@@ -90,6 +90,16 @@ def test_matches_endpoint_filters_and_orders(staff_client, job, org):
     assert len(staff_client.get(f"/api/v1/ops/jobs/{job.id}/matches", {"limit": 1}).json()) == 1
 
 
+def test_matches_exclude_workers_without_the_job_trade(staff_client, job):
+    cook = worker(years=1, district="jhapa", verified=False)  # weak cook: 50 + 1
+    mason = worker(trade="mason", years=10, nstb="level3")  # strong, but not a cook (30 points)
+    nobody = worker(trade=None)
+    res = staff_client.get(f"/api/v1/ops/jobs/{job.id}/matches", {"refresh": "1"})
+    ids = [r["worker"]["id"] for r in res.json()]
+    assert ids == [str(cook.id)]
+    assert str(mason.id) not in ids and str(nobody.id) not in ids
+
+
 def test_shortlist_creates_applications(staff_client, job):
     w1, w2 = worker(), worker()
     res = staff_client.post(

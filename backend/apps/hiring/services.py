@@ -288,7 +288,7 @@ def shortlist_workers(job: JobOpening, workers, user) -> list[Application]:
     return created
 
 
-# --------------------------------------------------------------------------- matching (v2.1)
+# --------------------------------------------------------------------------- matching (v2.2)
 NSTB_RANK = {"none": 0, "elementary": 0, "level1": 1, "level2": 2, "level3": 3}
 NSTB_POINTS = {"none": 0, "elementary": 0, "level1": 5, "level2": 10, "level3": 15}  # default weights
 NSTB_LABEL = {"level1": "NSTB Level 1", "level2": "NSTB Level 2", "level3": "NSTB Level 3"}
@@ -477,8 +477,10 @@ def match_score(job: JobOpening, worker) -> tuple[int, list[str]]:
 
 
 def score_candidates(job: JobOpening) -> list[dict]:
-    """All eligible candidates scored and ranked (unpersisted). Workers failing a *required* job
-    requirement are excluded. Each item: {worker, score, reasons, explain, requirements}."""
+    """All eligible candidates scored and ranked (unpersisted). Only workers with a skill in the job's
+    trade are candidates (v2.2: a strong worker of another trade used to rank on district/verified
+    points alone); workers failing a *required* job requirement are excluded too.
+    Each item: {worker, score, reasons, explain, requirements}."""
     from apps.workers.models import Worker
     from apps.workers.serializers import card_queryset
 
@@ -488,7 +490,9 @@ def score_candidates(job: JobOpening) -> list[dict]:
     busy = Worker.objects.filter(employments__organization=job.organization, employments__status="active")
     candidates = list(
         card_queryset(
-            Worker.objects.filter(is_available=True).exclude(id__in=in_pipeline).exclude(id__in=busy)
+            Worker.objects.filter(is_available=True, skills__trade_id=job.trade_id)
+            .exclude(id__in=in_pipeline)
+            .exclude(id__in=busy)
         )
         .prefetch_related("preferred_districts")
         .distinct()

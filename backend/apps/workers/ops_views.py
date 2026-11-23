@@ -218,7 +218,7 @@ class OpsJobViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.G
             limit = min(max(int(request.query_params.get("limit", 20)), 1), 100)
         except ValueError as exc:
             raise APIError("validation_error", fields={"limit": ["Must be an integer."]}) from exc
-        # matching v2.1: rows carry ``explain``, ``requirements``, ``interested``, ``rank``, ``run_id``.
+        # matching v2.2: rows carry ``explain``, ``requirements``, ``interested``, ``rank``, ``run_id``.
         # The scoring is persisted as a MatchRun (K010) and reused for 10 min unless ?refresh=1.
         refresh = request.query_params.get("refresh") in ("1", "true")
         rows = job_matches(job, limit, request, persist=True, refresh=refresh)
