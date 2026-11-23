@@ -24,6 +24,9 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
 ### Fixed (launch hardening)
 - **Ops matching** lists only workers with a skill in the job's trade (algorithm `v2.2`): a
   non-cook with district and verified points no longer appears for a cook job.
+- **Job openings filled** count only hires from the job who are still employed (`filled`; `left`
+  counts hires who already ended): a job no longer shows "2 of 2" or flips to filled when one of the
+  two has left. Web job list, detail and dashboard show "N of M filled · K left".
 
 ### Fixed
 - **Payroll:** an edit that would make net pay negative is refused, and a negative-net payslip can't

@@ -108,16 +108,22 @@ export function PipelineCounts({
   );
 }
 
-/** Joined / openings progress. */
-export function FillProgress({ job }: { job: Pick<Job, "counts" | "openings_count"> }) {
+/** Openings filled by hires still employed (older API: joined count). */
+export function filledCount(job: Pick<Job, "counts" | "filled">): number {
+  return job.filled ?? job.counts?.joined ?? 0;
+}
+
+/** Filled / openings progress; hires who already left are shown separately. */
+export function FillProgress({ job }: { job: Pick<Job, "counts" | "openings_count" | "filled" | "left"> }) {
   const t = useTranslations("hiring.jobs");
   const f = useFormat();
-  const joined = job.counts?.joined ?? 0;
+  const joined = filledCount(job);
   const pct = Math.min(100, Math.round((joined / Math.max(1, job.openings_count)) * 100));
   return (
     <div className="min-w-28 space-y-1">
       <p className="text-fg-muted tabular text-xs">
         {t("filled_of", { joined: f.digits(joined), total: f.digits(job.openings_count) })}
+        {job.left ? ` · ${t("filled_left", { count: f.digits(job.left) })}` : null}
       </p>
       <div
         className="bg-surface-muted h-1.5 overflow-hidden rounded-full"

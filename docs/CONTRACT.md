@@ -115,7 +115,7 @@ Payroll calculation (per active employment overlapping the BS month, prorated by
 ### Hiring
 - `GET /org/jobs?status=&trade=&q=` · `POST /org/jobs` · `GET|PATCH|DELETE(draft only) /org/jobs/{id}`
 - `POST /org/jobs/{id}/publish` (draft→open) · `POST /org/jobs/{id}/close`
-- Job response includes `trade: {code, name_en, name_ne}`, `site: {id, name}|null`, `counts: {sourced, shortlisted, interview, selected, joined, rejected, dropped}`, `status_label`.
+- Job response includes `trade: {code, name_en, name_ne}`, `site: {id, name}|null`, `counts: {sourced, shortlisted, interview, selected, joined, rejected, dropped}` (pipeline history), `filled` (hires from this job still employed — what fills openings and flips the job to `filled`), `left` (hires from this job whose employment ended), `status_label`.
 - `GET /org/applications?job=&stage=&q=` → Application with `worker: WorkerCard`, `job: {id, title}`, `stage_label`
 - `GET /org/applications/{id}` (includes `events` and full `worker: WorkerProfile` if consent `profile_share` granted for this org or worker shortlisted to it)
 - `POST /org/applications/{id}/move {stage, interview_at?, note?, rejection_reason?, employment?: {start_date, site_id?, designation?, wage_type, basic_salary?, dearness_allowance?, daily_wage?, ssf_enrolled}}` — `employment` required when stage=joined; returns `{application, employment_id?}`. Allowed transitions: sourced→shortlisted|rejected; shortlisted→interview|selected|rejected|dropped; interview→selected|rejected|dropped; selected→joined|dropped; any terminal → none (400 `invalid_state`).

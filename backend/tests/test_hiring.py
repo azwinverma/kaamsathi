@@ -261,6 +261,32 @@ def test_join_creates_employment_charge_and_fills_job(owner_client, org, site):
     assert job.status == "filled"
 
 
+def test_job_filled_counts_only_hires_still_employed(owner_client, org):
+    job = f.JobFactory(organization=org, openings_count=2)
+    stayed, left = (f.ApplicationFactory(job=job, stage="joined") for _ in range(2))
+    f.EmploymentFactory(organization=org, worker=stayed.worker, application=stayed)
+    f.EmploymentFactory(
+        organization=org,
+        worker=left.worker,
+        application=left,
+        status="ended",
+        end_date=dt.date(2025, 3, 1),
+        end_reason="resigned",
+    )
+    for body in (
+        owner_client.get(f"/api/v1/org/jobs/{job.id}").json(),
+        owner_client.get("/api/v1/org/jobs").json()["results"][0],
+    ):
+        assert body["counts"]["joined"] == 2  # pipeline history is unchanged
+        assert body["filled"] == 1 and body["left"] == 1
+    # one opening is free again: a new join must not count the leaver
+    from apps.hiring.services import refresh_job_fill_status
+
+    refresh_job_fill_status(job)
+    job.refresh_from_db()
+    assert job.status == "open"
+
+
 def test_replacement_within_window_is_waived(owner_client, org):
     job = f.JobFactory(organization=org, openings_count=1)
     first = f.ApplicationFactory(job=job, stage="selected")

@@ -397,6 +397,9 @@ export interface Job {
   published_at: ISODateTime | null;
   first_shortlist_at?: ISODateTime | null;
   counts: StageCounts;
+  /** Openings filled = hires from this job still employed; `left` = hires whose employment ended. */
+  filled?: number;
+  left?: number;
   /** J002 extra requirements. */
   requirements?: JobRequirement[];
   /** J006: set while the job is paused. */

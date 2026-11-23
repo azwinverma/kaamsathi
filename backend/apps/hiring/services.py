@@ -27,8 +27,11 @@ def validate_job_wage(wage_type: str, amount):
 
 
 def refresh_job_fill_status(job: JobOpening):
-    joined = job.applications.filter(stage="joined").count()
-    if job.status == "open" and joined >= job.openings_count:
+    # Openings are filled by hires still employed: a hire who already left frees the opening.
+    from apps.workforce.models import Employment
+
+    filled = Employment.objects.filter(application__job=job, status="active").count()
+    if job.status == "open" and filled >= job.openings_count:
         job.status = "filled"
         job.save(update_fields=["status"])
 
