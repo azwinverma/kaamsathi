@@ -197,6 +197,7 @@ class JobOffer(models.Model):
     designation = models.CharField(max_length=120, blank=True, default="")
     contract_type = models.CharField(max_length=12, choices=CONTRACT_TYPES, default="permanent")
     ends_on = models.DateField(null=True, blank=True)
+    ssf_enrolled = models.BooleanField(default=False, help_text="Carried into the employment on join.")
     expires_at = models.DateTimeField()
     status = models.CharField(max_length=10, choices=STATUSES, default="sent")
     sent_by = models.ForeignKey(

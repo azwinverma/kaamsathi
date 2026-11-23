@@ -58,6 +58,8 @@
     "email_invalid": "Enter a valid email address",
     "footnote": "You'll be the owner of this organization.",
     "submit": "Create organization",
-    "created": "{name} is ready"
+    "created": "{name} is ready",
+    "your_name": "Your name",
+    "your_name_hint": "So your team and workers know who runs this account."
   }
 }

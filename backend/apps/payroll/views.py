@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import ProtectedError, Q
 from django.http import HttpResponse
 from rest_framework import mixins, viewsets
@@ -154,6 +155,7 @@ class PayslipViewSet(
             "worker", "employment", "run__organization"
         )
 
+    @transaction.atomic
     def perform_update(self, serializer):
         slip = serializer.instance
         if slip.run.status != "draft":

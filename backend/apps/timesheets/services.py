@@ -184,6 +184,15 @@ def approve(ts: Timesheet, user, overtime_minutes_approved=None) -> Timesheet:
                 ]
             },
         )
+    # Hard limit (Labour Act: 24 h/week by default): approving up to the policy cap is fine, beyond it is not.
+    cap = policy_or_default(ts.employment.organization).weekly_ot_cap_minutes
+    if overtime_minutes_approved > cap:
+        msg = pgettext(
+            "fixpay",
+            "Overtime can't go above the weekly limit of %(hours)s hours. "
+            "At most %(minutes)s minutes can be approved for this week.",
+        ) % {"hours": round(cap / 60, 1), "minutes": cap}
+        raise APIError("validation_error", message=msg, fields={"overtime_minutes_approved": [msg]})
     ts.status = "approved"
     ts.overtime_minutes_approved = overtime_minutes_approved
     ts.approved_by = user
@@ -247,7 +256,8 @@ def approved_ot_minutes(employment, period_start: dt.date, period_end: dt.date) 
     """
     policy = TimesheetPolicy.objects.filter(organization_id=employment.organization_id).first()
     if policy is None or not policy.ot_requires_approval:
-        return None
+        return capped_attendance_ot(employment, period_start, period_end, policy)
+    cap = policy.weekly_ot_cap_minutes
     total = Decimal("0")
     sheets = Timesheet.objects.filter(
         employment=employment,
@@ -260,5 +270,32 @@ def approved_ot_minutes(employment, period_start: dt.date, period_end: dt.date) 
         overlap = (min(week_end, period_end) - max(ts.week_start, period_start)).days + 1
         if overlap <= 0:
             continue
-        total += Decimal(ts.overtime_minutes_approved or 0) * Decimal(overlap) / Decimal(WEEK)
+        approved = min(ts.overtime_minutes_approved or 0, cap)  # sheets approved before the cap was hard
+        total += Decimal(approved) * Decimal(overlap) / Decimal(WEEK)
     return int(total.quantize(Decimal("1"), rounding=ROUND_HALF_UP))
+
+
+def capped_attendance_ot(employment, period_start: dt.date, period_end: dt.date, policy=None) -> int | None:
+    """Without OT approval payroll pays attendance OT, but never above the weekly cap: per Sunday-week
+    (looking at the whole week, even the days outside the period) minutes count in date order until the
+    cap is reached. None when no week goes over (payroll then sums attendance as usual). Hourly wage
+    types derive OT from hours worked, not ``overtime_minutes``, so they are left alone."""
+    if employment.wage_type == "hourly":
+        return None
+    cap = (policy or TimesheetPolicy(organization_id=employment.organization_id)).weekly_ot_cap_minutes
+    start, end = week_of(period_start), week_of(period_end) + dt.timedelta(days=WEEK - 1)
+    rows = (
+        Attendance.objects.filter(employment=employment, date__range=(start, end), overtime_minutes__gt=0)
+        .order_by("date")
+        .values_list("date", "overtime_minutes")
+    )
+    paid = raw = 0
+    used: dict = {}
+    for day, minutes in rows:
+        week = week_of(day)
+        allowed = max(min(minutes, cap - used.get(week, 0)), 0)
+        used[week] = used.get(week, 0) + minutes
+        if period_start <= day <= period_end:
+            raw += minutes
+            paid += allowed
+    return paid if paid < raw else None

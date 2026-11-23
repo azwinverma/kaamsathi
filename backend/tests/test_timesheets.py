@@ -168,6 +168,69 @@ def test_over_cap_flag(owner_client, org):
     assert row["over_cap"] is False and row["warning"] is None
 
 
+def _over_cap_sheet(org):
+    emp = f.EmploymentFactory(organization=org)
+    for i in range(6):  # 6 × 250 = 1500 min > 1440 cap
+        f.AttendanceFactory(
+            employment=emp, date=WEEK + dt.timedelta(days=i), status="present", overtime_minutes=250
+        )
+    services.generate(org, WEEK)
+    return Timesheet.objects.get(employment=emp)
+
+
+def test_approving_ot_above_weekly_cap_is_refused(owner_client, org):
+    ts = _over_cap_sheet(org)
+    res = owner_client.post(f"{URL}/{ts.id}/approve", {}, format="json")  # default = claimed 1500
+    assert res.status_code == 400
+    err = res.json()["error"]
+    assert err["code"] == "validation_error" and "overtime_minutes_approved" in err["fields"]
+    assert "24" in err["message"] and "1440" in err["message"]
+    res = owner_client.post(
+        f"{URL}/{ts.id}/approve",
+        {"overtime_minutes_approved": 1441},
+        format="json",
+        HTTP_ACCEPT_LANGUAGE="ne",
+    )
+    assert res.status_code == 400 and "ओभरटाइम" in res.json()["error"]["message"]
+    ts.refresh_from_db()
+    assert ts.status == "draft" and ts.overtime_minutes_approved is None
+    res = owner_client.post(f"{URL}/{ts.id}/approve", {"overtime_minutes_approved": 1440}, format="json")
+    assert res.status_code == 200 and res.json()["overtime_minutes_approved"] == 1440
+
+
+def test_bulk_approve_skips_over_cap_sheets(owner_client, org):
+    over = _over_cap_sheet(org)
+    ok_emp = f.EmploymentFactory(organization=org)
+    f.AttendanceFactory(employment=ok_emp, date=WEEK, status="present", overtime_minutes=60)
+    services.generate(org, WEEK)
+    ok = Timesheet.objects.get(employment=ok_emp)
+    body = owner_client.post(f"{URL}/bulk-approve", {"ids": [str(over.id), str(ok.id)]}, format="json").json()
+    assert body["approved"] == [str(ok.id)]
+    assert body["skipped"][0]["id"] == str(over.id) and body["skipped"][0]["code"] == "validation_error"
+    over.refresh_from_db()
+    assert over.status == "draft"
+
+
+def test_payroll_never_pays_ot_above_weekly_cap(org):
+    # without approval: attendance OT 6 × 250 = 1500 min in one week → paid 1440 (24 h)
+    emp = _over_cap_sheet(org).employment
+    slip = _slip(org, emp)
+    assert slip.overtime_hours == D("24.00")
+
+
+def test_payroll_caps_legacy_approved_ot(org):
+    TimesheetPolicy.objects.create(organization=org, ot_requires_approval=True)
+    emp = _payroll_emp(org)
+    Timesheet.objects.create(  # approved before the cap was enforced
+        employment=emp,
+        week_start=WEEK,
+        status="approved",
+        overtime_minutes_claimed=2000,
+        overtime_minutes_approved=2000,
+    )
+    assert _slip(org, emp).overtime_hours == D("24.00")
+
+
 def test_policy_get_and_patch(owner_client, org):
     assert owner_client.get("/api/v1/org/timesheet-policy").json() == {
         "ot_requires_approval": False,

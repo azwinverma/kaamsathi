@@ -42,7 +42,7 @@ const INDUSTRIES: { value: Industry; icon: LucideIcon }[] = [
   { value: "other", icon: Building2 },
 ];
 
-const FIELDS = ["name", "pan_no", "industry", "district", "municipality", "ward", "address", "phone", "email"] as const;
+const FIELDS = ["name", "pan_no", "industry", "district", "municipality", "ward", "address", "phone", "email", "owner_name"] as const;
 
 export function OnboardingForm() {
   const t = useTranslations();
@@ -51,6 +51,8 @@ export function OnboardingForm() {
   const { data: me } = useMe();
   const createOrg = useCreateOrg();
   const [formError, setFormError] = React.useState<string | null>(null);
+  // Accounts created by OTP have no name yet: ask for the owner's own name once, here.
+  const needsName = !!me && !me.full_name?.trim();
 
   const schema = React.useMemo(
     () =>
@@ -73,8 +75,12 @@ export function OnboardingForm() {
         address: z.string().trim().min(2, t("errors.required")),
         phone: zPhone(t("errors.invalid_phone")),
         email: z.union([z.literal(""), z.string().trim().email(t("onboarding.email_invalid"))]),
+        owner_name: z
+          .string()
+          .trim()
+          .refine((v) => !needsName || v.length >= 2, t("errors.required")),
       }),
-    [t],
+    [t, needsName],
   );
   type FormIn = z.input<typeof schema>;
   type FormOut = z.output<typeof schema>;
@@ -92,6 +98,7 @@ export function OnboardingForm() {
       address: "",
       phone: "",
       email: "",
+      owner_name: "",
     },
   });
   const { register, handleSubmit, control, formState, setValue, watch } = form;
@@ -118,6 +125,7 @@ export function OnboardingForm() {
         address: v.address,
         phone: v.phone,
         email: v.email || undefined,
+        owner_name: needsName ? v.owner_name : undefined,
       },
       {
         onSuccess: async (org) => {
@@ -252,6 +260,16 @@ export function OnboardingForm() {
 
         <Card className="space-y-5 p-5 sm:p-6">
           <h2 className="text-base font-semibold">{t("onboarding.section_contact")}</h2>
+          {needsName ? (
+            <Field
+              id="owner_name"
+              label={t("onboarding.your_name")}
+              error={errors.owner_name?.message}
+              hint={t("onboarding.your_name_hint")}
+            >
+              <Input autoComplete="name" className="sm:max-w-sm" {...register("owner_name")} />
+            </Field>
+          ) : null}
           <div className="grid gap-5 sm:grid-cols-2">
             <Field id="phone" label={t("term.phone")} error={errors.phone?.message}>
               <Controller

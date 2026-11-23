@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils.translation import pgettext
 
+from apps.core.bs import today_ad
 from apps.core.exceptions import APIError, BelowMinimumWage, Duplicate, InvalidState
 from apps.core.money import D, format_npr
 from apps.core.phone import is_valid_phone, normalize_phone
@@ -194,6 +195,9 @@ def upsert_attendance(employment, day: dt.date, values: dict, client_uuid=None, 
     """Idempotent upsert keyed by client_uuid, then (employment, date)."""
     from apps.payroll.services import is_month_locked
 
+    if day > today_ad():  # every write path (bulk, QR check-in, corrections, enterprise API) lands here
+        msg = pgettext("fixpay", "Hajiri can't be saved for a future date.")
+        raise APIError("validation_error", message=msg, fields={"date": [msg]})
     if is_month_locked(employment.organization, day):
         raise InvalidState(message=_("Payroll for this month is approved; attendance is locked."))
     if not employment.is_active_on(day):
@@ -252,6 +256,9 @@ def end_employment(emp: Employment, end_date: dt.date, end_reason: str) -> Emplo
         raise InvalidState()
     if end_date < emp.start_date:
         raise APIError("validation_error", fields={"end_date": [_("End date cannot be before start date.")]})
+    if end_date > today_ad():
+        msg = pgettext("fixpay", "End date cannot be in the future. End the employment on the day it ends.")
+        raise APIError("validation_error", fields={"end_date": [msg]})
     emp.end_date = end_date
     emp.end_reason = end_reason
     emp.status = "ended"

@@ -28,7 +28,8 @@
       "duplicate": "A payroll run for {month} already exists.",
       "open_existing": "Open the existing run",
       "submit": "Create wage sheet",
-      "created": "Wage sheet for {month} created"
+      "created": "Wage sheet for {month} created",
+      "current_month_note": "This month isn't over yet. You can draft the wage sheet now, but approve it only after the month ends."
     },
     "how": {
       "title": "How payroll works",

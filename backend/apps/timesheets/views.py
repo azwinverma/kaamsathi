@@ -14,6 +14,7 @@ from rest_framework.views import APIView
 
 from apps.audit.services import log
 from apps.core.bs import bs_str
+from apps.core.exceptions import APIError
 from apps.core.pagination import StandardPagination
 from apps.core.permissions import ALL_ROLES, MANAGERS, OrgScopedMixin
 from apps.workforce.views import SupervisorScopeMixin
@@ -214,7 +215,11 @@ class TimesheetViewSet(
                 elif ts.status not in {"draft", "submitted"}:
                     skipped.append({"id": str(tid), "code": "invalid_state"})
                 else:
-                    services.approve(ts, request.user)
+                    try:
+                        services.approve(ts, request.user)
+                    except APIError as exc:  # e.g. claimed OT above the weekly cap: approve it on its own
+                        skipped.append({"id": str(tid), "code": exc.code, "message": str(exc.detail)})
+                        continue
                     approved.append(str(tid))
         if approved:
             log(

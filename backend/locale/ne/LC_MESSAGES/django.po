@@ -2872,3 +2872,29 @@ msgstr "बुकिङ लिनुअघि KaamSathi ले तपाईं�
 msgctxt "bolau"
 msgid "Turn on bookings so Ghardhani can book you"
 msgstr "घरधनीले बोलाउन सकून् भनेर बुकिङ सुरु गर्नुहोस्"
+
+# --- fixpay: e2e verification fixes (payroll, billing, hajiri, OT cap, offers, members)
+msgctxt "fixpay"
+msgid "This would make net pay negative. At most Rs. %(amount)s can be deducted."
+msgstr "यसले खुद तलब ऋणात्मक बनाउँछ। बढीमा रु. %(amount)s मात्र कट्टा गर्न सकिन्छ।"
+
+msgctxt "fixpay"
+msgid "This month isn't over yet. You can approve the payroll from %(date)s."
+msgstr "यो महिना अझै सकिएको छैन। %(date)s देखि तलब स्वीकृत गर्न सकिन्छ।"
+
+msgctxt "fixpay"
+msgid "Some payslips have negative net pay. Reduce their deductions first."
+msgstr "केही तलब पर्चीमा खुद तलब ऋणात्मक छ। पहिले कट्टी घटाउनुहोस्।"
+
+msgctxt "fixpay"
+msgid "Hajiri can't be saved for a future date."
+msgstr "भविष्यको मितिको हाजिरी राख्न मिल्दैन।"
+
+msgctxt "fixpay"
+msgid "End date cannot be in the future. End the employment on the day it ends."
+msgstr "अन्त्य मिति भविष्यको हुन सक्दैन। रोजगारी सकिएकै दिन अन्त्य गर्नुहोस्।"
+
+msgctxt "fixpay"
+msgid "Overtime can't go above the weekly limit of %(hours)s hours. At most %(minutes)s minutes can be approved for this week."
+msgstr "ओभरटाइम हप्ताको %(hours)s घण्टाको सीमाभन्दा बढी हुन सक्दैन। यो हप्ताका लागि बढीमा %(minutes)s मिनेट मात्र स्वीकृत गर्न सकिन्छ।"
+

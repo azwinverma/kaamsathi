@@ -34,6 +34,7 @@ from .models import (
 DEFAULT_PLAN = "pilot"
 INVOICE_SERIES = "KS"
 CREDIT_NOTE_SERIES = "KS-CN"
+PILOT_WAIVER = "waived: pilot, free for 90 days"
 
 
 # --------------------------------------------------------------------------- plans
@@ -71,7 +72,15 @@ def plan_for(org) -> Plan:
     return sub.plan if sub is not None else default_plan()
 
 
+def on_pilot(org) -> bool:
+    """Pilot orgs (``Organization.plan``) are free: their charges are recorded but waived."""
+    return getattr(org, "plan", None) == "pilot"
+
+
 def set_plan(org, plan: Plan, *, started_on: dt.date | None = None, status: str = "active") -> Subscription:
+    if plan.code != DEFAULT_PLAN and on_pilot(org):  # moving to a paid plan ends the free pilot
+        org.plan = "standard"
+        org.save(update_fields=["plan"])
     sub, created = Subscription.objects.get_or_create(
         organization=org,
         defaults={"plan": plan, "started_on": started_on or today_ad(), "status": status},
@@ -111,8 +120,13 @@ def workers_active_in(org, month) -> int:
     )
 
 
+def estimate(workers: int, plan: Plan | None = None) -> Decimal:
+    """What a month would cost: nothing with no active workers (no subscription charge then)."""
+    return subscription_amount(workers, plan) if workers else q2(0)
+
+
 def monthly_estimate(org) -> Decimal:
-    return subscription_amount(active_worker_count(org), plan_for(org))
+    return estimate(active_worker_count(org), plan_for(org))
 
 
 def unpaid_total(org) -> Decimal:
@@ -131,14 +145,19 @@ def create_subscription_charge(org, bs_year: int, bs_month: int):
         return None, False
     plan = sub.plan if sub is not None else default_plan()
     workers = workers_active_in(org, BSMonth(bs_year, bs_month))
+    if workers == 0:  # nobody to manage: no charge at all (not the plan minimum)
+        return None, False
+    waived = on_pilot(org)
     charge = Charge.objects.create(
         organization=org,
         kind="subscription",
         amount=subscription_amount(workers, plan),
         description=f"Subscription {MONTHS_EN[bs_month]} {bs_year} ({workers} active workers)"
-        + ("" if plan.code == DEFAULT_PLAN else f" — {plan.name} plan"),
+        + ("" if plan.code == DEFAULT_PLAN else f" — {plan.name} plan")
+        + (f" — {PILOT_WAIVER}" if waived else ""),
         bs_year=bs_year,
         bs_month=bs_month,
+        status="waived" if waived else "unpaid",
     )
     return charge, True
 

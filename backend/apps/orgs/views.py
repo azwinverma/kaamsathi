@@ -42,7 +42,11 @@ class MyOrganizationsView(APIView):
     def post(self, request):
         s = OrganizationSerializer(data=request.data, context={"request": request})
         s.is_valid(raise_exception=True)
+        owner_name = (s.validated_data.pop("owner_name", "") or "").strip()
         org = s.save()
+        if owner_name and not request.user.full_name:
+            request.user.full_name = owner_name
+            request.user.save(update_fields=["full_name"])
         Membership.objects.create(user=request.user, organization=org, role=OWNER)
         log(request, "organization.create", org, organization=org, changes={"after": snapshot(org)})
         return Response(OrganizationSerializer(org, context={"request": request}).data, status=201)
@@ -164,6 +168,33 @@ class DashboardView(OrgScopedMixin, APIView):
         )
 
 
+def notify_member_added(membership, added_by):
+    """Inbox + SMS to someone just added to an org's team, in both languages."""
+    from django.utils import translation
+
+    from apps.core import labels
+    from apps.notifications.services import notify
+
+    org = membership.organization
+    with translation.override("en"):
+        role_en = str(labels.label(labels.ROLE, membership.role))
+    with translation.override("ne"):
+        role_ne = str(labels.label(labels.ROLE, membership.role))
+    who = added_by.full_name or org.name
+    notify(
+        membership.user,
+        "member_added",
+        f"You were added to {org.name}",
+        f"{who} added you to {org.name} on KaamSathi as {role_en}. Log in with this phone number to start.",
+        title_ne=f"तपाईंलाई {org.name} मा थपियो",
+        body_ne=f"{who} ले तपाईंलाई KaamSathi मा {org.name} को {role_ne} को रूपमा थप्नुभयो। "
+        "सुरु गर्न यही फोन नम्बरबाट लगइन गर्नुहोस्।",
+        data={"organization_id": str(org.id), "role": membership.role},
+        link="/app",
+        sms=True,
+    )
+
+
 class MemberViewSet(OrgScopedMixin, AuditedViewSetMixin, viewsets.ModelViewSet):
     serializer_class = MemberSerializer
     default_roles = ADMINS
@@ -193,6 +224,10 @@ class MemberViewSet(OrgScopedMixin, AuditedViewSetMixin, viewsets.ModelViewSet):
         )
         if not others.exists():
             raise InvalidState(message="An organization must keep at least one owner.")
+
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        notify_member_added(serializer.instance, self.request.user)
 
     def perform_update(self, serializer):
         self._guard_last_owner(

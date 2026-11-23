@@ -56,6 +56,7 @@ def _track(name, *, user=None, organization=None, **props):
 
 def create_placement_charge(application: Application, employment):
     from apps.billing.models import Charge
+    from apps.billing.services import PILOT_WAIVER, on_pilot
     from apps.workforce.models import Employment
 
     org = application.job.organization
@@ -85,13 +86,15 @@ def create_placement_charge(application: Application, employment):
             replaces_employment=replaced,
             status="waived",
         )
+    pilot = on_pilot(org)
     return Charge.objects.create(
         organization=org,
         kind="placement",
         amount=fee,
-        description=f"Placement: {worker_name} — {application.job.title}",
+        description=f"Placement: {worker_name} — {application.job.title}"
+        + (f" ({PILOT_WAIVER})" if pilot else ""),
         application=application,
-        status="unpaid",
+        status="waived" if pilot else "unpaid",
     )
 
 
@@ -710,6 +713,7 @@ def send_offer(application: Application, data: dict, user):
         designation=data.get("designation") or application.job.title,
         contract_type=data.get("contract_type") or ("daily" if wage_type == "daily" else "permanent"),
         ends_on=data.get("ends_on"),
+        ssf_enrolled=bool(data.get("ssf_enrolled")),
         expires_at=timezone.now() + dt.timedelta(days=days),
         sent_by=user,
     )
@@ -827,6 +831,7 @@ def employment_from_offer(offer) -> dict:
         "dearness_allowance": offer.dearness_allowance,
         "daily_wage": offer.daily_wage,
         "hourly_wage": offer.hourly_wage,
+        "ssf_enrolled": offer.ssf_enrolled,
     }
 
 

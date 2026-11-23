@@ -1044,8 +1044,9 @@ class Command(BaseCommand):
         prev = cur.previous()
         for org in self.orgs.values():
             charge, _ = create_subscription_charge(org, prev.year, prev.month)
-            charge.status = "paid"
-            charge.save(update_fields=["status"])
+            if charge is not None and charge.status == "unpaid":  # pilot charges stay waived
+                charge.status = "paid"
+                charge.save(update_fields=["status"])
             create_subscription_charge(org, cur.year, cur.month)
 
     # ------------------------------------------------------------------ summary

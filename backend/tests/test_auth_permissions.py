@@ -193,6 +193,45 @@ def test_create_org_makes_caller_owner(db):
     assert client.get("/api/v1/orgs").json()["count"] == 1
 
 
+ORG_BODY = {
+    "name": "Shivam Builders",
+    "industry": "construction",
+    "district": "makwanpur",
+    "address": "Hetauda",
+    "phone": "057000000",
+}
+
+
+def test_create_org_saves_owner_name_when_missing(db):
+    user = f.UserFactory(full_name="")
+    res = auth_client(user).post("/api/v1/orgs", {**ORG_BODY, "owner_name": " Sita Sharma "}, format="json")
+    assert res.status_code == 201, res.json()
+    assert "owner_name" not in res.json()
+    user.refresh_from_db()
+    assert user.full_name == "Sita Sharma"
+    named = f.UserFactory(full_name="Ram Thapa")  # an existing name is never overwritten
+    auth_client(named).post("/api/v1/orgs", {**ORG_BODY, "owner_name": "Someone"}, format="json")
+    named.refresh_from_db()
+    assert named.full_name == "Ram Thapa"
+
+
+def test_new_member_gets_inbox_and_sms_in_both_languages(owner_client, owner, org):
+    from apps.notifications.models import Notification, NotificationDelivery
+
+    owner.full_name = "Sita Sharma"
+    owner.save()
+    res = owner_client.post(
+        "/api/v1/org/members",
+        {"phone": "9812345670", "full_name": "Hari", "role": "supervisor"},
+        format="json",
+    )
+    assert res.status_code == 201, res.json()
+    n = Notification.objects.get(user__phone="9812345670", kind="member_added")
+    assert org.name in n.title and "Sita Sharma" in n.body and "Supervisor" in n.body
+    assert org.name in n.title_ne and "सुपरभाइजर" in n.body_ne
+    assert NotificationDelivery.objects.filter(notification=n, channel="sms").exists()
+
+
 # --- roles -------------------------------------------------------------------------------
 
 

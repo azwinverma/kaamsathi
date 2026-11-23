@@ -36,3 +36,10 @@ export function runFileStem(run: Pick<PayrollRunListItem, "bs_year" | "bs_month"
 export function isFestivalMonth(month: number): boolean {
   return month === 6 || month === 7;
 }
+
+type BsYearMonth = { year: number; month: number };
+
+/** The BS month before `ym` (Baisakh 2083 → Chaitra 2082); the last completed month when `ym` is now. */
+export function previousBsMonth(ym: BsYearMonth): BsYearMonth {
+  return ym.month === 1 ? { year: ym.year - 1, month: 12 } : { year: ym.year, month: ym.month - 1 };
+}

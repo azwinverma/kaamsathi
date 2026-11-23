@@ -23,7 +23,7 @@ import type { PayrollRunListItem } from "@/lib/api/types";
 import { todayBs } from "@/lib/format";
 import { toastError } from "@/lib/forms";
 import { useFormat } from "@/lib/use-format";
-import { isFestivalMonth } from "./utils";
+import { isFestivalMonth, previousBsMonth } from "./utils";
 
 type YM = { year: number; month: number };
 
@@ -52,15 +52,17 @@ export function CreateRunDialog({
     const b = todayBs();
     return { year: b.year, month: b.month };
   }, []);
-  const [month, setMonth] = React.useState<YM>(current);
-  const [festival, setFestival] = React.useState(isFestivalMonth(current.month));
+  // Default to the last completed month: a run can be approved only after its month ends.
+  const lastCompleted = React.useMemo<YM>(() => previousBsMonth(current), [current]);
+  const [month, setMonth] = React.useState<YM>(lastCompleted);
+  const [festival, setFestival] = React.useState(isFestivalMonth(lastCompleted.month));
   const [festivalTouched, setFestivalTouched] = React.useState(false);
   const [duplicateOf, setDuplicateOf] = React.useState<YM | null>(null);
 
   React.useEffect(() => {
     if (open) {
-      setMonth(current);
-      setFestival(isFestivalMonth(current.month));
+      setMonth(lastCompleted);
+      setFestival(isFestivalMonth(lastCompleted.month));
       setFestivalTouched(false);
       setDuplicateOf(null);
       setGroupId("");
@@ -124,6 +126,12 @@ export function CreateRunDialog({
                 <BsMonthPicker value={month} onChange={onMonthChange} max={current} />
               </div>
               <p className="text-fg-muted text-xs">{t("month_hint")}</p>
+              {month.year === current.year && month.month === current.month ? (
+                <p className="text-warning flex items-start gap-1.5 text-xs">
+                  <AlertCircle className="mt-px size-3.5 shrink-0" aria-hidden />
+                  {t("current_month_note")}
+                </p>
+              ) : null}
             </div>
 
             {activeGroups.length ? (

@@ -187,6 +187,7 @@ export interface JobOfferSummary {
   contract_type_label: string;
   ends_on: ISODate | null;
   ends_on_bs: string | null;
+  ssf_enrolled?: boolean;
   expires_at: ISODateTime;
   created_at: ISODateTime;
   responded_at: ISODateTime | null;
@@ -220,6 +221,7 @@ export interface OfferInput {
   designation?: string;
   contract_type: ContractType;
   ends_on?: ISODate | null;
+  ssf_enrolled?: boolean;
   expires_in_days?: number;
 }
 
