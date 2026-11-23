@@ -12,6 +12,8 @@ from .models import Membership, Organization, Shift, Site
 
 class OrganizationSerializer(BSModelSerializer):
     district = serializers.SlugRelatedField(slug_field="code", queryset=District.objects.all())
+    # POST /orgs only: the owner's own name, saved when their account has none yet.
+    owner_name = serializers.CharField(write_only=True, required=False, allow_blank=True, max_length=150)
 
     class Meta:
         model = Organization
@@ -34,6 +36,7 @@ class OrganizationSerializer(BSModelSerializer):
             "weekly_off_day",
             "created_at",
             "is_active",
+            "owner_name",
         ]
         read_only_fields = ["id", "plan", "created_at", "is_active"]
         extra_kwargs = {"address": {"required": True}, "phone": {"required": True}}

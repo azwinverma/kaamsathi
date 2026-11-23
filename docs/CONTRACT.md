@@ -105,10 +105,10 @@ Payroll calculation (per active employment overlapping the BS month, prorated by
 - `Me` = `{id, phone, full_name, email, preferred_language, is_staff, worker_id: uuid|null, memberships: [{id, role, organization: {id, name, logo, industry}, site_ids: []}]}`
 
 ### Organization (X-Org-Id required except POST/GET /orgs)
-- `GET /orgs` (mine) · `POST /orgs {name, pan_no?, industry, district, municipality?, ward?, address, phone, email?}` → Organization (caller = owner)
+- `GET /orgs` (mine) · `POST /orgs {name, pan_no?, industry, district, municipality?, ward?, address, phone, email?, owner_name?}` → Organization (caller = owner; `owner_name` is saved as the caller's name if their account has none)
 - `GET /org` · `PATCH /org` (owner/admin)
 - `GET /org/dashboard` → `{today, today_bs, active_workers, present_today, absent_today, on_leave_today, not_marked_today, open_jobs, pipeline: {sourced, shortlisted, interview, selected}, hires_30d, attrition_30d, last_payroll: {id, bs_year, bs_month, net_total, status}|null, attendance_14d: [{date, date_bs, present, absent, leave}], wage_bill_month_estimate}`
-- Members: `GET /org/members` · `POST /org/members {phone, full_name, role, site_ids?}` (creates user if needed) · `PATCH /org/members/{id}` · `DELETE /org/members/{id}`
+- Members: `GET /org/members` · `POST /org/members {phone, full_name, role, site_ids?}` (creates user if needed; the new member gets an inbox notification + SMS, kind `member_added`, en/ne) · `PATCH /org/members/{id}` · `DELETE /org/members/{id}`
 - Sites: CRUD `/org/sites`, `/org/sites/{id}`; `GET /org/sites/{id}/qr.png` (QR encodes `kaamsathi://site/<qr_token>`); `POST /org/sites/{id}/rotate-qr`
 - Shifts: CRUD `/org/shifts`
 
