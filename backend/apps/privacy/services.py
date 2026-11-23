@@ -156,6 +156,7 @@ def collect_export(user, worker) -> dict:
             "This is a copy of the personal data KaamSathi holds about you (Individual Privacy Act 2075).",
             "Uploaded documents (ID photos, certificates) are not included; only whether they exist.",
             "Payroll and attendance records are also held by your employer, who must keep them by law.",
+            "Bolau bookings show the other party only by public handle or area, never their contact details.",
         ],
     }
     if user is not None:
@@ -179,6 +180,12 @@ def collect_export(user, worker) -> dict:
             if hasattr(user, "memberships")
             else [],
         }
+    if user is not None:
+        from apps.bolau.privacy import export_household
+
+        household = export_household(user)
+        if household is not None:
+            data["bolau_household"] = household
     if worker is None:
         return data
 
@@ -329,6 +336,12 @@ def collect_export(user, worker) -> dict:
             obj._export_user_id = worker.user_id
             rows.append(row_to_dict(obj))
         data[label] = rows
+
+    from apps.bolau.privacy import export_sipalu
+
+    sipalu = export_sipalu(worker)
+    if sipalu is not None:
+        data["bolau_sipalu"] = sipalu
 
     data["privacy_requests"] = [
         {"kind": r.kind, "status": r.status, "created_at": _jsonable(r.created_at)}
@@ -492,6 +505,14 @@ def render_pdf(data: dict) -> bytes:
                 ["Given to employers", *r["given_to_employers"].values()],
             ]
         )
+    for key, title in (
+        ("bolau_household", "Bolau — as a Ghardhani"),
+        ("bolau_sipalu", "Bolau — as a Sipalu"),
+    ):
+        section = data.get(key)
+        if section:
+            p(f"{title} (full detail in the JSON file)", "Heading2")
+            table([["Section", "Records"], *[[k, len(v)] for k, v in section.items() if isinstance(v, list)]])
     other = [
         (k, len(v)) for k, v in data.items() if k in {s[0] for s in LAZY_SOURCES} and isinstance(v, list)
     ]
@@ -587,7 +608,10 @@ def anonymise_worker(worker, *, actor=None) -> dict:
     """Erase a worker's personal data but keep legally required payroll/attendance rows.
 
     Kept (linked to the anonymised record): employments, attendance (minus GPS), leave,
-    advances, payslips, payout items, ratings (minus comments), consent history, view logs.
+    advances, payslips, payout items, ratings (minus comments), consent history, view logs, Bolau
+    bookings and disputes. A Sipalu is taken off Bolau first (``apps.bolau.privacy.erase_sipalu``):
+    not bookable, no public page, handle released, open bookings cancelled with notice. Identity
+    documents and numbers are erased, so the worker is no longer "verified".
     """
     from apps.hiring.models import Application
     from apps.workers.models import Rating
@@ -595,6 +619,10 @@ def anonymise_worker(worker, *, actor=None) -> dict:
 
     summary: dict = {"documents_deleted": 0, "rows_deleted": {}, "rows_revoked": {}}
     now = timezone.now()
+
+    from apps.bolau.privacy import erase_sipalu
+
+    summary["bolau"] = erase_sipalu(worker, actor=actor)
 
     for field in ("id_front", "id_back", "photo"):
         f = getattr(worker, field)
@@ -661,6 +689,7 @@ def anonymise_worker(worker, *, actor=None) -> dict:
     ):
         setattr(worker, name, None)
     worker.is_available = False
+    worker.verification_status = "unverified"
     worker.user = None
     worker.save()
 
@@ -740,12 +769,20 @@ def process_request(req: PrivacyRequest, *, action: str, note: str | None, actor
         _enqueue_export(req)
         return req
     if req.kind == "deletion":
-        if req.worker is not None:
-            summary = anonymise_worker(req.worker, actor=actor)
-        elif req.user is not None:
-            summary = {"account": anonymise_user(req.user)}
-        else:
-            summary = {}
+        with transaction.atomic():
+            household = None
+            if req.user is not None:  # Bolau household data (addresses, open bookings, free text)
+                from apps.bolau.privacy import erase_household
+
+                household = erase_household(req.user, actor=actor)
+            if req.worker is not None:
+                summary = anonymise_worker(req.worker, actor=actor)
+            elif req.user is not None:
+                summary = {"account": anonymise_user(req.user)}
+            else:
+                summary = {}
+            if household is not None:
+                summary["bolau_household"] = household
         req.response_note = (
             req.response_note or "Data anonymised; payroll and attendance kept as required by law."
         )
