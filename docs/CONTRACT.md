@@ -76,7 +76,7 @@ Payroll calculation (per active employment overlapping the BS month, prorated by
 5. `gross = basic+da+allowance+ot+festival`.
 6. SSF if ssf_enrolled: employee 11% of basic_earned, employer 20% of basic_earned (employer share not deducted from net).
 7. TDS: regular income R = gross − ot − festival − ssf_employee; one-off income O = ot + festival. `tds = tax(R×12)/12 + [tax(R×12 + O) − tax(R×12)]` (slabs, skip 1% slab if ssf_enrolled), round to rupee — a Dashain or OT-heavy month is not annualised.
-8. Advance recovery = min(recover_per_month, amount − recovered); on `mark-paid` add to recovered_amount.
+8. Advance recovery = min(recover_per_month, amount − recovered) per open advance; on `mark-paid` each advance gets at most its own recover_per_month (oldest first).
 9. `net = gross − ssf_employee − tds − advance_recovery − other_deductions`. All rounding to 2 dp, ROUND_HALF_UP.
 
 **billing**: `Charge(id, organization, kind placement|subscription, amount, description, bs_year?, bs_month?, application?, status unpaid|paid|waived, created_at)`. Placement charge NPR 5,000 created when an application reaches `joined` (waived if it replaces an employment ended within its replacement window). Subscription: Celery beat on BS month start → `max(active_workers × 150, 3000)`; no charge at all for a month with 0 active workers. While `Organization.plan = pilot` (free pilot) placement and subscription charges are still created, with `status=waived` and the reason in `description`; waived charges never reach an invoice. Moving the org to a paid billing plan ends the pilot (`plan=standard`).
@@ -132,7 +132,7 @@ Payroll calculation (per active employment overlapping the BS month, prorated by
 ### Hajiri (attendance)
 - `GET /org/attendance/day?date=YYYY-MM-DD&site=` → `{date, date_bs, is_holiday, holiday_name, rows: [{employment_id, worker: {id, full_name, photo}, designation, site_id, record: Attendance|null}], summary: {present, absent, half_day, leave, not_marked}}`
 - `GET /org/attendance/register?bs_year=&bs_month=&site=` → `{bs_year, bs_month, month_name_en, month_name_ne, days: [{date, bs_day, weekday, is_holiday, is_weekly_off}], rows: [{employment_id, worker_name, designation, cells: {"<ad date>": "P"|"A"|"H"|"L"|"PH"|"WO"|null}, totals: {present, half_day, absent, leave, overtime_hours}}]}`
-- `POST /org/attendance/bulk {records: [{client_uuid, employment_id, date, status, check_in_at?, check_out_at?, lat?, lng?, method, overtime_minutes?, note?}]}` → `{saved: [client_uuid], errors: [{client_uuid, code, message}]}` — idempotent upsert on (employment, date); supervisors limited to their sites; payroll-approved months are locked (`invalid_state`).
+- `POST /org/attendance/bulk {records: [{client_uuid, employment_id, date, status, check_in_at?, check_out_at?, lat?, lng?, method, overtime_minutes?, note?}]}` → `{saved: [client_uuid], errors: [{client_uuid, code, message}]}` — idempotent upsert on (employment, date); supervisors limited to their sites; payroll-approved months are locked (`invalid_state`); a `date` after today (Asia/Kathmandu) → per-record `validation_error`.
 - `Attendance` = `{id, employment_id, date, date_bs, status, status_label, check_in_at, check_out_at, method, overtime_minutes, note}`
 - Leave: `GET /org/leaves?status=` · `POST /org/leaves` · `POST /org/leaves/{id}/approve` · `POST /org/leaves/{id}/reject {note?}`
 - Peski: `GET /org/advances?employment=` · `POST /org/advances` · `PATCH /org/advances/{id}`
@@ -142,8 +142,8 @@ Payroll calculation (per active employment overlapping the BS month, prorated by
 - `GET /org/payroll-runs` · `POST /org/payroll-runs {bs_year, bs_month, include_festival_allowance}` (computes payslips, 400 `duplicate` if exists)
 - `GET /org/payroll-runs/{id}` → `{id, bs_year, bs_month, month_name_en, month_name_ne, period_start, period_end, status, totals: {workers, gross, ssf_employee, ssf_employer, tds, advance_recovery, other_deductions, net}, employer_cost}`
 - `GET /org/payroll-runs/{id}/payslips?q=` → Payslip list (with `worker: {id, full_name}`, `designation`)
-- `POST /org/payroll-runs/{id}/recalculate` (draft) · `POST .../approve` (draft→approved; locks attendance) · `POST .../mark-paid {paid_on, method?}` (approved→paid; marks payslips paid, updates advances, notifies workers)
-- `PATCH /org/payslips/{id} {other_deductions?, note?, payment_method?}` (draft only; recomputes net)
+- `POST /org/payroll-runs/{id}/recalculate` (draft; also refreshes each payslip's `payment_method` from the worker) · `POST .../approve` (draft→approved; locks attendance; `invalid_state` until the BS month has ended (Asia/Kathmandu) or while any payslip has a negative net) · `POST .../mark-paid {paid_on, method?}` (approved→paid; marks payslips paid, updates advances, notifies workers)
+- `PATCH /org/payslips/{id} {other_deductions?, note?, payment_method?}` (draft only; recomputes net; an `other_deductions` that would make net negative → 400 `validation_error` on that field)
 - Exports: `GET /org/payroll-runs/{id}/wage-sheet.xlsx` (तलब पाना, bilingual headers) · `GET .../bank-transfer.csv` (name, account, bank, amount) · `GET .../ssf.csv` (ssf_id, name, basic, 11%, 20%, 31%) · `GET /org/payslips/{id}/payslip.pdf`
 
 ### Billing
