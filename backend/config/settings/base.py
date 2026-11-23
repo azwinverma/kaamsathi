@@ -423,6 +423,12 @@ OTP_MAX_PER_HOUR = env.int("OTP_MAX_PER_HOUR", default=5)
 OTP_RESEND_COOLDOWN_SECONDS = env.int("OTP_RESEND_COOLDOWN_SECONDS", default=30)
 
 SMS_BACKEND = env("SMS_BACKEND", default="console")  # console | sparrow | aakash
+# Automatic failover (RUNBOOK §7): when the primary gateway errors or times out, the same message
+# goes through this one in the same attempt. Empty = off. After SMS_CIRCUIT_THRESHOLD consecutive
+# primary failures, new messages go straight to the failover for SMS_CIRCUIT_SECONDS.
+SMS_FAILOVER_BACKEND = env("SMS_FAILOVER_BACKEND", default="")  # "" | sparrow | aakash
+SMS_CIRCUIT_THRESHOLD = env.int("SMS_CIRCUIT_THRESHOLD", default=3)
+SMS_CIRCUIT_SECONDS = env.int("SMS_CIRCUIT_SECONDS", default=300)
 SMS_SENDER_ID = env("SMS_SENDER_ID", default="KaamSathi")
 SPARROW_SMS_TOKEN = env("SPARROW_SMS_TOKEN", default="")
 SPARROW_SMS_FROM = env("SPARROW_SMS_FROM", default="InfoSMS")

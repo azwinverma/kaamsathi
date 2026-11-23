@@ -6,6 +6,14 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
 
 ## [Unreleased]
 
+### Added (launch hardening)
+- **Automatic SMS failover** (RUNBOOK §7): with `SMS_FAILOVER_BACKEND=aakash`, an SMS whose primary
+  gateway errors or times out is sent through Aakash in the same attempt (OTP login included, also
+  in `SERVERLESS` mode). After `SMS_CIRCUIT_THRESHOLD` (3) primary failures in a row, new messages go
+  straight to the failover for `SMS_CIRCUIT_SECONDS` (300). Each message is one `SMSMessage` row with
+  the delivering gateway, `failed_over` and `attempts` (Celery retries used to add a row per try).
+  Ops → System shows the gateways, circuit state and failovers in the last 24 h.
+
 ### Fixed
 - **Payroll:** an edit that would make net pay negative is refused, and a negative-net payslip can't
   be approved; TDS taxes the festival (Dashain) allowance and overtime once at the marginal rate

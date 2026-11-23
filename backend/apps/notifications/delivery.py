@@ -9,7 +9,7 @@ from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 
-from .models import DeviceToken, NotificationDelivery, SMSMessage
+from .models import DeviceToken, NotificationDelivery
 
 logger = logging.getLogger("kaamsathi.notifications")
 
@@ -18,18 +18,15 @@ MAX_ATTEMPTS = 1 + len(RETRY)
 
 
 def _send_sms(d: NotificationDelivery) -> tuple[str, str | None, str | None]:
-    from .sms import get_backend
+    from .sms import send_logged
 
-    backend = get_backend()
     user = d.notification.user
-    msg = SMSMessage.objects.create(
-        phone=user.phone, body=d.body, kind=d.notification.kind, backend=backend.name
+    # A retry reuses the SMSMessage row the previous attempt recorded (provider_ref "sms:<id>").
+    prev = (d.provider_ref or "").removeprefix("sms:")
+    msg, sent = send_logged(
+        user.phone, d.body, kind=d.notification.kind, message_id=int(prev) if prev.isdigit() else None
     )
-    result = backend.send(user.phone, d.body)
-    msg.status = "sent" if result.ok else "failed"
-    msg.provider_response = result.response
-    msg.save(update_fields=["status", "provider_response"])
-    return ("sent", f"sms:{msg.pk}", None) if result.ok else ("failed", f"sms:{msg.pk}", result.response)
+    return ("sent", f"sms:{msg.pk}", None) if sent.ok else ("failed", f"sms:{msg.pk}", sent.response)
 
 
 def _send_push(d: NotificationDelivery) -> tuple[str, str | None, str | None]:

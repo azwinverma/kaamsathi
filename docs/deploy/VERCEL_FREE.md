@@ -99,6 +99,7 @@ nightly encrypted backup.
    | `MEDIA_STORAGE` | `database` |
    | `NUM_PROXIES` | `1` |
    | `SMS_BACKEND` | `console` (OTP codes appear in Vercel → Logs) until Sparrow is approved |
+   | `SMS_FAILOVER_BACKEND` | empty while on `console`; `aakash` (with `AAKASH_SMS_TOKEN`) once `SMS_BACKEND=sparrow`, so a Sparrow outage fails over inside the same request (RUNBOOK §7) |
    | `OTP_SHOW_CODE` | `true` **only while testing with demo data**: shows the login code on screen. Remove before real users sign up. |
 
 3. Deploy. The build runs `check --deploy`, `migrate` and `seed_reference` against Neon, then

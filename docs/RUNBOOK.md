@@ -128,14 +128,34 @@ Rotate immediately on suspicion of leak, staff departure with server access, or 
 
 ## 7. SMS gateway failover (OTP login depends on it)
 
-Symptoms: users report no OTP; `notifications_smsmessage` rows with `status=failed`; Sentry errors
-from `apps.notifications`.
-1. Confirm: `docker compose ... exec backend python manage.py shell -c "from apps.notifications.models import SMSMessage as S; print(S.objects.order_by('-created_at').values('status','backend','provider_response')[:10])"`.
+Failover is **automatic** when `SMS_FAILOVER_BACKEND` is set (production: `SMS_BACKEND=sparrow`,
+`SMS_FAILOVER_BACKEND=aakash`, both tokens set). Every SMS (OTP, notifications, reminders) goes
+through `apps/notifications/sms.dispatch`:
+
+- the primary gateway is tried first; if it errors, answers non-200 or times out (10 s), the same
+  message goes through the failover **in the same attempt** (no wait for a Celery retry);
+- after `SMS_CIRCUIT_THRESHOLD` (default 3) consecutive primary failures the circuit opens (cache
+  key `sms:circuit:<primary>`): for `SMS_CIRCUIT_SECONDS` (default 300) new messages go straight to
+  the failover, and the primary is tried only if the failover fails too. The next primary success
+  closes it;
+- each message is **one** `SMSMessage` row: `backend` = the gateway that delivered (or was last
+  tried), `failed_over` = delivered by the failover, `attempts` = tries including Celery retries,
+  `provider_response` = each gateway's answer. If both gateways fail the task retries (3 times,
+  30 s apart; inline when `SERVERLESS`) and updates the same row.
+
+Ops console → System (`GET /ops/system/health` → `sms`) shows the primary, the failover, whether the
+circuit is open and the last 24 h of failovers (no phone numbers).
+
+Symptoms that still need a human: users report no OTP; `status=failed` rows (both gateways down);
+the failovers card climbing; Sentry warnings from `kaamsathi.sms`.
+1. Confirm: `docker compose ... exec backend python manage.py shell -c "from apps.notifications.models import SMSMessage as S; print(S.objects.order_by('-created_at').values('status','backend','failed_over','attempts','provider_response')[:10])"`.
 2. Check the gateway status page / balance (Sparrow credit runs out silently).
-3. Fail over: set `SMS_BACKEND=aakash` (and `AAKASH_SMS_TOKEN`) in the env file, `make deploy-up`.
-   Order of preference: **sparrow → aakash**; `console` only on staging (prints codes to logs — never
-   in production, users cannot log in).
-4. When the primary recovers, switch back and note the window in the incident log.
+3. If the failover is unset or also failing: set `SMS_BACKEND` / `SMS_FAILOVER_BACKEND` (and the
+   tokens) in the env file, `make deploy-up` (Vercel: project env + redeploy). Order of preference:
+   **sparrow → aakash**; `console` only on staging (prints codes to logs — never in production,
+   users cannot log in).
+4. When the primary recovers nothing needs switching back (the circuit closes by itself); note the
+   window in the incident log.
 5. Keep both accounts funded and sender IDs approved; top up when balance < 2 weeks of traffic.
 
 ## 8. Incident response

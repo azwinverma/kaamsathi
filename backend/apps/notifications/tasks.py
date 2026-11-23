@@ -16,22 +16,22 @@ def _sms(phone, body, kind):
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=30)
-def send_sms(self, phone: str, body: str, kind: str = "generic", log_body: str | None = None):
-    from .models import SMSMessage
-    from .sms import get_backend
+def send_sms(
+    self, phone: str, body: str, kind: str = "generic", log_body: str | None = None, message_id=None
+):
+    """Send with gateway failover (``sms.dispatch``); retries update the same SMSMessage row."""
+    from django.conf import settings
 
-    backend = get_backend()
-    msg = SMSMessage.objects.create(
-        phone=phone, body=log_body if log_body is not None else body, kind=kind, backend=backend.name
-    )
-    result = backend.send(phone, body)
-    msg.status = "sent" if result.ok else "failed"
-    msg.provider_response = result.response
-    msg.save(update_fields=["status", "provider_response"])
-    if not result.ok and backend.name != "console":
-        logger.warning("SMS failed to %s: %s", phone, result.response)
-        raise self.retry()
-    return result.ok
+    from .sms import send_logged
+
+    msg, sent = send_logged(phone, body, kind=kind, log_body=log_body, message_id=message_id)
+    if sent.ok or settings.SMS_BACKEND == "console":
+        return sent.ok
+    if self.request.retries >= self.max_retries:
+        logger.error("SMS to ...%s failed after %s attempts", phone[-4:], msg.attempts)
+        return False
+    logger.warning("SMS to ...%s failed: %s", phone[-4:], sent.response)
+    raise self.retry(kwargs={"kind": kind, "log_body": log_body, "message_id": msg.pk})
 
 
 @shared_task

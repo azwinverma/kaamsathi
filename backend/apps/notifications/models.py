@@ -13,10 +13,14 @@ class SMSMessage(models.Model):
     phone = models.CharField(max_length=15, db_index=True)
     body = models.TextField()
     kind = models.CharField(max_length=30, default="generic")
-    backend = models.CharField(max_length=20)
+    backend = models.CharField(max_length=20)  # the gateway that delivered (or was last tried)
     status = models.CharField(max_length=10, choices=STATUSES, default="queued")
     provider_response = models.TextField(blank=True, default="")
+    # Retries update this row (one row per message); failed_over = delivered by SMS_FAILOVER_BACKEND.
+    attempts = models.PositiveSmallIntegerField(default=0)
+    failed_over = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
 
     class Meta:
         ordering = ["-created_at"]
