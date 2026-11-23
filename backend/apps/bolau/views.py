@@ -28,7 +28,15 @@ from apps.trust.serializers import DisputeSerializer
 from apps.trust.views import AppealMixin, EvidenceMixin, _filter_status, dispute_queryset
 
 from . import bookings, kaam, labels, onboarding, payloads, payments, profiles, search
-from .common import accept_timeout, error, free_cancel_window, min_hourly, money, require_bolau
+from .common import (
+    CoarseCoordinate,
+    accept_timeout,
+    error,
+    free_cancel_window,
+    min_hourly,
+    money,
+    require_bolau,
+)
 from .models import (
     Address,
     Booking,
@@ -84,8 +92,8 @@ class SipaluPatch(serializers.Serializer):
     service_districts = serializers.ListField(child=serializers.SlugField(), required=False)
     service_municipality = serializers.CharField(max_length=120, required=False, allow_blank=True)
     service_radius_km = serializers.IntegerField(min_value=1, max_value=100, required=False, allow_null=True)
-    base_lat = serializers.DecimalField(max_digits=9, decimal_places=6, required=False, allow_null=True)
-    base_lng = serializers.DecimalField(max_digits=9, decimal_places=6, required=False, allow_null=True)
+    base_lat = CoarseCoordinate(limit=90)
+    base_lng = CoarseCoordinate(limit=180)
     gender_visible = serializers.BooleanField(required=False)
     public_indexable = serializers.BooleanField(required=False)
     years_total = serializers.IntegerField(min_value=0, max_value=60, required=False)

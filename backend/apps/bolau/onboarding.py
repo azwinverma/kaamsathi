@@ -16,6 +16,7 @@ from apps.core.uploads import validate_upload
 from apps.workers import labels as worker_labels
 
 from . import profiles
+from .common import CoarseCoordinate
 from .models import SipaluProfile, SipaluService
 
 NSTB = ["none", "elementary", "level1", "level2", "level3"]
@@ -53,8 +54,8 @@ class ServiceAreaStep(serializers.Serializer):
     service_districts = serializers.ListField(child=serializers.SlugField(), allow_empty=False)
     service_municipality = serializers.CharField(max_length=120, required=False, allow_blank=True)
     service_radius_km = serializers.IntegerField(min_value=1, max_value=100, required=False, allow_null=True)
-    base_lat = serializers.DecimalField(max_digits=9, decimal_places=6, required=False, allow_null=True)
-    base_lng = serializers.DecimalField(max_digits=9, decimal_places=6, required=False, allow_null=True)
+    base_lat = CoarseCoordinate(limit=90)
+    base_lng = CoarseCoordinate(limit=180)
 
 
 class RuleRow(serializers.Serializer):

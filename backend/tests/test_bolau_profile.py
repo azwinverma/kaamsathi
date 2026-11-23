@@ -61,6 +61,33 @@ def test_profile_editing_allowed_with_flag_off():
 
 
 # --------------------------------------------------------------------------- onboarding
+def test_service_area_coordinates_with_many_decimals_are_rounded_not_rejected():
+    user = f.UserFactory(full_name="Bikash Tamang")
+    c = auth_client(user)
+    r = c.post(
+        "/api/v1/me/sipalu/onboarding-step",
+        {
+            "step": "service_area",
+            # a phone GPS fix: 13 decimals
+            "data": {
+                "service_districts": ["kathmandu"],
+                "base_lat": 27.7172453185932,
+                "base_lng": "85.3239605",
+            },
+        },
+        format="json",
+    )
+    assert r.status_code == 200, r.content
+    profile = SipaluProfile.objects.get(worker__user=user)
+    assert (str(profile.base_lat), str(profile.base_lng)) == ("27.72", "85.32")
+    r = c.patch("/api/v1/me/sipalu", {"base_lat": "27.6789012345", "base_lng": 85.43219876}, format="json")
+    assert r.status_code == 200, r.content
+    profile.refresh_from_db()
+    assert (str(profile.base_lat), str(profile.base_lng)) == ("27.68", "85.43")
+    bad = c.patch("/api/v1/me/sipalu", {"base_lat": "127.5"}, format="json")
+    assert bad.status_code == 400  # still a real latitude
+
+
 def test_onboarding_steps_progress_and_completeness():
     user = f.UserFactory(full_name="")
     c = auth_client(user)

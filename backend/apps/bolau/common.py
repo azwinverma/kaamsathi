@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import datetime as dt
 import secrets
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 
 from django.conf import settings
 from django.http import Http404
 from django.utils import timezone
+from rest_framework import serializers
 
 from apps.core.exceptions import APIError, BelowMinimumWage, InvalidState
 from apps.core.money import D, q2
@@ -112,3 +114,20 @@ def free_cancel_window() -> dt.timedelta:
 
 def first_name(full_name: str | None) -> str:
     return (full_name or "").strip().split(" ")[0] if full_name else ""
+
+
+class CoarseCoordinate(serializers.DecimalField):
+    """A Sipalu's base point: any precision in (a phone GPS fix has 13+ decimals), rounded to the
+    2 decimals that are stored and shown (~1 km) instead of rejected."""
+
+    def __init__(self, *, limit: int, **kwargs):
+        kwargs.setdefault("required", False)
+        kwargs.setdefault("allow_null", True)
+        super().__init__(max_digits=5, decimal_places=2, min_value=-limit, max_value=limit, **kwargs)
+
+    def validate_precision(self, value):
+        try:
+            value = value.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        except InvalidOperation:  # absurdly large: let max_digits reject it
+            pass
+        return super().validate_precision(value)

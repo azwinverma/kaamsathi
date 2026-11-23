@@ -45,6 +45,8 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
 - `GET /me/addresses` and `GET /me/favourites` are paginated like every other list (they returned
   bare arrays). Web and mobile read the envelope and ask for `page_size=100`; both still accept a
   plain list.
+- Sipalu service area: a base point straight from a phone's GPS (more than 6 decimals) was
+  rejected; it is now rounded to the 2 decimals that are stored (onboarding and `PATCH /me/sipalu`).
 
 ### Fixed
 - **Payroll:** an edit that would make net pay negative is refused, and a negative-net payslip can't
