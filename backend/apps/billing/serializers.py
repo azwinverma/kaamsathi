@@ -57,7 +57,7 @@ def subscription_dict(org) -> dict:
         "started_on_bs": bs_str(sub.started_on) if sub else None,
         "is_default": sub is None,
         "active_workers": workers,
-        "monthly_estimate": money_str(services.subscription_amount(workers, plan)),
+        "monthly_estimate": money_str(services.estimate(workers, plan)),
     }
 
 

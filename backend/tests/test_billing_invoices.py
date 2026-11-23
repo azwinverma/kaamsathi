@@ -75,6 +75,38 @@ def test_paused_subscription_creates_no_charge(org):
     assert charge is None and not created
 
 
+def test_pilot_subscription_charge_is_waived_and_never_invoiced(owner_client, org):
+    org.plan = "pilot"
+    org.save(update_fields=["plan"])
+    for _ in range(3):
+        EmploymentFactory(organization=org)
+    charge, created = services.create_subscription_charge(org, 2083, 5)
+    assert created and charge.status == "waived" and charge.amount == Decimal("3000.00")
+    assert "pilot" in charge.description
+    assert services.unpaid_total(org) == 0
+    assert [i for i in services.generate_invoices(2083, 5) if i.organization_id == org.id] == []
+    assert owner_client.get("/api/v1/org/billing/summary").json()["pilot"] is True
+
+
+def test_no_subscription_charge_without_active_workers(org):
+    charge, created = services.create_subscription_charge(org, 2083, 5)
+    assert charge is None and not created  # not the 3,000 minimum
+    assert not Charge.objects.filter(organization=org).exists()
+    EmploymentFactory(organization=org, start_date=dt.date(2020, 1, 1), end_date=dt.date(2021, 1, 1))
+    assert services.create_subscription_charge(org, 2083, 5) == (None, False)  # ended long ago
+
+
+def test_paid_plan_ends_the_pilot(org):
+    org.plan = "pilot"
+    org.save(update_fields=["plan"])
+    services.set_plan(org, Plan.objects.get(code="growth"))
+    org.refresh_from_db()
+    assert org.plan == "standard"
+    EmploymentFactory(organization=org)
+    charge, _ = services.create_subscription_charge(org, 2083, 5)
+    assert charge.status == "unpaid"
+
+
 def test_ops_plans_crud_and_subscription_change_audited(staff_client, org):
     res = staff_client.get("/api/v1/ops/billing/plans")
     assert res.status_code == 200 and {p["code"] for p in res.json()} >= {"pilot", "starter", "enterprise"}
@@ -98,7 +130,7 @@ def test_org_subscription_endpoint(owner_client):
     assert res.status_code == 200
     body = res.json()
     assert body["plan"]["code"] == "pilot" and body["is_default"] is True
-    assert body["monthly_estimate"] == "3000.00"
+    assert body["monthly_estimate"] == "0.00"  # no active workers → no subscription charge
 
 
 # ---------------------------------------------------------------------------- invoices

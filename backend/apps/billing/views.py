@@ -75,6 +75,7 @@ class BillingSummaryView(OrgScopedMixin, APIView):
             {
                 "plan": plan.code,
                 "plan_name": plan.name,
+                "pilot": services.on_pilot(org),  # charges recorded but waived
                 "active_workers": services.active_worker_count(org),
                 "monthly_estimate": f"{services.monthly_estimate(org):.2f}",
                 "unpaid_total": f"{services.unpaid_total(org):.2f}",

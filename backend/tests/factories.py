@@ -47,6 +47,8 @@ class OrganizationFactory(factory.django.DjangoModelFactory):
     weekly_off_day = 6
     # KYB_REQUIRED_FOR_SHORTLIST gates ops shortlisting; test orgs are verified unless a test says otherwise.
     verification_status = "verified"
+    # Pilot orgs get every charge waived; test orgs pay unless a test puts them on the pilot.
+    plan = "standard"
 
 
 class SiteFactory(factory.django.DjangoModelFactory):

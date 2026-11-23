@@ -222,6 +222,16 @@ def test_join_requires_employment(owner_client, org):
     assert "employment" in res.json()["error"]["fields"]
 
 
+def test_pilot_org_placement_charge_is_recorded_but_waived(owner_client, org):
+    org.plan = "pilot"
+    org.save(update_fields=["plan"])
+    app = f.ApplicationFactory(job=f.JobFactory(organization=org), stage="selected")
+    assert move(owner_client, app, "joined", employment=JOIN_MONTHLY).status_code == 200
+    charge = Charge.objects.get(application=app)
+    assert charge.kind == "placement" and charge.amount == D("5000.00")
+    assert charge.status == "waived" and "pilot" in charge.description
+
+
 def test_join_below_minimum_wage(owner_client, org):
     app = f.ApplicationFactory(job=f.JobFactory(organization=org), stage="selected")
     res = move(owner_client, app, "joined", employment={**JOIN_MONTHLY, "basic_salary": "1000"})

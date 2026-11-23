@@ -79,7 +79,7 @@ Payroll calculation (per active employment overlapping the BS month, prorated by
 8. Advance recovery = min(recover_per_month, amount − recovered); on `mark-paid` add to recovered_amount.
 9. `net = gross − ssf_employee − tds − advance_recovery − other_deductions`. All rounding to 2 dp, ROUND_HALF_UP.
 
-**billing**: `Charge(id, organization, kind placement|subscription, amount, description, bs_year?, bs_month?, application?, status unpaid|paid|waived, created_at)`. Placement charge NPR 5,000 created when an application reaches `joined` (waived if it replaces an employment ended within its replacement window). Subscription: Celery beat on BS month start → `max(active_workers × 150, 3000)`.
+**billing**: `Charge(id, organization, kind placement|subscription, amount, description, bs_year?, bs_month?, application?, status unpaid|paid|waived, created_at)`. Placement charge NPR 5,000 created when an application reaches `joined` (waived if it replaces an employment ended within its replacement window). Subscription: Celery beat on BS month start → `max(active_workers × 150, 3000)`; no charge at all for a month with 0 active workers. While `Organization.plan = pilot` (free pilot) placement and subscription charges are still created, with `status=waived` and the reason in `description`; waived charges never reach an invoice. Moving the org to a paid billing plan ends the pilot (`plan=standard`).
 
 **audit**: `AuditLog(id, actor?, organization?, action, object_type, object_id, changes json, ip?, created_at)` — written for create/update/delete on org-owned models and all ops actions.
 
@@ -147,7 +147,7 @@ Payroll calculation (per active employment overlapping the BS month, prorated by
 - Exports: `GET /org/payroll-runs/{id}/wage-sheet.xlsx` (तलब पाना, bilingual headers) · `GET .../bank-transfer.csv` (name, account, bank, amount) · `GET .../ssf.csv` (ssf_id, name, basic, 11%, 20%, 31%) · `GET /org/payslips/{id}/payslip.pdf`
 
 ### Billing
-- `GET /org/billing/summary` → `{plan, active_workers, monthly_estimate, unpaid_total}` · `GET /org/billing/charges`
+- `GET /org/billing/summary` → `{plan, pilot, active_workers, monthly_estimate, unpaid_total}` · `GET /org/billing/charges`
 
 ### Worker self-service (user linked to a Worker)
 - `GET /me/worker` · `PATCH /me/worker {full_name_ne?, payment_method?, bank_*, wallet_id?, is_available?}` · `POST /me/worker/claim {}` (links user to Worker with same phone, if exists)

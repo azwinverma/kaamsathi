@@ -56,6 +56,7 @@ def _track(name, *, user=None, organization=None, **props):
 
 def create_placement_charge(application: Application, employment):
     from apps.billing.models import Charge
+    from apps.billing.services import PILOT_WAIVER, on_pilot
     from apps.workforce.models import Employment
 
     org = application.job.organization
@@ -85,13 +86,15 @@ def create_placement_charge(application: Application, employment):
             replaces_employment=replaced,
             status="waived",
         )
+    pilot = on_pilot(org)
     return Charge.objects.create(
         organization=org,
         kind="placement",
         amount=fee,
-        description=f"Placement: {worker_name} — {application.job.title}",
+        description=f"Placement: {worker_name} — {application.job.title}"
+        + (f" ({PILOT_WAIVER})" if pilot else ""),
         application=application,
-        status="unpaid",
+        status="waived" if pilot else "unpaid",
     )
 
 
