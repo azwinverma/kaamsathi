@@ -29,6 +29,11 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
   two has left. Web job list, detail and dashboard show "N of M filled · K left".
 - Web leave page: a pending leave that overlaps an approved/paid payroll month no longer offers
   "Approve" (which then failed); it says the month's payroll is approved. Reject still works.
+- **Free replacement** has rules: the leaver must have resigned, absconded or been dismissed for
+  cause (`terminated`); an employer ending it without fault (`contract_end`, `other`) is charged.
+  The replacement must join within `REPLACEMENT_HIRE_DAYS` (30) of the leaver's last day (it had no
+  deadline). Web shows the conditions in the end-employment dialog; "Terminated" reads "Dismissed
+  (for cause)".
 
 ### Fixed
 - **Payroll:** an edit that would make net pay negative is refused, and a negative-net payslip can't

@@ -57,19 +57,31 @@ def _track(name, *, user=None, organization=None, **props):
     track(name, user=user, organization=organization, **props)
 
 
+# Free replacement (CONTRACT §billing): only when the placed worker left through their own doing:
+# resigned, absconded or dismissed for cause ("terminated", as trust/credentials also read it).
+# An employer ending it without fault (contract_end) or "other" is charged as a new placement.
+REPLACEMENT_END_REASONS = ("resigned", "absconded", "terminated")
+
+
 def create_placement_charge(application: Application, employment):
+    """Placement charge on join; waived as a free replacement when an earlier hire of the same trade
+    left within ``REPLACEMENT_WINDOW_DAYS`` of starting, for a reason in ``REPLACEMENT_END_REASONS``,
+    and this hire joins within ``REPLACEMENT_HIRE_DAYS`` of that worker's last day."""
     from apps.billing.models import Charge
     from apps.billing.services import PILOT_WAIVER, on_pilot
     from apps.workforce.models import Employment
 
     org = application.job.organization
     fee = placement_fee(org)
+    hire_by = employment.start_date - dt.timedelta(days=settings.REPLACEMENT_HIRE_DAYS)
     replaced = (
         Employment.objects.filter(
             organization=org,
             status="ended",
             replacement_eligible_until__isnull=False,
             end_date__isnull=False,
+            end_date__gte=hire_by,
+            end_reason__in=REPLACEMENT_END_REASONS,
             trade=application.job.trade,
             replacement_charges__isnull=True,
         )

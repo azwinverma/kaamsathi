@@ -445,6 +445,8 @@ PLACEMENT_FEE = env("PLACEMENT_FEE", default="5000.00")
 SUBSCRIPTION_PER_WORKER = env("SUBSCRIPTION_PER_WORKER", default="150.00")
 SUBSCRIPTION_MINIMUM = env("SUBSCRIPTION_MINIMUM", default="3000.00")
 REPLACEMENT_WINDOW_DAYS = 30
+# A free replacement must join within this many days of the leaver's last day (hiring grace).
+REPLACEMENT_HIRE_DAYS = 30
 # Free pilot (Organization.plan="pilot"): its length, and how many days before the end the org's
 # owners/admins and finance ops are reminded (apps/billing/pilot.py, daily beat task).
 PILOT_DAYS = env.int("PILOT_DAYS", default=90)
