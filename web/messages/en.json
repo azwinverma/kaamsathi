@@ -1651,6 +1651,8 @@
       "method_label": "How did you verify it?",
       "note_label": "Note",
       "note_hint": "required to reject",
+      "note_hint_change": "required to change a decision",
+      "note_required_change": "Explain why the earlier decision is being changed. Another staff member or a superadmin must make the change.",
       "note_placeholder": "e.g. Called NSTB Bhaktapur, certificate confirmed",
       "note_required": "Add a note explaining why the credential is rejected.",
       "verify": "Verify",

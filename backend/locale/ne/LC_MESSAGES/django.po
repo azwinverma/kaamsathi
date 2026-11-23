@@ -2935,3 +2935,11 @@ msgctxt "harden"
 msgid "This organization is not on the free pilot."
 msgstr "यो संस्था निःशुल्क पाइलटमा छैन।"
 
+msgctxt "harden"
+msgid "Another staff member or a superadmin must change your own decision."
+msgstr "आफ्नै निर्णय बदल्न अर्को कर्मचारी वा सुपरएड्मिन चाहिन्छ।"
+
+msgctxt "harden"
+msgid "Explain why the earlier decision is being changed."
+msgstr "पहिलेको निर्णय किन बदलिँदैछ, लेख्नुहोस्।"
+

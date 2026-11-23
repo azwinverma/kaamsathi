@@ -142,6 +142,49 @@ def test_ops_verify_flow_and_trust_recompute(staff_client, trust_calls, django_c
     assert res.json()["status"] == "rejected"
 
 
+def _staff(*roles):
+    from apps.accounts.models import StaffProfile
+
+    user = f.UserFactory(is_staff=True)
+    StaffProfile.objects.create(user=user, roles=list(roles))
+    return user, auth_client(user)
+
+
+def test_changing_a_decided_credential_needs_another_staff_member_and_a_note(trust_calls):
+    from apps.audit.models import AuditLog
+
+    cred = make_cred(f.WorkerFactory(), status="pending")
+    first, first_client = _staff("verifier")
+    url = f"/api/v1/ops/credentials/{cred.id}/verify"
+    assert first_client.post(url, {"status": "rejected", "note": "Blurry"}).status_code == 200
+
+    # the same verifier can't flip their own decision, even with a note
+    res = first_client.post(url, {"status": "verified", "note": "Looked again"})
+    assert res.status_code == 403 and res.json()["error"]["code"] == "permission_denied"
+    # another verifier must say why
+    _, second_client = _staff("verifier")
+    res = second_client.post(url, {"status": "verified"})
+    assert res.status_code == 400 and "note" in res.json()["error"]["fields"]
+    cred.refresh_from_db()
+    assert cred.status == "rejected"
+
+    res = second_client.post(url, {"status": "verified", "note": "Issuer confirmed by phone"})
+    assert res.status_code == 200 and res.json()["status"] == "verified"
+    entry = AuditLog.objects.get(action="ops.credential.redecide", object_id=str(cred.id))
+    assert entry.changes["status"] == {"from": "rejected", "to": "verified"}
+    assert entry.changes["previous_decided_by"] == str(first.id)
+    assert entry.changes["note"] == "Issuer confirmed by phone"
+
+
+def test_superadmin_may_change_their_own_decision_with_a_note(trust_calls):
+    cred = make_cred(f.WorkerFactory(), status="pending")
+    _, admin = _staff("superadmin")
+    url = f"/api/v1/ops/credentials/{cred.id}/verify"
+    admin.post(url, {"status": "verified"})
+    assert admin.post(url, {"status": "rejected"}).status_code == 400  # note still required
+    assert admin.post(url, {"status": "rejected", "note": "Forged stamp"}).status_code == 200
+
+
 def test_registry_verifier_not_configured(staff_client):
     cred = make_cred(f.WorkerFactory(), status="pending")
     res = staff_client.post(
