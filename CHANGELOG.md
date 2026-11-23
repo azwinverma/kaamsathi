@@ -27,6 +27,8 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
 - **Job openings filled** count only hires from the job who are still employed (`filled`; `left`
   counts hires who already ended): a job no longer shows "2 of 2" or flips to filled when one of the
   two has left. Web job list, detail and dashboard show "N of M filled · K left".
+- Web leave page: a pending leave that overlaps an approved/paid payroll month no longer offers
+  "Approve" (which then failed); it says the month's payroll is approved. Reject still works.
 
 ### Fixed
 - **Payroll:** an edit that would make net pay negative is refused, and a negative-net payslip can't

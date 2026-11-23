@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Check, Plus, X, CalendarOff } from "lucide-react";
+import { Check, Plus, X, CalendarOff, Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { StatusBadge } from "@/components/shared/status-badge";
@@ -16,9 +16,10 @@ import { NativeSelect } from "@/components/ui/select";
 import { RowHeader, Table, TableContainer, TBody, Td, Th, THead, Tr } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { listResults } from "@/lib/api/client";
-import { useCreateLeave, useDecideLeave, useLeaves } from "@/lib/api/hooks/workforce";
+import { useCreateLeave, useDecideLeave, useLeaves, usePayrollRunsForLock } from "@/lib/api/hooks/workforce";
 import { isApiError } from "@/lib/api/errors";
-import type { LeaveRequest, LeaveStatus, LeaveType } from "@/lib/api/types";
+import type { LeaveRequest, LeaveStatus, LeaveType, PayrollRunListItem } from "@/lib/api/types";
+import { useSession } from "@/components/providers/session";
 import { todayIso } from "@/lib/format";
 import { toastError } from "@/lib/forms";
 import { useFormat } from "@/lib/use-format";
@@ -38,6 +39,20 @@ function dayCount(from: string, to: string): number {
   return Math.round((b - a) / 86_400_000) + 1;
 }
 
+/** The approved/paid payroll run whose period overlaps the leave (the API refuses to approve it:
+ * approving writes hajiri into a locked month). Mirrors ``payroll.services.is_month_locked``. */
+export function lockingRun(
+  leave: Pick<LeaveRequest, "from_date" | "to_date">,
+  runs: PayrollRunListItem[],
+): PayrollRunListItem | undefined {
+  return runs.find(
+    (r) =>
+      (r.status === "approved" || r.status === "paid") &&
+      r.period_start <= leave.to_date &&
+      r.period_end >= leave.from_date,
+  );
+}
+
 export function LeavePage() {
   const t = useTranslations();
   const tl = useTranslations("workforce.leave");
@@ -48,6 +63,8 @@ export function LeavePage() {
   const [rejecting, setRejecting] = React.useState<LeaveRequest | null>(null);
   const decide = useDecideLeave();
   const [busyId, setBusyId] = React.useState<string | null>(null);
+  const { canManage } = useSession();
+  const lockRuns = listResults(usePayrollRunsForLock(canManage).data);
 
   React.useEffect(() => setPage(1), [tab]);
 
@@ -128,6 +145,7 @@ export function LeavePage() {
               <TBody>
                 {rows.map((lr) => {
                   const name = workerNameOf(lr) || "—";
+                  const locked = lr.status === "pending" ? lockingRun(lr, lockRuns) : undefined;
                   return (
                     <Tr key={lr.id}>
                       <RowHeader sticky>
@@ -152,17 +170,24 @@ export function LeavePage() {
                       </Td>
                       <Td className="text-right">
                         {lr.status === "pending" ? (
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={() => approve(lr)}
-                              loading={busyId === lr.id}
-                              aria-label={tl("approve_for", { name })}
-                            >
-                              <Check aria-hidden />
-                              {tl("approve")}
-                            </Button>
+                          <div className="flex items-center justify-end gap-2">
+                            {locked ? (
+                              <span className="flex max-w-48 items-start gap-1 text-left text-xs text-fg-muted">
+                                <Lock aria-hidden className="mt-0.5 size-3.5 shrink-0" />
+                                {tl("approve_locked", { month: f.bsMonth(locked.bs_year, locked.bs_month) })}
+                              </span>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => approve(lr)}
+                                loading={busyId === lr.id}
+                                aria-label={tl("approve_for", { name })}
+                              >
+                                <Check aria-hidden />
+                                {tl("approve")}
+                              </Button>
+                            )}
                             <Button
                               size="sm"
                               variant="danger-outline"

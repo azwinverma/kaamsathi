@@ -226,6 +226,7 @@
       "approve": "Approve",
       "reject": "Reject",
       "approve_for": "Approve leave for {name}",
+      "approve_locked": "Payroll for {month} is approved, so this leave can't be approved (hajiri for that month is locked).",
       "reject_for": "Reject leave for {name}",
       "reject_title": "Reject leave",
       "reject_note": "Note to worker",
