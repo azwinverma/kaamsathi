@@ -67,6 +67,8 @@ COMPLETENESS_KEYS = (
     "consent",
 )
 OPTIONAL_KEYS = ("portfolio",)
+# Not part of the percentage: once everything above is done, "take bookings" is the last thing left.
+READY_KEY = "bolau_enabled"
 
 
 # --------------------------------------------------------------------------- worker + profile
@@ -191,6 +193,22 @@ def set_bolau_enabled(profile: SipaluProfile, enabled: bool) -> None:
     profile.bolau_enabled = bool(enabled)
 
 
+# --------------------------------------------------------------------------- verified identity lock
+def check_identity_change(worker, **changes) -> None:
+    """Once KaamSathi has verified the worker, name (en/ne) and ID numbers / photos are locked, as on
+    ``/me/worker``: a real change is refused (400) and the person is pointed to support. Repeating the
+    stored value is not a change, so idempotent onboarding steps keep working."""
+    if worker.verification_status != "verified":
+        return
+    for field, value in changes.items():
+        if value is None:
+            continue
+        if field in ("id_front", "id_back") or (str(value).strip() or None) != (
+            getattr(worker, field) or None
+        ):
+            raise error("validation_error", "identity_locked", field)
+
+
 # --------------------------------------------------------------------------- bookability
 def bookable_problems(profile: SipaluProfile) -> list[str]:
     """Reasons the Sipalu cannot be booked (empty = bookable)."""
@@ -206,6 +224,15 @@ def bookable_problems(profile: SipaluProfile) -> list[str]:
     if not profile.availability.exists():
         problems.append("availability")
     return problems
+
+
+def check_can_take_work(profile: SipaluProfile | None) -> None:
+    """Accepting a booking / offer (which shares the household's address) needs a verified,
+    not-suspended Sipalu. Turning Bolau off or editing services does not block pending work."""
+    if profile is None or profile.suspended_at:
+        raise InvalidState(message=labels.message("suspended"))
+    if profile.worker.verification_status != "verified":
+        raise InvalidState(message=labels.message("not_verified"))
 
 
 def is_bookable(profile: SipaluProfile) -> bool:
@@ -315,7 +342,10 @@ def _payment_done(worker) -> bool:
 def completeness(profile: SipaluProfile) -> dict:
     """Sipalu completeness: ``{percent, missing, items: [{key, done, optional, label}]}``.
 
-    Portfolio is shown as an optional item and does not count towards the percentage.
+    Portfolio is shown as an optional item and does not count towards the percentage. ``bolau_enabled``
+    is listed as an item and, once every profile key is done (and the Sipalu is not suspended), in
+    ``missing`` while bookings are switched off — otherwise a Sipalu who finished onboarding on the
+    web would see nothing left to do and never be bookable.
     """
     w = profile.worker
     done = {
@@ -334,6 +364,7 @@ def completeness(profile: SipaluProfile) -> dict:
         "payment_details": _payment_done(w),
         "consent": profile.public_consent_at is not None,
         "portfolio": profile.portfolio.exists(),
+        READY_KEY: profile.bolau_enabled,
     }
     items = [
         {
@@ -342,14 +373,13 @@ def completeness(profile: SipaluProfile) -> dict:
             "optional": k in OPTIONAL_KEYS,
             "label": labels.label(labels.COMPLETENESS, k),
         }
-        for k in (*COMPLETENESS_KEYS, *OPTIONAL_KEYS)
+        for k in (*COMPLETENESS_KEYS, READY_KEY, *OPTIONAL_KEYS)
     ]
     n = sum(1 for k in COMPLETENESS_KEYS if done[k])
-    return {
-        "percent": round(n * 100 / len(COMPLETENESS_KEYS)),
-        "missing": [k for k in COMPLETENESS_KEYS if not done[k]],
-        "items": items,
-    }
+    missing = [k for k in COMPLETENESS_KEYS if not done[k]]
+    if not missing and not done[READY_KEY] and not profile.suspended_at:
+        missing.append(READY_KEY)
+    return {"percent": round(n * 100 / len(COMPLETENESS_KEYS)), "missing": missing, "items": items}
 
 
 STEP_DONE = {

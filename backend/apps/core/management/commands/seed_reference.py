@@ -8,14 +8,17 @@ from apps.core.bs import parse_bs
 
 
 class Command(BaseCommand):
-    help = "Seed provinces, 77 districts, trades, minimum wage, tax slabs and national holidays (idempotent)."
+    help = (
+        "Seed provinces, 77 districts, trades (+ search words), minimum wage, tax slabs and national "
+        "holidays (idempotent)."
+    )
 
     @transaction.atomic
     def handle(self, *args, **options):
         from apps.geo.models import District, Province
         from apps.hiring.models import MinimumWage
         from apps.payroll.models import TaxSlab
-        from apps.workers.models import Trade
+        from apps.workers.models import Trade, TradeAlias
         from apps.workforce.models import Holiday
 
         for code, en, ne in ref.PROVINCES:
@@ -28,6 +31,13 @@ class Command(BaseCommand):
             Trade.objects.update_or_create(
                 code=code, defaults={"name_en": en, "name_ne": ne, "category": cat}
             )
+        aliases = 0
+        for code, rows in ref.TRADE_ALIASES.items():
+            for alias, language in rows:
+                # Case-insensitive unique per trade (DB constraint); an ops-edited row is left alone.
+                if not TradeAlias.objects.filter(trade_id=code, alias__iexact=alias).exists():
+                    TradeAlias.objects.create(trade_id=code, alias=alias, language=language)
+                    aliases += 1
         for eff, basic, da, total, daily, hourly, part in ref.MINIMUM_WAGES:
             MinimumWage.objects.update_or_create(
                 effective_from=eff,
@@ -59,7 +69,8 @@ class Command(BaseCommand):
             self.style.SUCCESS(
                 f"Reference data: {Province.objects.count()} provinces, "
                 f"{District.objects.count()} districts, "
-                f"{Trade.objects.count()} trades, {MinimumWage.objects.count()} minimum wage rows, "
+                f"{Trade.objects.count()} trades ({aliases} new search words), "
+                f"{MinimumWage.objects.count()} minimum wage rows, "
                 f"{TaxSlab.objects.count()} tax slabs, {Holiday.objects.filter(organization=None).count()} "
                 f"national holidays ({holidays} new)."
             )

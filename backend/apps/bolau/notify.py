@@ -170,6 +170,13 @@ TEMPLATES: dict[str, tuple[str, str, str, str, bool]] = {
         "घरधनीले अनुरोध {code} का लागि अर्को प्रस्ताव छान्नुभयो।",
         False,
     ),
+    "offer_withdrawn": (
+        "Offer withdrawn",
+        "प्रस्ताव फिर्ता लिइयो",
+        "An offer on your request {code} is no longer available. Other offers stay open.",
+        "तपाईंको अनुरोध {code} मा आएको एउटा प्रस्ताव अब उपलब्ध छैन। अरू प्रस्ताव खुलै छन्।",
+        False,
+    ),
     "request_expired": (
         "Kaam request expired",
         "कामको अनुरोधको समय सकियो",
@@ -271,3 +278,92 @@ def to_sipalu(booking, event: str, **extra) -> None:
         data={"booking_id": str(booking.id), "code": booking.code},
         **ctx,
     )
+
+
+# --------------------------------------------------------------------------- booking dispute outcomes
+# Role-correct wording: the party who raised the dispute (or the appeal) vs the other party.
+# (title_en, title_ne, body_en raiser, body_ne raiser, body_en other, body_ne other)
+DISPUTE_TEMPLATES = {
+    "resolved": (
+        "Dispute decided",
+        "विवादमा निर्णय भयो",
+        "KaamSathi decided the dispute you raised about booking {code}: {outcome}. "
+        "Open the app to see the note.",
+        "तपाईंले बुकिङ {code} मा दर्ता गर्नुभएको विवादमा KaamSathi ले निर्णय गर्यो: {outcome_ne}। "
+        "टिप्पणी हेर्न एप खोल्नुहोस्।",
+        "The {role} raised a dispute about booking {code}. KaamSathi decided: {outcome}. "
+        "Open the app to see the note.",
+        "{role_ne} ले बुकिङ {code} मा विवाद दर्ता गर्नुभएको थियो। KaamSathi को निर्णय: {outcome_ne}। "
+        "टिप्पणी हेर्न एप खोल्नुहोस्।",
+    ),
+    "appeal": (
+        "Dispute appeal decided",
+        "विवादको पुनरावेदनमा निर्णय भयो",
+        "KaamSathi decided your appeal on booking {code}: {outcome}. Open the app to see the note.",
+        "बुकिङ {code} मा तपाईंको पुनरावेदनमा KaamSathi ले निर्णय गर्यो: {outcome_ne}। टिप्पणी हेर्न एप खोल्नुहोस्।",
+        "The {role} appealed the dispute decision on booking {code}. KaamSathi decided: {outcome}. "
+        "Open the app to see the note.",
+        "{role_ne} ले बुकिङ {code} को विवादको निर्णयमा पुनरावेदन गर्नुभएको थियो। KaamSathi को निर्णय: "
+        "{outcome_ne}। टिप्पणी हेर्न एप खोल्नुहोस्।",
+    ),
+}
+ROLE_NAMES = {"ghardhani": ("Ghardhani", "घरधनी"), "sipalu": ("Sipalu", "सिपालु")}
+
+
+def dispute_raised_by(dispute) -> str:
+    """``ghardhani`` | ``sipalu``: from the booking event written when this dispute was raised."""
+    from .models import BookingEvent
+
+    ev = (
+        BookingEvent.objects.filter(
+            booking_id=dispute.booking_id, to_status="disputed", at__gte=dispute.raised_at
+        )
+        .order_by("at")
+        .first()
+    )
+    return ev.by_party if ev and ev.by_party in ROLE_NAMES else "ghardhani"
+
+
+def dispute_outcome(dispute, stage: str, outcome: str, outcome_ne: str) -> None:
+    """Tell both parties of a booking dispute about a decision (``stage`` resolved | appeal). Never
+    names the deciding staff member; never raises."""
+    booking = dispute.booking
+    if booking is None:
+        return
+    if stage == "appeal":
+        raiser = "ghardhani" if dispute.appealed_by_party == "ghardhani" else "sipalu"
+    else:
+        raiser = dispute_raised_by(dispute)
+    title, title_ne, body, body_ne, other_body, other_body_ne = DISPUTE_TEMPLATES[stage]
+    users = {"ghardhani": booking.ghardhani, "sipalu": booking.sipalu.user}
+    links = {"ghardhani": f"/ghar/bookings/{booking.id}", "sipalu": "/me/disputes"}
+    try:
+        from apps.notifications.services import notify
+    except ImportError:  # pragma: no cover
+        return
+    for party, user in users.items():
+        if user is None:
+            continue
+        mine = party == raiser
+        role, role_ne = ROLE_NAMES[raiser]
+        ctx = {
+            "code": booking.code,
+            "outcome": outcome,
+            "outcome_ne": outcome_ne,
+            "role": role,
+            "role_ne": role_ne,
+        }
+        try:
+            notify(
+                user,
+                "bolau_dispute_resolved" if stage == "resolved" else "bolau_dispute_appeal",
+                title,
+                (body if mine else other_body).format(**ctx),
+                title_ne=title_ne,
+                body_ne=(body_ne if mine else other_body_ne).format(**ctx),
+                data={"dispute_id": str(dispute.id), "booking_id": str(booking.id), "code": booking.code},
+                link=links[party],
+                sms=True,
+            )
+        except Exception:  # noqa: BLE001
+            logger.exception("bolau dispute notify failed")

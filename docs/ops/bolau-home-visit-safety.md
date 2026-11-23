@@ -107,8 +107,11 @@ For every safety case:
 ## 5. Suspension rules
 
 Suspend from `/ops/bolau` → Sipalu → **Suspend** with a written reason (audited). Suspension turns
-Bolau off and blocks new bookings; the Sipalu cannot switch it back on. Existing future bookings are
-**not** cancelled automatically: cancel them with reason `sipalu_suspended` and tell each Ghardhani.
+Bolau off and blocks new bookings; the Sipalu cannot switch it back on. Requests the Sipalu has not
+answered yet are cancelled automatically (reason `sipalu_suspended`, fee refunded, each Ghardhani is
+notified) and pending offers on Kaam requests are withdrawn; a suspended or no-longer-verified Sipalu
+can never accept a booking or offer. Already **accepted** future bookings are **not** cancelled
+automatically: cancel them with reason `sipalu_suspended` and tell each Ghardhani.
 
 | Trigger | Action |
 | --- | --- |

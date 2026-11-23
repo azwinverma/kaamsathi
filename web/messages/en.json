@@ -1166,6 +1166,12 @@
       "done_progress": "Profile {n}% complete",
       "bookable": "You can take Bolau bookings.",
       "not_bookable": "Not bookable yet: {problems}",
+      "take_bookings": "Take bookings",
+      "take_bookings_hint": "Switch on so Ghardhani can find and book you. Switch off any time you are busy.",
+      "take_bookings_unverified": "You can switch this on once KaamSathi has verified your ID.",
+      "take_bookings_suspended": "Bolau is paused on your profile. Contact KaamSathi support.",
+      "take_bookings_on": "Bookings are on. Ghardhani can now book you.",
+      "take_bookings_off": "Bookings are off.",
       "open_app": "Manage bookings in the KaamSathi app"
     },
     "ops": {

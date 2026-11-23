@@ -316,6 +316,10 @@ def accept(booking: Booking, user) -> Booking:
     if booking.status == "requested" and booking.expires_at and booking.expires_at <= timezone.now():
         _expire(booking)
         raise invalid()
+    if booking.status == "requested":  # suspended / no longer verified: never share the address
+        profiles.check_can_take_work(
+            SipaluProfile.objects.select_related("worker").filter(worker=booking.sipalu).first()
+        )
     _accept(booking, by=user, party="sipalu")
     notify.to_ghardhani(booking, "booking_accepted")
     _refresh_sipalu(booking)
@@ -632,7 +636,8 @@ def payment_state(booking: Booking) -> dict:
         "ghardhani_method": booking.paid_method_ghardhani,
         "sipalu_marked_at": s.isoformat() if s else None,
         "sipalu_method": booking.paid_method_sipalu,
-        "agreed": bool(g and s),
+        # Both sides marked it *and* name the same method (a mismatch is for the parties / ops to sort out).
+        "agreed": bool(g and s and booking.paid_method_ghardhani == booking.paid_method_sipalu),
     }
 
 
@@ -676,6 +681,33 @@ def raise_dispute(booking: Booking, user, party: str, description: str):
     notify.to_ghardhani(booking, "booking_disputed")
     notify.to_sipalu(booking, "booking_disputed")
     return dispute
+
+
+@transaction.atomic
+def end_dispute(booking_id, *, by=None, note: str = "") -> Booking | None:
+    """Ops decided the booking's dispute (first decision or appeal): ``disputed`` → the status it had
+    before, unless another dispute on the booking is still open. No-op when not disputed."""
+    from apps.trust.models import Dispute
+
+    booking = _lock(booking_id)
+    if booking.status != "disputed" or not booking.status_before_dispute:
+        return None
+    if (
+        Dispute.objects.filter(booking=booking)
+        .exclude(status__in=("resolved", "rejected", "appeal_resolved"))
+        .exists()
+    ):
+        return None
+    _move(
+        booking,
+        booking.status_before_dispute,
+        ("disputed",),
+        by=by,
+        party="ops",
+        note=note or "dispute decided",
+    )
+    _refresh_sipalu(booking)
+    return booking
 
 
 def rate(booking: Booking, user, party: str, data: dict, *, request=None) -> BookingRating:
@@ -724,6 +756,19 @@ def report(booking: Booking, user, party: str, reason: str, note: str = "") -> B
     if created:
         risk.check_report(obj)
     return obj
+
+
+def close_open_work(worker, *, by=None, reason: str, statuses=("requested",)) -> int:
+    """Ops-cancel the Sipalu's bookings in ``statuses`` (suspension, data deletion); each household
+    is told through the normal cancellation notice. Returns how many were cancelled."""
+    n = 0
+    for pk in Booking.objects.filter(sipalu=worker, status__in=statuses).values_list("pk", flat=True):
+        try:
+            cancel(Booking(pk=pk), by, "ops", reason)
+            n += 1
+        except InvalidState:  # moved on concurrently
+            continue
+    return n
 
 
 # --------------------------------------------------------------------------- periodic

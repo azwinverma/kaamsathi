@@ -264,6 +264,7 @@ class MeSipaluView(APIView):
         d = valid(SipaluPatch, request.data, partial=True)
         with transaction.atomic():
             w = profile.worker
+            profiles.check_identity_change(w, full_name=d.get("name"), full_name_ne=d.get("name_ne"))
             if "name" in d:
                 w.full_name = d.pop("name").strip()
                 w.save(update_fields=["full_name", "updated_at"])

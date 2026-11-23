@@ -118,7 +118,13 @@ def test_payment_details_rules():
 
 
 # --------------------------------------------------------------------------- aliases
-def test_ops_taxonomy_aliases_crud_and_search(staff_client):
+@pytest.fixture
+def no_seeded_aliases(db):
+    """``seed_reference`` adds everyday search words; these tests start from an empty table."""
+    TradeAlias.objects.all().delete()
+
+
+def test_ops_taxonomy_aliases_crud_and_search(staff_client, no_seeded_aliases):
     r = staff_client.post(
         "/api/v1/ops/taxonomy/trades/cook/aliases", {"alias": "Bhanse", "language": "ne_rom"}
     )
@@ -154,7 +160,7 @@ def test_ops_taxonomy_aliases_crud_and_search(staff_client):
     assert not TradeAlias.objects.exists()
 
 
-def test_job_search_matches_alias(owner_client, org):
+def test_job_search_matches_alias(owner_client, org, no_seeded_aliases):
     TradeAlias.objects.create(trade=f.trade("cook"), alias="bhanse", language="ne_rom")
     job = f.JobFactory(organization=org, title="Kitchen staff", trade=f.trade("cook"))
     f.JobFactory(organization=org, title="Builder", trade=f.trade("mason"))

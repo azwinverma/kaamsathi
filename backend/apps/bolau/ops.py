@@ -86,6 +86,13 @@ def suspend(profile: SipaluProfile, user, reason: str) -> SipaluProfile:
     profile.save(
         update_fields=["bolau_enabled", "suspended_at", "suspension_reason", "suspended_by", "updated_at"]
     )
+    # Requests the Sipalu has not answered yet are cancelled (fee refunded) and pending offers
+    # withdrawn, so a suspended Sipalu can never accept and see a household's address. Accepted
+    # bookings are left for ops to handle case by case (docs/ops/bolau-home-visit-safety.md §5).
+    from . import bookings, kaam
+
+    bookings.close_open_work(profile.worker, by=user, reason="sipalu_suspended")
+    kaam.withdraw_pending_offers(profile.worker)
     if profile.worker.user:
         notify.send(profile.worker.user, "sipalu_suspended", link="/sipalu/profile")
     return profile

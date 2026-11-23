@@ -225,13 +225,22 @@ def month_bs(value) -> str | None:
     return f"{b.year:04d}-{b.month:02d}"
 
 
+def reviewer_first_name(user) -> str:
+    """The household's first name for a public review; falls back to the Ghardhani display name
+    (households that only ever set one)."""
+    if user is None:
+        return ""
+    gh = getattr(user, "ghardhani", None)
+    return first_name(user.full_name) or first_name(getattr(gh, "display_name", ""))
+
+
 def review_dict(r: BookingRating) -> dict:
     return {
         "score": r.score,
         "comment": r.public_comment,
         "tags": r.tags,
         "tag_labels": [str(labels.SIPALU_TAGS.get(t, t)) for t in r.tags],
-        "first_name": first_name(r.rater.full_name if r.rater_id else ""),
+        "first_name": reviewer_first_name(r.rater),
         "month_bs": month_bs(r.created_at),
     }
 
@@ -239,7 +248,7 @@ def review_dict(r: BookingRating) -> dict:
 def public_reviews(worker, limit: int = 10) -> list[dict]:
     qs = (
         BookingRating.objects.filter(booking__sipalu=worker, side="ghardhani", voided=False)
-        .select_related("rater")
+        .select_related("rater__ghardhani")
         .order_by("-created_at")[:limit]
     )
     return [review_dict(r) for r in qs]

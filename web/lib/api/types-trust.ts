@@ -61,7 +61,8 @@ export interface DisputeAppeal {
   outcome: AppealOutcome | null;
   outcome_label: string | null;
   resolution_note: string | null;
-  resolved_by: { id: UUID; full_name: string } | null;
+  /** Ops sees the staff member; the parties see `{id: null, full_name: "KaamSathi team"}`. */
+  resolved_by: { id: UUID | null; full_name: string } | null;
   resolved_at: ISODateTime | null;
 }
 
@@ -73,7 +74,8 @@ export interface DisputeEvidence {
   file_type: "image" | "pdf";
   party: "worker" | "employer" | "ops" | "ghardhani";
   party_label: string;
-  uploaded_by: { id: UUID; full_name: string } | null;
+  /** Staff uploads show `{id: null, full_name: "KaamSathi team"}` to the parties. */
+  uploaded_by: { id: UUID | null; full_name: string } | null;
   note: string | null;
   created_at: ISODateTime;
 }
@@ -97,7 +99,8 @@ export interface Dispute {
   resolution_note: string | null;
   raised_at: ISODateTime;
   responded_at: ISODateTime | null;
-  resolved_by: { id: UUID; full_name: string } | null;
+  /** Ops sees the staff member; the parties see `{id: null, full_name: "KaamSathi team"}`. */
+  resolved_by: { id: UUID | null; full_name: string } | null;
   resolved_at: ISODateTime | null;
   /** N006 */
   evidence_count?: number | null;

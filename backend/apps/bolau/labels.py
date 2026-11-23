@@ -131,6 +131,7 @@ COMPLETENESS = {
     "service_area": b("Choose the areas you work in"),
     "payment_details": b("Add your eSewa, Khalti or bank details"),
     "consent": b("Agree to show your profile publicly"),
+    "bolau_enabled": b("Turn on bookings so Ghardhani can book you"),
     "portfolio": b("Add a photo of your work (optional)"),
 }
 
@@ -164,6 +165,11 @@ MESSAGES = {
     "visit_fee_required": b("Add a visit fee for visit-then-quote services."),
     "portfolio_full": b("You can add up to 12 portfolio photos."),
     "suspended": b("Bolau is paused on your profile. Contact KaamSathi support."),
+    "not_verified": b("Your identity must be verified by KaamSathi before you can take bookings."),
+    "identity_locked": b(
+        "Your identity is verified, so your name and ID details cannot be changed here. "
+        "Contact KaamSathi support to correct them."
+    ),
     "phone_in_use": b("Another account already uses this phone number for a Sipalu profile."),
     "fee_not_payable": b("There is no booking fee to pay for this booking."),
     "receipt_unavailable": b("A receipt is available once the booking fee is paid."),
