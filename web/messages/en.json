@@ -398,7 +398,9 @@
     "email_invalid": "Enter a valid email address",
     "footnote": "You'll be the owner of this organization.",
     "submit": "Create organization",
-    "created": "{name} is ready"
+    "created": "{name} is ready",
+    "your_name": "Your name",
+    "your_name_hint": "So your team and workers know who runs this account."
   },
   "invoices": {
     "title": "Invoices",
@@ -1966,7 +1968,8 @@
         "fixed_term": "Fixed term",
         "daily": "Daily wage",
         "probation": "Probation"
-      }
+      },
+      "ssf_hint": "Enrol in SSF from the first day: 11% from basic salary, plus 20% employer contribution. Carried into the employment when they join."
     }
   },
   "finance": {
@@ -4647,7 +4650,8 @@
       "duplicate": "A payroll run for {month} already exists.",
       "open_existing": "Open the existing run",
       "submit": "Create wage sheet",
-      "created": "Wage sheet for {month} created"
+      "created": "Wage sheet for {month} created",
+      "current_month_note": "This month isn't over yet. You can draft the wage sheet now, but approve it only after the month ends."
     },
     "how": {
       "title": "How payroll works",

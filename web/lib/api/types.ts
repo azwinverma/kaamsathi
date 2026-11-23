@@ -210,6 +210,8 @@ export interface OrganizationCreate {
   address: string;
   phone: string;
   email?: string;
+  /** Saved as the caller's name when their account has none. */
+  owner_name?: string;
 }
 
 export interface Dashboard {
