@@ -78,6 +78,45 @@ def test_bulk_partial_errors(owner_client, org):
     }
 
 
+def test_bulk_refuses_future_dates_but_keeps_today_and_past(owner_client, org):
+    from apps.core.bs import today_ad
+
+    today = today_ad()
+    emp = f.EmploymentFactory(organization=org)
+    past = rec(emp, date=(today - dt.timedelta(days=1)).isoformat())
+    now = rec(emp, date=today.isoformat())
+    ahead = rec(emp, date=(today + dt.timedelta(days=1)).isoformat())
+    month_ahead = rec(emp, date=(today + dt.timedelta(days=30)).isoformat())
+    body = bulk(owner_client, past, now, ahead, month_ahead)
+    assert body["saved"] == [past["client_uuid"], now["client_uuid"]]
+    assert {e["client_uuid"]: e["code"] for e in body["errors"]} == {
+        ahead["client_uuid"]: "validation_error",
+        month_ahead["client_uuid"]: "validation_error",
+    }
+    assert "future" in body["errors"][0]["message"]
+    assert Attendance.objects.filter(employment=emp).count() == 2
+    # the offline queue replaying today's and yesterday's records stays idempotent
+    body = bulk(owner_client, past, now)
+    assert body == {"saved": [past["client_uuid"], now["client_uuid"]], "errors": []}
+    assert Attendance.objects.filter(employment=emp).count() == 2
+
+
+def test_end_employment_refuses_future_date(owner_client, org):
+    from apps.core.bs import today_ad
+
+    emp = f.EmploymentFactory(organization=org)
+    url = f"/api/v1/org/employments/{emp.id}/end"
+    ahead = (today_ad() + dt.timedelta(days=10)).isoformat()
+    res = owner_client.post(url, {"end_date": ahead, "end_reason": "resigned"}, format="json")
+    assert res.status_code == 400 and "end_date" in res.json()["error"]["fields"]
+    emp.refresh_from_db()
+    assert emp.status == "active" and emp.end_date is None
+    res = owner_client.post(
+        url, {"end_date": today_ad().isoformat(), "end_reason": "resigned"}, format="json"
+    )
+    assert res.status_code == 200, res.json()
+
+
 def test_bulk_requires_list(owner_client):
     res = owner_client.post("/api/v1/org/attendance/bulk", {"records": "x"}, format="json")
     assert res.status_code == 400 and res.json()["error"]["code"] == "validation_error"

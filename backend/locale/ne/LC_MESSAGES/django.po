@@ -2870,3 +2870,11 @@ msgctxt "fixpay"
 msgid "Some payslips have negative net pay. Reduce their deductions first."
 msgstr "केही तलब पर्चीमा खुद तलब ऋणात्मक छ। पहिले कट्टी घटाउनुहोस्।"
 
+msgctxt "fixpay"
+msgid "Hajiri can't be saved for a future date."
+msgstr "भविष्यको मितिको हाजिरी राख्न मिल्दैन।"
+
+msgctxt "fixpay"
+msgid "End date cannot be in the future. End the employment on the day it ends."
+msgstr "अन्त्य मिति भविष्यको हुन सक्दैन। रोजगारी सकिएकै दिन अन्त्य गर्नुहोस्।"
+
