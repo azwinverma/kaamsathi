@@ -213,7 +213,7 @@ export interface AddressInput {
   is_default?: boolean;
 }
 
-/** GET /me/favourites returns Sipalu cards. */
+/** GET /me/favourites returns a page of Sipalu cards (newest first). */
 export type Favourite = SipaluCard;
 
 // ---------------------------------------------------------------- bookings

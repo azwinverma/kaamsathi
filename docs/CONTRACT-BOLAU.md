@@ -46,7 +46,7 @@ Public (no auth, throttled `public`, flag `bolau`): `GET /public/sipalu/{handle}
 ## 2. Ghardhani
 
 Any user can act as a Ghardhani (no organization needed). **`GhardhaniProfile(user OneToOne, display_name, preferred_language, created_at)`**; **`Address(id, ghardhani, label home|office|other, line, ward, municipality, district, landmark?, lat?, lng?, is_default)`** — address lines EncryptedCharField; lat/lng stored, shared only per rule 4.
-Endpoints: `GET|PATCH /me/ghardhani` · CRUD `/me/addresses` · `GET|POST|DELETE /me/favourites` (Sipalu handles).
+Endpoints: `GET|PATCH /me/ghardhani` · CRUD `/me/addresses` · `GET|POST|DELETE /me/favourites` (Sipalu handles). Both `GET` lists are paginated (`{count, next, previous, results}`, `page_size` ≤ 100) like every other list; favourites are Sipalu cards, newest first.
 
 ## 3. Discovery
 

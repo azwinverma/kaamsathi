@@ -42,6 +42,9 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
   about their own action (only the other side does; auto-confirm still tells both). Marking the
   payment already only told the other side. Suspending a Sipalu already withdraws their pending
   offers (verified, covered by a test).
+- `GET /me/addresses` and `GET /me/favourites` are paginated like every other list (they returned
+  bare arrays). Web and mobile read the envelope and ask for `page_size=100`; both still accept a
+  plain list.
 
 ### Fixed
 - **Payroll:** an edit that would make net pay negative is refused, and a negative-net payslip can't

@@ -559,8 +559,12 @@ def _set_default(user, address):
 
 class MeAddressesView(APIView):
     def get(self, request):
-        qs = Address.objects.filter(ghardhani=request.user, is_active=True).select_related("district")
-        return Response([payloads.address_dict(a) for a in qs])
+        qs = (
+            Address.objects.filter(ghardhani=request.user, is_active=True)
+            .select_related("district")
+            .order_by("-is_default", "created_at")
+        )
+        return paginate(self, request, qs, payloads.address_dict)
 
     def post(self, request):
         d = valid(AddressIn, request.data)
@@ -621,7 +625,8 @@ class MeFavouritesView(APIView):
             .select_related("profile__worker")
             .prefetch_related("profile__services", "profile__worker__skills__trade")
         )
-        return Response([payloads.card(f.profile, request) for f in qs if profiles.is_public(f.profile)])
+        public = [f.profile for f in qs.order_by("-created_at") if profiles.is_public(f.profile)]
+        return paginate(self, request, public, lambda p: payloads.card(p, request))
 
     def post(self, request):
         handle = valid(HandleIn, request.data)["handle"].lower()

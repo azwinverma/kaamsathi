@@ -310,12 +310,14 @@ def test_ghardhani_profile_addresses_and_favourites():
     assert r.status_code == 201 and r.json()["is_default"] is True
     addr.refresh_from_db()
     assert addr.is_default is False
-    assert len(c.get("/api/v1/me/addresses").json()) == 2
+    listed = c.get("/api/v1/me/addresses").json()  # paginated like every other list
+    assert listed["count"] == 2 and len(listed["results"]) == 2
     # another user cannot read my address
     other = auth_client(f.UserFactory())
     assert other.get(f"/api/v1/me/addresses/{addr.id}").status_code == 404
     assert c.post("/api/v1/me/favourites", {"handle": "fav-sipalu"}, format="json").status_code == 201
-    assert [x["handle"] for x in c.get("/api/v1/me/favourites").json()] == ["fav-sipalu"]
+    favs = c.get("/api/v1/me/favourites").json()
+    assert favs["count"] == 1 and [x["handle"] for x in favs["results"]] == ["fav-sipalu"]
     assert c.delete("/api/v1/me/favourites/fav-sipalu").status_code == 204
     # line is encrypted at rest
     from django.db import connection
