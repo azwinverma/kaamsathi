@@ -6,13 +6,13 @@ import { Check, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { DistrictSelect, TradeSelect } from "@/components/shared/selects";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox, Switch } from "@/components/ui/checkbox";
 import { Field, FormError } from "@/components/ui/field";
 import { ErrorState, Skeleton, errorMessage } from "@/components/ui/feedback";
 import { Input, PrefixInput, Textarea } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/select";
 import { useDistricts, useMinimumWage } from "@/lib/api/hooks/ref";
-import { useOnboardingStep, useSetHandle, useSipaluMe } from "@/lib/api/hooks/bolau";
+import { useOnboardingStep, useSetHandle, useSipaluMe, useUpdateSipaluMe } from "@/lib/api/hooks/bolau";
 import { isApiError } from "@/lib/api/errors";
 import type { PriceType, SipaluMe } from "@/lib/api/types-bolau";
 import { useFormat } from "@/lib/use-format";
@@ -824,6 +824,48 @@ function HandleStep({ me, save, saving, fieldErrors }: StepProps) {
   );
 }
 
+/** "Take bookings" (`bolau_enabled`): the last switch before Ghardhani can book this Sipalu. Locked
+ * while KaamSathi has not verified the ID yet or ops paused Bolau on the profile. */
+export function TakeBookings({ me }: { me: SipaluMe }) {
+  const t = useTranslations("bolau.join");
+  const tAll = useTranslations();
+  const update = useUpdateSipaluMe();
+  const verified = me.verification_status === "verified";
+  const locked = !!me.suspended || !verified;
+  const hint = me.suspended
+    ? t("take_bookings_suspended")
+    : !verified
+      ? t("take_bookings_unverified")
+      : t("take_bookings_hint");
+  return (
+    <div className="border-border mt-5 flex items-start justify-between gap-4 rounded-card border p-4">
+      <div>
+        <label htmlFor="join-take-bookings" className="text-fg font-semibold">
+          {t("take_bookings")}
+        </label>
+        <p id="join-take-bookings-hint" className="text-fg-muted mt-1 text-sm">
+          {hint}
+        </p>
+      </div>
+      <Switch
+        id="join-take-bookings"
+        aria-describedby="join-take-bookings-hint"
+        checked={me.bolau_enabled}
+        disabled={locked || update.isPending}
+        onCheckedChange={(on) =>
+          update.mutate(
+            { bolau_enabled: on },
+            {
+              onSuccess: () => toast.success(on ? t("take_bookings_on") : t("take_bookings_off")),
+              onError: (err) => toast.error(errorMessage(err, tAll)),
+            },
+          )
+        }
+      />
+    </div>
+  );
+}
+
 function DonePanel({ me, headingRef }: { me: SipaluMe; headingRef: React.RefObject<HTMLHeadingElement | null> }) {
   const t = useTranslations("bolau.join");
   const f = useFormat();
@@ -846,6 +888,7 @@ function DonePanel({ me, headingRef }: { me: SipaluMe; headingRef: React.RefObje
           })}
         </p>
       ) : null}
+      <TakeBookings me={me} />
       <div className="mt-5 flex flex-wrap gap-3">
         {me.handle ? (
           <Link

@@ -2868,3 +2868,7 @@ msgstr "कामसाथी टोली"
 msgctxt "bolau"
 msgid "Your identity must be verified by KaamSathi before you can take bookings."
 msgstr "बुकिङ लिनुअघि KaamSathi ले तपाईंको परिचय प्रमाणित गर्नुपर्छ।"
+
+msgctxt "bolau"
+msgid "Turn on bookings so Ghardhani can book you"
+msgstr "घरधनीले बोलाउन सकून् भनेर बुकिङ सुरु गर्नुहोस्"

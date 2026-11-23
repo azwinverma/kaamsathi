@@ -131,6 +131,7 @@ COMPLETENESS = {
     "service_area": b("Choose the areas you work in"),
     "payment_details": b("Add your eSewa, Khalti or bank details"),
     "consent": b("Agree to show your profile publicly"),
+    "bolau_enabled": b("Turn on bookings so Ghardhani can book you"),
     "portfolio": b("Add a photo of your work (optional)"),
 }
 

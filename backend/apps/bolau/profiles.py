@@ -67,6 +67,8 @@ COMPLETENESS_KEYS = (
     "consent",
 )
 OPTIONAL_KEYS = ("portfolio",)
+# Not part of the percentage: once everything above is done, "take bookings" is the last thing left.
+READY_KEY = "bolau_enabled"
 
 
 # --------------------------------------------------------------------------- worker + profile
@@ -340,7 +342,10 @@ def _payment_done(worker) -> bool:
 def completeness(profile: SipaluProfile) -> dict:
     """Sipalu completeness: ``{percent, missing, items: [{key, done, optional, label}]}``.
 
-    Portfolio is shown as an optional item and does not count towards the percentage.
+    Portfolio is shown as an optional item and does not count towards the percentage. ``bolau_enabled``
+    is listed as an item and, once every profile key is done (and the Sipalu is not suspended), in
+    ``missing`` while bookings are switched off — otherwise a Sipalu who finished onboarding on the
+    web would see nothing left to do and never be bookable.
     """
     w = profile.worker
     done = {
@@ -359,6 +364,7 @@ def completeness(profile: SipaluProfile) -> dict:
         "payment_details": _payment_done(w),
         "consent": profile.public_consent_at is not None,
         "portfolio": profile.portfolio.exists(),
+        READY_KEY: profile.bolau_enabled,
     }
     items = [
         {
@@ -367,14 +373,13 @@ def completeness(profile: SipaluProfile) -> dict:
             "optional": k in OPTIONAL_KEYS,
             "label": labels.label(labels.COMPLETENESS, k),
         }
-        for k in (*COMPLETENESS_KEYS, *OPTIONAL_KEYS)
+        for k in (*COMPLETENESS_KEYS, READY_KEY, *OPTIONAL_KEYS)
     ]
     n = sum(1 for k in COMPLETENESS_KEYS if done[k])
-    return {
-        "percent": round(n * 100 / len(COMPLETENESS_KEYS)),
-        "missing": [k for k in COMPLETENESS_KEYS if not done[k]],
-        "items": items,
-    }
+    missing = [k for k in COMPLETENESS_KEYS if not done[k]]
+    if not missing and not done[READY_KEY] and not profile.suspended_at:
+        missing.append(READY_KEY)
+    return {"percent": round(n * 100 / len(COMPLETENESS_KEYS)), "missing": missing, "items": items}
 
 
 STEP_DONE = {
