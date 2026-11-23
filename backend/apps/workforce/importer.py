@@ -16,7 +16,7 @@ from apps.core.exceptions import APIError
 from apps.core.phone import is_valid_phone, normalize_phone
 
 from .models import Employment
-from .services import create_employment, get_or_create_worker, validate_wage
+from .services import check_direct_onboarding, create_employment, get_or_create_worker, validate_wage
 
 COLUMNS = [
     "full_name",
@@ -131,6 +131,7 @@ def import_employments(org, upload) -> dict:
                     existing.save()
                     updated += 1
                 else:
+                    check_direct_onboarding(org, worker, by_id=False)
                     create_employment(org, worker, data)
                     created += 1
         except APIError as exc:

@@ -206,3 +206,37 @@ def test_worker_cannot_read_another_workers_payslip():
     f.WorkerFactory(user=stranger, phone=stranger.phone)
     res = auth_client(stranger).get(f"/api/v1/me/payslips/{slip.id}")
     assert res.status_code == 404
+
+
+def _onboard(client, **extra):
+    body = {
+        "designation": "Cook",
+        "start_date": "2026-11-23",
+        "wage_type": "daily",
+        "daily_wage": "800",
+        "ssf_enrolled": False,
+        **extra,
+    }
+    return client.post("/api/v1/org/employments", body, format="json")
+
+
+def test_employer_cannot_attach_a_stranger_by_worker_id(owner_client):
+    """Worker ids are visible on shortlist cards; an employment writes into the worker's record."""
+    stranger = f.WorkerFactory()
+    res = _onboard(owner_client, worker_id=str(stranger.id))
+    assert res.status_code == 400 and "worker_id" in res.json()["error"]["fields"]
+
+
+def test_candidate_in_open_pipeline_must_be_hired_from_candidates(owner_client, org):
+    job = f.JobFactory(organization=org)
+    app = f.ApplicationFactory(job=job, stage="shortlisted")
+    for extra in ({"worker_id": str(app.worker.id)}, {"worker": {"phone": app.worker.phone}}):
+        res = _onboard(owner_client, **extra)
+        assert res.status_code == 400 and res.json()["error"]["code"] == "invalid_state", extra
+
+
+def test_past_employee_and_new_staff_can_still_be_onboarded(owner_client, org):
+    past = f.EmploymentFactory(organization=org, status="ended")
+    assert _onboard(owner_client, worker_id=str(past.worker.id)).status_code == 201
+    res = _onboard(owner_client, worker={"phone": "9812345670", "full_name": "Naya Kamdar"})
+    assert res.status_code == 201

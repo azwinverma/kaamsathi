@@ -110,6 +110,38 @@ def get_or_create_worker(data: dict) -> tuple[Worker, bool]:
     return Worker.objects.create(phone=phone, **values), True
 
 
+# Pipeline stages where KaamSathi has put the worker in front of this employer and the hire
+# should go through the pipeline (placement fee, free-replacement window).
+OPEN_PIPELINE_STAGES = ("shortlisted", "interview", "selected")
+
+
+def check_direct_onboarding(org, worker, *, by_id: bool) -> None:
+    """Guard for adding staff outside the hiring pipeline (single form and spreadsheet import).
+
+    - A worker in this employer's open pipeline must be hired from Candidates, so the placement
+      terms apply.
+    - A worker picked by id (not typed in by phone) must already have a history here: a past
+      employment or an application. Ids appear on shortlist cards, and an employment lets the
+      employer write hajiri and ratings into that person's record.
+    """
+    from apps.hiring.models import Application
+
+    apps_here = Application.objects.filter(job__organization=org, worker=worker)
+    if apps_here.filter(stage__in=OPEN_PIPELINE_STAGES).exists():
+        raise InvalidState(
+            message=_(
+                "This worker is in your candidates. Hire them from Candidates so the placement terms apply."
+            )
+        )
+    if by_id and not (
+        Employment.objects.filter(organization=org, worker=worker).exists() or apps_here.exists()
+    ):
+        raise APIError(
+            "validation_error",
+            fields={"worker_id": [_("Add new staff by mobile number.")]},
+        )
+
+
 def create_employment(org, worker, data: dict, application=None) -> Employment:
     wage_type = data.get("wage_type") or "monthly"
     validate_wage(

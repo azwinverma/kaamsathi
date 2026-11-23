@@ -167,6 +167,9 @@ class EmploymentViewSet(OrgScopedMixin, SupervisorScopeMixin, AuditedViewSetMixi
                     code = worker_data.get(fk)
                     worker_data[fk] = District.objects.filter(code=code).first() if code else None
                 worker, _ = services.get_or_create_worker(worker_data)
+                services.check_direct_onboarding(self.org, worker, by_id=False)
+            else:
+                services.check_direct_onboarding(self.org, worker, by_id=True)
             employment = services.create_employment(self.org, worker, d)
             log(
                 request,
