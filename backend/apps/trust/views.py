@@ -315,15 +315,27 @@ class OpsDisputeViewSet(
             organization=dispute.organization,
             changes={"outcome": dispute.appeal_outcome, "note": dispute.appeal_resolution_note},
         )
-        outcome = str(labels.label(labels.APPEAL_OUTCOME, dispute.appeal_outcome))
-        dispute_services.notify_parties(
-            dispute,
-            "Dispute appeal decided",
-            f"KaamSathi decided the appeal: decision {dispute.appeal_outcome}. Open the app to see the note.",
-            title_ne="विवादको पुनरावेदनमा निर्णय भयो",
-            body_ne=f"KaamSathi ले पुनरावेदनमा निर्णय गर्यो: {outcome}। टिप्पणी हेर्न एप खोल्नुहोस्।",
-        )
-        return Response(DisputeSerializer(dispute_queryset().get(pk=dispute.pk)).data)
+        if dispute.booking_id:  # Bolau: both parties, role-correct wording; the booking leaves "disputed"
+            dispute_services.end_booking_dispute(
+                dispute, "appeal", labels.APPEAL_OUTCOME, dispute.appeal_outcome
+            )
+        else:
+            outcome = str(labels.label(labels.APPEAL_OUTCOME, dispute.appeal_outcome))
+            dispute_services.notify_parties(
+                dispute,
+                "Dispute appeal decided",
+                f"KaamSathi decided the appeal: decision {dispute.appeal_outcome}. "
+                "Open the app to see the note.",
+                title_ne="विवादको पुनरावेदनमा निर्णय भयो",
+                body_ne=f"KaamSathi ले पुनरावेदनमा निर्णय गर्यो: {outcome}। टिप्पणी हेर्न एप खोल्नुहोस्।",
+            )
+        return Response(self._payload(dispute))
+
+    def get_serializer_context(self):
+        return {**super().get_serializer_context(), "staff_names": True}
+
+    def _payload(self, dispute):
+        return DisputeSerializer(dispute_queryset().get(pk=dispute.pk), context={"staff_names": True}).data
 
     def get_queryset(self):
         qs = dispute_queryset()
@@ -361,11 +373,14 @@ class OpsDisputeViewSet(
             organization=dispute.organization,
             changes={"status": {"from": old, "to": dispute.status}, "note": dispute.resolution_note},
         )
-        from apps.notifications.services import send_sms
+        if dispute.booking_id:  # Bolau: both parties, role-correct wording; the booking leaves "disputed"
+            dispute_services.end_booking_dispute(dispute, "resolved", labels.DISPUTE_STATUS, dispute.status)
+        else:
+            from apps.notifications.services import send_sms
 
-        send_sms(
-            dispute.worker.phone,
-            f"KaamSathi: Your dispute has been {dispute.status}. Open the app to see the note.",
-            kind="dispute_resolved",
-        )
-        return Response(DisputeSerializer(dispute_queryset().get(pk=dispute.pk)).data)
+            send_sms(
+                dispute.worker.phone,
+                f"KaamSathi: Your dispute has been {dispute.status}. Open the app to see the note.",
+                kind="dispute_resolved",
+            )
+        return Response(self._payload(dispute))

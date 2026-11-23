@@ -36,14 +36,24 @@ class ProfileViewSerializer(serializers.ModelSerializer):
         }
 
 
+def _decided_by(user, staff_names: bool):
+    """Ops sees who decided; the parties only see a role (CONTRACT-EXTENSIONS: staff are not named)."""
+    if user is None:
+        return None
+    if staff_names:
+        return {"id": str(user.pk), "full_name": user.full_name}
+    return {"id": None, "full_name": str(labels.STAFF_ROLE)}
+
+
 class DisputeSerializer(serializers.ModelSerializer):
-    """Read shape shared by worker, employer and ops endpoints."""
+    """Read shape shared by worker, employer and ops endpoints (``context["staff_names"]`` = ops)."""
 
     class Meta:
         model = Dispute
         fields = ["id"]
 
     def to_representation(self, d):
+        staff_names = bool(self.context.get("staff_names"))
         emp = d.employment
         slip = d.payslip
         return {
@@ -72,11 +82,7 @@ class DisputeSerializer(serializers.ModelSerializer):
             "resolution_note": d.resolution_note,
             "raised_at": _dt(d.raised_at),
             "responded_at": _dt(d.responded_at),
-            "resolved_by": (
-                {"id": str(d.resolved_by_id), "full_name": d.resolved_by.full_name}
-                if d.resolved_by_id
-                else None
-            ),
+            "resolved_by": _decided_by(d.resolved_by if d.resolved_by_id else None, staff_names),
             "resolved_at": _dt(d.resolved_at),
             "sla_due_at": _dt(d.sla_due_at),
             "overdue": bool(d.sla_due_at and d.sla_due_at < timezone.now()),
@@ -95,10 +101,8 @@ class DisputeSerializer(serializers.ModelSerializer):
                     "outcome": d.appeal_outcome,
                     "outcome_label": labels.label(labels.APPEAL_OUTCOME, d.appeal_outcome),
                     "resolution_note": d.appeal_resolution_note,
-                    "resolved_by": (
-                        {"id": str(d.appeal_resolved_by_id), "full_name": d.appeal_resolved_by.full_name}
-                        if d.appeal_resolved_by_id
-                        else None
+                    "resolved_by": _decided_by(
+                        d.appeal_resolved_by if d.appeal_resolved_by_id else None, staff_names
                     ),
                     "resolved_at": _dt(d.appeal_resolved_at),
                 }
@@ -200,8 +204,9 @@ def evidence_payload(e, request=None) -> dict:
         "file_type": e.file_type,
         "party": e.party,
         "party_label": labels.label(labels.EVIDENCE_PARTY, e.party),
-        "uploaded_by": (
-            {"id": str(e.uploaded_by_id), "full_name": e.uploaded_by.full_name} if e.uploaded_by_id else None
+        "uploaded_by": _decided_by(
+            e.uploaded_by if e.uploaded_by_id else None,
+            e.party != "ops" or bool(getattr(request_user(request), "is_staff", False)),
         ),
         "note": e.note,
         "created_at": _dt(e.created_at),

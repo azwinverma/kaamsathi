@@ -679,6 +679,33 @@ def raise_dispute(booking: Booking, user, party: str, description: str):
     return dispute
 
 
+@transaction.atomic
+def end_dispute(booking_id, *, by=None, note: str = "") -> Booking | None:
+    """Ops decided the booking's dispute (first decision or appeal): ``disputed`` → the status it had
+    before, unless another dispute on the booking is still open. No-op when not disputed."""
+    from apps.trust.models import Dispute
+
+    booking = _lock(booking_id)
+    if booking.status != "disputed" or not booking.status_before_dispute:
+        return None
+    if (
+        Dispute.objects.filter(booking=booking)
+        .exclude(status__in=("resolved", "rejected", "appeal_resolved"))
+        .exists()
+    ):
+        return None
+    _move(
+        booking,
+        booking.status_before_dispute,
+        ("disputed",),
+        by=by,
+        party="ops",
+        note=note or "dispute decided",
+    )
+    _refresh_sipalu(booking)
+    return booking
+
+
 def rate(booking: Booking, user, party: str, data: dict, *, request=None) -> BookingRating:
     from . import risk
 

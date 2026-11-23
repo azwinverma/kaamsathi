@@ -58,6 +58,9 @@ EVIDENCE_PARTY = {
     "ghardhani": pgettext_lazy("bolau", "Ghardhani"),  # Bolau booking disputes (the household party)
 }
 
+# Who decided a dispute, as the parties see it (staff members are never named to them).
+STAFF_ROLE = _("KaamSathi team")
+
 NEXT_STEPS = {
     "verify_identity": _("Get your citizenship card verified by KaamSathi."),
     "build_history": _("Work 30 days with an employer that records hajiri on KaamSathi."),

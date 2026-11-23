@@ -104,6 +104,21 @@ def can_download_evidence(rest: str, user, name: str) -> bool:
     return can_view_dispute(user, ev.dispute)
 
 
+def end_booking_dispute(dispute: Dispute, stage: str, mapping: dict, value: str) -> None:
+    """Bolau booking dispute decided (``stage`` resolved | appeal): restore the booking's status
+    from before the dispute and tell the Ghardhani and the Sipalu (each in both languages)."""
+    from django.utils import translation
+
+    from apps.bolau import bookings, notify
+
+    bookings.end_dispute(dispute.booking_id, by=dispute.appeal_resolved_by or dispute.resolved_by)
+    with translation.override("en"):
+        outcome = str(labels.label(mapping, value))
+    with translation.override("ne"):
+        outcome_ne = str(labels.label(mapping, value))
+    notify.dispute_outcome(dispute, stage, outcome, outcome_ne)
+
+
 def notify_parties(dispute: Dispute, title: str, body: str, *, title_ne=None, body_ne=None) -> None:
     """Inbox (+SMS to the worker) for appeal events; never includes personal details."""
     try:
