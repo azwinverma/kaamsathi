@@ -41,7 +41,7 @@ kaamsathi/
 
 **geo** (seeded): `Province(code 1–7, name_en, name_ne)` — Koshi, Madhesh, Bagmati, Gandaki, Lumbini, Karnali, Sudurpashchim; `District(code slug e.g. "kathmandu", name_en, name_ne, province)` — all 77.
 
-**orgs**: `Organization(id, name, name_ne?, pan_no?, vat_registered bool, ssf_employer_no?, industry: hospitality|healthcare|security|construction|manufacturing|retail|other, district FK, municipality, ward int?, address, phone, email?, logo?, plan: pilot|standard, weekly_off_day 0–6 (default 6=Saturday), created_at, is_active)`;
+**orgs**: `Organization(id, name, name_ne?, pan_no?, vat_registered bool, ssf_employer_no?, industry: hospitality|healthcare|security|construction|manufacturing|retail|other, district FK, municipality, ward int?, address, phone, email?, logo?, plan: pilot|standard, pilot_started_on?, pilot_ends_on?, pilot_reminder_sent_on?, weekly_off_day 0–6 (default 6=Saturday), created_at, is_active)`;
 `Membership(id, user, organization, role, sites M2M Site, is_active, created_at)` unique(user, organization);
 `Site(id, organization, name, address, district FK, lat?, lng?, geofence_radius_m=200, qr_token uuid, is_active)`;
 `Shift(id, organization, name, start_time, end_time, break_minutes=60)`.
@@ -79,7 +79,7 @@ Payroll calculation (per active employment overlapping the BS month, prorated by
 8. Advance recovery = min(recover_per_month, amount − recovered) per open advance; on `mark-paid` each advance gets at most its own recover_per_month (oldest first).
 9. `net = gross − ssf_employee − tds − advance_recovery − other_deductions`. All rounding to 2 dp, ROUND_HALF_UP.
 
-**billing**: `Charge(id, organization, kind placement|subscription, amount, description, bs_year?, bs_month?, application?, status unpaid|paid|waived, created_at)`. Placement charge NPR 5,000 created when an application reaches `joined` (waived if it replaces an employment ended within its replacement window). Subscription: Celery beat on BS month start → `max(active_workers × 150, 3000)`; no charge at all for a month with 0 active workers. While `Organization.plan = pilot` (free pilot) placement and subscription charges are still created, with `status=waived` and the reason in `description`; waived charges never reach an invoice. Moving the org to a paid billing plan ends the pilot (`plan=standard`).
+**billing**: `Charge(id, organization, kind placement|subscription, amount, description, bs_year?, bs_month?, application?, status unpaid|paid|waived, created_at)`. Placement charge NPR 5,000 created when an application reaches `joined` (waived if it replaces an employment ended within its replacement window). Subscription: Celery beat on BS month start → `max(active_workers × 150, 3000)`; no charge at all for a month with 0 active workers. While `Organization.plan = pilot` (free pilot) placement and subscription charges are still created, with `status=waived` and the reason in `description`; waived charges never reach an invoice. Moving the org to a paid billing plan ends the pilot (`plan=standard`). The pilot lasts `PILOT_DAYS` (90) from `Organization.pilot_started_on` (the day the org got `plan=pilot`; new orgs start on it): a daily beat task (`apps.billing.tasks.pilot_expiry`) notifies owners/admins (inbox + SMS) and finance ops (inbox) `PILOT_REMINDER_DAYS` (14) days before `pilot_ends_on`, and on that day sets `plan=standard` (audited `billing.pilot.end`, actor = system) and notifies again; the billing price list is unchanged (default = the phase-1 terms).
 
 **audit**: `AuditLog(id, actor?, organization?, action, object_type, object_id, changes json, ip?, created_at)` — written for create/update/delete on org-owned models and all ops actions.
 
@@ -147,7 +147,7 @@ Payroll calculation (per active employment overlapping the BS month, prorated by
 - Exports: `GET /org/payroll-runs/{id}/wage-sheet.xlsx` (तलब पाना, bilingual headers) · `GET .../bank-transfer.csv` (name, account, bank, amount) · `GET .../ssf.csv` (ssf_id, name, basic, 11%, 20%, 31%) · `GET /org/payslips/{id}/payslip.pdf`
 
 ### Billing
-- `GET /org/billing/summary` → `{plan, pilot, active_workers, monthly_estimate, unpaid_total}` · `GET /org/billing/charges`
+- `GET /org/billing/summary` → `{plan, pilot, pilot_days_left?, pilot_ends_on?, active_workers, monthly_estimate, unpaid_total}` (pilot fields null when not on the pilot) · ops: `POST /ops/billing/subscriptions/{org_id}/extend-pilot {days 1–180, note}` (finance_ops; audited `billing.pilot.extend`) · `GET /org/billing/charges`
 
 ### Worker self-service (user linked to a Worker)
 - `GET /me/worker` · `PATCH /me/worker {full_name_ne?, payment_method?, bank_*, wallet_id?, is_available?}` · `POST /me/worker/claim {}` (links user to Worker with same phone, if exists)

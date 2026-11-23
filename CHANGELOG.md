@@ -13,6 +13,13 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
   straight to the failover for `SMS_CIRCUIT_SECONDS` (300). Each message is one `SMSMessage` row with
   the delivering gateway, `failed_over` and `attempts` (Celery retries used to add a row per try).
   Ops → System shows the gateways, circuit state and failovers in the last 24 h.
+- **The free pilot ends after 90 days.** `Organization.pilot_started_on` / `pilot_ends_on` (set when
+  an org gets `plan=pilot`; existing pilots backfilled from their creation date with at least 14
+  days' notice). A daily beat task (`billing-pilot-expiry`, also run by the serverless cron) reminds
+  owners/admins (inbox + SMS) and finance ops 14 days ahead, then moves the org to the standard
+  plan (audited, everyone notified). Ops can extend a pilot (Billing → Subscriptions, audited with a
+  note). The web billing page shows "Free pilot — N days left"; after the pilot the default price
+  list reads "Standard" instead of "Pilot".
 
 ### Fixed
 - **Payroll:** an edit that would make net pay negative is refused, and a negative-net payslip can't

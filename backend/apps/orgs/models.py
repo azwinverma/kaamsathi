@@ -1,3 +1,4 @@
+import datetime as dt
 import uuid
 
 from django.conf import settings
@@ -29,6 +30,11 @@ class Organization(models.Model):
     email = models.EmailField(blank=True, null=True)
     logo = models.ImageField(upload_to="org-logos/", blank=True, null=True)
     plan = models.CharField(max_length=10, choices=PLANS, default="pilot")
+    # Free pilot window (apps/billing/pilot.py): set when the org gets plan="pilot" (new orgs: on
+    # creation); the daily ``pilot_expiry`` task reminds 14 days before and ends it on pilot_ends_on.
+    pilot_started_on = models.DateField(null=True, blank=True)
+    pilot_ends_on = models.DateField(null=True, blank=True)
+    pilot_reminder_sent_on = models.DateField(null=True, blank=True)
     weekly_off_day = models.PositiveSmallIntegerField(
         default=6,
         validators=[MinValueValidator(0), MaxValueValidator(6)],
@@ -63,6 +69,13 @@ class Organization(models.Model):
         self.pan_hash = blind_index(self.pan_no, "pan")
         if kwargs.get("update_fields") is not None and "pan_no" in kwargs["update_fields"]:
             kwargs["update_fields"] = set(kwargs["update_fields"]) | {"pan_hash"}
+        if self.plan == "pilot" and self.pilot_ends_on is None:
+            from apps.core.bs import today_ad
+
+            self.pilot_started_on = self.pilot_started_on or today_ad()
+            self.pilot_ends_on = self.pilot_started_on + dt.timedelta(days=settings.PILOT_DAYS)
+            if kwargs.get("update_fields") is not None:
+                kwargs["update_fields"] = set(kwargs["update_fields"]) | {"pilot_started_on", "pilot_ends_on"}
         super().save(*args, **kwargs)
 
 

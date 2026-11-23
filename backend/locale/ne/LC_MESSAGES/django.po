@@ -2898,3 +2898,40 @@ msgctxt "fixpay"
 msgid "Overtime can't go above the weekly limit of %(hours)s hours. At most %(minutes)s minutes can be approved for this week."
 msgstr "ओभरटाइम हप्ताको %(hours)s घण्टाको सीमाभन्दा बढी हुन सक्दैन। यो हप्ताका लागि बढीमा %(minutes)s मिनेट मात्र स्वीकृत गर्न सकिन्छ।"
 
+# --- harden: launch hardening (SMS failover, pilot expiry, e2e minor bugs)
+msgctxt "harden"
+msgid "Your free pilot ends soon"
+msgstr "तपाईंको निःशुल्क पाइलट छिट्टै सकिँदैछ"
+
+msgctxt "harden"
+msgid "{org}: your free KaamSathi pilot ends in {days} days ({date}). After that, the standard monthly charges apply. See Billing for prices."
+msgstr "{org}: तपाईंको निःशुल्क कामसाथी पाइलट {days} दिनमा ({date}) सकिन्छ। त्यसपछि सामान्य मासिक शुल्क लाग्छ। मूल्य बिलिङमा हेर्नुहोस्।"
+
+msgctxt "harden"
+msgid "Pilot ending soon"
+msgstr "पाइलट छिट्टै सकिँदैछ"
+
+msgctxt "harden"
+msgid "{org}: the free pilot ends in {days} days ({date})."
+msgstr "{org}: निःशुल्क पाइलट {days} दिनमा ({date}) सकिन्छ।"
+
+msgctxt "harden"
+msgid "Your free pilot has ended"
+msgstr "तपाईंको निःशुल्क पाइलट सकियो"
+
+msgctxt "harden"
+msgid "{org}: your free KaamSathi pilot has ended. The standard monthly charges apply from today. See Billing for prices."
+msgstr "{org}: तपाईंको निःशुल्क कामसाथी पाइलट सकियो। आजदेखि सामान्य मासिक शुल्क लाग्छ। मूल्य बिलिङमा हेर्नुहोस्।"
+
+msgctxt "harden"
+msgid "Pilot ended"
+msgstr "पाइलट सकियो"
+
+msgctxt "harden"
+msgid "{org} moved from the free pilot to the standard plan."
+msgstr "{org} निःशुल्क पाइलटबाट सामान्य योजनामा सरियो।"
+
+msgctxt "harden"
+msgid "This organization is not on the free pilot."
+msgstr "यो संस्था निःशुल्क पाइलटमा छैन।"
+

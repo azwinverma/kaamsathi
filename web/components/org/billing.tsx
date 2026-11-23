@@ -65,14 +65,22 @@ function Summary() {
   const minimum = Number(plan?.min_monthly ?? MINIMUM);
   const raw = Number(plan?.monthly_base ?? 0) + Math.max(0, workers - (plan?.included_workers ?? 0)) * perWorker;
   const unpaid = Number(data?.unpaid_total ?? 0);
+  // After the free pilot the default "pilot" price list is the standard phase-1 terms.
+  const planLabel = (p: NonNullable<typeof plan>) =>
+    p.code === "pilot" ? t("plan_standard") : p.code_label || p.name;
   return (
     <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
       <StatCard
         label={t("plan")}
-        value={plan ? plan.code_label || plan.name : "—"}
+        value={data?.pilot ? t("pilot_free") : plan ? planLabel(plan) : "—"}
         icon={BadgeCheck}
         tone="brand"
         loading={isLoading || sub.isLoading}
+        hint={
+          data?.pilot && data.pilot_days_left != null
+            ? t("pilot_days_left", { count: data.pilot_days_left, date: f.dateText(data.pilot_ends_on) })
+            : undefined
+        }
       />
       <StatCard
         label={t("active_workers")}

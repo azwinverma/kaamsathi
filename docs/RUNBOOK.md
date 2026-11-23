@@ -200,6 +200,15 @@ Defined in `config/settings/base.py` (`CELERY_BEAT_SCHEDULE`, Asia/Kathmandu). C
 (03:00) purges expired data exports, deletes OTP rows older than 30 days and SMS logs older than
 180 days, and re-queues stuck exports.
 
+`apps.billing.tasks.pilot_expiry` (02:15) ends free pilots: 14 days before an org's
+`pilot_ends_on` its owners/admins get an inbox item + SMS and finance ops an inbox item; on the day
+the org moves to `plan=standard` (audit `billing.pilot.end`, no actor) and charges stop being
+waived. To give a pilot more time: Ops console → Billing → Subscriptions → **Extend free pilot**
+(`POST /ops/billing/subscriptions/{org_id}/extend-pilot {days, note}`, audited); the reminder is
+sent again before the new end. Pilots that existed before migration `orgs.0003` were backfilled
+with start = org creation day and end = start + 90 days, but no earlier than 14 days after the
+migration ran.
+
 ## 11. Security & platform operations (docs/CONTRACT-EXTENSIONS.md §1)
 
 **Staff access.** `/ops` needs `is_staff` **and** a role (`verifier`, `support`, `finance_ops`,

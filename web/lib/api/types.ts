@@ -757,6 +757,10 @@ export interface PayslipUpdate {
 // ---------------------------------------------------------------- billing
 export interface BillingSummary {
   plan: Plan;
+  /** Free pilot: charges are recorded but waived until `pilot_ends_on`. */
+  pilot?: boolean;
+  pilot_days_left?: number | null;
+  pilot_ends_on?: ISODate | null;
   active_workers: number;
   monthly_estimate: Money;
   unpaid_total: Money;

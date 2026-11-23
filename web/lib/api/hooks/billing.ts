@@ -116,6 +116,12 @@ export function useCreateCreditNote() {
   );
 }
 
+export function useExtendPilot() {
+  return useOpsMutation(({ orgId, days, note }: { orgId: string; days: number; note: string }) =>
+    api.post<BillingSubscription>(`/ops/billing/subscriptions/${orgId}/extend-pilot`, { days, note }),
+  );
+}
+
 export function useSetSubscription() {
   return useOpsMutation(({ orgId, plan, status }: { orgId: string; plan: string; status?: SubscriptionStatus }) =>
     api.patch<BillingSubscription>(`/ops/billing/subscriptions/${orgId}`, { plan, status: status ?? "active" }),
