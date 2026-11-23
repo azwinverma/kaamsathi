@@ -39,6 +39,7 @@ class AuditLogSerializer(serializers.ModelSerializer):
             "object_id",
             "changes",
             "ip",
+            "prev_hash",
             "hash",
         ]
 

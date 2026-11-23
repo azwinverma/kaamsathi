@@ -74,6 +74,7 @@ export interface AuditEntry {
   object_id: string;
   changes: Record<string, unknown> | null;
   ip: string | null;
+  prev_hash: string;
   hash: string;
 }
 export type AuditPage = Paginated<AuditEntry>;

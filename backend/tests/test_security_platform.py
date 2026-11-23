@@ -315,6 +315,7 @@ def test_ops_audit_list_filters_and_verify_endpoint():
     row = res["results"][0]
     assert row["actor"]["phone"] == staff_user.phone and row["organization"]["name"] == org.name
     assert row["hash"] and row["seq"]
+    assert len(row["prev_hash"]) == 64  # chain link (CONTRACT-EXTENSIONS: prev_hash, hash)
     today = dt.date.today().isoformat()
     assert staff.get("/api/v1/ops/audit", {"actor": staff_user.phone, "from": today}).json()["count"] >= 1
     assert staff.get("/api/v1/ops/audit", {"from": "nope"}).status_code == 400

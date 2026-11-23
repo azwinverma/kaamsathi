@@ -37,6 +37,7 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
 - **Credential decisions** can't be flipped silently: changing an already verified/rejected
   credential needs a note and another staff member (or a superadmin), and is audited as
   `ops.credential.redecide` with the previous decider. The web review form asks for the reason.
+- `GET /ops/audit` items carry `prev_hash` next to `hash`, as CONTRACT-EXTENSIONS promised.
 
 ### Fixed
 - **Payroll:** an edit that would make net pay negative is refused, and a negative-net payslip can't
