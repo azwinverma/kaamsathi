@@ -38,6 +38,10 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
   credential needs a note and another staff member (or a superadmin), and is audited as
   `ops.credential.redecide` with the previous decider. The web review form asks for the reason.
 - `GET /ops/audit` items carry `prev_hash` next to `hash`, as CONTRACT-EXTENSIONS promised.
+- Bolau: the party who confirms a booking or raises a dispute no longer gets an inbox item/SMS
+  about their own action (only the other side does; auto-confirm still tells both). Marking the
+  payment already only told the other side. Suspending a Sipalu already withdraws their pending
+  offers (verified, covered by a test).
 
 ### Fixed
 - **Payroll:** an edit that would make net pay negative is refused, and a negative-net payslip can't
