@@ -203,11 +203,19 @@ def annual_tax(taxable: Decimal, bands, ssf_enrolled: bool) -> Decimal:
     return tax
 
 
-def monthly_tds(gross: Decimal, ssf_employee: Decimal, bands, ssf_enrolled: bool) -> Decimal:
-    taxable_annual = (gross - ssf_employee) * 12
-    if taxable_annual <= 0 or not bands:
+def monthly_tds(
+    gross: Decimal, ssf_employee: Decimal, bands, ssf_enrolled: bool, one_off: Decimal = ZERO
+) -> Decimal:
+    """Regular income (gross − one-off − SSF) is annualised ×12 and its tax spread over 12 months;
+    one-off income this month (festival allowance, overtime) is taxed once, at the marginal rate on
+    top of that annual figure: tax(R×12)/12 + [tax(R×12 + O) − tax(R×12)]."""
+    one_off = max(D(one_off), ZERO)
+    regular_annual = max((gross - one_off - ssf_employee) * 12, ZERO)
+    if regular_annual + one_off <= 0 or not bands:
         return q2(ZERO)
-    return q2(q0(annual_tax(taxable_annual, bands, ssf_enrolled) / 12))
+    regular_tax = annual_tax(regular_annual, bands, ssf_enrolled)
+    one_off_tax = annual_tax(regular_annual + one_off, bands, ssf_enrolled) - regular_tax
+    return q2(q0(regular_tax / 12 + one_off_tax))
 
 
 def advance_due(advances) -> Decimal:
@@ -307,10 +315,17 @@ def calculate(inp: PayInput) -> PayResult:
         res.ssf_employee = m(res.basic_earned * SSF_EMPLOYEE_RATE)
         res.ssf_employer = m(res.basic_earned * SSF_EMPLOYER_RATE)
 
-    # Step 7: TDS
-    res.tds = monthly_tds(res.gross_pay, res.ssf_employee, inp.tax_bands, inp.ssf_enrolled)
+    # Step 7: TDS (overtime and the festival allowance are one-off income, not annualised).
+    res.tds = monthly_tds(
+        res.gross_pay,
+        res.ssf_employee,
+        inp.tax_bands,
+        inp.ssf_enrolled,
+        one_off=res.overtime_pay + res.festival_allowance,
+    )
 
-    # Step 8/9: deductions & net (advance recovery never pushes net below zero).
+    # Step 8/9: deductions & net (advance recovery never pushes net below zero; other deductions
+    # that would are refused before they reach here, and a negative net can't be approved).
     res.other_deductions = q2(inp.other_deductions)
     before_advance = res.gross_pay - res.ssf_employee - res.tds - res.other_deductions
     res.advance_recovery = q2(max(min(advance_due(inp.advances), before_advance), ZERO))

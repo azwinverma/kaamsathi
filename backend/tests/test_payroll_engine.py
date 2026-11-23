@@ -352,6 +352,53 @@ def test_tds_without_bands_is_zero():
     assert calculate(make()).tds == 0
 
 
+def test_tds_dashain_month_taxes_festival_allowance_once():
+    normal = calculate(make(basic_salary=D("30000"), dearness_allowance=D("10000"), tax_bands=BANDS))
+    assert normal.tds == D("400.00")  # 480000 × 1% / 12
+    dashain = calculate(
+        make(
+            basic_salary=D("30000"),
+            dearness_allowance=D("10000"),
+            tax_bands=BANDS,
+            include_festival_allowance=True,
+        )
+    )
+    assert dashain.festival_allowance == D("30000.00")
+    # 400 + [tax(480000 + 30000) − tax(480000)] = 400 + 20000×1% + 10000×10% = 1600
+    # (annualising the whole 70000 gross would have given 4417)
+    assert dashain.tds == D("1600.00")
+
+
+def test_tds_overtime_is_one_off_income():
+    ot = {d: 120 for d in working_days()}  # 2 h a day × 26 days = 52 h
+    r = calculate(
+        make(
+            basic_salary=D("30000"),
+            dearness_allowance=D("10000"),
+            tax_bands=BANDS,
+            attendance=full_present(ot=ot),
+        )
+    )
+    # hourly (40000 / 31 / 8) × 1.5 × 52 = 12580.65 OT, all inside the 1% band on top of 480000
+    assert r.overtime_pay == D("12580.65")
+    assert r.tds == D("526.00")  # 400 + 125.81 → 526
+
+
+def test_tds_one_off_keeps_ssf_first_band_waiver():
+    r = calculate(
+        make(
+            basic_salary=D("30000"),
+            dearness_allowance=D("10000"),
+            tax_bands=BANDS,
+            ssf_enrolled=True,
+            include_festival_allowance=True,
+        )
+    )
+    # regular (40000 − 3300) × 12 = 440400 → 0 (1% band waived); +30000 one-off → still waived
+    assert r.ssf_employee == D("3300.00")
+    assert r.tds == D("0.00")
+
+
 # --- advances, deductions, net -------------------------------------------------------
 
 

@@ -75,7 +75,7 @@ Payroll calculation (per active employment overlapping the BS month, prorated by
 4. Festival allowance (if flag): basic_salary (monthly) or daily_wage×30×basic ratio (daily) × min(months_employed/12, 1).
 5. `gross = basic+da+allowance+ot+festival`.
 6. SSF if ssf_enrolled: employee 11% of basic_earned, employer 20% of basic_earned (employer share not deducted from net).
-7. TDS: annualise (gross − ssf_employee)×12, apply slabs (skip 1% slab if ssf_enrolled), divide by 12, round to rupee.
+7. TDS: regular income R = gross − ot − festival − ssf_employee; one-off income O = ot + festival. `tds = tax(R×12)/12 + [tax(R×12 + O) − tax(R×12)]` (slabs, skip 1% slab if ssf_enrolled), round to rupee — a Dashain or OT-heavy month is not annualised.
 8. Advance recovery = min(recover_per_month, amount − recovered); on `mark-paid` add to recovered_amount.
 9. `net = gross − ssf_employee − tds − advance_recovery − other_deductions`. All rounding to 2 dp, ROUND_HALF_UP.
 
