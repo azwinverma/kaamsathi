@@ -52,11 +52,11 @@ test.describe("bolau", () => {
       await page.goto("/bolau");
       await page.getByRole("search").getByText("Electrician", { exact: true }).click();
       await expect(page).toHaveURL(/trade=electrician/);
-      await expect(page.getByRole("link", { name: "Suman Maharjan" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Suman Maharjan", exact: true })).toBeVisible();
     });
 
     await test.step("open the profile and start booking", async () => {
-      await page.getByRole("link", { name: "Suman Maharjan" }).click();
+      await page.getByRole("link", { name: "Suman Maharjan", exact: true }).click();
       await expect(page).toHaveURL(new RegExp(`/sipalu/${SIPALU}$`));
       await expect(page.getByRole("heading", { level: 2, name: "Services and prices" })).toBeVisible();
       await page.getByRole("link", { name: /^Bolau Suman/ }).first().click();

@@ -6,6 +6,15 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
 
 ## [Unreleased]
 
+### Fixed
+- Unknown Passport codes, Sipalu handles, help articles and booking pages answer **404** again. The
+  route-level `loading.tsx` skeletons added with the loading feedback made Next.js commit a 200
+  before `notFound()` ran (hidden, unverified Sipalu answered 200 too); they are removed, the top
+  progress bar still shows the page is loading.
+- Date-dependent tests: the mobile passport "expires soon" and Bolau book-button tests no longer
+  break as the calendar moves; the Bolau E2E matches the Sipalu link exactly (the card's Book button
+  is labelled with the name too).
+
 ### Added
 - **Browse Sipalus**: header link (desktop and phone menu, Bolau on) to the full list on
   `/bolau#results`; `/sipalu` now opens that list instead of a 404; a "Browse all verified Sipalu"
@@ -14,9 +23,7 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
 - **Web loading feedback**: a brand-blue → yellow progress bar along the top while the next page
   loads (`components/providers/nav-progress.tsx`, `lib/nav-progress.ts`); a bilingual pill when the
   browser is offline, back online, or a request/page change takes over 4 s
-  (`components/providers/network-status.tsx`); mural-style `loading.tsx` screens for Sipalu
-  profiles, Passport, help and the Bolau booking/request forms (`components/signature/page-skeleton.tsx`);
-  the Bolau button shows "Searching…" until the new results render, and jumps to them on `/bolau`.
+  (`components/providers/network-status.tsx`); the Bolau button shows "Searching…" until the new results render, and jumps to them on `/bolau`.
 - **Mobile loading feedback**: themed shimmer skeletons (`lib/core/widgets/skeleton.dart`: card
   list, detail, compact section; static under reduced motion, one localized "Loading…" announcement)
   replace the content spinners in `AsyncBody`, `FeatureAsyncBody`, `FeatureAsyncSection` and five

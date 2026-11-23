@@ -446,6 +446,12 @@ void main() {
       expect(find.byKey(const Key('book_fee')), findsOneWidget);
       expect(find.text('Free for now'), findsOneWidget);
       expect(find.text('Free to cancel until 2 hours before the start.'), findsOneWidget);
+      // The button sits below today's time slots, so how far down depends on the day the suite runs.
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('book_confirm')),
+        200,
+        scrollable: find.descendant(of: find.byType(ListView), matching: find.byType(Scrollable)).first,
+      );
       expect(find.byKey(const Key('book_confirm')), findsOneWidget);
     });
   });

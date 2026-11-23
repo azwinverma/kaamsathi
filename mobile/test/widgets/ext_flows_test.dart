@@ -210,8 +210,19 @@ void main() {
   });
 
   group('mobility safety guidance is always visible', () {
+    // The passport fixture expires on a fixed date; move it 30 days ahead of today so the
+    // "expires soon" warning shows whenever the suite runs.
+    final soon = DateTime.now().add(const Duration(days: 30)).toIso8601String().substring(0, 10);
+    final results = mobilityDocsJson['results']! as List;
+    final docsJson = {
+      ...mobilityDocsJson,
+      'results': [
+        {...(results.first as Map<String, Object?>), 'expires_on': soon},
+        ...results.skip(1),
+      ],
+    };
     final docs = mobilityDocumentsProvider.overrideWith(
-      (ref) async => Cached(MobilityDocuments.fromJson(mobilityDocsJson)),
+      (ref) async => Cached(MobilityDocuments.fromJson(docsJson)),
     );
     final agencies = mobilityAgenciesProvider.overrideWith(
       (ref) async => resultsOf(agenciesJson).map(RecruitmentAgency.fromJson).toList(),
