@@ -24,12 +24,18 @@ import { SHORTLIST_SLA_HOURS, hoursSince, slaTone, useDistrictLabel } from "@/co
 import { useOpsDashboard, useOpsJobs, useOpsWorkers } from "@/lib/api/hooks/ops";
 import { listResults } from "@/lib/api/client";
 import { useFormat } from "@/lib/use-format";
+import { useSession } from "@/components/providers/session";
+import { hasStaffRole } from "@/components/security/helpers";
 
 export default function OpsDashboardPage() {
   const t = useTranslations("ops.dashboard");
   const tl = useTranslations("ledger.ops");
   const f = useFormat();
   const dash = useOpsDashboard();
+  const { me } = useSession();
+  // Only the cards this role may load (the API refuses the rest; see staff_roles.ROUTE_ROLES).
+  const showJobs = hasStaffRole(me, ["verifier", "support"]);
+  const showQueue = hasStaffRole(me, ["verifier"]);
   const d = dash.data;
 
   const verifiedPct = d && d.workers ? Math.round((d.verified_workers / d.workers) * 100) : null;
@@ -83,10 +89,12 @@ export default function OpsDashboardPage() {
         </div>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
-        <OpenJobsCard />
-        <PendingQueueCard />
-      </div>
+      {showJobs || showQueue ? (
+        <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+          {showJobs ? <OpenJobsCard /> : null}
+          {showQueue ? <PendingQueueCard /> : null}
+        </div>
+      ) : null}
     </>
   );
 }

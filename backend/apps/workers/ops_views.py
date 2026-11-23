@@ -6,6 +6,7 @@ import datetime as dt
 
 from django.db.models import Avg, Count, DurationField, ExpressionWrapper, F, Q
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from rest_framework import mixins, serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -64,6 +65,12 @@ class OpsDashboardView(APIView):
 class VerifySerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=["verified", "rejected"])
     note = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+
+    def validate(self, attrs):
+        # The worker is told why (KYC SOP), as with KYB, disputes and privacy decisions.
+        if attrs["status"] == "rejected" and not (attrs.get("note") or "").strip():
+            raise serializers.ValidationError({"note": [_("Give the reason for rejecting.")]})
+        return attrs
 
 
 class OpsWorkerViewSet(

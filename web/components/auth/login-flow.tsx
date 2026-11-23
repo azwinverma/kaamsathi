@@ -2,7 +2,17 @@
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { ArrowLeft, Briefcase, KeyRound, LockKeyhole, ShieldCheck, Smartphone } from "lucide-react";
+import {
+  ArrowLeft,
+  Briefcase,
+  Hammer,
+  House,
+  KeyRound,
+  LockKeyhole,
+  ShieldCheck,
+  Smartphone,
+} from "lucide-react";
+import { api } from "@/lib/api/client";
 import { useLogout, useRequestOtp, useVerifyOtp } from "@/lib/api/hooks/auth";
 import { useVerifyMfa } from "@/lib/api/hooks/security";
 import { isApiError } from "@/lib/api/errors";
@@ -22,10 +32,16 @@ import { OtpInput } from "./otp-input";
 const RESEND_SECONDS = 30;
 
 function safeNext(next: string | null): string | null {
-  if (!next || !next.startsWith("/") || next.startsWith("//") || next.startsWith("/login")) return null;
+  if (!next || !next.startsWith("/") || next.startsWith("//") || next.startsWith("/login"))
+    return null;
   return next;
 }
 
+/**
+ * Where a fresh login goes. "choose" = show the workspace picker: staff who also belong to an
+ * organization, and people with no organization (a household, a Sipalu or a new business look the
+ * same until they pick).
+ */
 export function routeAfterLogin(user: Me, next: string | null): string | "choose" {
   const hasOrg = (user.memberships?.length ?? 0) > 0;
   const target = safeNext(next);
@@ -36,7 +52,7 @@ export function routeAfterLogin(user: Me, next: string | null): string | "choose
   }
   if (user.is_staff && hasOrg) return "choose";
   if (user.is_staff) return "/ops";
-  if (!hasOrg) return "/onboarding";
+  if (!hasOrg) return "choose";
   return "/app";
 }
 
@@ -51,6 +67,8 @@ export function LoginFlow() {
   const logout = useLogout();
 
   const [step, setStep] = React.useState<"phone" | "otp" | "mfa" | "legal" | "choose">("phone");
+  // Bolau answers 404 while its flag is off; then a new account can only set up a business.
+  const [bolauOn, setBolauOn] = React.useState(false);
   const [phone, setPhone] = React.useState("");
   const [phoneError, setPhoneError] = React.useState<string | null>(null);
   const [code, setCode] = React.useState("");
@@ -77,7 +95,11 @@ export function LoginFlow() {
   const apiMessage = (e: unknown) => {
     if (isApiError(e)) {
       const key = `errors.${e.code}`;
-      return e.message && e.code !== "network_error" ? e.message : t.has(key) ? t(key) : t("errors.server_error");
+      return e.message && e.code !== "network_error"
+        ? e.message
+        : t.has(key)
+          ? t(key)
+          : t("errors.server_error");
     }
     return t("errors.server_error");
   };
@@ -113,7 +135,16 @@ export function LoginFlow() {
       return;
     }
     const dest = routeAfterLogin(me, params.get("next"));
-    if (dest === "choose") {
+    if (dest === "choose" && !me.is_staff) {
+      api
+        .get("/bolau/config")
+        .then(() => {
+          setBolauOn(true);
+          setUser(me);
+          setStep("choose");
+        })
+        .catch(() => router.replace("/onboarding"));
+    } else if (dest === "choose") {
       setUser(me);
       setStep("choose");
     } else {
@@ -181,7 +212,9 @@ export function LoginFlow() {
           return;
         }
         if (isApiError(err) && err.code === "mfa_invalid") {
-          setError(useRecovery ? t("security.login.invalid_recovery") : t("security.login.invalid_code"));
+          setError(
+            useRecovery ? t("security.login.invalid_recovery") : t("security.login.invalid_code"),
+          );
         } else {
           setError(apiMessage(err));
         }
@@ -191,28 +224,57 @@ export function LoginFlow() {
   };
 
   if (step === "choose" && user) {
+    const noOrg = (user.memberships?.length ?? 0) === 0;
     return (
       <div className="space-y-6">
         <div className="space-y-1.5">
           <h1 ref={headingRef} tabIndex={-1} className="text-2xl font-semibold focus:outline-none">
             {t("auth.choose_title", { name: user.full_name || f.phone(user.phone) })}
           </h1>
-          <p className="text-sm text-fg-muted">{t("auth.choose_body")}</p>
+          <p className="text-fg-muted text-sm">
+            {noOrg ? t("auth.choose_new_body") : t("auth.choose_body")}
+          </p>
         </div>
-        <div className="grid gap-3">
-          <ChoiceCard
-            icon={Briefcase}
-            title={t("nav.employer_portal")}
-            body={t("auth.choose_app")}
-            onClick={() => router.replace("/app")}
-          />
-          <ChoiceCard
-            icon={ShieldCheck}
-            title={t("nav.ops")}
-            body={t("auth.choose_ops")}
-            onClick={() => router.replace("/ops")}
-          />
-        </div>
+        {noOrg && bolauOn ? (
+          <div className="grid gap-3">
+            <ChoiceCard
+              icon={House}
+              title={t("auth.choose_ghar")}
+              body={t("auth.choose_ghar_body")}
+              onClick={() => router.replace("/ghar")}
+            />
+            <ChoiceCard
+              icon={Hammer}
+              title={user.worker_id ? t("auth.choose_sipalu_mine") : t("auth.choose_sipalu")}
+              body={t("auth.choose_sipalu_body")}
+              onClick={() => router.replace("/sipalu/join")}
+            />
+            <ChoiceCard
+              icon={Briefcase}
+              title={t("auth.choose_business")}
+              body={t("auth.choose_business_body")}
+              onClick={() => router.replace("/onboarding")}
+            />
+            {user.worker_id ? (
+              <p className="text-fg-muted text-sm">{t("auth.choose_worker_app")}</p>
+            ) : null}
+          </div>
+        ) : (
+          <div className="grid gap-3">
+            <ChoiceCard
+              icon={Briefcase}
+              title={t("nav.employer_portal")}
+              body={t("auth.choose_app")}
+              onClick={() => router.replace("/app")}
+            />
+            <ChoiceCard
+              icon={ShieldCheck}
+              title={t("nav.ops")}
+              body={t("auth.choose_ops")}
+              onClick={() => router.replace("/ops")}
+            />
+          </div>
+        )}
       </div>
     );
   }
@@ -246,19 +308,24 @@ export function LoginFlow() {
             setMfaToken(null);
             setError(null);
           }}
-          className="inline-flex items-center gap-1 text-sm text-fg-muted hover:text-fg"
+          className="text-fg-muted hover:text-fg inline-flex items-center gap-1 text-sm"
         >
           <ArrowLeft className="size-4" aria-hidden />
           {t("security.login.start_over")}
         </button>
         <div className="space-y-1.5">
-          <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-brand-subtle text-brand-text">
+          <div className="bg-brand-subtle text-brand-text mb-4 flex size-11 items-center justify-center rounded-xl">
             <LockKeyhole className="size-5" aria-hidden />
           </div>
-          <h1 ref={headingRef} tabIndex={-1} id="mfa-heading" className="text-2xl font-semibold focus:outline-none">
+          <h1
+            ref={headingRef}
+            tabIndex={-1}
+            id="mfa-heading"
+            className="text-2xl font-semibold focus:outline-none"
+          >
             {t("security.login.title")}
           </h1>
-          <p className="text-sm text-fg-muted" id="mfa-desc">
+          <p className="text-fg-muted text-sm" id="mfa-desc">
             {useRecovery ? t("security.login.recovery_body") : t("security.login.body")}
           </p>
         </div>
@@ -310,7 +377,7 @@ export function LoginFlow() {
         <p className="text-center text-sm">
           <button
             type="button"
-            className="font-medium text-brand-text hover:underline"
+            className="text-brand-text font-medium hover:underline"
             aria-pressed={useRecovery}
             onClick={() => {
               setUseRecovery((v) => !v);
@@ -335,21 +402,28 @@ export function LoginFlow() {
             setStep("phone");
             setError(null);
           }}
-          className="inline-flex items-center gap-1 text-sm text-fg-muted hover:text-fg"
+          className="text-fg-muted hover:text-fg inline-flex items-center gap-1 text-sm"
         >
           <ArrowLeft className="size-4" aria-hidden />
           {t("auth.change_number")}
         </button>
         <div className="space-y-1.5">
-          <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-brand-subtle text-brand-text">
+          <div className="bg-brand-subtle text-brand-text mb-4 flex size-11 items-center justify-center rounded-xl">
             <KeyRound className="size-5" aria-hidden />
           </div>
-          <h1 ref={headingRef} tabIndex={-1} id="otp-heading" className="text-2xl font-semibold focus:outline-none">
+          <h1
+            ref={headingRef}
+            tabIndex={-1}
+            id="otp-heading"
+            className="text-2xl font-semibold focus:outline-none"
+          >
             {t("auth.otp_title")}
           </h1>
-          <p className="text-sm text-fg-muted" id="otp-desc">
+          <p className="text-fg-muted text-sm" id="otp-desc">
             {t.rich("auth.otp_sent_to", {
-              phone: () => <strong className="font-semibold text-fg tabular">{f.phone(phone)}</strong>,
+              phone: () => (
+                <strong className="text-fg tabular font-semibold">{f.phone(phone)}</strong>
+              ),
             })}
           </p>
         </div>
@@ -374,7 +448,7 @@ export function LoginFlow() {
             boxLabel={(i) => t("auth.otp_digit", { n: i })}
           />
           {devCode ? (
-            <p className="flex items-center gap-2 rounded-md border border-dashed border-warning/40 bg-warning-subtle px-3 py-2 text-xs text-warning">
+            <p className="border-warning/40 bg-warning-subtle text-warning flex items-center gap-2 rounded-md border border-dashed px-3 py-2 text-xs">
               <span className="font-semibold">{t("auth.dev_hint")}</span>
               <button
                 type="button"
@@ -393,13 +467,13 @@ export function LoginFlow() {
             {t("auth.verify")}
           </Button>
         </form>
-        <p className="text-center text-sm text-fg-muted" aria-live="polite">
+        <p className="text-fg-muted text-center text-sm" aria-live="polite">
           {cooldown > 0 ? (
             t("auth.resend_in", { seconds: f.digits(cooldown) })
           ) : (
             <button
               type="button"
-              className="font-medium text-brand-text hover:underline disabled:opacity-50"
+              className="text-brand-text font-medium hover:underline disabled:opacity-50"
               onClick={() => sendCode()}
               disabled={requestOtp.isPending}
             >
@@ -414,16 +488,21 @@ export function LoginFlow() {
   return (
     <div className="space-y-6">
       <div className="space-y-1.5">
-        <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-brand-subtle text-brand-text">
+        <div className="bg-brand-subtle text-brand-text mb-4 flex size-11 items-center justify-center rounded-xl">
           <Smartphone className="size-5" aria-hidden />
         </div>
         <h1 ref={headingRef} tabIndex={-1} className="text-2xl font-semibold focus:outline-none">
           {t("auth.title")}
         </h1>
-        <p className="text-sm text-fg-muted">{t("auth.subtitle")}</p>
+        <p className="text-fg-muted text-sm">{t("auth.subtitle")}</p>
       </div>
       <form className="space-y-5" onSubmit={sendCode} noValidate>
-        <Field id="phone" label={t("auth.phone_label")} error={phoneError ?? undefined} hint={t("auth.phone_hint")}>
+        <Field
+          id="phone"
+          label={t("auth.phone_label")}
+          error={phoneError ?? undefined}
+          hint={t("auth.phone_hint")}
+        >
           <PhoneInput
             name="phone"
             value={phone}
@@ -441,7 +520,7 @@ export function LoginFlow() {
           {t("auth.send_code")}
         </Button>
       </form>
-      <p className="text-xs leading-relaxed text-fg-muted">{t("auth.terms")}</p>
+      <p className="text-fg-muted text-xs leading-relaxed">{t("auth.terms")}</p>
     </div>
   );
 }
@@ -461,14 +540,14 @@ function ChoiceCard({
     <button
       type="button"
       onClick={onClick}
-      className="flex items-start gap-4 rounded-xl border border-border bg-surface p-4 text-left shadow-sm transition-colors hover:border-brand/50 hover:bg-brand-subtle/40"
+      className="border-border bg-surface hover:border-brand/50 hover:bg-brand-subtle/40 flex items-start gap-4 rounded-xl border p-4 text-left shadow-sm transition-colors"
     >
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-subtle text-brand-text">
+      <span className="bg-brand-subtle text-brand-text flex size-10 shrink-0 items-center justify-center rounded-lg">
         <Icon className="size-5" aria-hidden />
       </span>
       <span>
-        <span className="block font-semibold text-fg">{title}</span>
-        <span className="block text-sm text-fg-muted">{body}</span>
+        <span className="text-fg block font-semibold">{title}</span>
+        <span className="text-fg-muted block text-sm">{body}</span>
       </span>
     </button>
   );

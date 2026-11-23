@@ -263,6 +263,9 @@ def test_audit_update_and_delete_blocked_at_db():
         AuditLog.objects.filter(pk=row.pk).delete()
     with pytest.raises(DatabaseError), transaction.atomic(), connection.cursor() as cur:
         cur.execute("DELETE FROM audit_auditlog")
+    # A full wipe would otherwise verify as a fresh chain.
+    with pytest.raises(DatabaseError, match="append-only"), transaction.atomic(), connection.cursor() as cur:
+        cur.execute("TRUNCATE audit_auditlog")
     with pytest.raises(RuntimeError):
         row.save()
 

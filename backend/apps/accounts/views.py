@@ -131,6 +131,8 @@ class MFAVerifyView(APIView):
             cache.set(fail_key, (cache.get(fail_key) or 0) + 1, MFA_LOCK_SECONDS)
             raise APIError("mfa_invalid")
         cache.delete(fail_key)
+        if not mfa.consume_login_token(s.validated_data["mfa_token"]):
+            raise APIError("mfa_token_invalid")
         request.user = user
         audit_log(
             request,

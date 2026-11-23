@@ -133,6 +133,14 @@ def make_login_token(user) -> str:
     return signing.dumps({"u": str(user.pk)}, salt=MFA_TOKEN_SALT, compress=True)
 
 
+def consume_login_token(token: str) -> bool:
+    """Mark a login token used; False if it already was (one sign-in per token, within its life)."""
+    from django.core.cache import cache
+
+    key = "ks-mfa-token-used:" + hashlib.sha256((token or "").encode()).hexdigest()
+    return cache.add(key, 1, MFA_TOKEN_MAX_AGE)
+
+
 def read_login_token(token: str) -> str | None:
     try:
         data = signing.loads(token or "", salt=MFA_TOKEN_SALT, max_age=MFA_TOKEN_MAX_AGE)

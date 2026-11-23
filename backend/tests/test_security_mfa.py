@@ -416,3 +416,19 @@ def test_employer_agreement_pending_for_owners_only():
     kinds = lambda u: {p["kind"] for p in auth_client(u).get("/api/v1/auth/me").json()["pending_legal"]}  # noqa: E731
     assert "employer_agreement" in kinds(owner)
     assert "employer_agreement" not in kinds(hr)
+
+
+@pytest.mark.django_db
+def test_mfa_token_signs_in_only_once():
+    api = APIClient()
+    _, _, recovery = _staff(mfa_on=True)
+    token = _otp_login(api).json()["mfa_token"]
+    first = api.post(
+        "/api/v1/auth/mfa/verify", {"mfa_token": token, "recovery_code": recovery[0]}, format="json"
+    )
+    assert first.status_code == 200
+    # A second valid factor doesn't make a used token good again.
+    again = api.post(
+        "/api/v1/auth/mfa/verify", {"mfa_token": token, "recovery_code": recovery[1]}, format="json"
+    )
+    assert again.status_code == 400 and again.json()["error"]["code"] == "mfa_token_invalid"

@@ -7,6 +7,21 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
 ## [Unreleased]
 
 ### Fixed
+- Web login: people with no organization (households, Sipalu, new businesses) choose where to go
+  (book a Sipalu, Sipalu profile, set up a business) instead of always landing on business setup;
+  while Bolau is off they go straight to business setup as before.
+- Switching the `bolau` flag off reaches the public home page within 30 s: the flag is no longer read
+  through Next's data cache, which kept serving the last 200 once the endpoint answered 404.
+- Ops overview shows the open-jobs and verification cards only to roles that may load them (support
+  and finance saw an error card).
+- Audit log: `TRUNCATE` is blocked by a statement trigger (a full wipe used to verify as a fresh
+  chain); the Django admin can't delete audit rows.
+- `check --deploy` refuses production settings that pass Django's own checks but break the service:
+  missing field-encryption keys (E001), console SMS without `OTP_SHOW_CODE` (E002), serverless without
+  `CRON_SECRET` (E003); warns on an empty `BFF_PROXY_SECRET` (W002).
+- An MFA login token signs in once; rejecting a worker's identity needs a reason.
+- Employers can onboard by worker id only someone with a history at their organization, and must
+  hire a worker in their open pipeline from Candidates.
 - Unknown Passport codes, Sipalu handles, help articles and booking pages answer **404** again. The
   route-level `loading.tsx` skeletons added with the loading feedback made Next.js commit a 200
   before `notFound()` ran (hidden, unverified Sipalu answered 200 too); they are removed, the top

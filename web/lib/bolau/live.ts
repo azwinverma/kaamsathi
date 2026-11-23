@@ -5,22 +5,30 @@ import type { Paginated } from "@/lib/api/types";
 import type { BolauTrade, PublicSipalu, SipaluCard } from "@/lib/api/types-bolau";
 import { bolauOnFromStatus } from "./flag";
 
+const FLAG_TTL_MS = 30_000;
+let flagMemo: { on: boolean; at: number } | null = null;
+
 /**
  * Is Bolau switched on for the public? `GET /flags` needs a session, so anonymous pages ask a
  * public, flag-gated Bolau endpoint instead: it answers 200 when the `bolau` flag is on and 404
- * when it is off. Cached for a minute (the home page header asks on every render); any network
- * problem counts as "off" so the B2B site never shows a dead link.
+ * when it is off. Remembered for 30 s per server instance (the header asks on every render). Not
+ * Next's data cache: that keeps serving a stored 200 once the endpoint starts answering 404, so
+ * switching Bolau off never reached the home page. When the API can't be reached, the last answer
+ * stands ("off" if there is none) so the B2B site never shows a dead link.
  */
 export const bolauLive = cache(async (): Promise<boolean> => {
+  if (flagMemo && Date.now() - flagMemo.at < FLAG_TTL_MS) return flagMemo.on;
   try {
     const res = await fetch(`${API_BASE_URL}/bolau/trades`, {
       headers: { Accept: "application/json" },
-      next: { revalidate: 60, tags: ["bolau-flag"] },
+      cache: "no-store",
       signal: AbortSignal.timeout(2500),
     });
-    return bolauOnFromStatus(res.status);
+    flagMemo = { on: bolauOnFromStatus(res.status), at: Date.now() };
+    return flagMemo.on;
   } catch {
-    return false;
+    // Unreachable (cold start, timeout): keep the last answer and ask again next render.
+    return flagMemo?.on ?? false;
   }
 });
 

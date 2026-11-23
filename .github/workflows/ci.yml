@@ -55,6 +55,11 @@ jobs:
           DJANGO_SETTINGS_MODULE: config.settings.prod
           DJANGO_SECRET_KEY: ci-only-0f9c2d7e4b1a8c3f6e5d2b9a7c4e1f8a3b6d9c2e5f8a1b4c7d0e3f6a9b2c5d8e
           DJANGO_ALLOWED_HOSTS: api.example.com
+          # Dummy values: the kaamsathi.E00x checks refuse a production config without them.
+          FIELD_ENCRYPTION_KEYS: ci-only-Wm9hVVhxcU9RbGRqZ0RjS3pMb2Z3eG5qbVpzQ2lUbE0=
+          FIELD_HASH_KEY: ci-only-hash-key-3f6a9b2c5d8e1f4a7b0c3d6e9f2a5b8c
+          SMS_BACKEND: sparrow
+          BFF_PROXY_SECRET: ci-only-bff-6e5d2b9a7c4e1f8a3b6d
       - run: pytest -q --cov=apps --cov-report=term-missing:skip-covered
       - name: OpenAPI schema (validated)
         run: python manage.py spectacular --file schema.yml --validate

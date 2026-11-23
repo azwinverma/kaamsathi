@@ -28,7 +28,16 @@
     "point_hajiri": "Daily hajiri in seconds",
     "point_hajiri_body": "QR check-in at site or one-tap marking by supervisors.",
     "point_talab": "Accurate talab, on time",
-    "point_talab_body": "B.S. month wage sheets with SSF, TDS and peski handled."
+    "point_talab_body": "B.S. month wage sheets with SSF, TDS and peski handled.",
+    "choose_new_body": "What would you like to do?",
+    "choose_ghar": "Book a Sipalu",
+    "choose_ghar_body": "Find a verified electrician, plumber, cook or cleaner for your home.",
+    "choose_sipalu": "Become a Sipalu",
+    "choose_sipalu_mine": "My Sipalu profile",
+    "choose_sipalu_body": "Offer your skills, set your price and get booked by households near you.",
+    "choose_business": "Set up a business",
+    "choose_business_body": "Hire verified workers, take hajiri and run payroll for your organization.",
+    "choose_worker_app": "Working for an employer on KaamSathi? Your hajiri and payslips are in the KaamSathi app."
   },
   "onboarding": {
     "meta_title": "Set up your organization",

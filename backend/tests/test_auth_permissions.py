@@ -364,3 +364,25 @@ def test_otp_show_code_returns_the_real_code(api, settings):
     ok = api.post("/api/v1/auth/otp/verify", {"phone": "9800000556", "code": code}, format="json")
     assert ok.status_code == 200 and ok.json()["access"]
     assert any(m.id == "kaamsathi.W001" for m in checks.run_checks(include_deployment_checks=True))
+
+
+def test_ops_reject_needs_a_reason(staff_client):
+    w = f.WorkerFactory(verification_status="pending")
+    res = staff_client.post(f"/api/v1/ops/workers/{w.id}/verify", {"status": "rejected"}, format="json")
+    assert res.status_code == 400 and "note" in res.json()["error"]["fields"]
+
+
+def test_deploy_checks_refuse_an_unusable_production_config(settings):
+    from django.core import checks
+
+    settings.DEBUG = False
+    settings.OTP_SHOW_CODE = False
+    settings.FIELD_ENCRYPTION_KEYS, settings.FIELD_HASH_KEY = [], ""
+    settings.SMS_BACKEND = "console"
+    settings.SERVERLESS, settings.CRON_SECRET = True, ""
+    ids = {m.id for m in checks.run_checks(include_deployment_checks=True)}
+    assert {"kaamsathi.E001", "kaamsathi.E002", "kaamsathi.E003"} <= ids
+    # A test site that shows the code on screen may run without SMS.
+    settings.OTP_SHOW_CODE = True
+    ids = {m.id for m in checks.run_checks(include_deployment_checks=True)}
+    assert "kaamsathi.E002" not in ids and "kaamsathi.W001" in ids
