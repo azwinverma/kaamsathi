@@ -118,8 +118,11 @@ String? routeForNotification(AppNotification n, AppMode? mode, {bool bolau = fal
     if (k.contains('dispute') && disputeId != null && disputeId.isNotEmpty) return Routes.workerDispute(disputeId);
     if (k == 'roster_changed' || k.contains('roster') || k.contains('shift')) return Routes.workerShifts;
     if (k.contains('attendance_correction') || k.contains('correction')) return Routes.workerHajiri;
+    if (k == 'leave_decided') return Routes.workerLeave;
   } else if (k.contains('attendance_correction') || k.contains('correction')) {
     return Routes.supCorrections;
+  } else if (k == 'leave_request') {
+    return Routes.supLeaves;
   }
   if (link.startsWith('/')) {
     if (worker && link.startsWith('/w/')) return link;
@@ -141,6 +144,7 @@ String? routeForNotification(AppNotification n, AppMode? mode, {bool bolau = fal
         ('/me/career', Routes.workerCareer),
         ('/me/roster', Routes.workerShifts),
         ('/me/attendance', Routes.workerHajiri),
+        ('/me/leaves', Routes.workerLeave),
         ('/me/ratings', Routes.workerRatings),
       ]) {
         if (link.startsWith(prefix)) return route;

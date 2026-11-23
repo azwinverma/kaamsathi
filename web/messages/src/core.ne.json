@@ -153,7 +153,8 @@
     "verified": "प्रमाणित",
     "unpaid": "भुक्तानी बाँकी",
     "paid": "भुक्तानी भयो",
-    "waived": "छुट"
+    "waived": "छुट",
+    "cancelled": "रद्द"
   },
   "stage": {
     "sourced": "खोजिएको",

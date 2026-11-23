@@ -12,6 +12,7 @@ from apps.orgs import views as orgs
 from apps.payroll import views as payroll
 from apps.workers import me_views as me
 from apps.workers import ops_views as ops
+from apps.workforce import leave_requests
 from apps.workforce import views as workforce
 
 router = Router()
@@ -78,6 +79,12 @@ urlpatterns = [
     p("me/attendance", me.MeAttendanceView, "me-attendance"),
     p("me/attendance/check-in", me.CheckInView, "me-check-in"),
     p("me/attendance/check-out", me.CheckOutView, "me-check-out"),
+    p("me/leaves", leave_requests.MeLeavesView, "me-leaves"),
+    re_path(
+        r"^me/leaves/(?P<pk>[0-9a-f-]{36})/cancel/?$",
+        leave_requests.MeLeaveCancelView.as_view(),
+        name="me-leave-cancel",
+    ),
     # ops
     p("ops/dashboard", ops.OpsDashboardView, "ops-dashboard"),
     *router.urls,

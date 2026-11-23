@@ -6,7 +6,8 @@ import '../../../../core/auth/session.dart';
 import '../../../../core/providers.dart';
 
 /// `LeaveRequest` — CONTRACT lists the model fields; the response's worker
-/// reference isn't spelled out, so several shapes are accepted.
+/// reference isn't spelled out, so several shapes are accepted. Shared by the
+/// supervisor queue (`/org/leaves`) and the worker's own list (`/me/leaves`).
 class LeaveRequest {
   const LeaveRequest({
     required this.id,
@@ -22,6 +23,12 @@ class LeaveRequest {
     required this.days,
     this.reason,
     required this.status,
+    this.employmentId,
+    this.organizationName,
+    this.source,
+    this.requestedByName,
+    this.decisionNote,
+    this.createdAt,
   });
 
   final String id;
@@ -36,7 +43,20 @@ class LeaveRequest {
   final String? toDateBs;
   final num days;
   final String? reason;
+
+  /// pending | approved | rejected | cancelled
   final String status;
+  final String? employmentId;
+  final String? organizationName;
+
+  /// employer (entered by the employer/supervisor) | worker (asked from the app)
+  final String? source;
+  final String? requestedByName;
+  final String? decisionNote;
+  final DateTime? createdAt;
+
+  bool get isPending => status == 'pending';
+  bool get isWorkerRequested => source == 'worker';
 
   factory LeaveRequest.fromJson(Json j) {
     final emp = asJsonOrNull(j['employment']);
@@ -55,6 +75,12 @@ class LeaveRequest {
       days: numOf(j['days']) ?? 0,
       reason: str(j['reason']),
       status: strOr(j['status'], 'pending'),
+      employmentId: str(j['employment_id']),
+      organizationName: str(asJsonOrNull(j['organization'])?['name']),
+      source: str(j['source']),
+      requestedByName: str(asJsonOrNull(j['requested_by'])?['full_name']),
+      decisionNote: str(j['decision_note']),
+      createdAt: dateTimeOf(j['created_at']),
     );
   }
 }

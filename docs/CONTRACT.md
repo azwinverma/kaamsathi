@@ -134,7 +134,8 @@ Payroll calculation (per active employment overlapping the BS month, prorated by
 - `GET /org/attendance/register?bs_year=&bs_month=&site=` → `{bs_year, bs_month, month_name_en, month_name_ne, days: [{date, bs_day, weekday, is_holiday, is_weekly_off}], rows: [{employment_id, worker_name, designation, cells: {"<ad date>": "P"|"A"|"H"|"L"|"PH"|"WO"|null}, totals: {present, half_day, absent, leave, overtime_hours}}]}`
 - `POST /org/attendance/bulk {records: [{client_uuid, employment_id, date, status, check_in_at?, check_out_at?, lat?, lng?, method, overtime_minutes?, note?}]}` → `{saved: [client_uuid], errors: [{client_uuid, code, message}]}` — idempotent upsert on (employment, date); supervisors limited to their sites; payroll-approved months are locked (`invalid_state`); a `date` after today (Asia/Kathmandu) → per-record `validation_error`.
 - `Attendance` = `{id, employment_id, date, date_bs, status, status_label, check_in_at, check_out_at, method, overtime_minutes, note}`
-- Leave: `GET /org/leaves?status=` · `POST /org/leaves` · `POST /org/leaves/{id}/approve` · `POST /org/leaves/{id}/reject {note?}`
+- Leave: `GET /org/leaves?status=` · `POST /org/leaves` · `POST /org/leaves/{id}/approve` · `POST /org/leaves/{id}/reject {note?}` — lists include worker-requested leave (`source: "worker"`, see `/me/leaves`); supervisors see and decide their sites only; approve writes `leave` attendance rows for each employed day (payroll-locked months → `invalid_state`); a decision notifies the worker (inbox + push; SMS too when the worker asked for it), kind `leave_decided`.
+- `LeaveRequest` = `{id, employment_id, worker: {id, full_name}, designation, organization: {id, name}, site_id, leave_type, leave_type_label, from_date(+_bs), to_date(+_bs), days, reason, status: pending|approved|rejected|cancelled, status_label, source: employer|worker, requested_by: {id, full_name}|null, decided_by, decided_at, decision_note, created_at}`
 - Peski: `GET /org/advances?employment=` · `POST /org/advances` · `PATCH /org/advances/{id}`
 - Holidays: `GET /org/holidays?bs_year=` (national + org) · `POST /org/holidays` · `DELETE /org/holidays/{id}` (org only)
 
@@ -154,6 +155,7 @@ Payroll calculation (per active employment overlapping the BS month, prorated by
 - `GET /me/employments` · `GET /me/history` (verified work history)
 - `GET /me/attendance?bs_year=&bs_month=` → `{days: [{date, bs_day, status}], totals}`
 - `POST /me/attendance/check-in {site_qr_token, lat, lng, client_uuid}` · `POST /me/attendance/check-out {...}` — geofence check (`outside_geofence`)
+- Leave (बिदा): `GET /me/leaves?status=` → paginated own `LeaveRequest`s across employers, newest first · `POST /me/leaves {employment_id, leave_type, from_date, to_date, reason?}` → 201 `LeaveRequest` (`status: pending`, `source: worker`) — the employment must be the worker's and active over the dates (else `invalid_state`), `to_date >= from_date`, at most 120 days (`validation_error`), no day inside an approved/paid payroll period (`invalid_state`), no overlap with the employment's pending/approved leave (`duplicate`); notifies the org's owner/admin/hr and the site's supervisors (inbox + push, kind `leave_request`) · `POST /me/leaves/{id}/cancel` → own pending request becomes `cancelled` (another worker's id → 404; not pending → `invalid_state`)
 - `GET /me/payslips` · `GET /me/payslips/{id}` · `GET /me/payslips/{id}/payslip.pdf`
 - `GET /me/consents` · `POST /me/consents {organization_id?, scope, granted}`
 

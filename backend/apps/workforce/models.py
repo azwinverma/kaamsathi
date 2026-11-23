@@ -117,6 +117,8 @@ class LeaveRequest(models.Model):
     TYPES = labels.choices(labels.LEAVE_TYPE)
     STATUSES = labels.choices(labels.LEAVE_STATUS)
     PAID_TYPES = {"home", "sick", "maternity", "paternity", "mourning"}
+    # who raised it: the employer/supervisor entering it, or the worker asking from the app (/me/leaves)
+    SOURCES = [("employer", "Employer"), ("worker", "Worker")]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     employment = models.ForeignKey(Employment, on_delete=models.CASCADE, related_name="leaves")
@@ -126,6 +128,10 @@ class LeaveRequest(models.Model):
     days = models.DecimalField(max_digits=5, decimal_places=1)
     reason = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=10, choices=STATUSES, default="pending")
+    source = models.CharField(max_length=10, choices=SOURCES, default="employer")
+    requested_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
     decided_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
     )

@@ -44,7 +44,12 @@ LEAVE_TYPE = {
     "mourning": _("Mourning leave"),
     "unpaid": _("Unpaid leave"),
 }
-LEAVE_STATUS = {"pending": _("Pending"), "approved": _("Approved"), "rejected": _("Rejected")}
+LEAVE_STATUS = {
+    "pending": _("Pending"),
+    "approved": _("Approved"),
+    "rejected": _("Rejected"),
+    "cancelled": _("Cancelled"),  # worker withdrew their own pending request
+}
 EMPLOYMENT_STATUS = {"active": _("Active"), "ended": _("Ended")}
 END_REASON = {
     "resigned": _("Resigned"),

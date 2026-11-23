@@ -6,6 +6,15 @@ production deploy, see docs/RUNBOOK.md → CI/CD). Architecture decisions: [docs
 
 ## [Unreleased]
 
+### Added
+- **Workers request leave (बिदा) themselves:** `GET|POST /me/leaves` and `POST /me/leaves/{id}/cancel`
+  (active employment only, no overlap with pending/approved leave, not inside an approved payroll
+  period). The site's supervisors and the org's owner/admin/hr get an inbox notification; the worker
+  hears about the approval or rejection by inbox and SMS. `LeaveRequest` gains `source`
+  (employer/worker), `requested_by` and a `cancelled` status (migration `workforce.0003`). The web
+  leave page and the supervisor app mark worker-requested items "Requested by worker"; the worker
+  app's Work tab has a Leave shortcut with my requests, a request form and cancel.
+
 ### Fixed
 - **Payroll:** an edit that would make net pay negative is refused, and a negative-net payslip can't
   be approved; TDS taxes the festival (Dashain) allowance and overtime once at the marginal rate

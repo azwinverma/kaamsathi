@@ -33,6 +33,11 @@ export function employmentIdOf(
   return typeof e === "string" ? e : (e?.id ?? "");
 }
 
+/** True when the worker asked for this leave themselves (from the app), not entered by the employer. */
+export function isWorkerRequested(lr: Pick<LeaveRequest, "source">): boolean {
+  return lr.source === "worker";
+}
+
 /** Worker name from LeaveRequest/Advance (worker.full_name or worker_name), with optional lookup. */
 export function workerNameOf(
   item: Pick<LeaveRequest | Advance, "worker" | "worker_name" | "employment">,

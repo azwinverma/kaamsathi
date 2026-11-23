@@ -1,9 +1,10 @@
 "use client";
 import * as React from "react";
-import { Check, Plus, X, CalendarOff } from "lucide-react";
+import { Check, Plus, X, CalendarOff, Smartphone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BsDatePicker, DateText } from "@/components/ui/date";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader } from "@/components/ui/dialog";
@@ -23,7 +24,7 @@ import { todayIso } from "@/lib/format";
 import { toastError } from "@/lib/forms";
 import { useFormat } from "@/lib/use-format";
 import { EmploymentPicker } from "./employment-picker";
-import { designationOf, workerNameOf } from "./utils";
+import { designationOf, isWorkerRequested, workerNameOf } from "./utils";
 
 const PAGE_SIZE = 25;
 type Tab = LeaveStatus | "all";
@@ -134,6 +135,16 @@ export function LeavePage() {
                         <span className="block">{name}</span>
                         {designationOf(lr) ? (
                           <span className="block text-xs font-normal text-fg-muted">{designationOf(lr)}</span>
+                        ) : null}
+                        {isWorkerRequested(lr) ? (
+                          <Badge
+                            tone="info"
+                            className="mt-1"
+                            title={tl("requested_by_worker_hint", { name: lr.requested_by?.full_name ?? name })}
+                          >
+                            <Smartphone aria-hidden />
+                            {tl("requested_by_worker")}
+                          </Badge>
                         ) : null}
                       </RowHeader>
                       <Td>{lr.leave_type_label ?? t(`leave_type.${lr.leave_type}`)}</Td>

@@ -22,6 +22,7 @@ from apps.workers.models import Rating
 from apps.workers.serializers import WORKER_CARD_PREFETCH
 
 from . import importer, services
+from .leave_requests import notify_decision
 from .models import Advance, Attendance, Employment, Holiday, LeaveRequest
 from .serializers import (
     AdvanceSerializer,
@@ -505,7 +506,7 @@ class LeaveViewSet(
 
     def get_queryset(self):
         qs = LeaveRequest.objects.filter(employment__organization=self.org).select_related(
-            "employment__worker", "decided_by"
+            "employment__worker", "employment__organization", "decided_by", "requested_by"
         )
         qs = self.scope_employments(qs, "employment__site_id")
         p = self.request.query_params
@@ -514,6 +515,9 @@ class LeaveViewSet(
         if p.get("employment"):
             qs = qs.filter(employment_id=p["employment"])
         return qs.order_by("-created_at")
+
+    def get_create_kwargs(self):
+        return {"requested_by": self.request.user}  # source stays "employer"
 
     def perform_create(self, serializer):
         self.check_employment_access(serializer.validated_data["employment"])
@@ -524,6 +528,7 @@ class LeaveViewSet(
         leave = self.get_object()
         services.approve_leave(leave, request.user)
         log(request, "leave.approve", leave, organization=self.org)
+        notify_decision(leave)
         return Response(self.get_serializer(leave).data)
 
     @action(detail=True, methods=["post"])
@@ -537,6 +542,7 @@ class LeaveViewSet(
         leave.decision_note = (request.data or {}).get("note") or None
         leave.save(update_fields=["status", "decided_by", "decided_at", "decision_note"])
         log(request, "leave.reject", leave, organization=self.org, changes={"note": leave.decision_note})
+        notify_decision(leave)
         return Response(self.get_serializer(leave).data)
 
 

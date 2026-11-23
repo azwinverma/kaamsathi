@@ -254,11 +254,12 @@ class LeaveSerializer(BSModelSerializer):
             "days",
             "reason",
             "status",
+            "source",
             "decided_at",
             "decision_note",
             "created_at",
         ]
-        read_only_fields = ["id", "status", "decided_at", "decision_note", "created_at"]
+        read_only_fields = ["id", "status", "source", "decided_at", "decision_note", "created_at"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -280,6 +281,13 @@ class LeaveSerializer(BSModelSerializer):
         data["designation"] = emp.designation
         data["leave_type_label"] = labels.label(labels.LEAVE_TYPE, instance.leave_type)
         data["status_label"] = labels.label(labels.LEAVE_STATUS, instance.status)
+        data["organization"] = {"id": str(emp.organization_id), "name": emp.organization.name}
+        data["site_id"] = str(emp.site_id) if emp.site_id else None
+        data["requested_by"] = (
+            {"id": str(instance.requested_by_id), "full_name": instance.requested_by.full_name}
+            if instance.requested_by_id
+            else None
+        )
         data["decided_by"] = (
             {"id": str(instance.decided_by_id), "full_name": instance.decided_by.full_name}
             if instance.decided_by_id

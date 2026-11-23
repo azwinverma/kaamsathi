@@ -62,6 +62,12 @@ class WorkSwitcher extends StatelessWidget {
                 label: l.tsTitle,
                 onTap: () => context.push(Routes.workerTimesheets),
               ),
+              _Shortcut(
+                key: const Key('work_leave'),
+                icon: LucideIcons.calendarOff,
+                label: l.workLeave,
+                onTap: () => context.push(Routes.workerLeave),
+              ),
             ],
           ),
         ],

@@ -5144,4 +5144,70 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get gharDisputesEmpty => 'तपाईंको बुकिङबारे कुनै उजुरी छैन।';
+
+  @override
+  String get workLeave => 'बिदा';
+
+  @override
+  String get myLeaveTitle => 'मेरो बिदा';
+
+  @override
+  String get myLeaveSubtitle => 'बिदा माग्नुहोस् र आफ्ना अनुरोधको अवस्था हेर्नुहोस्';
+
+  @override
+  String get myLeaveRequest => 'बिदा माग्नुहोस्';
+
+  @override
+  String get myLeaveEmpty => 'तपाईंले अहिलेसम्म बिदा माग्नुभएको छैन।';
+
+  @override
+  String get myLeaveStatusPending => 'पर्खँदै';
+
+  @override
+  String get myLeaveStatusApproved => 'स्वीकृत';
+
+  @override
+  String get myLeaveStatusRejected => 'अस्वीकृत';
+
+  @override
+  String get myLeaveStatusCancelled => 'रद्द';
+
+  @override
+  String get myLeaveCancel => 'अनुरोध रद्द गर्नुहोस्';
+
+  @override
+  String get myLeaveCancelTitle => 'यो बिदा अनुरोध रद्द गर्ने?';
+
+  @override
+  String get myLeaveCancelBody => 'तपाईंको सुपरभाइजरले यो अनुरोध अब देख्नुहुने छैन। पछि फेरि माग्न सक्नुहुन्छ।';
+
+  @override
+  String get myLeaveKeep => 'राख्नुहोस्';
+
+  @override
+  String get myLeaveCancelled => 'बिदा अनुरोध रद्द भयो।';
+
+  @override
+  String get myLeaveType => 'बिदाको प्रकार';
+
+  @override
+  String get myLeaveFrom => 'पहिलो दिन';
+
+  @override
+  String get myLeaveTo => 'अन्तिम दिन';
+
+  @override
+  String get myLeaveReason => 'कारण';
+
+  @override
+  String get myLeaveReasonHint => 'जस्तै: दशैंमा घर जाँदैछु';
+
+  @override
+  String get myLeaveSent => 'अनुरोध तपाईंको सुपरभाइजरलाई पठाइयो।';
+
+  @override
+  String get myLeaveNoJob => 'बिदा माग्न तपाईंको चालु काम हुनुपर्छ।';
+
+  @override
+  String get leaveRequestedByWorker => 'कामदारले मागेको';
 }

@@ -9613,6 +9613,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No disputes about your bookings.'**
   String get gharDisputesEmpty;
+
+  /// No description provided for @workLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get workLeave;
+
+  /// No description provided for @myLeaveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My leave'**
+  String get myLeaveTitle;
+
+  /// No description provided for @myLeaveSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for bida and follow your requests'**
+  String get myLeaveSubtitle;
+
+  /// No description provided for @myLeaveRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Request leave'**
+  String get myLeaveRequest;
+
+  /// No description provided for @myLeaveEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t asked for leave yet.'**
+  String get myLeaveEmpty;
+
+  /// No description provided for @myLeaveStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get myLeaveStatusPending;
+
+  /// No description provided for @myLeaveStatusApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get myLeaveStatusApproved;
+
+  /// No description provided for @myLeaveStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get myLeaveStatusRejected;
+
+  /// No description provided for @myLeaveStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get myLeaveStatusCancelled;
+
+  /// No description provided for @myLeaveCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel request'**
+  String get myLeaveCancel;
+
+  /// No description provided for @myLeaveCancelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this leave request?'**
+  String get myLeaveCancelTitle;
+
+  /// No description provided for @myLeaveCancelBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your supervisor will no longer see it. You can ask again later.'**
+  String get myLeaveCancelBody;
+
+  /// No description provided for @myLeaveKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it'**
+  String get myLeaveKeep;
+
+  /// No description provided for @myLeaveCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave request cancelled.'**
+  String get myLeaveCancelled;
+
+  /// No description provided for @myLeaveType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type of leave'**
+  String get myLeaveType;
+
+  /// No description provided for @myLeaveFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'First day'**
+  String get myLeaveFrom;
+
+  /// No description provided for @myLeaveTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Last day'**
+  String get myLeaveTo;
+
+  /// No description provided for @myLeaveReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get myLeaveReason;
+
+  /// No description provided for @myLeaveReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Going home for Dashain'**
+  String get myLeaveReasonHint;
+
+  /// No description provided for @myLeaveSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent to your supervisor.'**
+  String get myLeaveSent;
+
+  /// No description provided for @myLeaveNoJob.
+  ///
+  /// In en, this message translates to:
+  /// **'You need an active job to ask for leave.'**
+  String get myLeaveNoJob;
+
+  /// No description provided for @leaveRequestedByWorker.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested by worker'**
+  String get leaveRequestedByWorker;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
